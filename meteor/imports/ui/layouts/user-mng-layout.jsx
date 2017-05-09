@@ -32,8 +32,8 @@ export  class UserManagementLayout extends React.Component{
     render(){
         var rows = [];
         this.usuarios.forEach((usuario)=>{
-            console.log(usuario.emails[0].address);
-            rows.push({name:usuario.emails[0].address,key:usuario._id});
+            //console.log(usuario.emails[0].address);
+            rows.push({name:usuario.username,key:usuario._id});
             //rows.push(<ItemBasic name={usuario.emails[0].address} key={usuario._id} />)
         })
         return(
@@ -44,7 +44,7 @@ export  class UserManagementLayout extends React.Component{
                         <SearchLayout rows={rows} deleteHandler={this.deleteUser} editHandler={this.editUser}/>
                     </div>
                     <div className="col-md-9 col-lg-9">
-                        {children}
+                        {this.props.children}
                     </div>
                 </div>
                 {/*{rows}*/}

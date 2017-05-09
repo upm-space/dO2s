@@ -10,6 +10,6 @@ Para arrancar el servicio de mongodb
     
 Para arrancar meteor con otra base de datos
 
-    MONGO_URL='mongodb://localhost:27017/igs' meteor
+    MONGO_URL='mongodb://localhost:27017/dO2s' meteor
     
 Para la creación de colecciones y publicaciones leemos el siguiente [artículo](https://themeteorchef.com/tutorials/defining-mongodb-collections)
