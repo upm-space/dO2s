@@ -4,8 +4,27 @@
 
 # -
 
+# Created by https://www.gitignore.io/api/meteorjs
+
+### MeteorJS ###
+# default meteor build and local packages
+.meteor/local
+
+# meteor settings file
+settings.json
+
+# meteor build output files
+*.tar.gz
+
+# general swp files from vim
+*.swp
+
 # ignoring the node_modules folder for all projects
 **/node_modules/
+
+# End of https://www.gitignore.io/api/meteorjs
+
+
 
 # Created by https://www.gitignore.io/api/webstorm
 
