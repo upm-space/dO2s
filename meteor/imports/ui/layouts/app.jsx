@@ -1,10 +1,11 @@
 import React from 'react';
-import { Navigation } from '../components/navigation.jsx';
+import Navigation from '../components/navigation';
 
-export const App = ( { children } ) => (
-    <div>
+const App = ( {children} ) => (
+    <div className="App">
         <Navigation />
-        { children }
+        {children}
     </div>
-)
+);
 
+export default App;

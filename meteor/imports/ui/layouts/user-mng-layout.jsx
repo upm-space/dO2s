@@ -1,8 +1,9 @@
 import React from 'react';
-import {ItemBasic} from '../components/item-basic.jsx';
-import {SearchLayout} from './search-layout-basic.jsx';
+import PropTypes from 'prop-types';
+import { ItemBasic } from '../components/item-basic';
+import { SearchLayout } from './search-layout-basic';
 
-export  class UserManagementLayout extends React.Component{
+export class UserManagementLayout extends React.Component{
     constructor(props){
         super(props);
         this.usuarios = Users.find({});

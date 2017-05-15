@@ -1,7 +1,9 @@
-import React,{PropTypes} from 'react';
-import {ButtonBasic} from './../components/button-basic.jsx';
-import {ItemBasic} from './../components/item-basic.jsx';
-export  class SearchLayout extends React.Component{
+import React from 'react';
+import PropTypes from 'prop-types';
+import {ButtonBasic} from './../components/button-basic';
+import {ItemBasic} from './../components/item-basic';
+
+export class SearchLayout extends React.Component{
     constructor(props){
         super(props);
     }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { IndexLink, Link } from 'react-router';
+import { NavLink } from 'react-router-dom';
 /*
 export const Navigation = () => (
     <nav className="navbar navbar-ipsilum">
@@ -13,7 +13,7 @@ export const Navigation = () => (
 )
     */
 
-export const Navigation = () => (
+const Navigation = () => (
     <nav className="navbar navbar-ipsilum">
         <div className="container-fluid">
             <div className="navbar-header">
@@ -25,8 +25,8 @@ export const Navigation = () => (
             </div>
             <div className="collapse navbar-collapse" id="myNavbar">
                 <ul className="nav navbar-nav">
-                    <li><IndexLink to="/" activeClassName="active"><span className="glyphicon glyphicon-home"></span> <b>HOME</b></IndexLink></li>
-                    <li><Link to="/usrmng" activeClassName="active"><span className="glyphicon glyphicon-user"></span> <b>USER MNG</b></Link></li>
+                    <li><NavLink to="/" activeClassName="active"><span className="glyphicon glyphicon-home"></span> <b>HOME</b></NavLink></li>
+                    <li><NavLink to="/usrmng" activeClassName="active"><span className="glyphicon glyphicon-user"></span> <b>USER MNG</b></NavLink></li>
                 </ul>
                 <ul className="nav navbar-nav navbar-right">
 
@@ -38,4 +38,6 @@ export const Navigation = () => (
         </div>
     </nav>
 
-)
+);
+
+export default Navigation;
