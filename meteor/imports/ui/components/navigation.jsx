@@ -1,17 +1,5 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-/*
-export const Navigation = () => (
-    <nav className="navbar navbar-ipsilum">
-        <ul className="nav navbar-nav">
-            <li><IndexLink to="/" activeClassName="active">Index</IndexLink></li>
-            <li><IndexLink to="/urrmng" activeClassName="active">User Management</IndexLink></li>
-            <li><Link to="/one" activeClassName="active">Page One</Link></li>
-            <li><Link to="/two" activeClassName="active">Page Two</Link></li>
-        </ul>
-    </nav>
-)
-    */
 
 const Navigation = () => (
     <nav className="navbar navbar-ipsilum">

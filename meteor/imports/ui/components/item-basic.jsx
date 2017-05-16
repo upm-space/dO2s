@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {ButtonBasic} from './../components/button-basic';
+import { ButtonBasic } from './button-basic';
 
 export  class ItemBasic extends React.Component{
     // ver este link https://facebook.github.io/react/docs/thinking-in-react.html

@@ -3,15 +3,6 @@
  */
 import React from 'react';
 
-// export class UserCuota extends React.Component{
-//     constructor(props){
-//         super(props);
-//     }
-//     render(){
-//         return(<div><h1>User Cutoa</h1></div>)
-//     }
-// }
-
 const UserCuota = () => (
     <div><h1>User Cutoa</h1></div>
 );
