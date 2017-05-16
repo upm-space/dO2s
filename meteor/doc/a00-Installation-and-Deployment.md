@@ -71,3 +71,7 @@ And that's it.
 -   [Meteor Guide](https://guide.meteor.com)
 -   [Meteor Documentation](http://docs.meteor.com)
 -   [Meteor + React Tutorial](https://www.meteor.com/tutorials/react/creating-an-app)
+-   [New JavaScript ES6 features](http://git.io/es6features)
+-   [Facebook React Tutorial](https://facebook.github.io/react/docs/tutorial.html)
+-   [React Facebook Getting Started](https://facebook.github.io/react/docs/getting-started.html)
+-   [A re-introduction to JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript/A_re-introduction_to_JavaScript)
