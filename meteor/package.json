@@ -1,8 +1,8 @@
 {
-  "name": "ipsilum",
+  "name": "dO2s",
   "private": true,
   "scripts": {
-    "start": "meteor run"
+      "start": "env MONGO_URL=mongodb://localhost:27017/do2sdb meteor run"
   },
   "dependencies": {
     "babel-runtime": "^6.23.0",
