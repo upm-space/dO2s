@@ -2,14 +2,17 @@
   "name": "dO2s",
   "private": true,
   "scripts": {
-      "start": "env MONGO_URL=mongodb://localhost:27017/do2sdb meteor run"
+    "start": "env MONGO_URL=mongodb://localhost:27017/do2sdb meteor run"
   },
   "dependencies": {
     "babel-runtime": "^6.23.0",
+    "bcrypt": "^1.0.2",
+    "classnames": "^2.2.5",
     "meteor-node-stubs": "~0.2.4",
     "prop-types": "^15.5.10",
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
+    "react-komposer": "^2.0.0",
     "react-router": "^4.1.1",
     "react-router-dom": "^4.1.1"
   }

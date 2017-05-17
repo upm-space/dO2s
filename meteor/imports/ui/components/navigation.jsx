@@ -1,5 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
+import { LoginButtons } from 'meteor/okgrow:accounts-ui-react';
 
 const Navigation = () => (
     <nav className="navbar navbar-ipsilum">
@@ -15,6 +16,7 @@ const Navigation = () => (
                 <ul className="nav navbar-nav">
                     <li><NavLink to="/" activeClassName="active"><span className="glyphicon glyphicon-home"></span> <b>HOME</b></NavLink></li>
                     <li><NavLink to="/usrmng" activeClassName="active"><span className="glyphicon glyphicon-user"></span> <b>USER MNG</b></NavLink></li>
+                    <li><LoginButtons /></li>
                 </ul>
                 <ul className="nav navbar-nav navbar-right">
 
