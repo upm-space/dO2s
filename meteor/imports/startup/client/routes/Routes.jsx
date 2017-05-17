@@ -2,15 +2,15 @@ import React from 'react';
 import { render } from 'react-dom';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
-import App from '../layouts/app';
+import App from '../../../ui/layouts/app';
 
-import Home from '../pages/home';
-import One from '../pages/one';
-import Two from '../pages/two';
-import NotFound from '../pages/not-found';
+import Home from '../../../ui/pages/home';
+import One from '../../../ui/pages/one';
+import Two from '../../../ui/pages/two';
+import NotFound from '../../../ui/pages/not-found';
 
-import UserCouta from '../forms/user-cuota';
-import { UserManagementLayout } from '../layouts/user-mng-layout';
+import UserCouta from '../../../ui/forms/user-cuota';
+import { UserManagementLayout } from '../../../ui/layouts/user-mng-layout';
 
 
 const Routes = () => (

@@ -3,11 +3,12 @@ As of this writing `react-router` is in version `4.1.1`
 
 -   [Meteor Chef - Getting Started with React Router 4](https://themeteorchef.com/tutorials/getting-started-with-react-router-v4)
 -   [React Router Documentation](https://reacttraining.com/react-router/web/guides/quick-start)
+-   [React Router 4 Basics](https://teamtreehouse.com/library/react-router-4-basics-2)
 
 ###### Some Tips
 
 -   [Nesting in ReactRouter v4](https://teamtreehouse.com/community/warning-you-should-not-use-route-component-and-route-children-in-the-same-route-route-children-will-be-ignored)
--   [Quick tut to ReactRouter 4](https://medium.com/@pshrmn/a-simple-react-router-v4-tutorial-7f23ff27adf˚)
+-   [Quick tut to ReactRouter 4](https://medium.com/@pshrmn/a-simple-react-router-v4-tutorial-7f23ff27adf)
 
 ---
 
@@ -195,11 +196,199 @@ export default Hello;
 
 ## Nesting Routes
 
-There is still some opinions as to how to do this. We will cover two ways I found that successfully does nesting.
+As we said before in React Router, we rely on nesting React components using a concept known as Higher-Order Components (HOCs). This means that we define our routes _within_ our other React components, as opposed to standalone in another file. Quite literally, our routes are defined where they're rendered.
 
-<!-- TODO -->
-Coming soon...
+Getting the shock factor out of the way now. The biggest change in React Router v4 is the suggestion that our routes should _**not**_ be defined in a file separate from our components. Instead, in the latest version, routes are defined at the component-level.
 
+There is still some opinions as to how to do this. We will cover some ways that successfully do nesting.
+
+### [React Router Documentation](https://reacttraining.com/react-router/web/guides/quick-start)
+
+This is the example in React Router Documentation,
+
+```javascript
+import React from 'react';
+import {
+  BrowserRouter as Router,
+  Route,
+  Link
+} from 'react-router-dom';
+
+const Home = () => (
+  <div>
+    <h2>Home</h2>
+  </div>
+);
+
+const About = () => (
+  <div>
+    <h2>About</h2>
+  </div>
+);
+
+const Topic = ({ match }) => (
+  <div>
+    <h3>This is a nested Topic</h3>
+  </div>
+);
+
+const Topics = ( ) => (
+  <div>
+    <h2>Topics</h2>
+    // a list of topics
+    <Route path="/topics/nested" component={Topic}/>
+    <Route exact path="/topics" render={() => (
+      <h3>Please select a topic.</h3>
+    )}/>
+  </div>
+);
+
+const BasicExample = () => (
+  <Router>
+    <div>
+      <ul>
+        <li><Link to="/">Home</Link></li>
+        <li><Link to="/about">About</Link></li>
+        <li><Link to="/topics">Topics</Link></li>
+      </ul>
+
+      <hr/>
+
+      <Route exact path="/" component={Home}/>
+      <Route path="/about" component={About}/>
+      <Route path="/topics" component={Topics}/>
+    </div>
+  </Router>
+);
+export default BasicExample;
+```
+
+As you can see the nesting is done inside the `<Topics >` component, you wouldn't load all the components inside a routes file and then do the routing there. We would then load this basic example on the `index.js` file like this:
+
+```javascript
+import React from 'react';
+import { render } from 'react-dom';
+import { Meteor } from 'meteor/meteor';
+
+import BasicExample from 'path-to-file';
+
+Meteor.startup(() => {
+    render(<BasicExample />, document.getElementById('react-root'));
+});
+
+```
+
+But there are other ways to do this. Thins you need to have in mind:
+
+-   `<Router >` component only accepts one child.
+-   `<Switch >` component load the first child `<Route >` that matches, if no path is defined, the `<Route >`/`Component` is always rendered.
+
+
+### First Level Nesting.
+
+This first level nesting we do is usually the Main Layout of our App, inside this layout we want to put all of our stuff. Check nesting as explained here [Leveling Up With React: React Router](https://css-tricks.com/learning-react-router/).
+
+Doing this is easy:
+
+```javascript
+import React from 'react';
+import {
+  BrowserRouter as Router,
+  Route,
+  Link
+} from 'react-router-dom';
+
+const MainLayout = ( {children} ) => (
+  <div>
+    <h2>Main Layout</h2>
+    {children}
+  </div>
+);
+
+const Home = () => (
+  <div>
+    <h2>Home</h2>
+  </div>
+);
+
+const About = () => (
+  <div>
+    <h2>About</h2>
+  </div>
+);
+
+const FirstLevelNesting = () => (
+  <Router>
+      <MainLayout>
+          <Switch>
+              <Route exact path="/" component={Home}/>
+              <Route path="/about" component={About}/>
+          </Switch>
+      </MainLayout>
+    </div>
+  </Router>
+);
+export default FirstLevelNesting;
+```
+
+Notice the `<Switch>` inside `<MainLayout>`, if we don't use a `<Switch>`, all the paths that match will be loaded.
+
+### Second Level Nesting
+
+This now gets trickier, we can't use the same pattern as before. If we load a component inside the `<Switch>` it will get loaded no matter what when `<Switch>` gets to it because it does not have a path. We have to user a middle man to do the nesting. This allows us for simpler parent routes and gives us a place to render content that is common across all router with the same prefix.
+
+Following the example above, we add this:
+
+```javascript
+const NestedRoutes = () => (
+    <div>
+        <h2>This is my next nest</h2>
+        <Switch>
+            <Route exact path='/nextnest' component={Nest}/>
+            <Route path='/nextnest/about' component={NestAbout}/>
+        </Switch>
+    </div>
+)
+
+const SecondLevelNesting = () => (
+  <Router>
+      <MainLayout>
+          <Switch>
+              <Route exact path="/" component={Home}/>
+              <Route path="/about" component={About}/>
+              <Route path="/nextnest" component={NestedRoutes}
+          </Switch>
+      </MainLayout>
+    </div>
+  </Router>
+);
+```
+> Note: The route for the root always includes an exact prop. This is used to state that that route should only match when the pathname matches the route’s path exactly.
+
+## No Match (404)
+A `<Switch>` renders the first child `<Route>` that matches. A `<Route>` with no path always matches.
+
+```javascript
+const NoMatchExample = () => (
+  <Router>
+    <div>
+      <ul>
+        <li><Link to="/">Home</Link></li>
+        <li><Link to="/old-match">Old Match, to be redirected</Link></li>
+        <li><Link to="/will-match">Will Match</Link></li>
+        <li><Link to="/will-not-match">Will Not Match</Link></li>
+        <li><Link to="/also/will/not/match">Also Will Not Match</Link></li>
+      </ul>
+      <Switch>
+        <Route path="/" exact component={Home}/>
+        <Redirect from="/old-match" to="/will-match"/>
+        <Route path="/will-match" component={WillMatch}/>
+        <Route component={NoMatch}/>
+      </Switch>
+    </div>
+  </Router>
+)
+```
 
 ## Performing redirects programmatically
 Last but not least! In respect to routing, one more feature we need to look at is managing redirects when an action is performed.
