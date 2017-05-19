@@ -1,13 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-export  class ButtonBasic extends React.Component{
-    constructor(props){
+export class ButtonBasic extends React.Component{
+    constructor(props){ //instanciar la clase convertir la idea en objeto "real", crear un objeto
         super(props);
 
     }
 
-    render(){
+    render(){ // método
         let buttonClass =  "btn btn-block button-basic";
         if (this.props.isButtonList){
             buttonClass = "list-button";
