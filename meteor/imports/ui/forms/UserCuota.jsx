@@ -1,7 +1,5 @@
-/**
- * Created by luis on 18/04/17.
- */
-import React from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 const UserCuota = () => (
     <div><h1>User Cutoa</h1></div>

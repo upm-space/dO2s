@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ButtonBasic } from '../components/button-basic';
-import { ItemBasic } from '../components/item-basic';
+import ButtonBasic from '../components/ButtonBasic';
+import ItemBasic from '../components/ItemBasic';
 
-export class SearchLayout extends React.Component{
+
+
+
+export class SearchLayout extends Component{
     constructor(props){
         super(props);
     }
@@ -28,7 +31,7 @@ export class SearchLayout extends React.Component{
             <div className="row precise-width">
 
                     <div className="row precise-width data-input">
-                        <ButtonBasic title="Add User" onCLick={this.saluda} glyphicon="glyphicon glyphicon-plus"/>
+                        <ButtonBasic title="Add User" onCLick={this.saluda} glyphicon="plus"/>
                     </div>
                     <div className="row precise-width" >
                         <div className="col-md-10 col-lg-10 col-sm-8 col-xs-10">
