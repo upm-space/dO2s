@@ -1,33 +1,56 @@
-import React from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { NavLink } from 'react-router-dom';
+import { Navbar, Button, Nav, NavItem, NavDropdown, MenuItem, Image, Glyphicon } from 'react-bootstrap';
+import { LinkContainer } from 'react-router-bootstrap';
 import { LoginButtons } from 'meteor/okgrow:accounts-ui-react';
 
 const Navigation = () => (
-    <nav className="navbar navbar-ipsilum">
-        <div className="container-fluid">
-            <div className="navbar-header">
-                <button type="button" className="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-                    <span className="icon-bar"></span>
-                    <span className="icon-bar"></span>
-                    <span className="icon-bar"></span>
-                </button>
+    <Navbar collapseOnSelect fluid>
+        <Navbar.Header>
+            <Navbar.Brand>
+                <LinkContainer to="/">
+                    <Button bsStyle="link">dO2s</Button>
+                </LinkContainer>
+            </Navbar.Brand>
+            <Navbar.Toggle />
+        </Navbar.Header>
+        <Navbar.Collapse>
+        <Nav>
+            <LinkContainer to="/" exact>
+                  <NavItem eventKey={1}><Glyphicon glyph="home"/> <b>HOME</b></NavItem>
+            </LinkContainer>
+            <LinkContainer to="/usrmng">
+                  <NavItem eventKey={2}><Glyphicon glyph="user"/><b>USER MNG</b></NavItem>
+            </LinkContainer>
+            <LinkContainer to="/one">
+                  <NavItem eventKey={3}><b>ONE</b></NavItem>
+            </LinkContainer>
+            <LinkContainer to="/two">
+                  <NavItem eventKey={4}><b>TWO</b></NavItem>
+            </LinkContainer>
+            <NavItem><LoginButtons /></NavItem>
+            <NavDropdown eventKey={5} title="Dropdown" id="basic-nav-dropdown">
+                <MenuItem eventKey={5.1}>Action</MenuItem>
+                <MenuItem eventKey={5.2}>Another action</MenuItem>
+                <MenuItem eventKey={5.3}>Something else here</MenuItem>
+                <MenuItem divider />
+                <MenuItem eventKey={5.3}>Separated link</MenuItem>
+            </NavDropdown>
+        </Nav>
+        {/* <Nav pullRight>
+            <div className="centerBlock">
+                FIXME error when passing down active prop to div
+                <LinkContainer to="/" exact>
+                    <NavItem eventKey={1}>
+                        <Image bsClass="logo img" src="/img/svg/ipsilum-light.svg" responsive/>
+                    </NavItem>
+                </LinkContainer>
             </div>
-            <div className="collapse navbar-collapse" id="myNavbar">
-                <ul className="nav navbar-nav">
-                    <li><NavLink to="/" activeClassName="active"><span className="glyphicon glyphicon-home"></span> <b>HOME</b></NavLink></li>
-                    <li><NavLink to="/usrmng" activeClassName="active"><span className="glyphicon glyphicon-user"></span> <b>USER MNG</b></NavLink></li>
-                    <li><LoginButtons /></li>
-                </ul>
-                <ul className="nav navbar-nav navbar-right">
-
-                    <div className="centerBlock">
-                        <li><img className="img-responsive logo" src="/img/svg/ipsilum-light.svg" /></li>
-                    </div>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
+        </Nav> */}
+        </Navbar.Collapse>
+    </Navbar>
 );
+
 
 export default Navigation;
