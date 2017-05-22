@@ -4,8 +4,6 @@ import { Meteor } from 'meteor/meteor';
 
 import Routes from './routes/Routes';
 
-console.log(Routes);
-
 Meteor.startup(() => {
     render(<Routes />, document.getElementById('react-root'));
 });
