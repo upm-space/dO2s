@@ -226,7 +226,7 @@ const About = () => (
   </div>
 );
 
-const Topic = ({ match }) => (
+const Topic = () => (
   <div>
     <h3>This is a nested Topic</h3>
   </div>
