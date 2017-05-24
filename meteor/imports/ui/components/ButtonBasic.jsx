@@ -1,48 +1,47 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Button from 'react-bootstrap';
+import { Button, Glyphicon} from 'react-bootstrap';
 
-const ButtonBasic = ({props}) => (
-    render() {
-        let spanObj = "";
-        if(props.glyphicon){
-            spanObj = <Glyphicon glyph="{props.glyphicon}"/>
-        }
-
+const ButtonBasic = ( props ) => {
         let title = props.title;
         if(props.isBlack){
-            title = <b>{props.title}</b>;
-        }
+            title = <b>{props.title}</b>
+        };
+
+        let spanObj = "";
+
+        if(props.glyphicon){
+            spanObj = <Glyphicon glyph={props.glyphicon}/>
+        };
 
         if (props.isButtonList){
             return(
-                <Button bsClass="list-button" onClick={()=>props.onCLick()}>
-                    {spanObj} {title}
-                </Button>
+            <Button bsStyle="link" onClick={props.clickAction} disabled={props.isDisabled}>
+                {spanObj} {title}
+            </Button>
             )
         } else {
             return(
-                <Button bsClass="btn button-basic" onClick={()=>props.onCLick()} block>
+                <Button bsStyle="primary" onClick={props.clickAction} block disabled={props.isDisabled}>
                     {spanObj} {title}
                 </Button>
             )
         }
-
-    }
-);
+};
 
 ButtonBasic.propTypes = {
     title           : PropTypes.string.isRequired,
     glyphicon       : PropTypes.string,
     isButtonList    : PropTypes.bool,
     isBlack         : PropTypes.bool,
-    onCLick         : PropTypes.func.isRequired
-
-}
+    clickAction     : PropTypes.func.isRequired,
+    isDisabled      : PropTypes.bool
+};
 
 ButtonBasic.defaultProps = {
     isButtonList    : false,
-    isBlack         : false
-}
+    isBlack         : false,
+    isDisabled      : false
+};
 
 export default ButtonBasic;

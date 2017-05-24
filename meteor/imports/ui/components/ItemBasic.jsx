@@ -1,25 +1,30 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ButtonBasic from './ButtonBasic';
+import { Row, Col, ListGroupItem, Button, Glyphicon} from 'react-bootstrap'
 
-const ItemBasic = ({ props }) => (
+const ItemBasic = ( props ) => (
     // ver este link https://facebook.github.io/react/docs/thinking-in-react.html
-    <Row bsClass="row precise-width search-item-list" >
-        <Col md={10} lg={10} sm={10} xs={10}>
-            <ButtonBasic title={this.props.name} onCLick={()=>this.props.editHandler(this.props.guid)} isButtonList={true}/>
-        </Col>
-        <Col md={2} lg={2} sm={2} xs={2}>
-            <ButtonBasic title="" onCLick={()=>this.props.deleteHandler(this.props.guid)} glyphicon="trash" isButtonList={true}/>
-        </Col>
-    </Row>
+    //  <Row bsClass="row precise-width search-item-list" >
+    <div className="clearfix">
+        <ListGroupItem onClick={()=>props.editHandler(props.guid)} >{props.name} <span className="pull-right">
+            <Button bsStyle="link" onClick={()=>props.deleteHandler(props.guid)}><Glyphicon glyph="trash"/></Button>
+        </span></ListGroupItem>
+    </div>
 );
+
 
 ItemBasic.PropTypes = {
     name           : PropTypes.string.isRequired,
     key            : PropTypes.string.isRequired,
     guid           : PropTypes.string.isRequired,
     deleteHandler  : PropTypes.func.isRequired,
-    editHandler    : PropTypes.func.isRequired
-}
+    editHandler    : PropTypes.func.isRequired,
+    isDisabled      : PropTypes.oneOf(['disabled', null])
+};
+
+ItemBasic.defaultProps = {
+    isDisabled      : null
+};
 
 export default ItemBasic;

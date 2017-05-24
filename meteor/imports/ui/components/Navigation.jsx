@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { NavLink } from 'react-router-dom';
-import { Navbar, Button, Nav, NavItem, NavDropdown, MenuItem, Image, Glyphicon } from 'react-bootstrap';
-import { LinkContainer } from 'react-router-bootstrap';
 import { LoginButtons } from 'meteor/okgrow:accounts-ui-react';
+import { Navbar, Button, NavDropdown, MenuItem, NavItem, Glyphicon, Nav } from 'react-bootstrap';
+import { LinkContainer } from 'react-router-bootstrap';
 
 const Navigation = () => (
     <Navbar collapseOnSelect fluid>
