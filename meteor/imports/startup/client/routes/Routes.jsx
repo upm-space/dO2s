@@ -13,7 +13,7 @@ import NotFound from '../../../ui/pages/NotFound';
 import Users from '../../../ui/pages/Users';
 
 import UserCouta from '../../../ui/forms/UserCuota';
-import { UserManagementLayout } from '../../../ui/layouts/UserMngLayout';
+import UserManagementLayout from '../../../ui/layouts/UserMngLayout';
 
 
 const UserManagementRoutes = () => (
@@ -29,15 +29,13 @@ const UserManagementRoutes = () => (
 const Routes = () => (
     <Router>
         <App>
-            <Grid>
-                <Switch>
-                    <Route exact path="/" component={ Index  }/>
-                    <Route path="/usrmng" component={ Users } />
-                    <Route path="/one" component={ One } />
-                    <Route path="/two" component={ Two } />
-                    <Route component={ NotFound } />
-                </Switch>
-            </Grid>
+            <Switch>
+                <Route exact path="/" component={ Index  }/>
+                <Route path="/usrmng" component={ UserManagementLayout } />
+                <Route path="/one" component={ One } />
+                <Route path="/two" component={ Two } />
+                <Route component={ NotFound } />
+            </Switch>
         </App>
     </Router>
 );
