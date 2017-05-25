@@ -18,8 +18,12 @@ class UserManagementLayout extends Component {
         console.log("Editing user "+ id);
     }
 
-    deleteUser(id){
-        console.log("Deleting user "+ id);
+    softDeleteUser(id){
+        console.log("Soft Deleting user "+ id);
+    }
+
+    hardDeleteUser(id){
+        console.log("Hard Deleting user "+ id);
     }
 
     render() {
@@ -41,7 +45,8 @@ class UserManagementLayout extends Component {
                     </Col>
                 </Row>
                 <Row>
-                    <SearchLayout rows={rows} listname="User" deleteHandler={this.deleteUser} editHandler={this.editUser}/>
+                    <SearchLayout rows={rows} listname="User" softDeleteHandler={this.softDeleteUser}
+                    hardDeleteHandler={this.hardDeleteUser} editHandler={this.editUser}/>
                     <Col md={9} lg={9} sm={12} xs={12}>
                         {this.props.children}
                     </Col>
