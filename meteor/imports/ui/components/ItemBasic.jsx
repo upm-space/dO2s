@@ -1,15 +1,14 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import ButtonBasic from './ButtonBasic';
 import { Row, Col, ListGroupItem, Button, Glyphicon} from 'react-bootstrap'
 
 const ItemBasic = ( props ) => (
-    // ver este link https://facebook.github.io/react/docs/thinking-in-react.html
-    //  <Row bsClass="row precise-width search-item-list" >
-    <div className="clearfix">
-        <ListGroupItem onClick={()=>props.editHandler(props.guid)} >{props.name} <span className="pull-right">
-            <Button bsStyle="link" onClick={()=>props.deleteHandler(props.guid)}><Glyphicon glyph="trash"/></Button>
-        </span></ListGroupItem>
+    <div className={props.isDisabled ? "list-group-item disabled" : "list-group-item"} >
+        <Button bsStyle="link" onClick={()=>props.editHandler(props.guid)} disabled={props.isDisabled}>{props.name}</Button>
+        <span className="pull-right">
+            <Button bsStyle="link" onClick={()=>props.deleteHandler(props.guid)} disabled={props.isDisabled}>
+            <Glyphicon glyph="trash"/></Button>
+        </span>
     </div>
 );
 
@@ -20,11 +19,11 @@ ItemBasic.PropTypes = {
     guid           : PropTypes.string.isRequired,
     deleteHandler  : PropTypes.func.isRequired,
     editHandler    : PropTypes.func.isRequired,
-    isDisabled      : PropTypes.oneOf(['disabled', null])
+    isDisabled      : PropTypes.bool
 };
 
 ItemBasic.defaultProps = {
-    isDisabled      : null
+    isDisabled      : false
 };
 
 export default ItemBasic;
