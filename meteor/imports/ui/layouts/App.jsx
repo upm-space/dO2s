@@ -2,12 +2,15 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { createContainer } from 'meteor/react-meteor-data';
 import Navigation from '../components/Navigation';
+import { Grid } from 'react-bootstrap';
 
 
 const App = ( {children} ) => (
     <div className="App">
         <Navigation />
-        {children}
+        <Grid fluid>
+            {children}
+        </Grid>
     </div>
 );
 

@@ -38,9 +38,8 @@ class UserManagementLayout extends Component {
         })
         return(
             <div className="appUserManagement">
-                <Grid fluid>
                 <Row>
-                    <Col md={12} lg={12} sm={12} xs={12}>
+                    <Col md={12} lg={12} sm={12} xs={12} xsHidden>
                         <PageHeader>User Management</PageHeader>
                     </Col>
                 </Row>
@@ -51,7 +50,6 @@ class UserManagementLayout extends Component {
                         {this.props.children}
                     </Col>
                 </Row>
-                </Grid>
             </div>
         )
     }

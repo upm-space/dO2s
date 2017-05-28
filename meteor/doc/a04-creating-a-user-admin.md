@@ -3,7 +3,7 @@
 
 ## 1. User Creation
 
-We manage creating our user with the following pakcages:
+We manage creating our user with the following packages:
 
 -   `okgrow:accounts-ui-react`
 

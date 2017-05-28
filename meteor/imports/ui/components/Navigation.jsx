@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { LoginButtons } from 'meteor/okgrow:accounts-ui-react';
 import { Navbar, Button, NavDropdown, MenuItem, NavItem, Glyphicon, Nav } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 
@@ -28,7 +27,6 @@ const Navigation = () => (
             <LinkContainer to="/two">
                   <NavItem eventKey={4}><b>TWO</b></NavItem>
             </LinkContainer>
-            <NavItem><LoginButtons /></NavItem>
             <NavDropdown eventKey={5} title="Dropdown" id="basic-nav-dropdown">
                 <MenuItem eventKey={5.1}>Action</MenuItem>
                 <MenuItem eventKey={5.2}>Another action</MenuItem>
@@ -37,16 +35,14 @@ const Navigation = () => (
                 <MenuItem eventKey={5.3}>Separated link</MenuItem>
             </NavDropdown>
         </Nav>
-        {/* <Nav pullRight>
-            <div className="centerBlock">
-                FIXME error when passing down active prop to div
-                <LinkContainer to="/" exact>
-                    <NavItem eventKey={1}>
-                        <Image bsClass="logo img" src="/img/svg/ipsilum-light.svg" responsive/>
-                    </NavItem>
-                </LinkContainer>
-            </div>
-        </Nav> */}
+        <Nav pullRight>
+            <LinkContainer to="/singup">
+            <NavItem eventKey={1} href="#">Sign Up</NavItem>
+            </LinkContainer>
+            <LinkContainer to="/login">
+            <NavItem eventKey={2} href="#">Log In</NavItem>
+            </LinkContainer>
+        </Nav>
         </Navbar.Collapse>
     </Navbar>
 );
