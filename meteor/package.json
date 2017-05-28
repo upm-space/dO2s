@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "db": "mongod --dbpath ~/myGitprojects/data/db",
-    "start": "env MONGO_URL=mongodb://localhost:27017/do2sdb meteor --settings settings-production.json run"
+    "start": "env MONGO_URL=mongodb://localhost:27017/do2sdb meteor --settings settings.json run"
   },
   "dependencies": {
     "babel-runtime": "^6.20.0",
