@@ -1,4 +1,4 @@
-#Using bootstrap and SASS
+#Using Bootstrap and SASS
 
 We'll be using bootstrap and sass on this project.
 We have to install a preprocessor to manage the scss files.
@@ -46,7 +46,7 @@ Meteor.startup(() => {
 });
 ```
 
-This loads the main theme and everything seems to work except for the glyphicons, somehow the don't get loaded. Using they `twbs:bootstrap` package fixed this but after installing `jquery` it complains about it's version, saying I have to downgrade. Also I don't want to use `twbs:bootstrap` since it looks that it won't be maintained any more after the change to `npm` and the update to Bootstrap 4.
+This loads the main theme and everything seems to work except for the glyphicons, somehow the don't get loaded. Using the `twbs:bootstrap` package fixed this but after installing `jquery` it complains about it's version, saying I have to downgrade. Also I don't want to use `twbs:bootstrap` since it looks that it won't be maintained any more after the change to `npm` and the update to Bootstrap 4.
 
 The current fix for this is copying the `/bootstrap/fonts` folder into a `/public/fonts` folder in our project. No more complains and everything works. This will be revisited if a better fix is found.
 
