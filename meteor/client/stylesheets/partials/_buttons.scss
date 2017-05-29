@@ -1,0 +1,24 @@
+.button-basic {
+    color: var(--colDefault);
+    background-color: var(--bgDefault);
+    &:hover {
+        color: var(--colHighlight);
+        background-color: var(--colDefault);
+    }
+    &:active {
+        color: var(--colDefault);
+        background-color: var(--bgDefault);
+    }
+}
+
+.list-button {
+    float: left;
+    background: none;
+    border: none;
+    position: relative;
+    border-radius: 5px;
+    &:hover {
+        font-weight:bold;
+        color: var(--bgHighlight);
+    }
+}

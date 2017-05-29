@@ -1,0 +1,35 @@
+
+
+.logo{
+    margin: 1em;
+    width : 1.5em;
+}
+
+.precise-width{
+    width: 100%;
+    margin: 0;
+    border: 0;
+    padding: 0;
+}
+
+.scroll {
+    /*height: 90vh;*/
+    overflow-x: hidden;
+}
+
+.search-item-list{
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 100%;
+    border:0;
+    margin:0;
+    padding-top: 1em;
+    padding-bottom: 1em;
+    border-bottom: #eee solid 1px;
+}
+
+.centerBlock {
+    display: table;
+    margin: 0 auto;
+}
