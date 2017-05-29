@@ -15,7 +15,7 @@ cd dO2s
 meteor npm install
 meteor npm install --save react react-dom
 meteor npm install --save font-awesome
-meteor add twbs:bootstrap
+meteor npm install --save bootstrap
 ```
 
 For the installation and setup of `react-router` we follow this steps [React Router Basics](https://themeteorchef.com/tutorials/react-router-basics). (Not really, we use v4)
