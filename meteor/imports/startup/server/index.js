@@ -1,4 +1,5 @@
-import './roles';
-import './api';
 import './configure-services';
-import './fixtures.js'
+import './accounts-config';
+import './fixtures.js';
+import './api';
+import './roles';

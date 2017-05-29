@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 
-import {  } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import { Accounts } from 'meteor/accounts-base';
 import { Bert } from 'meteor/themeteorchef:bert';
 import './validation.js';
