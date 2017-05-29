@@ -1,23 +1,31 @@
 import React, { Component } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Row, Col, FormGroup, ControlLabel, FormControl, Button } from 'react-bootstrap';
-import handleLogin from '../../modules/login';
+import LoginButtons from '../components/LoginButtons';
+// import handleLogin from '../../modules/login';
 
 class Login extends Component {
-  componentDidMount() {
-    handleLogin({ component: this });
-  }
+    // componentDidMount() {
+    //     handleLogin({ component: this });
+    // }
 
-  handleSubmit(event) {
-    event.preventDefault();
-  }
+    saluda() {
+        console.log("hola");
+    }
 
-  render() {
+
+    handleSubmit(event) {
+        event.preventDefault();
+    }
+
+    render() {
     return (
-      <div className="Login">
+      <div className="login">
         <Row>
-          <Col xs={ 12 } sm={ 6 } md={ 4 }>
-            <h4 className="page-header">Login</h4>
+          <Col xs={ 12 } smOffset={3} sm={ 6 } mdOffset={4} md={ 4 }>
+            <h3 className="page-header">Log In</h3>
+            <LoginButtons />
+            <hr/>
             <form
               ref={ form => (this.loginForm = form) }
               className="login"
@@ -35,7 +43,9 @@ class Login extends Component {
               <FormGroup>
                 <ControlLabel>
                   <span className="pull-left">Password</span>
-                  <NavLink className="pull-right" to="/recover-password">Forgot Password?</NavLink>
+                </ControlLabel>
+                <ControlLabel className="pull-right">
+                    <NavLink to="/recover-password">Forgot Password?</NavLink>
                 </ControlLabel>
                 <FormControl
                   type="password"
@@ -46,11 +56,13 @@ class Login extends Component {
               </FormGroup>
               <Button type="submit" bsStyle="success">Login</Button>
             </form>
+            <hr/>
+            <p>Need to create an account? <NavLink to="/singup">Sign Up</NavLink>.</p>
           </Col>
         </Row>
       </div>
     );
-  }
+    }
 }
 
 export default Login;

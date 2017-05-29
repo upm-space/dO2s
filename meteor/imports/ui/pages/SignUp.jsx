@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Row, Col, FormGroup, ControlLabel, FormControl, Button, ButtonToolbar } from 'react-bootstrap';
+import { Row, Col, FormGroup, ControlLabel, FormControl, Button } from 'react-bootstrap';
 import LoginButtons from '../components/LoginButtons';
 // import handleSignup from '../../modules/signup';
 
@@ -9,25 +9,27 @@ export default class SignUp extends Component {
   // componentDidMount() {
   //   handleSignup({ component: this });
   // }
+
   saluda() {
       console.log("hola");
   }
 
   handleSubmit(event) {
     event.preventDefault();
+    console.log("saluda");
   }
 
   render() {
     return (
-      <div className="center-block SignupButtons">
+      <div className="SignupButtons">
         <Row>
             <Col xs={ 12 } smOffset={3} sm={ 6 } mdOffset={4} md={ 4 }>
                 <h3 className="page-header">Sign Up</h3>
-                <LoginButtons userAction={this.saluda}></LoginButtons>
+                <LoginButtons />
                 <hr/>
           <form
             ref={ form => (this.signupForm = form) }
-            // onSubmit={ this.handleSubmit }
+            onSubmit={ this.handleSubmit }
           >
             <Row>
               <Col xs={ 6 } sm={ 6 }>
@@ -73,6 +75,7 @@ export default class SignUp extends Component {
                 </FormGroup>
                 <Button type="submit" bsStyle="success" block>Sign Up</Button>
               </form>
+              <hr/>
               <p>Already have an account? <NavLink to="/login">Log In</NavLink>.</p>
             </Col>
         </Row>
