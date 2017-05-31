@@ -9,15 +9,14 @@ if (!Meteor.isProduction) {
     profile: {
       name: { first: 'Pili', last: 'Arr' },
     },
-    roles: ['admin'],
-    deleted: "",
+    roles: ['admin']
   }];
 
   users.forEach(({ email, password, profile, roles, deleted }) => {
     const userExists = Meteor.users.findOne({ 'emails.address': email });
 
     if (!userExists) {
-      const userId = Accounts.createUser({ email, password, profile, deleted });
+      const userId = Accounts.createUser({ email, password, profile });
       Roles.addUsersToRoles(userId, roles);
     }
   });

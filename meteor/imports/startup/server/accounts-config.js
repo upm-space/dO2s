@@ -39,7 +39,8 @@ const UserSchema = new SimpleSchema({
     },
     profile: {
         type: Object,
-        optional: true
+        optional: true,
+        blackbox: true
     },
     // Make sure this services field is in your schema if you're using any of the accounts packages
     services: {
@@ -65,16 +66,13 @@ const UserSchema = new SimpleSchema({
     // you can specify [String] as the type
     roles: {
         type: Array,
-        optional: false
     },
     "roles.$": {
         type: String,
-        optional: true
     },
     // In order to avoid an 'Exception in setInterval callback' from Meteor
     deleted: {
-        type: SimpleSchema.oneOf(String, Date),
-        optional: true
+        type: SimpleSchema.oneOf(String, Date)
     }
 });
 
@@ -86,13 +84,12 @@ Accounts.onCreateUser((options, user) => {
     } else {
         user.roles.push("free-user");
     }
-    if (options.deleted){
-        user.deleted = options.deleted;
-    } else {
-        user.deleted = "";
-    }
+
     if (options.profile){
         user.profile = options.profile;
     }
-    return user;
+    
+    user.deleted = "No";
+    const cleanUser = UserSchema.clean(user);
+    return cleanUser;
 });
