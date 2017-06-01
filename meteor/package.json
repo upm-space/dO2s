@@ -3,19 +3,19 @@
   "private": true,
   "scripts": {
     "db": "mongod --dbpath ~/myGitprojects/data/db",
-    "start": "env MONGO_URL=mongodb://localhost:27017/do2sdb meteor run"
+    "start": "env MONGO_URL=mongodb://localhost:27017/do2sdb meteor --settings settings.json run"
   },
   "dependencies": {
-    "babel-runtime": "^6.23.0",
+    "babel-runtime": "^6.20.0",
     "bcrypt": "^1.0.2",
-    "classnames": "^2.2.5",
+    "bootstrap": "^3.3.7",
+    "jquery": "^3.2.1",
+    "jquery-validation": "^1.16.0",
     "meteor-node-stubs": "~0.2.4",
     "prop-types": "^15.5.10",
     "react": "^15.5.4",
-    "react-addons-pure-render-mixin": "^15.5.2",
     "react-bootstrap": "^0.31.0",
     "react-dom": "^15.5.4",
-    "react-komposer": "^2.0.0",
     "react-router": "^4.1.1",
     "react-router-bootstrap": "^0.24.2",
     "react-router-dom": "^4.1.1",

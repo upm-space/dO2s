@@ -27,13 +27,16 @@ Let's get the shock factor out of the way now. The biggest change in React Route
 In version 3, we import all of our components into one file and define our routes in the same location, too. Simple enough, however, in v4 of React Router we handle routing a bit differently. To begin, let's update the `/imports/startup/client/index.js` file to look like this:
 
 ```javascript
+import 'bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import React from 'react';
 import { render } from 'react-dom';
+import { Bert } from 'meteor/themeteorchef:bert';
 import { Meteor } from 'meteor/meteor';
 
-import Routes from '../../ui/routes/Routes';
+import Routes from './Routes';
 
-console.log(Routes);
+Bert.defaults.style = 'growl-top-right';
 
 Meteor.startup(() => {
     render(<Routes />, document.getElementById('react-root'));
@@ -42,48 +45,67 @@ Meteor.startup(() => {
 
 The big part to pay attention to is our importing and rendering of the `<Routes />` component. If we look back up at our `routes.js` file, we'll notice that we were rendering the `<Router />` component from React Router directly.
 
-Now, we want to move our routes into our components. As a result, we'll be moving our routes into our main `<Routes />` layout component. In the code here, we're saying that when the client-side of Meteor starts up, we want to use the `render()` method from the `react-dom` package to render the `<Routes />`—and subsequently, the routes it contains—into the `<div id="react-root"></div>` element defined in `/client/main.html`.
+Now, we want to move our routes into our components. As a result, we'll be moving our routes into our main `<Routes />` component. In the code here, we're saying that when the client-side of Meteor starts up, we want to use the `render()` method from the `react-dom` package to render the `<Routes />`—and subsequently, the routes it contains—into the `<div id="react-root"></div>` element defined in `/client/main.html`.
 
 Because this is only half the picture, let's take a look at the `<Routes />` component now to see how our routes are being defined.
 
 ```javascript
-import React from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { createContainer } from 'meteor/react-meteor-data';
 import { render } from 'react-dom';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
-import App from '../layouts/app';
+import App from '../../ui/layouts/App';
 
-import Home from '../pages/home';
-import One from '../pages/one';
-import Two from '../pages/two';
-import NotFound from '../pages/not-found';
+import Index from '../../ui/pages/Index';
+import One from '../../ui/pages/One';
+import Two from '../../ui/pages/Two';
+import NotFound from '../../ui/pages/NotFound';
+import SignUp from '../../ui/pages/SignUp';
+import Login from '../../ui/pages/Login';
+import RecoverPassword from '../../ui/pages/RecoverPassword';
+import ResetPassword from '../../ui/pages/ResetPassword';
 
-import UserCouta from '../forms/user-cuota';
-import { UserManagementLayout } from '../layouts/user-mng-layout';
+import Public from '../../ui/pages/Public';
+import Authenticated from '../../ui/pages/Authenticated';
+import AdminPage from '../../ui/pages/AdminPage';
 
+import UserManagementLayout from '../../ui/layouts/UserMngLayout';
 
-const Routes = () => (
+const Routes = (routesProps) => (
     <Router>
-        <App>
+        <App {...routesProps}>
             <Switch>
-                <Route exact path="/" component={ Home }/>
-                <Route path="/usrmng" component={ UserManagementRoutes } />
-                <Route path="/one" component={ One } />
-                <Route path="/two" component={ Two } />
+                <Route exact path="/" component={Index}/>
+                <AdminPage exact path="/usrmng" component={UserManagementLayout} {...routesProps} />
+                <Authenticated exact path="/one" component={One} {...routesProps} />
+                <Authenticated exact path="/two" component={Two} {...routesProps} />
+                <Public path="/signup" component={SignUp} {...routesProps} />
+                <Public path="/login" component={Login} {...routesProps} />
+                <Route path="/recover-password" component={ RecoverPassword } />
+                <Route path="/reset-password/:token" component={ ResetPassword } />
                 <Route component={ NotFound } />
             </Switch>
         </App>
     </Router>
 );
 
-const UserManagementRoutes = () => (
-    <UserManagementLayout>
-        <Route path="/usrmng/user-cuota" component={UserCouta} />
-    </UserManagementLayout>
-);
 
+Routes.PropTypes = {
+    loggingIn: PropTypes.bool.isRequired,
+    authenticated: PropTypes.bool.isRequired,
+    isAdmin: PropTypes.bool.isRequired
+}
 
-export default Routes;
+export default createContainer(({match}) => {
+    const loggingIn = Meteor.loggingIn();
+    return {
+        loggingIn: loggingIn,
+        authenticated: !loggingIn && !!Meteor.userId(),
+        isAdmin: Roles.userIsInRole(Meteor.userId(), "admin"),
+    }
+}, Routes);
 ```
 
 If we move up a bit to our `<Routes />` component's definition, we get our first taste of defining routes with React Router v4. In truth, beyond the move that we just explored, defining routes isn't too different from before. The first thing to pay attention to is where the different bits of React Router are coming from. As we hinted above when installing our dependencies, as opposed to the original `react-router` package, now, we pull everything we need from the `react-router-dom` package. Why?
@@ -97,20 +119,35 @@ As of v4, React Router supports routing in two different contexts: the browser a
 First, in order for our routing to work properly, we want to wrap the `<Router />` component at the top-most level so that all of our components have access to the `<Router />` component's instance. While the bulk of our work here won't need this too much, it's good to have just in case we need it later. Inside, we begin to define the contents of our `<Routes />` component, starting with our main wrapper `<App> </App>` element. Have in mind that the `<Router />` component only accepts one child.
 
 ```javascript
-import React from 'react';
-import Navigation from '../components/navigation';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import Navigation from '../components/Navigation';
+import PublicNavigation from '../components/PublicNavigation';
+import { Grid } from 'react-bootstrap';
 
-const App = ( {children} ) => (
+const renderNavigation = (authenticated, isAdmin) =>
+(authenticated ? <Navigation isAdmin={isAdmin} /> : <PublicNavigation />);
+
+
+const App = ( {children, authenticated, isAdmin} ) => (
     <div className="App">
-        <Navigation />
-        {children}
+        { renderNavigation(authenticated, isAdmin) }
+        <Grid fluid>
+            {children}
+        </Grid>
     </div>
 );
+
+App.PropTypes = {
+  authenticated: PropTypes.bool,
+  children: PropTypes.node,
+  isAdmin:  PropTypes.bool
+};
 
 export default App;
 ```
 
-Inside of this, we start to "layout" our application. Because all of the pages in our application will need to display our navigation bar—the `<Navigation />` component—we render this above the definition for all of our routes. Because all of our route's components will be rendered in the same spot in our app, we nest our call to the `<Switch />` component from React Router. This wraps each route's contents (the component it renders) in a `<div className="container"></div>` element. ¿Does it? Here the `<Switch />` component is nested inside our `<App>` layout.
+Inside of this, we start to "layout" our application. Because all of the pages in our application will need to display our navigation bar—the `<Navigation />` component—we render this above the definition for all of our routes. Because all of our route's components will be rendered in the same spot in our app, we nest our call to the `<Switch />` component from React Router inside of the `<Grid/>`. This wraps each route's contents (the component it renders) in a `<div className="container"></div>` element.
 
 Now for the fun part. The `<Switch />` component has a special significance in React Router v4. What does it do? Now, by default routes in React Router v4 do something known as fuzzy matching. This means that any route matching the URL in the browser will be loaded. So, given two routes like the following:
 
@@ -132,41 +169,53 @@ Inside of our `<Switch />` component, we get down to defining our routes. For th
 In the previous section, we moved our routes into our main `<Routes />` layout component. We covered how routes are wired up—as well, we need to understand how to handle our navigation state. So, when we move from link to link, we highlight the correct or corresponding navigation item.
 
 ```javascript
-import React from 'react';
-import Navigation from '../components/navigation';
+const renderNavigation = (authenticated, isAdmin) =>
+(authenticated ? <Navigation isAdmin={isAdmin} /> : <PublicNavigation />);
 
-const App = ( {children} ) => (
+
+const App = ( {children, authenticated, isAdmin} ) => (
     <div className="App">
-        <Navigation />
-        {children}
+        { renderNavigation(authenticated, isAdmin) }
+        <Grid fluid>
+            {children}
+        </Grid>
     </div>
 );
-
-export default App;
 ```
 
 Real quick, we want to call attention to one thing: our `<Navigation />` component inside of our `<App />` component. Remember earlier when we mentioned the importance of wrapping our component's contents with the `<Router />` component so every element could have access? This is where it comes into play. Because we're wrapping our `<Navigation />` component with this, that means that we'll be able to see the current route state and update our links accordingly.
 
 ```javascript
-import React from 'react';
-import { NavLink } from 'react-router-dom';
-
-const Navigation = () => (
-<nav className="navbar navbar-ipsilum">
-    [...]
-    <li><NavLink to="/" activeClassName="active">[...] <b>HOME</b></NavLink></li>
-    <li><NavLink to="/usrmng" activeClassName="active">[...]<b>USER MNG</b></NavLink></li>
-    [...]
-</nav>
+const PublicNavigation = () => (
+    <Navbar collapseOnSelect fluid>
+        <Navbar.Header>
+            <Navbar.Brand>
+                <LinkContainer to="/">
+                    <Button bsStyle="link">dO2s</Button>
+                </LinkContainer>
+            </Navbar.Brand>
+            <Navbar.Toggle />
+        </Navbar.Header>
+        <Navbar.Collapse>
+        <Nav pullRight>
+            <LinkContainer to="/signup">
+            <NavItem eventKey={1}>Sign Up</NavItem>
+            </LinkContainer>
+            <LinkContainer to="/login">
+            <NavItem eventKey={2}>Log In</NavItem>
+            </LinkContainer>
+        </Nav>
+        </Navbar.Collapse>
+    </Navbar>
 );
 
-export default Navigation;
+export default PublicNavigation;
 ```
-Let's take a look at the `<Navigation />` component now to see how we handle our links and switching active state based on the URL.
+Let's take a look at the `<PublicNavigation />` component now to see how we handle our links and switching active state based on the URL.
 
-Well, this got easier! In React Router v3, getting active links set up required a bit of hoop jumping. Now, it's baked into the library. Here, in order to handle navigation, we import the `<NavLink />` component which gives us access to a wrapped version of React Router's `<Link />` component which is self-aware about whether or not the link it renders is currently active.
+Well, this got easier! In React Router v3, getting active links set up required a bit of hoop jumping. Now, it's baked into the library. Here, in order to handle navigation, we import the `<LinkContainer />` component which gives us access to a wrapped version of React Router's `<NavLink />` component which is self-aware about whether or not the link it renders is currently active.
 
-Here, in order to toggle the active class, we simply specify the `activeClassName` we want applied to the rendered element when the current URL matches. That's it! Now if you render an `<li><a></a></li>` element within the `<Nav />` component from `react-bootstrap`, the appropriate styles from Bootstrap will be automatically applied.
+Because we are using `react-bootstrap` and `react-router` we need the `react-router-bootstrap` package that provides the `<LinkContainer />` component in which we have to wrap our  `<NavItem/>` components within the `<Nav />` component from `react-bootstrap`, the appropriate styles from Bootstrap will be automatically applied, and the `<LinkContainer />` passes the appropriate props to `<NavItem/>` in order to toggle the active class we want applied to the rendered element when the current URL matches. That's it!
 
 Behind the scenes, if we look at the source of `<NavLink />`, we can see that it returns a `<Route />` component. This is important to pay attention to because it explains why we need our `<Navigation />` component wrapped in our `<Router />` component. With these pieces, inside of `<NavLink />`, we can see the code looking at the match prop passed to the component. Wait...`match`? Where's that coming from?
 
@@ -291,13 +340,6 @@ This first level nesting we do is usually the Main Layout of our App, inside thi
 Doing this is easy:
 
 ```javascript
-import React from 'react';
-import {
-  BrowserRouter as Router,
-  Route,
-  Link
-} from 'react-router-dom';
-
 const MainLayout = ( {children} ) => (
   <div>
     <h2>Main Layout</h2>
