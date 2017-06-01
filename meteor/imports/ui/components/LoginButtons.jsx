@@ -17,9 +17,6 @@ export default class LoginButtons extends Component {
     render() {
         return(
             <ButtonToolbar>
-                <Button bsClass="btn btn-social btn-block btn-twitter" onClick={(event)=>this.handleClick(event.target.getAttribute("data-social-login"))} data-social-login="loginWithTwitter">
-                    <span className="fa fa-twitter"></span>Twitter
-                </Button>
                 <Button bsClass="btn btn-social btn-block btn-facebook" onClick={(event)=>this.handleClick(event.target.getAttribute("data-social-login"))} data-social-login="loginWithFacebook">
                     <span className="fa fa-facebook"></span>Facebook
                 </Button>

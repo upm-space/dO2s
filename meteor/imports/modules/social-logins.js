@@ -5,9 +5,8 @@ import { Bert } from 'meteor/themeteorchef:bert';
 const login = (service) => {
     const options = { requestPermissions: [ 'email' ] };
 
-
-    if ( service === 'loginWithTwitter' ) {
-        delete options.requestPermissions;
+    if ( service === 'loginWithGoogle' ) {
+        options.requestPermissions.push( 'profile' )
     }
 
     Meteor[ service ](options, (error) => {
