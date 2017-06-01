@@ -3,11 +3,35 @@ import PropTypes from 'prop-types';
 import { Navbar, Button, NavDropdown, MenuItem, NavItem, Glyphicon, Nav } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 
-const Navigation = () => (
+
+const handleLogout = () => Meteor.logout();
+
+const userName = () => {
+  const user = Meteor.user();
+  const name = user && user.profile ? user.profile.name : '';
+  if (typeof name === "string"){
+      return user ? `${name}` : '';
+  } else {
+      return user ? `${name.first} ${name.last}` : '';
+  }
+
+};
+
+const UserMngButton = (isAdmin) => {
+    if (isAdmin) {
+        return (
+            <LinkContainer to="/usrmng">
+                  <NavItem eventKey={3}><Glyphicon glyph="user"/> User Manager</NavItem>
+            </LinkContainer>
+        )
+    }
+}
+
+const Navigation = ({isAdmin}) => (
     <Navbar collapseOnSelect fluid>
         <Navbar.Header>
             <Navbar.Brand>
-                <LinkContainer to="/">
+                <LinkContainer to="/" exact>
                     <Button bsStyle="link">dO2s</Button>
                 </LinkContainer>
             </Navbar.Brand>
@@ -15,37 +39,22 @@ const Navigation = () => (
         </Navbar.Header>
         <Navbar.Collapse>
         <Nav>
-            <LinkContainer to="/" exact>
-                  <NavItem eventKey={1}><Glyphicon glyph="home"/> <b>HOME</b></NavItem>
-            </LinkContainer>
-            <LinkContainer to="/usrmng">
-                  <NavItem eventKey={2}><Glyphicon glyph="user"/><b>USER MNG</b></NavItem>
-            </LinkContainer>
             <LinkContainer to="/one">
-                  <NavItem eventKey={3}><b>ONE</b></NavItem>
+                  <NavItem eventKey={1}>Projects</NavItem>
             </LinkContainer>
             <LinkContainer to="/two">
-                  <NavItem eventKey={4}><b>TWO</b></NavItem>
+                  <NavItem eventKey={2}>Missions</NavItem>
             </LinkContainer>
-            <NavDropdown eventKey={5} title="Dropdown" id="basic-nav-dropdown">
-                <MenuItem eventKey={5.1}>Action</MenuItem>
-                <MenuItem eventKey={5.2}>Another action</MenuItem>
-                <MenuItem eventKey={5.3}>Something else here</MenuItem>
-                <MenuItem divider />
-                <MenuItem eventKey={5.3}>Separated link</MenuItem>
-            </NavDropdown>
+            {UserMngButton(isAdmin)}
         </Nav>
         <Nav pullRight>
-            <LinkContainer to="/singup">
-            <NavItem eventKey={1} href="#">Sign Up</NavItem>
-            </LinkContainer>
-            <LinkContainer to="/login">
-            <NavItem eventKey={2} href="#">Log In</NavItem>
-            </LinkContainer>
+            <NavDropdown eventKey={ 6 } title={ userName() } id="basic-nav-dropdown">
+                <MenuItem eventKey={ 6.1 }>Change Password</MenuItem>
+                <MenuItem eventKey={ 6.2 } onClick={ handleLogout }>Logout</MenuItem>
+            </NavDropdown>
         </Nav>
         </Navbar.Collapse>
     </Navbar>
 );
-
 
 export default Navigation;

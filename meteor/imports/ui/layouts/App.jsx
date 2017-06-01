@@ -1,34 +1,26 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { createContainer } from 'meteor/react-meteor-data';
 import Navigation from '../components/Navigation';
+import PublicNavigation from '../components/PublicNavigation';
 import { Grid } from 'react-bootstrap';
 
+const renderNavigation = (authenticated, isAdmin) =>
+(authenticated ? <Navigation isAdmin={isAdmin} /> : <PublicNavigation />);
 
-const App = ( {children} ) => (
+
+const App = ( {children, authenticated, isAdmin} ) => (
     <div className="App">
-        <Navigation />
+        { renderNavigation(authenticated, isAdmin) }
         <Grid fluid>
             {children}
         </Grid>
     </div>
 );
 
-export default App;
+App.PropTypes = {
+  authenticated: PropTypes.bool,
+  children: PropTypes.node,
+  isAdmin:  PropTypes.bool
+};
 
-//
-// App.propTypes = {
-//   loggingIn: PropTypes.bool,
-//   authenticated: PropTypes.bool,
-//   children: PropTypes.node,
-// };
-//
-// export default createContainer((props) => {
-//     const loggingIn = Meteor.loggingIn();
-//     const authenticated = !loggingIn && !!Meteor.userId();
-//     return {
-//         loggingIn: loggingIn,
-//         authenticated: authenticated,
-//         children: props.children,
-//     };
-// }, App);
+export default App;
