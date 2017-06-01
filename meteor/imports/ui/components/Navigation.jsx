@@ -1,20 +1,18 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Navbar, Button, NavDropdown, MenuItem, NavItem, Glyphicon, Nav } from 'react-bootstrap';
+import { Navbar, NavDropdown, MenuItem, NavItem, Glyphicon, Nav } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
-
 
 const handleLogout = () => Meteor.logout();
 
 const userName = () => {
-  const user = Meteor.user();
-  const name = user && user.profile ? user.profile.name : '';
-  if (typeof name === "string"){
-      return user ? `${name}` : '';
-  } else {
-      return user ? `${name.first} ${name.last}` : '';
-  }
-
+    const user = Meteor.user();
+    const name = user && user.profile ? user.profile.name : '';
+    if (typeof name === "string"){
+        return user ? `${name}` : '';
+    } else {
+        return user ? `${name.first} ${name.last}` : '';
+    }
 };
 
 const UserMngButton = (isAdmin) => {
@@ -28,16 +26,7 @@ const UserMngButton = (isAdmin) => {
 }
 
 const Navigation = ({isAdmin}) => (
-    <Navbar collapseOnSelect fluid>
-        <Navbar.Header>
-            <Navbar.Brand>
-                <LinkContainer to="/" exact>
-                    <Button bsStyle="link">dO2s</Button>
-                </LinkContainer>
-            </Navbar.Brand>
-            <Navbar.Toggle />
-        </Navbar.Header>
-        <Navbar.Collapse>
+    <Navbar.Collapse>
         <Nav>
             <LinkContainer to="/one">
                   <NavItem eventKey={1}>Projects</NavItem>
@@ -53,8 +42,7 @@ const Navigation = ({isAdmin}) => (
                 <MenuItem eventKey={ 6.2 } onClick={ handleLogout }>Logout</MenuItem>
             </NavDropdown>
         </Nav>
-        </Navbar.Collapse>
-    </Navbar>
+    </Navbar.Collapse>
 );
 
 export default Navigation;

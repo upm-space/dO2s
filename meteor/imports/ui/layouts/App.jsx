@@ -1,18 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Navigation from '../components/Navigation';
-import PublicNavigation from '../components/PublicNavigation';
 import { Grid } from 'react-bootstrap';
+import AppNavigation from '../components/AppNavigation';
 
-const renderNavigation = (authenticated, isAdmin) =>
-(authenticated ? <Navigation isAdmin={isAdmin} /> : <PublicNavigation />);
-
-
-const App = ( {children, authenticated, isAdmin} ) => (
+const App = (props) => (
     <div className="App">
-        { renderNavigation(authenticated, isAdmin) }
+        <AppNavigation {...props} />
         <Grid fluid>
-            {children}
+            {props.children}
         </Grid>
     </div>
 );
