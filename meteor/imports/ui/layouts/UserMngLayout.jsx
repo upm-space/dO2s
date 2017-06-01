@@ -2,16 +2,49 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { createContainer } from 'meteor/react-meteor-data';
 import SearchLayout from './SearchLayoutBasic';
+import { Meteor } from 'meteor/meteor';
+import { Roles } from 'meteor/alanning:roles';
 import { Row, Col, Grid, PageHeader } from 'react-bootstrap';
 
-// import { ItemBasic } from '../components/ItemBasic';
-// import { SearchLayout } from './SearchLayoutBasic';
-// import User from '../components/User';
-
 class UserManagementLayout extends Component {
+    constructor(props) {
+        super(props);
+        this.authorizeAccess = this.authorizeAccess.bind(this);
+        this.handleChangeRole = this.handleChangeRole.bind(this);
+    }
+
+    authorizeAccess() {
+        if (!Roles.userIsInRole(this.props.currentUser, ['admin'])) {
+          <Redirect to="/"/>
+        }
+    }
+
+    componentDidUpdate() {
+        this.authorizeAccess();
+    }
+
+    componentWillMount() {
+        this.authorizeAccess();
+    }
 
     checkIfCurrentUser(mappedUserId, currentUserId) {
         return mappedUserId === currentUserId;
+    }
+
+    handleChangeRole(_id, role) {
+        Meteor.call('users.changeRole', { _id, role }, (error) => {
+            if (error) {
+                    <Alert bsStyle="danger">
+                    <strong>Holy guacamole!</strong>
+                    </Alert>
+                // Bert.alert(error.reason, 'danger');
+            } else {
+                <Alert bsStyle="success">
+                <strong>Holy guacamole!</strong> Role Updated
+                </Alert>
+                // Bert.alert('Role updated!', 'success');
+            }
+        });
     }
 
     editUser(id){
@@ -54,6 +87,12 @@ class UserManagementLayout extends Component {
         )
     }
 };
+
+UserManagementLayout.PropTypes = {
+    users: PropTypes.array,
+    currentUser: PropTypes.object,
+    applicationRoles: PropTypes.array
+}
 
 
 export default createContainer(() => {

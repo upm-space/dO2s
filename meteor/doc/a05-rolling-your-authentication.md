@@ -140,13 +140,6 @@ const login = (service) => {
             Bert.alert(error.reason, 'warning');
         } else {
             Bert.alert('Logged in!', 'success');
-
-            const { location } = component.props;
-            if (location.state && location.state.nextPathname) {
-                <Redirect push to={location.state.nextPathname}/>
-            } else {
-                <Redirect push to="/"/>
-            }
         }
       });
 };
@@ -158,7 +151,7 @@ export default function handleExternalLogin(service) {
 
 <!-- TODO - handle redirects when logged in -->
 
-As you can see this call the appropiate `Meteor.loginWith<Service>` function to log in the user.
+As you can see this call the appropriate `Meteor.loginWith<Service>` function to log in the user.
 
 ## User Collection Schema
 
@@ -245,7 +238,7 @@ With this we make sure that every new user has a `free-user` role when created a
 
 ## Setting up the LogIn/SignUp with `accounts-password`
 
-For this part we will need to create the forms for signing in and logging in for the user in the respective pages. We'll also need the scripts to handle log in and signup plus we will use [jQuery validation](https://themeteorchef.com/tutorials/validating-forms-with-jquery-validation) to validate the forms. After that we also need a way to handle password recovery for the user and finally we'll maybe add some verification for the email address.
+For this part we will need to create the forms for signing in and logging in for the user in the respective pages. We'll also need the scripts to handle log in and signup plus we will use [jQuery validation](https://themeteorchef.com/tutorials/validating-forms-with-jquery-validation) to validate the forms. After that we also need a way to handle password recovery for the user.
 
 ### Setting up the forms
 
@@ -401,6 +394,9 @@ export default function handleSignup(options) {
     validate();
 }
 ```
+### Password Recovery
+
+
 
 ## Verification Email
 
