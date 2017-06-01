@@ -116,7 +116,7 @@ As of v4, React Router supports routing in two different contexts: the browser a
 
 ## Defining our routes
 
-First, in order for our routing to work properly, we want to wrap the `<Router />` component at the top-most level so that all of our components have access to the `<Router />` component's instance. While the bulk of our work here won't need this too much, it's good to have just in case we need it later. Inside, we begin to define the contents of our `<Routes />` component, starting with our main wrapper `<App> </App>` element. Have in mind that the `<Router />` component only accepts one child.
+First, in order for our routing to work properly, we want to wrap the `<Router />` component at the top-most level so that all of our components have access to the `<Router />` component's instance. While the bulk of our work here won't need this _too_ much, it's good to have just in case we need it later. Inside, we begin to define the contents of our `<Routes />` component, starting with our main wrapper `<App> </App>` element. Have in mind that the `<Router />` component only accepts one child.
 
 ```javascript
 import React, { Component } from 'react';
@@ -186,6 +186,67 @@ const App = ( {children, authenticated, isAdmin} ) => (
 Real quick, we want to call attention to one thing: our `<Navigation />` component inside of our `<App />` component. Remember earlier when we mentioned the importance of wrapping our component's contents with the `<Router />` component so every element could have access? This is where it comes into play. Because we're wrapping our `<Navigation />` component with this, that means that we'll be able to see the current route state and update our links accordingly.
 
 ```javascript
+const handleLogout = () => Meteor.logout();
+
+const userName = () => {
+  const user = Meteor.user();
+  const name = user && user.profile ? user.profile.name : '';
+  if (typeof name === "string"){
+      return user ? `${name}` : '';
+  } else {
+      return user ? `${name.first} ${name.last}` : '';
+  }
+
+};
+
+const UserMngButton = (isAdmin) => {
+    if (isAdmin) {
+        return (
+            <LinkContainer to="/usrmng">
+                  <NavItem eventKey={3}><Glyphicon glyph="user"/> User Manager</NavItem>
+            </LinkContainer>
+        )
+    }
+}
+
+const Navigation = ({isAdmin}) => (
+    <Navbar collapseOnSelect fluid>
+        <Navbar.Header>
+            <Navbar.Brand>
+                <LinkContainer to="/" exact>
+                    <Button bsStyle="link">dO2s</Button>
+                </LinkContainer>
+            </Navbar.Brand>
+            <Navbar.Toggle />
+        </Navbar.Header>
+        <Navbar.Collapse>
+        <Nav>
+            <LinkContainer to="/one">
+                  <NavItem eventKey={1}>Projects</NavItem>
+            </LinkContainer>
+            <LinkContainer to="/two">
+                  <NavItem eventKey={2}>Missions</NavItem>
+            </LinkContainer>
+            {UserMngButton(isAdmin)}
+        </Nav>
+        <Nav pullRight>
+            <NavDropdown eventKey={ 6 } title={ userName() } id="basic-nav-dropdown">
+                <MenuItem eventKey={ 6.1 }>Change Password</MenuItem>
+                <MenuItem eventKey={ 6.2 } onClick={ handleLogout }>Logout</MenuItem>
+            </NavDropdown>
+        </Nav>
+        </Navbar.Collapse>
+    </Navbar>
+);
+
+export default Navigation;
+```
+
+If we look at the internals of our `<Navigation />` component, we can see the same essential nav that we used with one twist. Here we map to our `authenticated` prop which is passed down from our `<Routes />` component's container.
+
+Putting this to use, we test `authenticated` to determine which set of navigation links we want to render: those intended for public-facing users, or those that have already logged in to the app. Once we know the answer, we render the appropriate component. Let's take a look at the `<PublicNavigation />` component now to see how we handle our links and switching active state based on the URL.
+
+```javascript
 const PublicNavigation = () => (
     <Navbar collapseOnSelect fluid>
         <Navbar.Header>
@@ -211,11 +272,10 @@ const PublicNavigation = () => (
 
 export default PublicNavigation;
 ```
-Let's take a look at the `<PublicNavigation />` component now to see how we handle our links and switching active state based on the URL.
 
 Well, this got easier! In React Router v3, getting active links set up required a bit of hoop jumping. Now, it's baked into the library. Here, in order to handle navigation, we import the `<LinkContainer />` component which gives us access to a wrapped version of React Router's `<NavLink />` component which is self-aware about whether or not the link it renders is currently active.
 
-Because we are using `react-bootstrap` and `react-router` we need the `react-router-bootstrap` package that provides the `<LinkContainer />` component in which we have to wrap our  `<NavItem/>` components within the `<Nav />` component from `react-bootstrap`, the appropriate styles from Bootstrap will be automatically applied, and the `<LinkContainer />` passes the appropriate props to `<NavItem/>` in order to toggle the active class we want applied to the rendered element when the current URL matches. That's it!
+Because we are using `react-bootstrap` and `react-router` we need the `react-router-bootstrap` package that provides the `<LinkContainer />` component in which we have to wrap our  `<NavItem/>` components within `<Nav />` from `react-bootstrap`, the appropriate styles from Bootstrap will be automatically applied, and the `<LinkContainer />` passes the appropriate props to `<NavItem/>` in order to toggle the active class we want applied to the rendered element when the current URL matches. That's it!
 
 Behind the scenes, if we look at the source of `<NavLink />`, we can see that it returns a `<Route />` component. This is important to pay attention to because it explains why we need our `<Navigation />` component wrapped in our `<Router />` component. With these pieces, inside of `<NavLink />`, we can see the code looking at the match prop passed to the component. Wait...`match`? Where's that coming from?
 
