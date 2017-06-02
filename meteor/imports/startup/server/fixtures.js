@@ -18,6 +18,12 @@ if (!Meteor.isProduction) {
     if (!userExists) {
       const userId = Accounts.createUser({ email, password, profile });
       Roles.addUsersToRoles(userId, roles);
+      Meteor.users.update(
+      { _id: userId },
+      { $set: {
+        'emails.0.verified': true
+      } }
+    )
     }
   });
 }
