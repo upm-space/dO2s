@@ -109,9 +109,6 @@ export default class LoginButtons extends Component {
     render() {
         return(
             <ButtonToolbar>
-                <Button bsClass="btn btn-social btn-block btn-twitter" onClick={(event)=>this.handleClick(event.target.getAttribute("data-social-login"))} data-social-login="loginWithTwitter">
-                    <span className="fa fa-twitter"></span>Twitter
-                </Button>
                 <Button bsClass="btn btn-social btn-block btn-facebook" onClick={(event)=>this.handleClick(event.target.getAttribute("data-social-login"))} data-social-login="loginWithFacebook">
                     <span className="fa fa-facebook"></span>Facebook
                 </Button>
@@ -130,11 +127,6 @@ Here we call the `handleExternalLogin` function with the `data-social-login` arg
 const login = (service) => {
     const options = { requestPermissions: [ 'email' ] };
 
-
-    if ( service === 'loginWithTwitter' ) {
-      delete options.requestPermissions;
-    }
-
     Meteor[ service ](options, (error) => {
         if (error) {
             Bert.alert(error.reason, 'warning');
@@ -149,9 +141,7 @@ export default function handleExternalLogin(service) {
 }
 ```
 
-<!-- TODO - handle redirects when logged in -->
-
-As you can see this call the appropriate `Meteor.loginWith<Service>` function to log in the user.
+As you can see this call the appropriate `Meteor.loginWith<Service>` function to log in the user. We deleted the twitter service since it does not offer the users email.
 
 ## User Collection Schema
 
@@ -396,10 +386,161 @@ export default function handleSignup(options) {
 ```
 ### Password Recovery
 
+#### Using the Email Package
+To do the password recovery we have to set up sending emails first. As explained in the guide from The Meteor Chef to [set up the email package](https://themeteorchef.com/tutorials/using-the-email-package).
 
+We need to install the `email` package from meteor, then we have to set up an email provider like [Mailgun](https://mailgun.com/), there are other providers, we'll use this.
+
+Get an account, by default we get a sandbox URL from Mailgun, but we can create a custom domain, too. For the sandbox URL you can only send emails to 5 authenticated emails, this is to prevent spam. I think that if you set up your domain you don't have this limitation.
+
+After getting the accounts you have to set up the `MAIL_URL` environment variable in meteor. We will set this up on our `settings.json` file, and then call it on the server on startup.
+
+```
+process.env.MAIL_URL = "smtp://postmaster%40<your-mailgun-address>.mailgun.org:password@smtp.mailgun.org:587";
+```
+
+Here, notice that we've taken our Default SMTP address and put it after a call to `smtp://`. After that we write a colon : and then pass our Default Password. Finally, we append `@smtp.mailgun.org:587`. All together, this string tells Meteor to route all SMTP requests to this URL. Notice that for our Default SMTP address, we've used the URL encoded value for the `@` symbol `%40`. This has to do with how the URL is parsed by Meteor internally where the first `@` and the second @ get confused. Using the URL encoded version for the first `@` fixes this issue.
+
+This would be a sample email sent with the `email` package, you would run this code on the server.
+
+```javascript
+Email.send({
+  to: "to.address@email.com",
+  from: "from.address@email.com",
+  subject: "Example Email",
+  html: "<p><strong>This will render as bold text</strong>, but this will not.</p>",
+});
+```
+
+#### Password Recovery and respective
+
+First we set up a Recovery Password component that will call the `recover-password` script. The component for password recovery is a simple form that asks for the user email. The script then validates the form and calls the `Accounts.forgotPassword` method that sends an email to the one provided.
+
+You can set the email template that this method is going to send by using the helper methods in the `accounts-base` package. This would be the code for that, to be run in the server at startup.
+
+```javascript
+import { Accounts } from 'meteor/accounts-base';
+
+const name = 'dO2s';
+const email = '<dO2s.app@gmail.com>';
+const from = `${name} ${email}`;
+const emailTemplates = Accounts.emailTemplates;
+
+emailTemplates.siteName = name;
+emailTemplates.from = from;
+
+emailTemplates.resetPassword = {
+  subject() {
+    return `[${name}] Reset Your Password`;
+  },
+  text(user, url) {
+    const userEmail = user.emails[0].address;
+    const urlWithoutHash = url.replace('#/', '');
+    const emailBody = `A password reset has been requested for the account related to this address (${userEmail}). To reset the password, visit the following link: \n\n${urlWithoutHash}\n\n If you did not request this reset, please ignore this email. If you feel something is wrong, please contact our support team: ${email}.`
+
+    return emailBody;
+  },
+};
+```
+
+This email sends a `url` with a token to the user. This url will load the ResetPassword component which is a simple form asking for the new password. The reset-password password script is loaded then and it validates the form and calls the `Accounts.resetPassword` method that takes as arguments the token send in the url and the new password. After the password is set we redirect the user to `/`, to do this with react-router4 we run:
+
+```javascript
+component.props.history.push('/');
+```
 
 ## Verification Email
 
+When doing to sign up we call the `Accounts.createUser` function, in the callback of this method we add a call to a new method called `sendVerificationLink`.
+
+```javascript
+Accounts.createUser( user, ( error ) => {
+      if ( error ) {
+        Bert.alert( error.reason, 'danger' );
+      } else {
+        Meteor.call( 'sendVerificationLink', ( error, response ) => {
+          if ( error ) {
+            Bert.alert( error.reason, 'danger' );
+          } else {
+            Bert.alert( 'Welcome!', 'success' );
+          }
+      });
+  }});
+```
+This new method is going to call the `Accounts.sendVerificationEmail` when a new user is created, as with password reset this email template can be defined with `Accounts.emailTemplates.verifyEmail`.
+
+```javascript
+'sendVerificationLink': function sendVerificationLink() {
+    const userId = Meteor.userId();
+    if ( userId ) {
+        return Accounts.sendVerificationEmail( userId );
+    }
+}
+```
+
+This email is going to have an url with a token, the VerifyEmail component that loads is going to call the `Accounts.verifyEmail` method, that takes as argument the token in the url to update the corresponding email address to verified. After the verification is done we redirect the router like shown bellow.
+
+```javascript
+export default class VerifyEmail extends Component{
+    componentDidMount(){
+        Accounts.verifyEmail( this.props.match.params.token, ( error ) =>{
+            if ( error ) {
+                Bert.alert( error.reason, 'danger' );
+                this.props.history.push('/');
+            } else {
+                Bert.alert( 'Email verified! Thanks!', 'success' );
+                this.props.history.push('/one');
+            }
+        });
+    }
+    render() {
+        return (<div></div>);
+    }
+}
+```
+
+Also for the external services for logging in we are going to take the email from services, add it to the email field and set it as verified. To do this we'll call a helper function on the `Accounts.onCreateUser` hook.
+
+```javascript
+Accounts.onCreateUser((options, user) => {
+    if (!user.roles) {
+        user.roles = ["free-user"];
+    } else {
+        user.roles.push("free-user");
+    }
+
+    if (options.profile){
+        user.profile = options.profile;
+    }
+    if (!user.emails){
+        user.emails = [{"address": getEmail(user),
+                        "verified": true}];
+    }
+
+    user.deleted = "no";
+    const cleanUser = UserSchema.clean(user);
+    return cleanUser;
+});
+```
+
+This is the helper function:
+
+```javascript
+const getUserEmail = ( user ) => {
+    let emails   = user.emails,
+    services = user.services;
+    return _getEmailFromService( services );
+};
+
+const _getEmailFromService = ( services ) => {
+    for ( let service in services ) {
+        let current = services[ service ];
+        return current.email;
+    }
+};
+
+export default function getEmail(user) { return getUserEmail(user); };
+```
 
 ## Useful links
 
