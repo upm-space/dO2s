@@ -15,7 +15,7 @@ export default class RecoverPassword extends Component {
     return (
       <div className="RecoverPassword">
         <Row>
-          <Col xs={ 12 } sm={ 6 } md={ 4 }>
+          <Col  xs={ 12 } smOffset={3} sm={ 6 } mdOffset={4} md={ 4 }>
             <h4 className="page-header">Recover Password</h4>
             <Alert bsStyle="info">
               Enter your email address below to receive a link to reset your password.

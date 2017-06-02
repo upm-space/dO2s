@@ -12,4 +12,11 @@ Meteor.methods({
       throw new Meteor.Error('500', 'Ha! Nice try, slick.');
     }
   },
+
+  'sendVerificationLink': function sendVerificationLink() {
+      const userId = Meteor.userId();
+      if ( userId ) {
+          return Accounts.sendVerificationEmail( userId );
+      }
+  }
 });

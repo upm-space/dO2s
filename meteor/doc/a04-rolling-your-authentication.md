@@ -228,13 +228,13 @@ Accounts.onCreateUser((options, user) => {
         user.profile = options.profile;
     }
 
-    user.deleted = "No";
+    user.deleted = "no";
     const cleanUser = UserSchema.clean(user);
     return cleanUser;
 });
 ```
 
-With this we make sure that every new user has a `free-user` role when created and a `deleted` field for recycle bin purposes. This `deleted` field would either be the string `"No"` or the date it was deleted. The Schema does not work with `null` plus it's use is not recommended. The empty String also gives an error when creating the user, the schema says `deleted` is a required field, changing this to a non-empty String fixed the error.
+With this we make sure that every new user has a `free-user` role when created and a `deleted` field for recycle bin purposes. This `deleted` field would either be the string `"no"` or the date it was deleted. The Schema does not work with `null` plus it's use is not recommended. The empty String also gives an error when creating the user, the schema says `deleted` is a required field, changing this to a non-empty String fixed the error.
 
 ## Setting up the LogIn/SignUp with `accounts-password`
 

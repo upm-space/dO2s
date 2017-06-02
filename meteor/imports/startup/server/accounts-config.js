@@ -1,6 +1,7 @@
 import { Mongo } from 'meteor/mongo';
 import SimpleSchema from 'simpl-schema';
 import { Roles } from 'meteor/alanning:roles';
+import getEmail from '../../modules/get-user-identity';
 
 const UserSchema = new SimpleSchema({
     _id: String,
@@ -88,8 +89,12 @@ Accounts.onCreateUser((options, user) => {
     if (options.profile){
         user.profile = options.profile;
     }
-    
-    user.deleted = "No";
+    if (!user.emails){
+        user.emails = [{"address": getEmail(user),
+                        "verified": true}];
+    }
+
+    user.deleted = "no";
     const cleanUser = UserSchema.clean(user);
     return cleanUser;
 });

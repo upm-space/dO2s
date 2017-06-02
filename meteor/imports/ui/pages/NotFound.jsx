@@ -1,8 +1,12 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import { Alert } from 'react-bootstrap';
 
 const NotFound = () => (
-    <h1>404 -- Ooops, Page Not Found</h1>
+  <div className="NotFound">
+    <Alert bsStyle="danger">
+      <h1><strong>Error [404]</strong>: { window.location.pathname } does not exist.</h1>
+    </Alert>
+  </div>
 );
 
 export default NotFound;

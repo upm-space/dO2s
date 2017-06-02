@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Row, Col, Alert, FormGroup, ControlLabel, FormControl, Button } from 'react-bootstrap';
 import handleResetPassword from '../../modules/reset-password';
 
@@ -15,7 +16,7 @@ export default class ResetPassword extends Component {
     return (
       <div className="ResetPassword">
         <Row>
-          <Col xs={ 12 } sm={ 6 } md={ 4 }>
+          <Col  xs={ 12 } smOffset={3} sm={ 6 } mdOffset={4} md={ 4 }>
             <h4 className="page-header">Reset Password</h4>
             <Alert bsStyle="info">
               To reset your password, enter a new one below. You will be logged in
@@ -53,6 +54,6 @@ export default class ResetPassword extends Component {
   }
 }
 
-ResetPassword.propTypes = {
-  match: React.PropTypes.object,
+ResetPassword.PropTypes = {
+  match: PropTypes.object,
 };

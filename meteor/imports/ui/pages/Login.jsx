@@ -62,7 +62,7 @@ export default class Login extends Component {
                             <Button type="submit" bsStyle="success">Login</Button>
                         </form>
                         <hr/>
-                        <p>Need to create an account? <NavLink to="/singup">Sign Up</NavLink>.</p>
+                        <p>Need to create an account? <NavLink to="/signup">Sign Up</NavLink>.</p>
                     </Col>
                 </Row>
             </div>

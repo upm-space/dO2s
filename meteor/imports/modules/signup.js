@@ -23,7 +23,13 @@ const signup = () => {
         if (error) {
             Bert.alert(error.reason, 'danger');
         } else {
-            Bert.alert('Welcome!', 'success');
+            Meteor.call( 'sendVerificationLink', ( error, response ) => {
+                if ( error ) {
+                    Bert.alert( error.reason, 'danger' );
+                } else {
+                    Bert.alert( 'Welcome!', 'success' );
+                }
+            });
         }
     });
 };

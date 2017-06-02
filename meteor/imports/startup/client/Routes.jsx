@@ -15,6 +15,7 @@ import SignUp from '../../ui/pages/SignUp';
 import Login from '../../ui/pages/Login';
 import RecoverPassword from '../../ui/pages/RecoverPassword';
 import ResetPassword from '../../ui/pages/ResetPassword';
+import VerifyEmail from '../../ui/pages/VerifyEmail';
 
 import Public from '../../ui/pages/Public';
 import Authenticated from '../../ui/pages/Authenticated';
@@ -31,8 +32,11 @@ const Routes = (routesProps) => (
                 <AdminPage exact path="/usrmng" component={UserManagementLayout} {...routesProps} />
                 <Authenticated exact path="/one" component={One} {...routesProps} />
                 <Authenticated exact path="/two" component={Two} {...routesProps} />
+
                 <Public path="/signup" component={SignUp} {...routesProps} />
                 <Public path="/login" component={Login} {...routesProps} />
+
+                <Route path="/verify-email/:token" component={ VerifyEmail }/>
                 <Route path="/recover-password" component={ RecoverPassword } />
                 <Route path="/reset-password/:token" component={ ResetPassword } />
                 <Route component={ NotFound } />
