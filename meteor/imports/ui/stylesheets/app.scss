@@ -1,5 +1,8 @@
+
+// This does not work yet, not even changing extension to scss
 // @import 'bootstrap';
-// @import '{}/node_modules/bootstrap/dist/css/bootstrap.min.css';
+// @import '/node_modules/bootstrap/dist/css/bootstrap.min';
+// This works if file extesion is changed to scss
 // @import './bootstrap.min';
 
 @import "./colors";
