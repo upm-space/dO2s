@@ -20,6 +20,9 @@
       "expect": false
     },
     "rules": {
+        "indent": ["error", 4],
+        "no-tabs": ["error"],
+        "no-mixed-spaces-and-tabs": ["error"],
       "import/no-unresolved": 0,
       "import/no-extraneous-dependencies": 0,
       "import/extensions": 0,
