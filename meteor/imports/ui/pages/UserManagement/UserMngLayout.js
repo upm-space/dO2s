@@ -78,7 +78,7 @@ class UserManagementLayout extends Component {
                     </Col>
                 </Row>
                 <Row>
-                    <SearchLayout rows={rows} listname="User" softDeleteHandler={this.softDeleteUser}
+                    <SearchComponent rows={rows} listname="User" softDeleteHandler={this.softDeleteUser}
                     hardDeleteHandler={this.hardDeleteUser} editHandler={this.editUser}/>
                     <Col md={9} lg={9} sm={12} xs={12}>
                         {this.props.children}

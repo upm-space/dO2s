@@ -11,7 +11,6 @@ import Index from '../../pages/Index/Index';
 import One from '../../pages/One/One';
 import Two from '../../pages/Two/Two';
 import NotFound from '../../pages/NotFound/NotFound';
-import Users from '../../pages/Users/Users';
 import SignUp from '../../pages/Signup/SignUp';
 import Login from '../../pages/Login/Login';
 import Logout from '../../pages/Logout/Logout';
@@ -28,7 +27,6 @@ import Public from '../../components/Public/Public';
 import Authenticated from '../../components/Authenticated/Authenticated';
 import AdminPage from '../../components/Administrator/AdminPage';
 
-import UserCouta from '../../components/UserCuota/UserCuota';
 import UserManagementLayout from '../../pages/UserManagement/UserMngLayout';
 
 const App = props => (
