@@ -20,7 +20,7 @@
       "expect": false
     },
     "rules": {
-        "indent": ["error", 4],
+        "indent": ["error", 2],
         "no-tabs": ["error"],
         "no-mixed-spaces-and-tabs": ["error"],
       "import/no-unresolved": 0,
