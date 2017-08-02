@@ -1,9 +1,21 @@
+/* eslint-disable consistent-return */
+
 import { Mongo } from 'meteor/mongo';
 import SimpleSchema from 'simpl-schema';
-import { Roles } from 'meteor/alanning:roles';
-import getEmail from '../../modules/get-user-identity';
 
-const UserSchema = new SimpleSchema({
+Meteor.users.allow({
+  insert: () => false,
+  update: () => false,
+  remove: () => false,
+});
+
+Meteor.users.deny({
+  insert: () => true,
+  update: () => true,
+  remove: () => true,
+});
+
+Meteor.users.schema = new SimpleSchema({
     _id: String,
     username: {
         type: String,
@@ -77,24 +89,4 @@ const UserSchema = new SimpleSchema({
     }
 });
 
-Meteor.users.attachSchema(UserSchema);
-
-Accounts.onCreateUser((options, user) => {
-    if (!user.roles) {
-        user.roles = ["free-user"];
-    } else {
-        user.roles.push("free-user");
-    }
-
-    if (options.profile){
-        user.profile = options.profile;
-    }
-    if (!user.emails){
-        user.emails = [{"address": getEmail(user),
-                        "verified": true}];
-    }
-
-    user.deleted = "no";
-    const cleanUser = UserSchema.clean(user);
-    return cleanUser;
-});
+Meteor.users.attachSchema(Meteor.users.schema);

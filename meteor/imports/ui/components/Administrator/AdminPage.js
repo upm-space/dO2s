@@ -1,6 +1,9 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { Route, Redirect } from 'react-router-dom';
+import { Alert, Button } from 'react-bootstrap';
+import { Meteor } from 'meteor/meteor';
+import { Bert } from 'meteor/themeteorchef:bert';
 
 const sendVerificationEmail = (emailAddress) => {
     Meteor.call( 'users.sendVerificationEmail', (error) => {

@@ -10,7 +10,7 @@ const UserMngButton = isAdmin => {
     if (isAdmin) {
         return (
             <LinkContainer to="/usrmng">
-                  <NavItem eventKey={3}><Glyphicon glyph="user"/> User Manager</NavItem>
+                  <NavItem eventKey={3}  href="/usrmng"><Glyphicon glyph="user"/>User Manager</NavItem>
             </LinkContainer>
         )
     }
@@ -28,12 +28,12 @@ const AuthenticatedNavigation = ({isAdmin, name}) => (
             {UserMngButton(isAdmin)}
         </Nav>
         <Nav pullRight>
-            <NavDropdown eventKey={6} title={name} id="user-nav-dropdown">
+            <NavDropdown eventKey={4} title={name} id="user-nav-dropdown">
                 <LinkContainer to="/profile">
-                <NavItem eventKey={6.1} href="/profile">Profile</NavItem>
+                    <NavItem eventKey={4.1} href="/profile">Profile</NavItem>
                 </LinkContainer>
                 <MenuItem divider />
-                <MenuItem eventKey={6.2} onClick={handleLogout}>Logout</MenuItem>
+                <MenuItem eventKey={4.2} onClick={handleLogout}>Logout</MenuItem>
             </NavDropdown>
         </Nav>
     </div>

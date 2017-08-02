@@ -1,29 +1,45 @@
+import seeder from '@cleverbeagle/seeder';
 import { Meteor } from 'meteor/meteor';
 import { Roles } from 'meteor/alanning:roles';
-import { Accounts } from 'meteor/accounts-base';
 
-if (!Meteor.isProduction) {
-  const users = [{
+seeder(Meteor.users, {
+  environments: ['development', 'staging'],
+  noLimit: true,
+  data: [{
     email: 'admin@admin.com',
     password: 'password',
     profile: {
-      name: { first: 'Pili', last: 'Arr' },
+      name: {
+        first: 'Pili',
+        last: 'Arr',
+      },
     },
-    roles: ['admin']
-  }];
+    roles: ['admin'],
+  }],
+  modelCount: 5,
+  model(index, faker) {
+    const userCount = index + 1;
+    return {
+      email: `user+${userCount}@test.com`,
+      password: 'password',
+      profile: {
+        name: {
+          first: faker.name.firstName(),
+          last: faker.name.lastName(),
+        },
+      },
+      roles: ['free-user'],
+    };
+  },
+});
 
-  users.forEach(({ email, password, profile, roles, deleted }) => {
-    const userExists = Meteor.users.findOne({ 'emails.address': email });
+if (!Meteor.isProduction) {
+    const userExists = Meteor.users.findOne({ 'emails.0.address': 'admin@admin.com' });
 
-    if (!userExists) {
-      const userId = Accounts.createUser({ email, password, profile });
-      Roles.addUsersToRoles(userId, roles);
-      Meteor.users.update(
-      { _id: userId },
-      { $set: {
-        'emails.0.verified': true
-      } }
-    )
-    }
-  });
+    if (!userExists.emails[0].verified){
+        Meteor.users.update(
+            {_id: userExists._id},
+            {$set: {'emails.0.verified': true}}
+        );
+    };
 }
