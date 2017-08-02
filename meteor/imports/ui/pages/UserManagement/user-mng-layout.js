@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ItemBasic } from '../components/ItemBasic';
-import { SearchLayout } from './SearchLayoutBasic';
+
+import { ItemBasic } from '../../components/ItemBasic/ItemBasic';
+import SearchComponent from '../../components/SearchComponent/SearchComponent';
 
 export class UserManagementLayout extends Component{
     constructor(props){

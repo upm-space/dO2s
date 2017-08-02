@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { createContainer } from 'meteor/react-meteor-data';
 import { Meteor } from 'meteor/meteor';
 import { Roles } from 'meteor/alanning:roles';
-import { PageHeader, Row, Table, Label, FormGroup, FormControl,  } from 'react-bootstrap';
+import { PageHeader, Row, Table, Label, FormGroup, FormControl } from 'react-bootstrap';
 
 class Users extends Component {
     constructor(props) {
