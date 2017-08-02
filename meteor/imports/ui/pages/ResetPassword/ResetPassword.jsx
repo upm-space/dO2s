@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Row, Col, Alert, FormGroup, ControlLabel, FormControl, Button } from 'react-bootstrap';
-import handleResetPassword from '../../modules/reset-password';
+import handleResetPassword from '../../../modules/reset-password';
 
 export default class ResetPassword extends Component {
   componentDidMount() {

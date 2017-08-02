@@ -29,12 +29,12 @@
     &:hover { background: darken($google, 5%); }
   }
 
-  &.OAuthLoginButton-github {
-    background: $github;
-    color: #fff;
-
-    &:hover { background: darken($github, 5%); }
-  }
+  // &.OAuthLoginButton-github {
+  //   background: $github;
+  //   color: #fff;
+  //
+  //   &:hover { background: darken($github, 5%); }
+  // }
 
   &:active {
     position: relative;

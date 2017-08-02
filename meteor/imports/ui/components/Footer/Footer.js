@@ -12,8 +12,8 @@ const copyrightYear = () => {
 
 const Footer = () => (
   <div className="Footer">
-    <Grid>
-      <p className="pull-left">&copy; {copyrightYear()} Application Name</p>
+    <Grid fluid>
+      <p className="pull-left">&copy; {copyrightYear()} dO2s</p>
       <ul className="pull-right">
         <li><Link to="/terms">Terms<span className="hidden-xs"> of Service</span></Link></li>
         <li><Link to="/privacy">Privacy<span className="hidden-xs"> Policy</span></Link></li>

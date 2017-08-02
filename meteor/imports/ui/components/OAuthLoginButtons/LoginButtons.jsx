@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, ButtonToolbar } from 'react-bootstrap';
-import handleExternalLogin from '../../modules/social-logins.js';
+import handleExternalLogin from '../../../modules/social-logins.js';
 
 
 export default class LoginButtons extends Component {

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import BasicModal from '../components/BasicModal';
-import ItemBasic from '../components/ItemBasic';
+import BasicModal from '../BasicModal/BasicModal';
+import ItemBasic from '../ItemBasic/ItemBasic';
 import { Row, Col, Grid, ListGroup, Button, Glyphicon, Panel } from 'react-bootstrap';
 
 export default class SearchLayout extends Component{

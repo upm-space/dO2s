@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { createContainer } from 'meteor/react-meteor-data';
-import SearchLayout from './SearchLayoutBasic';
+import SearchLayout from '../../components/SearchComponent/SearchLayoutBasic';
 import { Meteor } from 'meteor/meteor';
 import { Roles } from 'meteor/alanning:roles';
 import { Row, Col, Grid, PageHeader } from 'react-bootstrap';

@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Row, Col, FormGroup, ControlLabel, FormControl, Button } from 'react-bootstrap';
-import LoginButtons from '../components/LoginButtons';
-import handleSignup from '../../modules/signup';
+import LoginButtons from '../../components/OAuthLoginButtons/LoginButtons';
+import handleSignup from '../../../modules/signup';
 
 
 export default class SignUp extends Component {
