@@ -1,3 +1,4 @@
+/* eslint-disable no-return-assign */
 import { Meteor } from 'meteor/meteor';
 import { Roles } from 'meteor/alanning:roles';
 import { _ } from 'meteor/underscore';

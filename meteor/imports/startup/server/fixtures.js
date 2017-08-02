@@ -1,6 +1,5 @@
 import seeder from '@cleverbeagle/seeder';
 import { Meteor } from 'meteor/meteor';
-import { Roles } from 'meteor/alanning:roles';
 
 seeder(Meteor.users, {
   environments: ['development', 'staging'],
@@ -34,12 +33,12 @@ seeder(Meteor.users, {
 });
 
 if (!Meteor.isProduction) {
-    const userExists = Meteor.users.findOne({ 'emails.0.address': 'admin@admin.com' });
+  const userExists = Meteor.users.findOne({ 'emails.0.address': 'admin@admin.com' });
 
-    if (!userExists.emails[0].verified){
-        Meteor.users.update(
-            {_id: userExists._id},
-            {$set: {'emails.0.verified': true}}
+  if (!userExists.emails[0].verified) {
+    Meteor.users.update(
+            { _id: userExists._id },
+            { $set: { 'emails.0.verified': true } },
         );
-    };
+  }
 }
