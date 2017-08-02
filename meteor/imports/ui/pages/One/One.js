@@ -1,8 +1,7 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React from 'react';
 
 const One = () => (
-    <h1>One 1*</h1>
+  <h1>One 1*</h1>
 );
 
 export default One;

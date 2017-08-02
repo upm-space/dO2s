@@ -1,8 +1,7 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React from 'react';
 
 const Two = () => (
-    <h1>Two</h1>
+  <h1>Two</h1>
 );
 
 export default Two;
