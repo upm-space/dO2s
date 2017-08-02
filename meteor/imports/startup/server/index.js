@@ -1,5 +1,5 @@
 import './env-vars';
-import './accounts/email-templates';
+import './accounts';
 import './configure-services';
 import './accounts-config';
 import './fixtures';

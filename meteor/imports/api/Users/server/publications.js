@@ -12,3 +12,13 @@ Meteor.publish('users', function users() {
 });
 
 Meteor.publish('users.roles', () => Roles.getAllRoles());
+
+Meteor.publish('users.editProfile', function usersProfile() {
+  return Meteor.users.find(this.userId, {
+    fields: {
+      emails: 1,
+      profile: 1,
+      services: 1,
+    },
+  });
+});

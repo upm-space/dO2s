@@ -1,19 +1,20 @@
 /* eslint-disable no-underscore-dangle */
 
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Row, Col, FormGroup, ControlLabel, Button } from 'react-bootstrap';
-import { capitalize } from '@cleverbeagle/strings';
+import _ from 'lodash';
 import { Meteor } from 'meteor/meteor';
 import { Accounts } from 'meteor/accounts-base';
 import { Bert } from 'meteor/themeteorchef:bert';
 import { createContainer } from 'meteor/react-meteor-data';
+
 import InputHint from '../../components/InputHint/InputHint';
 import validate from '../../../modules/validate';
 
 import './Profile.scss';
 
-class Profile extends React.Component {
+class Profile extends Component {
   constructor(props) {
     super(props);
 
@@ -92,8 +93,6 @@ class Profile extends React.Component {
       },
     };
 
-    if (this.newPassword.value) profile.password = Accounts._hashPassword(this.newPassword.value);
-
     Meteor.call('users.editProfile', profile, (error) => {
       if (error) {
         Bert.alert(error.reason, 'danger');
@@ -101,6 +100,17 @@ class Profile extends React.Component {
         Bert.alert('Profile updated!', 'success');
       }
     });
+
+    if (this.newPassword.value) {
+      Accounts.changePassword(this.currentPassword.value, this.newPassword.value, (error) => {
+        if (error) {
+          Bert.alert(error.reason, 'danger');
+        } else {
+          this.currentPassword.value = '';
+          this.newPassword.value = '';
+        }
+      });
+    }
   }
 
   renderOAuthUser(loading, user) {
@@ -108,7 +118,7 @@ class Profile extends React.Component {
       {Object.keys(user.services).map(service => (
         <div key={service} className={`LoggedInWith ${service}`}>
           <div className="ServiceIcon"><i className={`fa fa-${service === 'facebook' ? 'facebook-official' : service}`} /></div>
-          <p>{`You're logged in with ${capitalize(service)} using the email address ${user.services[service].email}.`}</p>
+          <p>{`You're logged in with ${_.capitalize(service)} using the email address ${user.services[service].email}.`}</p>
         </div>
       ))}
     </div>) : <div />;

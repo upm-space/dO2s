@@ -3,44 +3,42 @@ import PropTypes from 'prop-types';
 import { Route, Redirect } from 'react-router-dom';
 import { Alert, Button } from 'react-bootstrap';
 
-const sendVerificationLink = () => {
-    Meteor.call( 'sendVerificationLink', ( error, response ) => {
-      if ( error ) {
-        Bert.alert( error.reason, 'danger' );
-      } else {
-        let email = Meteor.user().emails[ 0 ].address;
-        Bert.alert( `Verification sent to ${ email }!`, 'success' );
-      }
+const sendVerificationEmail = (emailAddress) => {
+    Meteor.call( 'users.sendVerificationEmail', (error) => {
+        if (error) {
+            Bert.alert(error.reason, 'danger');
+        } else {
+            Bert.alert( `Verification sent to ${ emailAddress }!`, 'success' );
+        }
     });
-}
+};
 
-const Authenticated = ({ loggingIn, authenticated, isAdmin, component, ...rest }) => (
+const Authenticated = ({ loggingIn, authenticated, isAdmin, component, userId, emailAddress, emailVerified, ...rest }) => (
     <Route
         {...rest}
         render={props => {
-        if (loggingIn) return <div></div>;
-        if (authenticated) {
-            if (Meteor.user().emails[0].verified){
-                return React.createElement(component, { ...props, loggingIn, authenticated, isAdmin});
-            } else {
-                return (
-                <Alert bsStyle="warning">
-                    <p>You need to verify your email address before using dO2s.</p>
-                    <Button bsStyle="link" onClick={() => sendVerificationLink()}>Resend Verification Link</Button>
+            if (authenticated) {
+                if (userId && !emailVerified) {
+                    return (
+                    <Alert bsStyle="warning"><p>Hey friend! Can you <strong>verify your email address</strong> ({emailAddress}) for us? <Button bsStyle="link" onClick={() => sendVerificationEmail(emailAddress)} href="#">Re-send verification email</Button></p>
                 </Alert>);
+                } else if (userId && emailVerified) {
+                    return React.createElement(component, { ...props, loggingIn, authenticated, isAdmin});
+                }
+            } else {
+                return <Redirect to="/logout" />;
             }
-        } else {
-            return <Redirect to="/logout" />;
-        }
-         }}
+        }}
     />
 );
 
 Authenticated.PropTypes = {
-  loggingIn: PropTypes.bool.isRequired,
-  authenticated: PropTypes.bool.isRequired,
-  isAdmin: PropTypes.bool.isRequired,
-  component: PropTypes.func.isRequired,
+    loggingIn: PropTypes.bool.isRequired,
+    authenticated: PropTypes.bool.isRequired,
+    isAdmin: PropTypes.bool.isRequired,
+    userId: PropTypes.func.isRequired,
+    emailAddress: PropTypes.bool.isRequired,
+    emailVerified: PropTypes.bool.isRequired,
 };
 
 export default Authenticated;

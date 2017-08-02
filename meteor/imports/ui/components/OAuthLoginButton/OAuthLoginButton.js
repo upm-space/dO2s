@@ -12,10 +12,6 @@ const handleLogin = (service, callback) => {
       requestPermissions: ['email'],
       loginStyle: 'popup',
     },
-    github: {
-      requestPermissions: ['user:email'],
-      loginStyle: 'popup',
-    },
     google: {
       requestPermissions: ['email'],
       requestOfflineToken: true,
@@ -25,14 +21,12 @@ const handleLogin = (service, callback) => {
 
   return {
     facebook: Meteor.loginWithFacebook,
-    github: Meteor.loginWithGithub,
     google: Meteor.loginWithGoogle,
   }[service](options, callback);
 };
 
 const serviceLabel = {
   facebook: <span><Icon icon="facebook-official" /> Log In with Facebook</span>,
-  github: <span><Icon icon="github" /> Log In with GitHub</span>,
   google: <span><Icon icon="google" /> Log In with Google</span>,
 };
 
