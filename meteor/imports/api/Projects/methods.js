@@ -1,7 +1,7 @@
 
 import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
-import Documents from './Documents';
+import Projects from './Projects';
 import rateLimit from '../../modules/rate-limit';
 
 Meteor.methods({
@@ -9,9 +9,9 @@ Meteor.methods({
 });
 
 rateLimit({
-    methods: [
+  methods: [
         /* Add your methods here. */
-    ],
-    limit: 5,
-    timeRange: 1000,
+  ],
+  limit: 5,
+  timeRange: 1000,
 });

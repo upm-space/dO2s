@@ -18,7 +18,7 @@ Projects.deny({
 });
 
 Projects.schema = new SimpleSchema({
-   /* Add your schema rules to this object. */
+  /* Add your schema rules to this object. */
 });
 
 Projects.attachSchema(Projects.schema);
