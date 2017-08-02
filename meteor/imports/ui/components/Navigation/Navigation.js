@@ -15,7 +15,9 @@ const Navigation = props => (
       <Navbar.Toggle />
     </Navbar.Header>
     <Navbar.Collapse>
-        {props.authenticated ? <AuthenticatedNavigation isAdmin={props.isAdmin} {...props}/> : <PublicNavigation />}
+      {props.authenticated ?
+        <AuthenticatedNavigation isAdmin={props.isAdmin} {...props} /> :
+        <PublicNavigation />}
     </Navbar.Collapse>
   </Navbar>
 );
@@ -26,6 +28,7 @@ Navigation.defaultProps = {
 
 Navigation.propTypes = {
   authenticated: PropTypes.bool.isRequired,
+  isAdmin: PropTypes.bool.isRequired,
 };
 
 export default Navigation;
