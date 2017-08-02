@@ -26,8 +26,7 @@ const AdminPage = ({ loggingIn, authenticated, isAdmin, component, userId, email
               bsStyle="warning"
             >
               <p>
-                Hey friend! Can you
-                <strong>verify your email address</strong> ({emailAddress}) for us?
+                Hey friend! Can you <strong>verify your email address</strong> ({emailAddress}) for us?
                 <Button
                   bsStyle="link"
                   onClick={() => sendVerificationEmail(emailAddress)}

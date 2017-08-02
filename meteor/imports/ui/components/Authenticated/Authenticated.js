@@ -23,8 +23,7 @@ const Authenticated = ({ loggingIn, authenticated, isAdmin, component, userId, e
         if (userId && !emailVerified) {
           return (
             <Alert bsStyle="warning">
-              <p>Hey friend! Can you
-                <strong>verify your email address</strong> ({emailAddress}) for us?
+              <p>Hey friend! Can you <strong>verify your email address</strong> ({emailAddress}) for us?
                 <Button
                   bsStyle="link"
                   onClick={() => sendVerificationEmail(emailAddress)}
