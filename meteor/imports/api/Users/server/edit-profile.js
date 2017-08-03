@@ -5,12 +5,19 @@ let action;
 
 const updateUser = (userId, { emailAddress, profile }) => {
   try {
-    Meteor.users.update(userId, {
-      $set: {
-        'emails.0.address': emailAddress,
-        profile,
-      },
-    });
+    if (emailAddress === Meteor.user().emails[0].address) {
+      Meteor.users.update(userId, {
+        $set: { profile },
+      });
+    } else {
+      Meteor.users.update(userId, {
+        $set: {
+          'emails.0.address': emailAddress,
+          'emails.0.verified': false,
+          profile,
+        },
+      });
+    }
   } catch (exception) {
     action.reject(`[editProfile.updateUser] ${exception}`);
   }

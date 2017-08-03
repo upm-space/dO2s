@@ -66,8 +66,6 @@ App.propTypes = {
   loading: PropTypes.bool.isRequired,
 };
 
-const getUserType = service => service.hasOwnProperty('password') ? 'password' : 'oauth';
-
 const getUserName = name => ({
   string: name,
   object: `${name.first} ${name.last}`,
@@ -79,8 +77,27 @@ export default createContainer(() => {
   const userId = Meteor.userId();
   const loading = !Roles.subscription.ready();
   const name = user && user.profile && user.profile.name && getUserName(user.profile.name);
-  const userType = user && user.services && getUserType(user.services);
+  const getUserType = (user) => {
+    if (!user) {
+      return '';
+    }
+    if ('emails' in user) {
+      return 'password';
+    }
+    return 'oauth';
+  };
   const emailAddress = user && user.emails && user.emails[0].address;
+  const userType = getUserType(Meteor.user());
+  const getEmailIsVerified = (user) => {
+    if (!user) {
+      return false;
+    }
+    if (userType === 'password') {
+      return user && user.emails && user.emails[0].verified;
+    } else if (userType === 'oauth') {
+      return true;
+    }
+  };
 
   return {
     loading,
@@ -89,9 +106,9 @@ export default createContainer(() => {
     name: name || emailAddress,
     roles: !loading && Roles.getRolesForUser(userId),
     isAdmin: Roles.userIsInRole(Meteor.userId(), 'admin'),
-    userId,
     userType,
+    userId,
     emailAddress,
-    emailVerified: userType === 'password' ? user && user.emails && user.emails[0].verified : true,
+    emailVerified: getEmailIsVerified(Meteor.user()),
   };
 }, App);
