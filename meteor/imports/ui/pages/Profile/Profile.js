@@ -52,6 +52,14 @@ class Profile extends Component {
             return component.currentPassword.value.length > 0;
           },
         },
+        repeatNewPassword: {
+          minlength: 6,
+          equalTo: '[name="newPassword"]',
+          required() {
+            // Only required if currentPassword field has a value.
+            return component.currentPassword.value.length > 0;
+          },
+        },
       },
       messages: {
         firstName: {
@@ -69,6 +77,10 @@ class Profile extends Component {
         },
         newPassword: {
           required: 'Need your new password if changing.',
+        },
+        repeatNewPassword: {
+          required: 'Repeat your new password, please.',
+          equalTo: 'Hmm, your passwords don\'t match. Try again?',
         },
       },
       submitHandler() { component.handleSubmit(); },
@@ -108,6 +120,7 @@ class Profile extends Component {
         } else {
           this.currentPassword.value = '';
           this.newPassword.value = '';
+          this.repeatNewPassword.value = '';
         }
       });
     }
@@ -162,6 +175,7 @@ class Profile extends Component {
           className="form-control"
         />
       </FormGroup>
+      <hr />
       <FormGroup>
         <ControlLabel>Current Password</ControlLabel>
         <input
@@ -180,6 +194,15 @@ class Profile extends Component {
           className="form-control"
         />
         <InputHint>Use at least six characters.</InputHint>
+      </FormGroup>
+      <FormGroup>
+        <ControlLabel>Repeat New Password</ControlLabel>
+        <input
+          type="password"
+          className="form-control"
+          ref={repeatNewPassword => (this.repeatNewPassword = repeatNewPassword)}
+          name="repeatNewPassword"
+        />
       </FormGroup>
       <Button type="submit" bsStyle="success">Save Profile</Button>
     </div>) : <div />;
