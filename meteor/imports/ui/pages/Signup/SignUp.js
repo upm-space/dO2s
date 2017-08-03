@@ -161,7 +161,6 @@ class SignUp extends Component {
               />
             </FormGroup>
             <Button type="submit" bsStyle="success" block>Sign Up</Button>
-            <hr />
             <AccountPageFooter>
               <p>Already have an account? <Link to="/login">Log In</Link>.</p>
             </AccountPageFooter>

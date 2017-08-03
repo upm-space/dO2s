@@ -94,8 +94,7 @@ class Login extends Component {
                 className="form-control"
               />
             </FormGroup>
-            <Button type="submit" bsStyle="success">Login</Button>
-            <hr />
+            <Button type="submit" bsStyle="success" block>Login</Button>
             <AccountPageFooter>
               <p>{'Don\'t have an account?'} <Link to="/signup">Sign Up</Link>.</p>
             </AccountPageFooter>
