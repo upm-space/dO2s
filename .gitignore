@@ -6,7 +6,7 @@
 .LSOverride
 
 # Icon must end with two \r
-Icon
+#Icon - this caused and error for a folder wihth the same name
 
 # Thumbnails
 ._*
