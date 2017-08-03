@@ -1,6 +1,5 @@
 /* eslint-disable consistent-return */
 import { Meteor } from 'meteor/meteor';
-import { Mongo } from 'meteor/mongo';
 import SimpleSchema from 'simpl-schema';
 
 Meteor.users.allow({

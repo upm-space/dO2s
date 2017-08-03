@@ -42,6 +42,9 @@ export default class SearchLayout extends Component {
                 objetos
       );
     }
+
+    console.log('nada que mostrar');
+    return '';
   }
 
   render() {
@@ -83,7 +86,10 @@ export default class SearchLayout extends Component {
           title="Delete this user"
           show={this.state.deleteModalShow}
           onHide={deleteClose}
-          text={<p>This is going to be forever, are you sure?</p>}
+          body={<div>
+            <h4>Delete User Forever</h4>
+            <p>This is going to be forever, are you sure?</p>
+          </div>}
           actionStyle="danger"
           action={this.props.hardDeleteHandler}
           actionText="Delete"
@@ -93,7 +99,7 @@ export default class SearchLayout extends Component {
           title="New Item Modal"
           show={this.state.newItemShow}
           onHide={newItemClose}
-          body={<h3>New Item Form</h3>}
+          body={<h4>New Item Form</h4>}
           actionStyle="primary"
           action={this.saluda}
           actionText="Save New Item"
@@ -103,7 +109,7 @@ export default class SearchLayout extends Component {
           title="Recycle Bin"
           show={this.state.trashShow}
           onHide={trashClose}
-          body={<h3>Deteled Users</h3>}
+          body={<h4>Deteled Users</h4>}
           actionStyle="warning"
           action={() => this.setState({ deleteModalShow: true })}
           actionText="Restore"
@@ -114,10 +120,10 @@ export default class SearchLayout extends Component {
   }
 }
 
-SearchLayout.PropTypes = {
-  rows: PropTypes.array.isrequired,
+SearchLayout.propTypes = {
+  rows: PropTypes.array.isRequired,
   softDeleteHandler: PropTypes.func.isRequired,
   hardDeleteHandler: PropTypes.func.isRequired,
   editHandler: PropTypes.func.isRequired,
-  listname: PropTypes.string.isrequired,
+  listname: PropTypes.string.isRequired,
 };

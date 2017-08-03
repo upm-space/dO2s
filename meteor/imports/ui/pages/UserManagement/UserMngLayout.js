@@ -26,7 +26,7 @@ class UserManagementLayout extends Component {
 
   authorizeAccess() {
     if (!Roles.userIsInRole(this.props.currentUser, ['admin'])) {
-      <Redirect to="/" />;
+      return <Redirect to="/" />;
     }
   }
 
@@ -61,9 +61,7 @@ class UserManagementLayout extends Component {
     const rows = [];
     users.map(({ _id, emails, profile }) => {
       const username = (emails ? emails[0].address : profile.name);
-      return (
-                rows.push({ name: username, key: _id })
-      );
+      return (rows.push({ name: username, key: _id }));
     });
     return (
       <div className="appUserManagement">
@@ -81,7 +79,7 @@ class UserManagementLayout extends Component {
             editHandler={this.editUser}
           />
           <Col md={9} lg={9} sm={12} xs={12}>
-            {this.props.children}
+            {/* {this.props.children} */}
           </Col>
         </Row>
       </div>
@@ -89,11 +87,11 @@ class UserManagementLayout extends Component {
   }
 }
 
-UserManagementLayout.PropTypes = {
+UserManagementLayout.propTypes = {
   users: PropTypes.array.isRequired,
   currentUser: PropTypes.object.isRequired,
   applicationRoles: PropTypes.array.isRequired,
-  children: PropTypes.node.isRequired,
+  // children: PropTypes.node,
 };
 
 

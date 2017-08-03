@@ -34,7 +34,7 @@ class VerifyEmail extends Component {
   }
 }
 
-VerifyEmail.PropTypes = {
+VerifyEmail.propTypes = {
   match: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
 };
