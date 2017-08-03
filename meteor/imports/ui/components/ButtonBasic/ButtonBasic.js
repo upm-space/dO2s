@@ -41,6 +41,7 @@ ButtonBasic.defaultProps = {
   isButtonList: false,
   isBlack: false,
   isDisabled: false,
+  glyphicon: '',
 };
 
 export default ButtonBasic;

@@ -14,7 +14,7 @@ const Index = () => (
     <p>The only drone tool you&aposll ever need.</p>
     <p style={{ fontSize: '16px', color: '#aaa' }}>WIP</p>
     <div>
-      <Button href="#">Read the Docs</Button>
+      <Button href="#docs">Read the Docs</Button>
       <Button href="https://github.com/upm-space/dO2s"><i className="fa fa-star" /> Star on GitHub</Button>
     </div>
   </div>

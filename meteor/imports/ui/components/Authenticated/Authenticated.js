@@ -1,3 +1,4 @@
+/* eslint-disable max-len, consistent-return */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Route, Redirect } from 'react-router-dom';
@@ -15,27 +16,27 @@ const sendVerificationEmail = (emailAddress) => {
   });
 };
 
-const Authenticated = ({ loggingIn, authenticated, isAdmin, component, userId, emailAddress, emailVerified, ...rest }) => (
+const verifyEmailAlert = emailAddress => (<Alert bsStyle="warning">
+  <p>Hey friend! Can you <strong>verify your email address</strong> ({emailAddress}) for us?
+    <Button
+      bsStyle="link"
+      onClick={() => sendVerificationEmail(emailAddress)}
+      href="#"
+    >
+    Re-send verification email
+  </Button>
+  </p>
+</Alert>);
+
+const Authenticated = ({ loggingIn, authenticated, component, userId, emailVerified, emailAddress, ...rest }) => (
   <Route
     {...rest}
     render={(props) => {
       if (authenticated) {
         if (userId && !emailVerified) {
-          return (
-            <Alert bsStyle="warning">
-              <p>Hey friend! Can you
-                <strong>verify your email address</strong> ({emailAddress}) for us?
-                <Button
-                  bsStyle="link"
-                  onClick={() => sendVerificationEmail(emailAddress)}
-                  href="#"
-                >
-                  Re-send verification email
-                </Button>
-              </p>
-            </Alert>);
+          return verifyEmailAlert(emailAddress);
         } else if (userId && emailVerified) {
-          return React.createElement(component, { ...props, loggingIn, authenticated, isAdmin });
+          return React.createElement(component, { ...props, loggingIn, authenticated });
         }
       } else {
         return <Redirect to="/logout" />;
@@ -44,13 +45,14 @@ const Authenticated = ({ loggingIn, authenticated, isAdmin, component, userId, e
   />
 );
 
-Authenticated.PropTypes = {
+Authenticated.propTypes = {
   loggingIn: PropTypes.bool.isRequired,
   authenticated: PropTypes.bool.isRequired,
   isAdmin: PropTypes.bool.isRequired,
-  userId: PropTypes.func.isRequired,
-  emailAddress: PropTypes.bool.isRequired,
+  userId: PropTypes.string,
+  emailAddress: PropTypes.string,
   emailVerified: PropTypes.bool.isRequired,
+  component: PropTypes.func.isRequired,
 };
 
 export default Authenticated;

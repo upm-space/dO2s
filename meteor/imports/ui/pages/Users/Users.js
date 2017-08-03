@@ -33,7 +33,7 @@ class Users extends Component {
             const isCurrentUser = this.checkIfCurrentUser(_id, currentUser._id);
             return (<tr key={_id}>
               <td className="vertical-align" width="5%">
-                {++count}
+                {count += 1}
               </td>
               <td className="vertical-align" width="40%">
                 {isCurrentUser ? <Label bsStyle="success">You!</Label> : ''}
@@ -46,13 +46,15 @@ class Users extends Component {
                 {roles ? (roles.map(role => (
                   <FormGroup controlId="formControlsSelectMultiple">
                     <FormControl
-                        componentClass="select" multiple value={role}
-                        disabled={isCurrentUser}
-                      >
-                        {applicationRoles.map(role => (
-                            <option key={role._id} value={role.name}>{role.name}</option>
+                      componentClass="select"
+                      multiple
+                      value={role}
+                      disabled={isCurrentUser}
+                    >
+                      {applicationRoles.map(role => (
+                        <option key={role._id} value={role.name}>{role.name}</option>
                                     ))}
-                      </FormControl>
+                    </FormControl>
                   </FormGroup>
                                     /* <select
                                         className="form-control"
@@ -60,7 +62,12 @@ class Users extends Component {
                                         disabled={isCurrentUser}
                                         >
                                         {applicationRoles.map((role) => (
-                                        <option key={role._id} value={role.name}>{role.name}</option>
+                                        <option
+                                          key={role._id}
+                                          value={role.name}
+                                        >
+                                          {role.name}
+                                        </option>
                                         ))}
                                     </select> */
                                 ))) :
@@ -87,13 +94,13 @@ class Users extends Component {
 }
 
 Users.propTypes = {
-  users: PropTypes.array,
-  currentUser: PropTypes.object,
-  applicationRoles: PropTypes.array,
+  users: PropTypes.array.isRequired,
+  currentUser: PropTypes.object.isRequired,
+  applicationRoles: PropTypes.array.isRequired,
 };
 
 
-export default createContainer(({ props }) => {
+export default createContainer(() => {
   const usersSub = Meteor.subscribe('users');
   const usersArray = Meteor.users.find().fetch();
     // const isReady = usersSub.ready() && Roles.usersSub.ready();
@@ -101,7 +108,7 @@ export default createContainer(({ props }) => {
   const applicationRoles = Roles.getAllRoles().fetch();
 
   return {
-        // ready: isReady,
+    loading: !usersSub.ready(),
     users: usersArray,
     currentUser,
     applicationRoles,

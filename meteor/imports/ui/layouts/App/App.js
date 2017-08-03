@@ -57,20 +57,13 @@ const App = props => (
   </Router>
 );
 
-
 App.defaultProps = {
   userId: '',
   emailAddress: '',
 };
 
-App.PropTypes = {
+App.propTypes = {
   loading: PropTypes.bool.isRequired,
-  loggingIn: PropTypes.bool.isRequired,
-  authenticated: PropTypes.bool.isRequired,
-  isAdmin: PropTypes.bool.isRequired,
-  userId: PropTypes.string,
-  emailAddress: PropTypes.string,
-  emailVerified: PropTypes.bool.isRequired,
 };
 
 const getUserName = name => ({

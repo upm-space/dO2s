@@ -17,18 +17,18 @@ const BasicModal = props => (
   </Modal>
 );
 
-BasicModal.PropTypes = {
+BasicModal.defaultProps = {
+  body: <div />,
+};
+
+BasicModal.propTypes = {
   show: PropTypes.bool.isRequired,
   onHide: PropTypes.func.isRequired,
   title: PropTypes.string.isRequired,
-  body: PropTypes.string.isRequired,
+  body: PropTypes.object,
   action: PropTypes.func.isRequired,
-  actionStyle: PropTypes.oneOf.isRequired,
-  actionText: PropTypes.func.isRequired,
-};
-
-BasicModal.defaultProps = {
-
+  actionStyle: PropTypes.oneOf(['success', 'warning', 'danger', 'info', 'default', 'primary', 'link']).isRequired,
+  actionText: PropTypes.string.isRequired,
 };
 
 export default BasicModal;

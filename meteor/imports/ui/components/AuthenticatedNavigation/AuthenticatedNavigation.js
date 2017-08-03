@@ -6,15 +6,9 @@ import { Meteor } from 'meteor/meteor';
 
 const handleLogout = () => Meteor.logout();
 
-const UserMngButton = (isAdmin) => {
-  if (isAdmin) {
-    return (
-      <LinkContainer to="/usrmng">
-        <NavItem eventKey={3} href="/usrmng"><Glyphicon glyph="user" />User Manager</NavItem>
-      </LinkContainer>
-    );
-  }
-};
+const UserMngButton = (<LinkContainer to="/usrmng">
+  <NavItem eventKey={3} href="/usrmng"><Glyphicon glyph="user" />User Manager</NavItem>
+</LinkContainer>);
 
 const AuthenticatedNavigation = ({ isAdmin, name }) => (
   <div>
@@ -25,7 +19,7 @@ const AuthenticatedNavigation = ({ isAdmin, name }) => (
       <LinkContainer to="/hangar">
         <NavItem eventKey={2} href="/hangar">Hangar</NavItem>
       </LinkContainer>
-      {UserMngButton(isAdmin)}
+      {isAdmin ? UserMngButton : ''}
     </Nav>
     <Nav pullRight>
       <NavDropdown eventKey={4} title={name} id="user-nav-dropdown">
