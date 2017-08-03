@@ -1,4 +1,3 @@
-import { Meteor } from 'meteor/meteor';
 import { Accounts } from 'meteor/accounts-base';
 
 Accounts.onCreateUser((options, user) => {
@@ -12,6 +11,5 @@ Accounts.onCreateUser((options, user) => {
   if (options.profile) userToCreate.profile = options.profile;
   userToCreate.deleted = 'no';
 
-  const cleanUserToCreate = Meteor.users.schema.clean(userToCreate);
-  return cleanUserToCreate;
+  return userToCreate;
 });
