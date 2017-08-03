@@ -1,0 +1,14 @@
+
+// This does not work yet, not even changing extension to scss
+// @import 'bootstrap';
+// @import '/node_modules/bootstrap/dist/css/bootstrap.min';
+// This works if file extesion is changed to scss
+// @import './bootstrap.min';
+
+@import "./colors";
+@import "./forms";
+@import './bootstrap-overrides';
+
+// @import "./navbar-twbscolor";
+
+// @include font-face(Glyphicon, "bootstrap/fonts");

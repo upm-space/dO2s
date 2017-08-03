@@ -1,7 +1,4 @@
-import './env-vars';
-import './accounts/email-templates';
-import './configure-services';
-import './accounts-config';
-import './fixtures';
+import './email';
+import './accounts';
 import './api';
-import './roles';
+import './fixtures';

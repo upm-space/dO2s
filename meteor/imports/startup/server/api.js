@@ -1,2 +1,6 @@
-import '../../api/users/server/methods.js';
-import '../../api/users/server/publications.js';
+import '../../api/Users/server/methods.js';
+import '../../api/Users/server/publications.js';
+
+import '../../api/OAuth/server/methods';
+
+import '../../api/Utility/server/methods';

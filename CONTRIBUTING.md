@@ -45,6 +45,8 @@ Go to your fork:
 *   Reference issues and pull requests liberally after the first line
 *   When only changing documentation, include `[ci skip]` in the commit description
 *   Consider starting the commit message with an applicable emoji:
+
+    *   :star: `:star:` when adding features
     *   :art: `:art:` when improving the format/structure of the code
     *   :racehorse: `:racehorse:` when improving performance
     *   :non-potable_water: `:non-potable_water:` when plugging memory leaks
@@ -67,7 +69,6 @@ All JavaScript must adhere to [JavaScript Airbnb Style](https://github.com/airbn
 
 *   Prefer the object spread operator (`{...anotherObj}`) to `Object.assign()`
 *   Inline `export`s with expressions whenever possible
-*   Use 4 spaces for indentation
 
 ```javascript
 // Use this:
