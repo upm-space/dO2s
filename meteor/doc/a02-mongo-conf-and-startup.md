@@ -22,7 +22,7 @@ MongoDB runs by default on port `27017`.
 Finally if we want to run our meteor app with a database other than the default, which is useful if you want to share data across apps, you star meteor like this:
 
 ```bash
-env MONGO_URL='mongodb://localhost:27017/do2sdb' meteor
+env MONGO_URL='mongodb://localhost:27017/myAppDB' meteor
 ```
 
 For setting this up automatically for you, you can add a script to your `packages.json` like this:
@@ -30,16 +30,16 @@ For setting this up automatically for you, you can add a script to your `package
 ```json
 /*...*/
 "scripts": {
-    "start": "env MONGO_URL=mongodb://localhost:27017/do2sdb meteor run"
+    "db" : "mongod --dbpath <path to data directory>",
+    "start": "env MONGO_URL=mongodb://localhost:27017/myAppDB meteor run"
 }
 /*...*/
 ```
-The to start your app you can run on the terminal, and meteor will run with your custom database.
+The to start your app you can run these commands on the terminal, the first one to run the database and the second one to run meteor with your custom database. They have to be executed on two different terminal windows.
 
 ```bash
+meteor npm run db
 meteor npm start
 ```
-
-> Maybe there is a better way to do this.
 
 For the creation of collections and publishing we read this tutorial [Defining MongoDB Collections](https://themeteorchef.com/tutorials/defining-mongodb-collections).

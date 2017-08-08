@@ -27,124 +27,170 @@ Let's get the shock factor out of the way now. The biggest change in React Route
 In version 3, we import all of our components into one file and define our routes in the same location, too. Simple enough, however, in v4 of React Router we handle routing a bit differently. To begin, let's update the `/imports/startup/client/index.js` file to look like this:
 
 ```javascript
-import 'bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import React from 'react';
 import { render } from 'react-dom';
 import { Bert } from 'meteor/themeteorchef:bert';
 import { Meteor } from 'meteor/meteor';
 
-import Routes from './Routes';
+import 'bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+import App from '../../ui/layouts/App/App';
+import '../../ui/stylesheets/app.scss';
 
 Bert.defaults.style = 'growl-top-right';
 
 Meteor.startup(() => {
-    render(<Routes />, document.getElementById('react-root'));
+  render(<App />, document.getElementById('react-root'));
 });
 ```
 
-The big part to pay attention to is our importing and rendering of the `<Routes />` component. If we look back up at our `routes.js` file, we'll notice that we were rendering the `<Router />` component from React Router directly.
+The big part to pay attention to is our importing and rendering of the `<App />` component. If we look back up at our `routes.js` file, we'll notice that we were rendering the `<Router />` component from React Router directly.
 
-Now, we want to move our routes into our components. As a result, we'll be moving our routes into our main `<Routes />` component. In the code here, we're saying that when the client-side of Meteor starts up, we want to use the `render()` method from the `react-dom` package to render the `<Routes />`—and subsequently, the routes it contains—into the `<div id="react-root"></div>` element defined in `/client/main.html`.
+Now, we want to move our routes into our components. As a result, we'll be moving our routes into our main `<App />` component. In the code here, we're saying that when the client-side of Meteor starts up, we want to use the `render()` method from the `react-dom` package to render the `<App />`—and subsequently, the routes it contains—into the `<div id="react-root"></div>` element defined in `/client/main.html`.
 
-Because this is only half the picture, let's take a look at the `<Routes />` component now to see how our routes are being defined.
+Because this is only half the picture, let's take a look at the `<App />` component now to see how our routes are being defined.
 
 ```javascript
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
+import { Grid } from 'react-bootstrap';
+import { Meteor } from 'meteor/meteor';
 import { createContainer } from 'meteor/react-meteor-data';
-import { render } from 'react-dom';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { Roles } from 'meteor/alanning:roles';
 
-import App from '../../ui/layouts/App';
+import Navigation from '../../components/Navigation/Navigation';
+import Index from '../../pages/Index/Index';
+import One from '../../pages/One/One';
+import Two from '../../pages/Two/Two';
+import NotFound from '../../pages/NotFound/NotFound';
+import SignUp from '../../pages/Signup/SignUp';
+import Login from '../../pages/Login/Login';
+import Logout from '../../pages/Logout/Logout';
+import RecoverPassword from '../../pages/RecoverPassword/RecoverPassword';
+import ResetPassword from '../../pages/ResetPassword/ResetPassword';
+import Profile from '../../pages/Profile/Profile';
+import VerifyEmail from '../../pages/VerifyEmail/VerifyEmail';
+import Footer from '../../components/Footer/Footer';
+import Terms from '../../pages/Terms/Terms';
+import Privacy from '../../pages/Privacy/Privacy';
+import ExamplePage from '../../pages/ExamplePage/ExamplePage';
 
-import Index from '../../ui/pages/Index';
-import One from '../../ui/pages/One';
-import Two from '../../ui/pages/Two';
-import NotFound from '../../ui/pages/NotFound';
-import SignUp from '../../ui/pages/SignUp';
-import Login from '../../ui/pages/Login';
-import RecoverPassword from '../../ui/pages/RecoverPassword';
-import ResetPassword from '../../ui/pages/ResetPassword';
+import Public from '../../components/Public/Public';
+import Authenticated from '../../components/Authenticated/Authenticated';
+import AdminPage from '../../components/Administrator/AdminPage';
+import EmailNotVerified from '../../components/EmailNotVerified/EmailNotVerified';
 
-import Public from '../../ui/pages/Public';
-import Authenticated from '../../ui/pages/Authenticated';
-import AdminPage from '../../ui/pages/AdminPage';
+import UserManagementLayout from '../../pages/UserManagement/UserMngLayout';
 
-import UserManagementLayout from '../../ui/layouts/UserMngLayout';
-
-const Routes = (routesProps) => (
-    <Router>
-        <App {...routesProps}>
-            <Switch>
-                <Route exact path="/" component={Index}/>
-                <AdminPage exact path="/usrmng" component={UserManagementLayout} {...routesProps} />
-                <Authenticated exact path="/one" component={One} {...routesProps} />
-                <Authenticated exact path="/two" component={Two} {...routesProps} />
-                <Public path="/signup" component={SignUp} {...routesProps} />
-                <Public path="/login" component={Login} {...routesProps} />
-                <Route path="/recover-password" component={ RecoverPassword } />
-                <Route path="/reset-password/:token" component={ ResetPassword } />
-                <Route component={ NotFound } />
-            </Switch>
-        </App>
-    </Router>
+const App = props => (
+  <Router>
+    {!props.loading ? <div className="App">
+      <Navigation {...props} />
+      <Grid fluid>
+        <Switch>
+          <Route exact name="index" path="/" component={Index} />
+          <AdminPage exact path="/usrmng" component={UserManagementLayout} {...props} />
+          <Authenticated exact path="/projects" component={One} {...props} />
+          <Authenticated exact path="/hangar" component={Two} {...props} />
+          <EmailNotVerified exact path="/profile" component={Profile} {...props} />
+          <Public path="/signup" component={SignUp} {...props} />
+          <Public path="/login" component={Login} {...props} />
+          <Public path="/logout" component={Logout} {...props} />
+          <Route name="verify-email" path="/verify-email/:token" component={VerifyEmail} />
+          <Route name="recover-password" path="/recover-password" component={RecoverPassword} />
+          <Route name="reset-password" path="/reset-password/:token" component={ResetPassword} />
+          <Route name="terms" path="/terms" component={Terms} />
+          <Route name="privacy" path="/privacy" component={Privacy} />
+          <Route name="examplePage" path="/example-page" component={ExamplePage} />
+          <Route component={NotFound} />
+        </Switch>
+      </Grid>
+      <Footer />
+    </div> : ''}
+  </Router>
 );
 
+App.defaultProps = {
+  userId: '',
+  emailAddress: '',
+};
 
-Routes.PropTypes = {
-    loggingIn: PropTypes.bool.isRequired,
-    authenticated: PropTypes.bool.isRequired,
-    isAdmin: PropTypes.bool.isRequired
-}
+App.propTypes = {
+  loading: PropTypes.bool.isRequired,
+};
 
-export default createContainer(({match}) => {
-    const loggingIn = Meteor.loggingIn();
-    return {
-        loggingIn: loggingIn,
-        authenticated: !loggingIn && !!Meteor.userId(),
-        isAdmin: Roles.userIsInRole(Meteor.userId(), "admin"),
-    }
-}, Routes);
+const getUserName = name => ({
+  string: name,
+  object: `${name.first} ${name.last}`,
+}[typeof name]);
+
+export default createContainer(() => {
+  const loggingIn = Meteor.loggingIn();
+  const user = Meteor.user();
+  const userId = Meteor.userId();
+  const loading = !Roles.subscription.ready();
+  const name = user && user.profile && user.profile.name && getUserName(user.profile.name);
+  const emailAddress = user && user.emails && user.emails[0].address;
+  const userType = user ? (user.emails ? 'password' : 'oauth') : '';
+  const passwordUserEmailVerified = userType === 'password' ? (user && user.emails && user.emails[0].verified) : true;
+  const emailVerified = user ? passwordUserEmailVerified : false;
+
+  return {
+    loading,
+    loggingIn,
+    authenticated: !loggingIn && !!userId,
+    name: name || emailAddress,
+    roles: !loading && Roles.getRolesForUser(userId),
+    isAdmin: Roles.userIsInRole(Meteor.userId(), 'admin'),
+    userType,
+    userId,
+    emailAddress,
+    emailVerified,
+  };
+}, App);
+
 ```
 
-If we move up a bit to our `<Routes />` component's definition, we get our first taste of defining routes with React Router v4. In truth, beyond the move that we just explored, defining routes isn't too different from before. The first thing to pay attention to is where the different bits of React Router are coming from. As we hinted above when installing our dependencies, as opposed to the original `react-router` package, now, we pull everything we need from the `react-router-dom` package. Why?
+If we move up a bit to our `<App />` component's definition, we get our first taste of defining routes with React Router v4. In truth, beyond the move that we just explored, defining routes isn't too different from before. The first thing to pay attention to is where the different bits of React Router are coming from. As we hinted above when installing our dependencies, as opposed to the original `react-router` package, now, we pull everything we need from the `react-router-dom` package. Why?
 
-As of v4, React Router supports routing in two different contexts: the browser and React Native applications. When we're working with the browser, we want to rely on the `react-router-dom` package . For our needs in this file (`/imports/ui/routes/Routes.jsx`), we're importing the `<BrowserRouter />` component (recasting it as `<Router />`), the `<Switch />` component, and the `<Route />` component. With these three, we have everything we need to set up our routes.
+As of v4, React Router supports routing in two different contexts: the browser and React Native applications. When we're working with the browser, we want to rely on the `react-router-dom` package . For our needs in this file (`/imports/ui/layouts/App.js`), we're importing the `<BrowserRouter />` component (recasting it as `<Router />`), the `<Switch />` component, and the `<Route />` component. With these three, we have everything we need to set up our routes.
 
 <!-- TODO - Handling authentication -->
 
 ## Defining our routes
 
-First, in order for our routing to work properly, we want to wrap the `<Router />` component at the top-most level so that all of our components have access to the `<Router />` component's instance. While the bulk of our work here won't need this _too_ much, it's good to have just in case we need it later. Inside, we begin to define the contents of our `<Routes />` component, starting with our main wrapper `<App> </App>` element. Have in mind that the `<Router />` component only accepts one child.
+First, in order for our routing to work properly, we want to wrap the `<Router />` component at the top-most level so that all of our components have access to the `<Router />` component's instance. While the bulk of our work here won't need this _too_ much, it's good to have just in case we need it later. Inside, we begin to define the contents of our `<App />` component. Have in mind that the `<Router />` component only accepts one child.
 
 ```javascript
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import Navigation from '../components/Navigation';
-import PublicNavigation from '../components/PublicNavigation';
-import { Grid } from 'react-bootstrap';
-
-const renderNavigation = (authenticated, isAdmin) =>
-(authenticated ? <Navigation isAdmin={isAdmin} /> : <PublicNavigation />);
-
-
-const App = ( {children, authenticated, isAdmin} ) => (
-    <div className="App">
-        { renderNavigation(authenticated, isAdmin) }
-        <Grid fluid>
-            {children}
-        </Grid>
-    </div>
+const App = props => (
+  <Router>
+    {!props.loading ? <div className="App">
+      <Navigation {...props} />
+      <Grid fluid>
+        <Switch>
+          <Route exact name="index" path="/" component={Index} />
+          <AdminPage exact path="/usrmng" component={UserManagementLayout} {...props} />
+          <Authenticated exact path="/projects" component={One} {...props} />
+          <Authenticated exact path="/hangar" component={Two} {...props} />
+          <EmailNotVerified exact path="/profile" component={Profile} {...props} />
+          <Public path="/signup" component={SignUp} {...props} />
+          <Public path="/login" component={Login} {...props} />
+          <Public path="/logout" component={Logout} {...props} />
+          <Route name="verify-email" path="/verify-email/:token" component={VerifyEmail} />
+          <Route name="recover-password" path="/recover-password" component={RecoverPassword} />
+          <Route name="reset-password" path="/reset-password/:token" component={ResetPassword} />
+          <Route name="terms" path="/terms" component={Terms} />
+          <Route name="privacy" path="/privacy" component={Privacy} />
+          <Route name="examplePage" path="/example-page" component={ExamplePage} />
+          <Route component={NotFound} />
+        </Switch>
+      </Grid>
+      <Footer />
+    </div> : ''}
+  </Router>
 );
-
-App.PropTypes = {
-  authenticated: PropTypes.bool,
-  children: PropTypes.node,
-  isAdmin:  PropTypes.bool
-};
-
-export default App;
 ```
 
 Inside of this, we start to "layout" our application. Because all of the pages in our application will need to display our navigation bar—the `<Navigation />` component—we render this above the definition for all of our routes. Because all of our route's components will be rendered in the same spot in our app, we nest our call to the `<Switch />` component from React Router inside of the `<Grid/>`. This wraps each route's contents (the component it renders) in a `<div className="container"></div>` element.
@@ -161,113 +207,66 @@ if we were to visit the `/documents/:_id` route with something like `http://loca
 
 > If your application relies less on rendering complete pages and more on swapping parts in and out (think like in a [single page application](https://themeteorchef.com/tutorials/single-page-applications-with-react-router)), the default behavior of React Router v4 is your bag of chips.
 
-Inside of our `<Switch />` component, we get down to defining our routes. For the most part, this looks identical to what we're doing above in our original `/imports/startup/routes.js` file. First, calling attention to the `<Route />` components in the list, these behave exactly like we'd expect. When the URL matches, the specified `component` is rendered. So, for the `path="/one"` component, we'd see the `<One />` component rendered on screen. Cool.
+Inside of our `<Switch />` component, we get down to defining our routes. For the most part, this looks identical to what we're doing above in our original `/imports/startup/routes.js` file. First, calling attention to the `<Route />` components in the list, these behave exactly like we'd expect. When the URL matches, the specified `component` is rendered. So, for the `path="/terms"` component, we'd see the `<Terms />` component rendered on screen. Cool.
 
 <!-- TODO - Authenticated Routes -->
 
 ## Handling Navigation Items
-In the previous section, we moved our routes into our main `<Routes />` layout component. We covered how routes are wired up—as well, we need to understand how to handle our navigation state. So, when we move from link to link, we highlight the correct or corresponding navigation item.
+In the previous section, we moved our routes into our main `<App />` layout component. We covered how routes are wired up—as well, we need to understand how to handle our navigation state. So, when we move from link to link, we highlight the correct or corresponding navigation item.
 
 ```javascript
-const renderNavigation = (authenticated, isAdmin) =>
-(authenticated ? <Navigation isAdmin={isAdmin} /> : <PublicNavigation />);
+import AuthenticatedNavigation from '../AuthenticatedNavigation/AuthenticatedNavigation';
+import PublicNavigation from '../PublicNavigation/PublicNavigation';
 
-
-const App = ( {children, authenticated, isAdmin} ) => (
-    <div className="App">
-        { renderNavigation(authenticated, isAdmin) }
-        <Grid fluid>
-            {children}
-        </Grid>
-    </div>
+const Navigation = props => (
+  <Navbar collapseOnSelect fluid>
+    <Navbar.Header>
+      <Navbar.Brand>
+        <Link to="/">dO2s</Link>
+      </Navbar.Brand>
+      <Navbar.Toggle />
+    </Navbar.Header>
+    <Navbar.Collapse>
+      {props.authenticated ?
+        <AuthenticatedNavigation isAdmin={props.isAdmin} {...props} /> :
+        <PublicNavigation />}
+    </Navbar.Collapse>
+  </Navbar>
 );
-```
 
-Real quick, we want to call attention to one thing: our `<Navigation />` component inside of our `<App />` component. Remember earlier when we mentioned the importance of wrapping our component's contents with the `<Router />` component so every element could have access? This is where it comes into play. Because we're wrapping our `<Navigation />` component with this, that means that we'll be able to see the current route state and update our links accordingly.
-
-```javascript
-const handleLogout = () => Meteor.logout();
-
-const userName = () => {
-  const user = Meteor.user();
-  const name = user && user.profile ? user.profile.name : '';
-  if (typeof name === "string"){
-      return user ? `${name}` : '';
-  } else {
-      return user ? `${name.first} ${name.last}` : '';
-  }
-
+Navigation.defaultProps = {
+  name: '',
 };
 
-const UserMngButton = (isAdmin) => {
-    if (isAdmin) {
-        return (
-            <LinkContainer to="/usrmng">
-                  <NavItem eventKey={3}><Glyphicon glyph="user"/> User Manager</NavItem>
-            </LinkContainer>
-        )
-    }
-}
-
-const Navigation = ({isAdmin}) => (
-    <Navbar collapseOnSelect fluid>
-        <Navbar.Header>
-            <Navbar.Brand>
-                <LinkContainer to="/" exact>
-                    <Button bsStyle="link">dO2s</Button>
-                </LinkContainer>
-            </Navbar.Brand>
-            <Navbar.Toggle />
-        </Navbar.Header>
-        <Navbar.Collapse>
-        <Nav>
-            <LinkContainer to="/one">
-                  <NavItem eventKey={1}>Projects</NavItem>
-            </LinkContainer>
-            <LinkContainer to="/two">
-                  <NavItem eventKey={2}>Missions</NavItem>
-            </LinkContainer>
-            {UserMngButton(isAdmin)}
-        </Nav>
-        <Nav pullRight>
-            <NavDropdown eventKey={ 6 } title={ userName() } id="basic-nav-dropdown">
-                <MenuItem eventKey={ 6.1 }>Change Password</MenuItem>
-                <MenuItem eventKey={ 6.2 } onClick={ handleLogout }>Logout</MenuItem>
-            </NavDropdown>
-        </Nav>
-        </Navbar.Collapse>
-    </Navbar>
-);
+Navigation.propTypes = {
+  authenticated: PropTypes.bool.isRequired,
+  isAdmin: PropTypes.bool.isRequired,
+};
 
 export default Navigation;
 ```
 
-If we look at the internals of our `<Navigation />` component, we can see the same essential nav that we used with one twist. Here we map to our `authenticated` prop which is passed down from our `<Routes />` component's container.
+Real quick, we want to call attention to one thing: our `<Navigation />` component inside of our `<App />` component. Remember earlier when we mentioned the importance of wrapping our component's contents with the `<Router />` component so every element could have access? This is where it comes into play. Because we're wrapping our `<Navigation />` component with this, that means that we'll be able to see the current route state and update our links accordingly.
+
+
+If we look at the internals of our `<Navigation />` component, we can see the same essential nav that we used with one twist. Here we map to our `authenticated` prop which is passed down from our `<App />` component's container.
 
 Putting this to use, we test `authenticated` to determine which set of navigation links we want to render: those intended for public-facing users, or those that have already logged in to the app. Once we know the answer, we render the appropriate component. Let's take a look at the `<PublicNavigation />` component now to see how we handle our links and switching active state based on the URL.
 
 ```javascript
+import React from 'react';
+import { LinkContainer } from 'react-router-bootstrap';
+import { NavItem, Nav } from 'react-bootstrap';
+
 const PublicNavigation = () => (
-    <Navbar collapseOnSelect fluid>
-        <Navbar.Header>
-            <Navbar.Brand>
-                <LinkContainer to="/">
-                    <Button bsStyle="link">dO2s</Button>
-                </LinkContainer>
-            </Navbar.Brand>
-            <Navbar.Toggle />
-        </Navbar.Header>
-        <Navbar.Collapse>
-        <Nav pullRight>
-            <LinkContainer to="/signup">
-            <NavItem eventKey={1}>Sign Up</NavItem>
-            </LinkContainer>
-            <LinkContainer to="/login">
-            <NavItem eventKey={2}>Log In</NavItem>
-            </LinkContainer>
-        </Nav>
-        </Navbar.Collapse>
-    </Navbar>
+  <Nav pullRight>
+    <LinkContainer to="/signup">
+      <NavItem eventKey={1} href="/signup">Sign Up</NavItem>
+    </LinkContainer>
+    <LinkContainer to="/login">
+      <NavItem eventKey={2} href="/login">Log In</NavItem>
+    </LinkContainer>
+  </Nav>
 );
 
 export default PublicNavigation;
