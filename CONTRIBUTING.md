@@ -31,7 +31,7 @@ So enjoy the course and start contributing to the projects you use and love toda
 **TL;DR**: You create a branch to do your work, work on small fixes/features at a time, branches should be named based on the content or work you will be doing. To create a new branch.
 ```bash
 git checkout -b <branch-name>
-git push <remote-name> <branch-name>
+git push -u <remote-name> <branch-name>
 ```
 
 ### Small Corrections
