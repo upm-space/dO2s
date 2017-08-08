@@ -28,23 +28,13 @@ const verifyEmailAlert = emailAddress => (<Alert bsStyle="warning">
   </p>
 </Alert>);
 
-const AdminPage = ({ loggingIn, authenticated, isAdmin, component, userId, emailVerified, emailAddress, ...rest }) => (
+const AdminPage = ({ loggingIn, authenticated, isAdmin, component, emailVerified, emailAddress, ...rest }) => (
   <Route
     {...rest}
     render={(props) => {
-      if (authenticated) {
-        if (userId && !emailVerified) {
-          return verifyEmailAlert(emailAddress);
-        } else if (userId && emailVerified) {
-          return isAdmin ? (
-            React.createElement(component, { ...props, loggingIn, authenticated, isAdmin })
-          ) : (
-            <Redirect to="/projects" />
-          );
-        }
-      } else {
-        return <Redirect to="/logout" />;
-      }
+      const adminComponent = isAdmin ? React.createElement(component, { ...props, loggingIn, authenticated, isAdmin }) : <Redirect to="/projects" />;
+      const emailVerifiedComponent = emailVerified ? adminComponent : verifyEmailAlert(emailAddress);
+      return authenticated ? emailVerifiedComponent : <Redirect to="/logout" />;
     }}
   />
 );
@@ -55,7 +45,6 @@ AdminPage.propTypes = {
   authenticated: PropTypes.bool.isRequired,
   isAdmin: PropTypes.bool.isRequired,
   component: PropTypes.func.isRequired,
-  userId: PropTypes.string,
   emailAddress: PropTypes.string,
   emailVerified: PropTypes.bool.isRequired,
 };
