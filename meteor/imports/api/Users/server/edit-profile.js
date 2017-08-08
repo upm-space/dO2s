@@ -1,5 +1,6 @@
 /* eslint-disable consistent-return */
 import { Meteor } from 'meteor/meteor';
+import { Bert } from 'meteor/themeteorchef:bert';
 
 let action;
 
@@ -16,6 +17,13 @@ const updateUser = (userId, { emailAddress, profile }) => {
           'emails.0.verified': false,
           profile,
         },
+      });
+      Meteor.call('users.sendVerificationEmail', (error) => {
+        if (error) {
+          Bert.alert(error.reason, 'danger');
+        } else {
+          Bert.alert(`Verification sent to ${emailAddress}!`, 'success');
+        }
       });
     }
   } catch (exception) {

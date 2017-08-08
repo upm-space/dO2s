@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Grid } from 'react-bootstrap';
@@ -26,6 +27,7 @@ import ExamplePage from '../../pages/ExamplePage/ExamplePage';
 import Public from '../../components/Public/Public';
 import Authenticated from '../../components/Authenticated/Authenticated';
 import AdminPage from '../../components/Administrator/AdminPage';
+import EmailNotVerified from '../../components/EmailNotVerified/EmailNotVerified';
 
 import UserManagementLayout from '../../pages/UserManagement/UserMngLayout';
 
@@ -39,7 +41,7 @@ const App = props => (
           <AdminPage exact path="/usrmng" component={UserManagementLayout} {...props} />
           <Authenticated exact path="/projects" component={One} {...props} />
           <Authenticated exact path="/hangar" component={Two} {...props} />
-          <Authenticated exact path="/profile" component={Profile} {...props} />
+          <EmailNotVerified exact path="/profile" component={Profile} {...props} />
           <Public path="/signup" component={SignUp} {...props} />
           <Public path="/login" component={Login} {...props} />
           <Public path="/logout" component={Logout} {...props} />
@@ -77,27 +79,10 @@ export default createContainer(() => {
   const userId = Meteor.userId();
   const loading = !Roles.subscription.ready();
   const name = user && user.profile && user.profile.name && getUserName(user.profile.name);
-  const getUserType = (user) => {
-    if (!user) {
-      return '';
-    }
-    if ('emails' in user) {
-      return 'password';
-    }
-    return 'oauth';
-  };
   const emailAddress = user && user.emails && user.emails[0].address;
-  const userType = getUserType(Meteor.user());
-  const getEmailIsVerified = (user) => {
-    if (!user) {
-      return false;
-    }
-    if (userType === 'password') {
-      return user && user.emails && user.emails[0].verified;
-    } else if (userType === 'oauth') {
-      return true;
-    }
-  };
+  const userType = user ? (user.emails ? 'password' : 'oauth') : '';
+  const passwordUserEmailVerified = userType === 'password' ? (user && user.emails && user.emails[0].verified) : true;
+  const emailVerified = user ? passwordUserEmailVerified : false;
 
   return {
     loading,
@@ -109,6 +94,6 @@ export default createContainer(() => {
     userType,
     userId,
     emailAddress,
-    emailVerified: getEmailIsVerified(Meteor.user()),
+    emailVerified,
   };
 }, App);
