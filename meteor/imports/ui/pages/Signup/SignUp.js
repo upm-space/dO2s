@@ -37,6 +37,11 @@ class SignUp extends Component {
           required: true,
           minlength: 6,
         },
+        repeatPassword: {
+          required: true,
+          minlength: 6,
+          equalTo: '[name="password"]',
+        },
       },
       messages: {
         firstName: {
@@ -52,6 +57,10 @@ class SignUp extends Component {
         password: {
           required: 'Need a password here.',
           minlength: 'Please use at least six characters.',
+        },
+        repeatPassword: {
+          required: 'Repeat your password, please.',
+          equalTo: 'Hmm, your passwords don\'t match. Try again?',
         },
       },
       submitHandler() { component.handleSubmit(); },
@@ -95,7 +104,6 @@ class SignUp extends Component {
               }}
             />
           </Col></Row>
-          <hr />
           <form
             ref={form => (this.form = form)}
             onSubmit={event => event.preventDefault()}
@@ -143,8 +151,16 @@ class SignUp extends Component {
               />
               <InputHint>Use at least six characters.</InputHint>
             </FormGroup>
+            <FormGroup>
+              <ControlLabel>Repeat Password</ControlLabel>
+              <input
+                type="password"
+                className="form-control"
+                ref={repeatPassword => (this.repeatPassword = repeatPassword)}
+                name="repeatPassword"
+              />
+            </FormGroup>
             <Button type="submit" bsStyle="success" block>Sign Up</Button>
-            <hr />
             <AccountPageFooter>
               <p>Already have an account? <Link to="/login">Log In</Link>.</p>
             </AccountPageFooter>

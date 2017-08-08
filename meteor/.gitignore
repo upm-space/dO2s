@@ -14,7 +14,8 @@ node_modules/
 
 # meteor settings file
 settings.json
-settings-development.json
+settings-demo.json
+settings-staging.json
 settings-production.json
 
 # meteor build output files
