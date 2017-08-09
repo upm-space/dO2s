@@ -28,7 +28,7 @@ So enjoy the course and start contributing to the projects you use and love toda
 
 [StackOverflow Question - How do I create a Git branch both locally and remotely?](https://stackoverflow.com/questions/2003505/how-do-i-delete-a-git-branch-both-locally-and-remotely)
 
-**TL;DR**: You create a branch to do your work, work on small fixes/features at a time, branches should be named based on the content or work you will be doing. To create a new branch.
+**TL;DR**: You create a branch to do your work, work on small fixes/features at a time, branches should be named based on the content or work you will be doing. To create a new branch both locally and on the remote:
 ```bash
 git checkout -b <branch-name>
 git push -u <remote-name> <branch-name>
@@ -50,7 +50,6 @@ git checkout master
 git merge upstream/master
 git push origin master
 ````
-
 
 ### How to make a pull request
 
@@ -82,7 +81,7 @@ As recommended in the link after your pull request is merged on the main reposit
 
 1.  Go to your fork repository on you computer.
 
-1.  Check out the master branch and [sync it with the main repository](#sync-your-fork).
+1.  Check out the master branch and [sync it with the main repository](#syncing-your-fork).
 1.  Delete the branch you were working with locally and in your remote fork. You shouldn't get any warnings when deleting the branch since the work on it is already merged on the master branch in your fork when you synced it with the main repository.
    ```bash
    git push origin --delete <branch_name>
