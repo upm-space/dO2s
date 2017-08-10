@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { Table, Alert, Button, Glyphicon, Checkbox, FormGroup } from 'react-bootstrap';
+import { Table, Alert, Button, Glyphicon } from 'react-bootstrap';
 import { timeago, monthDayYearAtTime } from '@cleverbeagle/dates';
 import { Meteor } from 'meteor/meteor';
 import { createContainer } from 'meteor/react-meteor-data';
@@ -123,7 +123,11 @@ class Projects extends Component {
             <Button
               bsStyle={done ? 'success' : 'default'}
               onClick={() => this.toggleDone(_id, done)}
-            >{done ? <i className="fa fa-check-square-o" aria-hidden="true" /> : <i className="fa fa-square-o" aria-hidden="true" />}</Button>
+            >
+              {done ?
+                <i className="fa fa-check-square-o" aria-hidden="true" /> :
+                <i className="fa fa-square-o" aria-hidden="true" />}
+            </Button>
           </td>
           <td className="button-column">
             <Button
