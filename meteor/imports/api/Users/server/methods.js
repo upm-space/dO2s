@@ -38,6 +38,42 @@ Meteor.methods({
       throw new Meteor.Error('500', exception);
     });
   },
+  'users.softDelete': function usersSoftDelete(userId) {
+    check(userId, String);
+    try {
+      if (Roles.userIsInRole(this.userId, ['admin'])) {
+        Meteor.users.update(userId, { $set: { deleted: (new Date()).toISOString() } });
+      } else {
+        throw new Meteor.Error('500', 'Ha! Nice try, slick.');
+      }
+    } catch (exception) {
+      throw new Meteor.Error('500', exception);
+    }
+  },
+  'users.restore': function projectsRestore(userId) {
+    check(userId, String);
+    try {
+      if (Roles.userIsInRole(this.userId, ['admin'])) {
+        Meteor.users.update(userId, { $set: { deleted: 'no' } });
+      } else {
+        throw new Meteor.Error('500', 'Ha! Nice try, slick.');
+      }
+    } catch (exception) {
+      throw new Meteor.Error('500', exception);
+    }
+  },
+  'users.hardDelete': function usersHardDelete(userId) {
+    check(userId, String);
+    try {
+      if (Roles.userIsInRole(this.userId, ['admin'])) {
+        Meteor.users.remove(userId);
+      } else {
+        throw new Meteor.Error('500', 'Ha! Nice try, slick.');
+      }
+    } catch (exception) {
+      throw new Meteor.Error('500', exception);
+    }
+  },
 });
 
 rateLimit({
@@ -45,6 +81,9 @@ rateLimit({
     'users.editProfile',
     'users.sendVerificationEmail',
     'users.changeRole',
+    'users.softDelete',
+    'users.restore',
+    'users.hardDelete',
   ],
   limit: 5,
   timeRange: 1000,
