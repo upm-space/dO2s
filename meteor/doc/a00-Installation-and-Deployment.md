@@ -12,7 +12,9 @@
 ### Download and Setup your Project Repo
 
 1.  Go to the [GitHub repository](https://github.com/upm-space/dO2s) for the project.
+
 2.  Fork it.
+
 3.  Clone your repository of your computer.
 
     -   Open a terminal and go to the directory where you want to save the project.
@@ -42,7 +44,7 @@ The meteor project is located inside the `/meteor` folder (:tada: Surprise Surpr
 cd meteor
 ```
 
-Now you have a barebones Meteor project, you need to install all the package dependencies for the project, this dependencies are documented in `/.meteor/packages` and `/packages.json`. Remember we are working on a terminal that is in your working directory, which should be something like `/your-path-to-project/dO2s/meteor/`, this is your meteor project root. Be careful that this is different from your git repo root, which is `/your-path-to-project/dO2s/`.
+Now you have a barebones Meteor project, you need to install all the package dependencies for the project, these dependencies are documented in `/.meteor/packages` and `/packages.json`. Remember we are working on a terminal that is in your working directory, which should be something like `/your-path-to-project/dO2s/meteor/`, this is your meteor project root. Be careful, this is different from your git repo root, which is `/your-path-to-project/dO2s/`.
 
 Let's install the dependencies and get the meteor app running. On the command line:
 
@@ -53,7 +55,7 @@ You can use this command and Meteor takes care of everything. You don't need to 
 
 When this finishes loading you can run:
 ```bash
-meteor
+meteor run
 ```
 
 Now you should see the working app in the browser by typing `http://localhost:3000/` this is the default port Meteor uses, you can change it. Also have in mind that this runs a default MongoDB database on port `3001`, you can also use a custom MongoDB database if you need to share this database among apps. This is explained in the documentation.

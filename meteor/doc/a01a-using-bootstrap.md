@@ -8,26 +8,21 @@ This are the packages we'll be installing.
 ```bash
 meteor npm install --save bootstrap
 meteor add fourseven:scss
+meteor add fortawesome:fontawesome
 ```
 
 ## Styles
 
-Stylesheets in dO2s are loaded in one of two ways: globally in `/imports/ui/stylesheets/main.scss` and directly from within React components.
+Stylesheets in dO2s are loaded in one of two ways: globally in `/imports/ui/stylesheets/app.scss` and directly from within React components.
 
 ### Global Stylesheets
 
-We are going to have some stylesheets that apply to the entire application, all located in `/imports/ui/stylesheets/` and importing them all in `main.scss`.
+We are going to have some stylesheets that apply to the entire application, all located in `/imports/ui/stylesheets/` and importing them all in `app.scss`.
 
 ```css
 @import "./colors";
-@import "./buttons";
-@import "./layout";
 @import "./forms";
 @import './bootstrap-overrides';
-
-@import "./navbar-twbscolor";
-
-@import "./buttons-social";
 ```
 ### Component Stylesheets
 
@@ -37,7 +32,7 @@ If you define a component that has any styles of its own (those that apply speci
 
 ## Bootstrap
 
-We are going to use Bootstrap from npm preparing for the release of Bootstrap 4, which will have sass files. Right now what is not working is importing the `bootstrap.css` file from the npm module on this `main.scss`, since somehow the scss processor does not get to the `node_modules` folder. The current workaround is to import this css on our project on `/imports/startup/client/index.js`:
+We are going to use Bootstrap from npm preparing for the release of Bootstrap 4, which will have sass files. Right now what is not working is importing the `bootstrap.css` file from the npm module on this `app.scss`, since somehow the scss processor does not get to the `node_modules` folder. The current workaround is to import this css on our project on `/imports/startup/client/index.js`:
 
 ```javascript
 import React from 'react';
@@ -45,16 +40,16 @@ import { render } from 'react-dom';
 import { Bert } from 'meteor/themeteorchef:bert';
 import { Meteor } from 'meteor/meteor';
 
-
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import Routes from './routes/Routes';
+import App from '../../ui/layouts/App/App';
+import '../../ui/stylesheets/app.scss';
 
 Bert.defaults.style = 'growl-top-right';
 
 Meteor.startup(() => {
-    render(<Routes />, document.getElementById('react-root'));
+  render(<App />, document.getElementById('react-root'));
 });
 ```
 
@@ -64,14 +59,14 @@ The current fix for this is copying the `/bootstrap/fonts` folder into a `/publi
 
 ## Adding Font Awesome
 
-To use Font Awesome we'll user the cdn provided on [request on the website](http://fontawesome.io/get-started/). We'll add it to the head of `main.html`
+To use Font Awesome we'll use a CDN. We'll add it to the head of `main.html`, we will also use the package `fortawesome:fontawesome`.
 
 ```html
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
 ```
 
 ### References
-- [The way to use Bootstrap 4 from npm including js and tether](https://forums.meteor.com/t/the-way-to-use-bootstrap-4-from-npm-including-js-and-tether/23159/10)
-- [Meteor bootstrap package](https://atmospherejs.com/twbs/bootstrap), is still on 3.3.6
-- [SASS project structure](http://vanseodesign.com/css/sass-directory-structures/)
-- [Sass Language Documentation](http://sass-lang.com/documentation/)
+-   [The way to use Bootstrap 4 from npm including js and tether](https://forums.meteor.com/t/the-way-to-use-bootstrap-4-from-npm-including-js-and-tether/23159/10)
+-   [Meteor bootstrap package](https://atmospherejs.com/twbs/bootstrap), is still on 3.3.6
+-   [SASS project structure](http://vanseodesign.com/css/sass-directory-structures/)
+-   [Sass Language Documentation](http://sass-lang.com/documentation/)

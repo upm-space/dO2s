@@ -10,8 +10,8 @@ This is a good tutorial on routing, [Leveling Up With React: React Router](https
 This is the installation process for a Meteor app with React.
 
 ```bash
-meteor create dO2s
-cd dO2s
+meteor create myAppName
+cd myAppName
 meteor npm install
 meteor npm install --save react react-dom
 meteor npm install --save font-awesome
@@ -28,7 +28,7 @@ On the `client` folder the `main.html` file looks like this:
 
 ```html
 <head>
-    <title>dO2s</title>
+    <title>myAppName</title>
 </head>
 
 <body>
@@ -38,11 +38,10 @@ On the `client` folder the `main.html` file looks like this:
 
 On the `client` folder the `main.js` file looks like this:
 ```javascript
-// import './main.html';
 import '/imports/startup/client';
 ```
 
-We create the folders `/imports/startup/routes/` and we put in a `Routes.jsx` file.
+We create a layout in `/imports/ui/layouts/App/` and we put in a `App.js` file.
 
 ## Collections Definition
 

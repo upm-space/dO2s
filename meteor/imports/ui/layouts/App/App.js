@@ -9,7 +9,6 @@ import { Roles } from 'meteor/alanning:roles';
 
 import Navigation from '../../components/Navigation/Navigation';
 import Index from '../../pages/Index/Index';
-import One from '../../pages/One/One';
 import Two from '../../pages/Two/Two';
 import NotFound from '../../pages/NotFound/NotFound';
 import SignUp from '../../pages/Signup/SignUp';
@@ -23,6 +22,11 @@ import Footer from '../../components/Footer/Footer';
 import Terms from '../../pages/Terms/Terms';
 import Privacy from '../../pages/Privacy/Privacy';
 import ExamplePage from '../../pages/ExamplePage/ExamplePage';
+
+import Projects from '../../pages/Projects/Projects';
+import NewProject from '../../pages/NewProject/NewProject';
+import ViewProject from '../../pages/ViewProject/ViewProject';
+import EditProject from '../../pages/EditProject/EditProject';
 
 import Public from '../../components/Public/Public';
 import Authenticated from '../../components/Authenticated/Authenticated';
@@ -39,7 +43,10 @@ const App = props => (
         <Switch>
           <Route exact name="index" path="/" component={Index} />
           <AdminPage exact path="/usrmng" component={UserManagementLayout} {...props} />
-          <Authenticated exact path="/projects" component={One} {...props} />
+          <Authenticated exact path="/projects" component={Projects} {...props} />
+          <Authenticated exact path="/projects/new" component={NewProject} {...props} />
+          <Authenticated exact path="/projects/:_id" component={ViewProject} {...props} />
+          <Authenticated exact path="/projects/:_id/edit" component={EditProject} {...props} />
           <Authenticated exact path="/hangar" component={Two} {...props} />
           <EmailNotVerified exact path="/profile" component={Profile} {...props} />
           <Public path="/signup" component={SignUp} {...props} />

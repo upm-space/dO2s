@@ -1,4 +1,4 @@
-/* eslint-disable max-len, consistent-return */
+/* eslint-disable max-len */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Route, Redirect } from 'react-router-dom';

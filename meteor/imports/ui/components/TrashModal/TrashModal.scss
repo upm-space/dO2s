@@ -1,0 +1,14 @@
+.recycle-bin table {
+  vertical-align: middle;
+  tbody tr{
+      td {
+        vertical-align: middle;
+      }
+      td.button-column {
+        text-align: center;
+        vertical-align: middle;
+        white-space: nowrap;
+        width: 1px;
+      }
+    }
+}
