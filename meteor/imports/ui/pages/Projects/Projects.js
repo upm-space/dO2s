@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { Table, Alert, Button, Glyphicon, Checkbox } from 'react-bootstrap';
+import { Table, Alert, Button, Glyphicon, Checkbox, FormGroup } from 'react-bootstrap';
 import { timeago, monthDayYearAtTime } from '@cleverbeagle/dates';
 import { Meteor } from 'meteor/meteor';
 import { createContainer } from 'meteor/react-meteor-data';
 import { Bert } from 'meteor/themeteorchef:bert';
 import classnames from 'classnames';
+
 
 import ProjectsCollection from '../../../api/Projects/Projects';
 import Loading from '../../components/Loading/Loading';
@@ -24,7 +25,7 @@ class Projects extends Component {
     this.handleRestore = this.handleRestore.bind(this);
     this.toggleHideCompleted = this.toggleHideCompleted.bind(this);
     this.renderProjects = this.renderProjects.bind(this);
-    // this.trashClose = this.trashClose.bind(this);
+    this.trashClose = this.trashClose.bind(this);
 
     this.state = {
       hideCompleted: false,
@@ -94,11 +95,11 @@ class Projects extends Component {
     });
   }
 
-  // trashClose() {
-  //   this.setState({
-  //     trashShow: false,
-  //   });
-  // }
+  trashClose() {
+    this.setState({
+      trashShow: false,
+    });
+  }
 
   renderProjects(projects) {
     let filteredProjects = projects;
@@ -106,30 +107,29 @@ class Projects extends Component {
       filteredProjects = filteredProjects.filter(project => !project.done);
     }
     return filteredProjects.map(({ _id, name, createdAt, updatedAt, done }) => {
-      const projectClassName = classnames({
-        completed: done,
-      });
+      const goToProject = () => this.props.history.push(`${this.props.match.url}/${_id}`);
+      const projectClassName = classnames({ completed: done });
       return (
-        <tr className={projectClassName} key={_id}>
-          <td>{name}</td>
-          <td>{timeago(updatedAt)}</td>
-          <td>{monthDayYearAtTime(createdAt)}</td>
-          <td>
-            <Checkbox
-              bsSize="lg"
-              type="checkbox"
-              readOnly
-              checked={done}
-              onClick={() => this.toggleDone(_id, done)}
-            />
-          </td>
-          <td>
+        <tr
+          className={projectClassName}
+          key={_id}
+        >
+          <td onClick={goToProject}>{name}</td>
+          <td onClick={goToProject}>
+            {timeago(updatedAt)}</td>
+          <td onClick={goToProject}>
+            {monthDayYearAtTime(createdAt)}</td>
+          <td className="center-column">
             <Button
-              bsSize="xs"
+              bsStyle={done ? 'success' : 'default'}
+              onClick={() => this.toggleDone(_id, done)}
+            >{done ? <i className="fa fa-check-square-o" aria-hidden="true" /> : <i className="fa fa-square-o" aria-hidden="true" />}</Button>
+          </td>
+          <td className="center-column">
+            <Button
               bsStyle="danger"
               onClick={() => this.handleSoftRemove(_id)}
-              block
-            ><Glyphicon glyph="trash" /></Button>
+            ><i className="fa fa-times" aria-hidden="true" /></Button>
           </td>
         </tr>);
     });
@@ -137,13 +137,12 @@ class Projects extends Component {
 
   render() {
     const { loading, projects, match } = this.props;
-    const trashClose = () => this.setState({ trashShow: false });
     return (!loading ? (
       <div className="Projects">
         <TrashModal
           title="Recycle Bin"
           show={this.state.trashShow}
-          onHide={trashClose}
+          onHide={() => this.trashClose()}
           itemName="Projects"
           loading={loading}
           deletedCount={this.props.deletedCount}
@@ -153,12 +152,12 @@ class Projects extends Component {
         />
         <div className="page-header clearfix">
           <Button
-            bsStyle={this.state.hideCompleted ? 'info' : 'default'}
+            bsStyle={!this.state.hideCompleted ? 'info' : 'default'}
             onClick={() => this.toggleHideCompleted()}
           >{!this.state.hideCompleted ? 'Hide Completed Projects' : 'Show Completed Projects'} ({this.props.completeCount})</Button>
           <Link className="btn btn-success pull-right" to={`${match.url}/new`}>Add Project</Link>
         </div>
-        {projects.length ? <Table responsive>
+        {projects.length ? <Table responsive hover>
           <thead>
             <tr>
               <th>
@@ -168,7 +167,9 @@ class Projects extends Component {
               </th>
               <th>Last Updated</th>
               <th>Created</th>
-              <th>Completed</th>
+              <th className="center-column">
+                Completed
+              </th>
               <th><Button
                 bsStyle="default"
                 onClick={() => this.setState({ trashShow: true })}
