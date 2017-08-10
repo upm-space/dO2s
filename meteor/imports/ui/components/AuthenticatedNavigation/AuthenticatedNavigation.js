@@ -1,23 +1,27 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { NavDropdown, MenuItem, NavItem, Glyphicon, Nav } from 'react-bootstrap';
+import { NavDropdown, MenuItem, NavItem, Nav } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { Meteor } from 'meteor/meteor';
 
 const handleLogout = () => Meteor.logout();
 
 const UserMngButton = (<LinkContainer to="/usrmng">
-  <NavItem eventKey={3} href="/usrmng"><Glyphicon glyph="user" />User Manager</NavItem>
+  <NavItem eventKey={3} href="/usrmng">
+    <i className="fa fa-users" aria-hidden="true" /> User Manager
+  </NavItem>
 </LinkContainer>);
 
 const AuthenticatedNavigation = ({ isAdmin, name }) => (
   <div>
     <Nav>
       <LinkContainer to="/projects">
-        <NavItem eventKey={1} href="/projects">Projects</NavItem>
+        <NavItem eventKey={1} href="/projects">
+          <i className="fa fa-map" aria-hidden="true" /> Projects</NavItem>
       </LinkContainer>
       <LinkContainer to="/hangar">
-        <NavItem eventKey={2} href="/hangar">Hangar</NavItem>
+        <NavItem eventKey={2} href="/hangar">
+          <i className="fa fa-paper-plane" aria-hidden="true" /> Hangar</NavItem>
       </LinkContainer>
       {isAdmin ? UserMngButton : ''}
     </Nav>
