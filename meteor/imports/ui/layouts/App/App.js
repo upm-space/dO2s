@@ -24,6 +24,9 @@ import Privacy from '../../pages/Privacy/Privacy';
 import ExamplePage from '../../pages/ExamplePage/ExamplePage';
 
 import Projects from '../../pages/Projects/Projects';
+import NewProject from '../../pages/NewProject/NewProject';
+import ViewProject from '../../pages/ViewProject/ViewProject';
+import EditProject from '../../pages/EditProject/EditProject';
 
 import Public from '../../components/Public/Public';
 import Authenticated from '../../components/Authenticated/Authenticated';
@@ -41,6 +44,9 @@ const App = props => (
           <Route exact name="index" path="/" component={Index} />
           <AdminPage exact path="/usrmng" component={UserManagementLayout} {...props} />
           <Authenticated exact path="/projects" component={Projects} {...props} />
+          <Authenticated exact path="/projects/new" component={NewProject} {...props} />
+          <Authenticated exact path="/projects/:_id" component={ViewProject} {...props} />
+          <Authenticated exact path="/projects/:_id/edit" component={EditProject} {...props} />
           <Authenticated exact path="/hangar" component={Two} {...props} />
           <EmailNotVerified exact path="/profile" component={Profile} {...props} />
           <Public path="/signup" component={SignUp} {...props} />

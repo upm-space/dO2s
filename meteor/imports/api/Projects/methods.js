@@ -8,10 +8,11 @@ Meteor.methods({
     check(project, {
       name: String,
       description: String,
-      location: Object,
-      'location.longitude': Number,
-      'location.latitude': Number,
-      'location.zoom': Number,
+      location: {
+        longitude: Number,
+        latitude: Number,
+        zoom: Number,
+      },
     });
 
     try {
@@ -25,10 +26,11 @@ Meteor.methods({
       _id: String,
       name: String,
       description: String,
-      location: Object,
-      'location.longitude': Number,
-      'location.latitude': Number,
-      'location.zoom': Number,
+      location: {
+        longitude: Number,
+        latitude: Number,
+        zoom: Number,
+      },
     });
     try {
       const projectId = project._id;

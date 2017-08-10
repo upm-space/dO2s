@@ -42,6 +42,7 @@ Projects.schema = new SimpleSchema({
   },
   description: {
     type: String,
+    optional: true,
     label: 'The description of the project.',
   },
   location: {
