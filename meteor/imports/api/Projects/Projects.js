@@ -20,25 +20,25 @@ Projects.deny({
 Projects.schema = new SimpleSchema({
   owner: {
     type: String,
-    label: 'The ID of the user this document belongs to.',
+    label: 'The ID of the user this project belongs to.',
   },
   createdAt: {
     type: String,
-    label: 'The date this document was created.',
+    label: 'The date this project was created.',
     autoValue() {
       if (this.isInsert) return (new Date()).toISOString();
     },
   },
   updatedAt: {
     type: String,
-    label: 'The date this document was last updated.',
+    label: 'The date this project was last updated.',
     autoValue() {
       if (this.isInsert || this.isUpdate) return (new Date()).toISOString();
     },
   },
   name: {
     type: String,
-    label: 'The name of the document.',
+    label: 'The name of the project.',
   },
   description: {
     type: String,
