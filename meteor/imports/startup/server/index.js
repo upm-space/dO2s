@@ -1,4 +1,5 @@
-import './email';
-import './api';
+
 import './accounts';
+import './api';
 import './fixtures';
+import './email';
