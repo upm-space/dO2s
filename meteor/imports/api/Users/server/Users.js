@@ -89,7 +89,7 @@ Meteor.users.schema = new SimpleSchema({
   },
     // In order to avoid an 'Exception in setInterval callback' from Meteor
   deleted: {
-    type: SimpleSchema.oneOf(String, Date),
+    type: String,
   },
 });
 
