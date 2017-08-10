@@ -119,13 +119,13 @@ class Projects extends Component {
             {timeago(updatedAt)}</td>
           <td onClick={goToProject}>
             {monthDayYearAtTime(createdAt)}</td>
-          <td className="center-column">
+          <td className="button-column">
             <Button
               bsStyle={done ? 'success' : 'default'}
               onClick={() => this.toggleDone(_id, done)}
             >{done ? <i className="fa fa-check-square-o" aria-hidden="true" /> : <i className="fa fa-square-o" aria-hidden="true" />}</Button>
           </td>
-          <td className="center-column">
+          <td className="button-column">
             <Button
               bsStyle="danger"
               onClick={() => this.handleSoftRemove(_id)}

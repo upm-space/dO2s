@@ -9,7 +9,7 @@ const renderDeletedProjects = (deletedProjects, handleRestore, handleHardRemove)
   deletedProjects.map(({ _id, name }) => (
     <tr key={_id} className="clearfix">
       <td>{name}</td>
-      <td>
+      <td className="button-column">
         <Button
           bsSize="small"
           bsStyle="info"
@@ -17,7 +17,7 @@ const renderDeletedProjects = (deletedProjects, handleRestore, handleHardRemove)
 
         >Restore</Button>
       </td>
-      <td>
+      <td className="button-column">
         <Button
           bsSize="small"
           bsStyle="danger"
@@ -37,15 +37,6 @@ const TrashModal = props => (
       {!props.loading ? (
         <div className="recycle-bin">
           {props.deletedProjects.length ? <Table responsive>
-            {/* <thead>
-              <tr>
-                <th>
-                  Deleted {props.itemName} ({props.deletedCount})
-                </th>
-                <th />
-                <th />
-              </tr>
-            </thead> */}
             <tbody>
               {renderDeletedProjects(
                 props.deletedProjects,
