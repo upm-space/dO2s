@@ -9,13 +9,13 @@ import { Bert } from 'meteor/themeteorchef:bert';
 import classnames from 'classnames';
 
 
-import ProjectsCollection from '../../../api/Projects/Projects';
+import MissionsCollection from '../../../api/Missions/Missions';
 import Loading from '../../components/Loading/Loading';
 import TrashModal from '../../components/TrashModal/TrashModal';
 
-import './Projects.scss';
+import './Missions.scss';
 
-class Projects extends Component {
+class Missions extends Component {
   constructor(props) {
     super(props);
 
@@ -24,14 +24,12 @@ class Projects extends Component {
     this.handleSoftRemove = this.handleSoftRemove.bind(this);
     this.handleRestore = this.handleRestore.bind(this);
     this.toggleHideCompleted = this.toggleHideCompleted.bind(this);
-    this.renderProjects = this.renderProjects.bind(this);
+    this.renderMissions = this.renderMissions.bind(this);
     this.trashClose = this.trashClose.bind(this);
 
     this.state = {
       hideCompleted: false,
       trashShow: false,
-      showGrid: false,
-      showList: true,
     };
   }
 
@@ -41,44 +39,44 @@ class Projects extends Component {
     };
   }
 
-  handleSoftRemove(projectId) {
+  handleSoftRemove(missionId) {
     if (confirm('Move to Trash?')) {
-      Meteor.call('projects.softDelete', projectId, (error) => {
+      Meteor.call('missions.softDelete', missionId, (error) => {
         if (error) {
           Bert.alert(error.reason, 'danger');
         } else {
-          Bert.alert('Project moved to Trash!', 'warning');
+          Bert.alert('Mission moved to Trash!', 'warning');
         }
       });
     }
   }
 
-  handleRestore(projectId) {
-    if (confirm('Restore Project?')) {
-      Meteor.call('projects.restore', projectId, (error) => {
+  handleRestore(missionId) {
+    if (confirm('Restore Mission?')) {
+      Meteor.call('missions.restore', missionId, (error) => {
         if (error) {
           Bert.alert(error.reason, 'danger');
         } else {
-          Bert.alert('Project Restored!', 'success');
+          Bert.alert('Mission Restored!', 'success');
         }
       });
     }
   }
 
-  handleHardRemove(projectId) {
+  handleHardRemove(missionId) {
     if (confirm('Are you sure? This is permanent!')) {
-      Meteor.call('projects.hardDelete', projectId, (error) => {
+      Meteor.call('missions.hardDelete', missionId, (error) => {
         if (error) {
           Bert.alert(error.reason, 'danger');
         } else {
-          Bert.alert('Project deleted!', 'danger');
+          Bert.alert('Mission deleted!', 'danger');
         }
       });
     }
   }
 
-  toggleDone(projectId, done) {
-    Meteor.call('projects.setDone', projectId, !done, (error) => {
+  toggleDone(missionId, done) {
+    Meteor.call('missions.setDone', missionId, !done, (error) => {
       if (error) {
         Bert.alert(error.reason, 'danger');
       } else {
@@ -99,23 +97,23 @@ class Projects extends Component {
     });
   }
 
-  renderProjects(projects) {
-    let filteredProjects = projects;
+  renderMissions(missions) {
+    let filteredMissions = missions;
     if (this.state.hideCompleted) {
-      filteredProjects = filteredProjects.filter(project => !project.done);
+      filteredMissions = filteredMissions.filter(mission => !mission.done);
     }
-    return filteredProjects.map(({ _id, name, createdAt, updatedAt, done }) => {
-      const goToProject = () => this.props.history.push(`${this.props.match.url}/${_id}`);
-      const projectClassName = classnames({ completed: done });
+    return filteredMissions.map(({ _id, name, createdAt, updatedAt, done }) => {
+      const goToMission = () => this.props.history.push(`${this.props.match.url}/${_id}`);
+      const missionClassName = classnames({ completed: done });
       return (
         <tr
-          className={projectClassName}
+          className={missionClassName}
           key={_id}
         >
-          <td onClick={goToProject}>{name}</td>
-          <td onClick={goToProject}>
+          <td onClick={goToMission}>{name}</td>
+          <td onClick={goToMission}>
             {timeago(updatedAt)}</td>
-          <td onClick={goToProject}>
+          <td onClick={goToMission}>
             {monthDayYearAtTime(createdAt)}</td>
           <td className="button-column">
             <Button
@@ -138,14 +136,14 @@ class Projects extends Component {
   }
 
   render() {
-    const { loading, projects, match } = this.props;
+    const { loading, missions, match } = this.props;
     return (!loading ? (
-      <div className="Projects">
+      <div className="Missions">
         <TrashModal
           title="Recycle Bin"
           show={this.state.trashShow}
           onHide={() => this.trashClose()}
-          itemName="Projects"
+          itemName="Missions"
           loading={loading}
           deletedCount={this.props.deletedCount}
           handleRestore={this.handleRestore}
@@ -156,14 +154,14 @@ class Projects extends Component {
           <Button
             bsStyle={!this.state.hideCompleted ? 'info' : 'default'}
             onClick={() => this.toggleHideCompleted()}
-          >{!this.state.hideCompleted ? 'Hide Completed Projects' : 'Show Completed Projects'} ({this.props.completeCount})</Button>
-          <Link className="btn btn-success pull-right" to={`${match.url}/new`}>Add Project</Link>
+          >{!this.state.hideCompleted ? 'Hide Completed Missions' : 'Show Completed Missions'} ({this.props.completeCount})</Button>
+          <Link className="btn btn-success pull-right" to={`${match.url}/new`}>Add Mission</Link>
         </div>
-        {projects.length ? <Table responsive hover>
+        {missions.length ? <Table responsive hover>
           <thead>
             <tr>
               <th>
-                Projects (
+                Missions (
                   {this.state.hideCompleted ? this.props.incompleteCount : this.props.totalCount}
                 )
               </th>
@@ -180,17 +178,18 @@ class Projects extends Component {
             </tr>
           </thead>
           <tbody>
-            {this.renderProjects(projects)}
+            {this.renderMissions(missions)}
           </tbody>
-        </Table> : <Alert bsStyle="warning">No projects yet!</Alert>}
+        </Table> : <Alert bsStyle="warning">No missions yet!</Alert>}
       </div>
     ) : <Loading />);
   }
 }
 
-Projects.propTypes = {
+Missions.propTypes = {
+  projectId: PropTypes.String.isRequired,
   loading: PropTypes.bool.isRequired,
-  projects: PropTypes.arrayOf(PropTypes.object).isRequired,
+  missions: PropTypes.arrayOf(PropTypes.object).isRequired,
   deletedProjects: PropTypes.arrayOf(PropTypes.object).isRequired,
   match: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
@@ -200,15 +199,15 @@ Projects.propTypes = {
   totalCount: PropTypes.number.isRequired,
 };
 
-export default createContainer(() => {
-  const subscription = Meteor.subscribe('projects');
+export default createContainer(({ projectId }) => {
+  const subscription = Meteor.subscribe('missions', projectId);
   return {
     loading: !subscription.ready(),
-    projects: ProjectsCollection.find({ deleted: { $eq: 'no' } }).fetch(),
-    deletedProjects: ProjectsCollection.find({ deleted: { $ne: 'no' } }).fetch(),
-    deletedCount: ProjectsCollection.find({ deleted: { $ne: 'no' } }).count(),
-    incompleteCount: ProjectsCollection.find({ deleted: { $eq: 'no' }, done: { $eq: false } }).count(),
-    completeCount: ProjectsCollection.find({ deleted: { $eq: 'no' }, done: { $eq: true } }).count(),
-    totalCount: ProjectsCollection.find({ deleted: { $eq: 'no' } }).count(),
+    missions: MissionsCollection.find({ deleted: { $eq: 'no' } }).fetch(),
+    deletedMissions: MissionsCollection.find({ deleted: { $ne: 'no' } }).fetch(),
+    deletedCount: MissionsCollection.find({ deleted: { $ne: 'no' } }).count(),
+    incompleteCount: MissionsCollection.find({ deleted: { $eq: 'no' }, done: { $eq: false } }).count(),
+    completeCount: MissionsCollection.find({ deleted: { $eq: 'no' }, done: { $eq: true } }).count(),
+    totalCount: MissionsCollection.find({ deleted: { $eq: 'no' } }).count(),
   };
-}, Projects);
+}, Missions);
