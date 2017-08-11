@@ -62,7 +62,7 @@ class ProjectEditor extends React.Component {
     const project = {
       name: this.name.value.trim(),
       description: this.description.value.trim(),
-      location: {
+      mapLocation: {
         longitude: Number(this.longitude.value),
         latitude: Number(this.latitude.value),
         zoom: Number(this.zoom.value),
@@ -116,7 +116,7 @@ class ProjectEditor extends React.Component {
               className="form-control"
               name="longitude"
               ref={longitude => (this.longitude = longitude)}
-              defaultValue={project && project.location.longitude}
+              defaultValue={project && project.mapLocation.longitude}
             />
           </FormGroup>
           <FormGroup>
@@ -126,7 +126,7 @@ class ProjectEditor extends React.Component {
               className="form-control"
               name="latitude"
               ref={latitude => (this.latitude = latitude)}
-              defaultValue={project && project.location.latitude}
+              defaultValue={project && project.mapLocation.latitude}
             />
           </FormGroup>
           <FormGroup>
@@ -136,7 +136,7 @@ class ProjectEditor extends React.Component {
               className="form-control"
               name="zoom"
               ref={zoom => (this.zoom = zoom)}
-              defaultValue={project && project.location.zoom}
+              defaultValue={project && project.mapLocation.zoom}
             />
           </FormGroup>
           <Button type="submit" bsStyle="success">
@@ -144,14 +144,14 @@ class ProjectEditor extends React.Component {
           </Button>
         </Col>
           <Col xs={12} sm={8}>
-            <MapComponent location={project && project.location} />
+            <MapComponent location={project && project.mapLocation} />
           </Col>
         </Row></form>);
   }
 }
 
 ProjectEditor.defaultProps = {
-  project: { name: '', description: '', location: { longitude: 0, latitude: 0, zoom: 0 } },
+  project: { name: '', description: '', mapLocation: { longitude: 0, latitude: 0, zoom: 0 } },
 };
 
 ProjectEditor.propTypes = {

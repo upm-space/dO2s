@@ -40,7 +40,7 @@ const renderProject = (project, match, history) => (project && project.deleted =
         { project && project.description }
       </Col>
       <Col xs={12} sm={8}>
-        <MapComponent location={project && project.location} />
+        <MapComponent location={project && project.mapLocation} />
       </Col>
     </Row>
 

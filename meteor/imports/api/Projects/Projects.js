@@ -17,6 +17,25 @@ Projects.deny({
   remove: () => true,
 });
 
+const mapLocationSchema = new SimpleSchema({
+  longitude: {
+    type: Number,
+    label: 'The longitude of the project.',
+    max: 180,
+    min: -180,
+  },
+  latitude: {
+    type: Number,
+    label: 'The latitude of the project.',
+    max: 90,
+    min: -90,
+  },
+  zoom: {
+    type: Number,
+    label: 'The zoom of the location.',
+  },
+});
+
 Projects.schema = new SimpleSchema({
   owner: {
     type: String,
@@ -45,25 +64,9 @@ Projects.schema = new SimpleSchema({
     optional: true,
     label: 'The description of the project.',
   },
-  location: {
-    type: Object,
-    label: 'The location of the project.',
-  },
-  'location.longitude': {
-    type: Number,
-    label: 'The longitude of the project.',
-    max: 180,
-    min: -180,
-  },
-  'location.latitude': {
-    type: Number,
-    label: 'The latitude of the project.',
-    max: 90,
-    min: -90,
-  },
-  'location.zoom': {
-    type: Number,
-    label: 'The zoom of the location.',
+  mapLocation: {
+    type: mapLocationSchema,
+    label: 'The location of the project for the map.',
   },
   deleted: {
     type: String,
