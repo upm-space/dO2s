@@ -1,38 +1,35 @@
+/* eslint-disable meteor/audit-argument-checks */
 import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
 import Missions from './Missions';
 import rateLimit from '../../modules/rate-limit';
 
+const newMissionSchema = Missions.schema.pick('name', 'project', 'rpaType', 'type', 'description');
+
+const editMissionSchema = newMissionSchema.extend({ _id: String });
+
 Meteor.methods({
   'missions.insert': function missionsInsert(mission) {
-    check(mission, {
-      name: String,
-      projectId: String,
-      rpaType: String,
-      type: String,
-      description: String,
-    });
-
     try {
+      newMissionSchema.validate(mission);
       return Missions.insert({ owner: this.userId, ...mission });
     } catch (exception) {
+      if (exception.error === 'validation-error') {
+        throw new Meteor.Error(500, exception.message);
+      }
       throw new Meteor.Error('500', exception);
     }
   },
   'missions.update': function missionsUpdate(mission) {
-    check(mission, {
-      _id: String,
-      name: String,
-      projectId: String,
-      rpaType: String,
-      type: String,
-      description: String,
-    });
     try {
+      editMissionSchema.validate(mission);
       const missionId = mission._id;
       Missions.update(missionId, { $set: mission });
       return missionId; // Return _id so we can redirect to document after update.
     } catch (exception) {
+      if (exception.error === 'validation-error') {
+        throw new Meteor.Error(500, exception.message);
+      }
       throw new Meteor.Error('500', exception);
     }
   },

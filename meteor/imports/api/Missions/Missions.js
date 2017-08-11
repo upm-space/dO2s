@@ -17,12 +17,88 @@ Missions.deny({
   remove: () => true,
 });
 
+const cameraParametersSchema = new SimpleSchema({
+  cameraModel: {
+    type: String,
+    label: 'The model of the camera',
+    optional: true,
+  },
+  focalLength: {
+    type: Number,
+    label: 'The focal length of the camera in milimeters',
+    optional: true,
+    min: 0,
+  },
+  sensorWidth: {
+    type: Number,
+    label: 'The sensor width in milimeters',
+    optional: true,
+    min: 0,
+  },
+  sensorHeight: {
+    type: Number,
+    label: 'The sensor height in milimeters',
+    optional: true,
+    min: 0,
+  },
+  imageWidth: {
+    type: Number,
+    label: 'The image width in pixels',
+    optional: true,
+    min: 0,
+  },
+  imageHeight: {
+    type: Object,
+    label: 'The image height in pixels',
+    optional: true,
+    min: 0,
+  },
+});
+
+const flightParametersSchema = new SimpleSchema({
+  altitude: {
+    type: Number,
+    label: 'The altitude of the flight in meters',
+    optional: true,
+    min: 0,
+  },
+  speed: {
+    type: Number,
+    label: 'The speed of the flight in meters per second',
+    optional: true,
+    min: 0,
+  },
+  entryMargin: {
+    type: Number,
+    label: 'The entry margin for the fixed wing rpa in meters',
+    optional: true,
+    min: 0,
+  },
+});
+
+const pictureGridSchema = new SimpleSchema({
+  overlap: {
+    type: Number,
+    label: 'The overlap in %',
+    optional: true,
+    max: 0,
+    min: 100,
+  },
+  sidelap: {
+    type: Object,
+    label: 'The sidelap in %',
+    optional: true,
+    max: 0,
+    min: 100,
+  },
+});
+
 Missions.schema = new SimpleSchema({
   owner: {
     type: String,
     label: 'The ID of the user this mission belongs to.',
   },
-  projectId: {
+  project: {
     type: String,
     label: 'The ID of the project this mission belongs to.',
   },
@@ -72,7 +148,6 @@ Missions.schema = new SimpleSchema({
     type: Object,
     label: 'All the data related to the flight',
     optional: true,
-    blackbox: true,
   },
   'flightPlan.takeOffPoint': {
     type: Object,
@@ -93,86 +168,19 @@ Missions.schema = new SimpleSchema({
     blackbox: true,
   },
   'flightPlan.flightParameters': {
-    type: Object,
-    label: 'All the data related to the area for the flight',
+    type: flightParametersSchema,
+    label: 'Data related to the flight',
     optional: true,
-  },
-  'flightPlan.flightParameters.altitude': {
-    type: Number,
-    label: 'The altitude of the flight in meters',
-    optional: true,
-    min: 0,
-  },
-  'flightPlan.flightParameters.speed': {
-    type: Number,
-    label: 'The speed of the flight in meters per second',
-    optional: true,
-    min: 0,
-  },
-  'flightPlan.flightParameters.entryMargin': {
-    type: Number,
-    label: 'The entry margin for the fixed wing rpa in meters',
-    optional: true,
-    min: 0,
   },
   'flightPlan.cameraParameters': {
-    type: Object,
+    type: cameraParametersSchema,
     label: 'All the data related to the area for the flight',
     optional: true,
-  },
-  'flightPlan.cameraParameters.cameraModel': {
-    type: String,
-    label: 'The model of the camera',
-    optional: true,
-  },
-  'flightPlan.cameraParameters.focalLength': {
-    type: Number,
-    label: 'The focal length of the camera in milimeters',
-    optional: true,
-    min: 0,
-  },
-  'flightPlan.cameraParameters.sensorWidth': {
-    type: Number,
-    label: 'The sensor width in milimeters',
-    optional: true,
-    min: 0,
-  },
-  'flightPlan.cameraParameters.sensorHeight': {
-    type: Number,
-    label: 'The sensor height in milimeters',
-    optional: true,
-    min: 0,
-  },
-  'flightPlan.cameraParameters.imageWidth': {
-    type: Number,
-    label: 'The image width in pixels',
-    optional: true,
-    min: 0,
-  },
-  'flightPlan.cameraParameters.imageHeight': {
-    type: Object,
-    label: 'The image height in pixels',
-    optional: true,
-    min: 0,
   },
   'flightPlan.pictureGrid': {
-    type: Object,
+    type: pictureGridSchema,
     label: 'All the data related to the area for the flight',
     optional: true,
-  },
-  'flightPlan.pictureGrid.overlap': {
-    type: Number,
-    label: 'The overlap in %',
-    optional: true,
-    max: 0,
-    min: 100,
-  },
-  'flightPlan.pictureGrid.sidelap': {
-    type: Object,
-    label: 'The sidelap in %',
-    optional: true,
-    max: 0,
-    min: 100,
   },
   deleted: {
     type: String,
