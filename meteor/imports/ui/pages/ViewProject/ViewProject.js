@@ -46,7 +46,7 @@ const renderProject = (project, match, history) => (project && project.deleted =
     </Row>
     <Row>
       <Col xs={12} sm={12} md={12} lg={12}>
-        <Missions projectId={project._id} />
+        <Missions projectId={project._id} match={match} history={history} />
       </Col>
     </Row>
 
@@ -66,7 +66,7 @@ ViewProject.propTypes = {
 };
 
 export default createContainer(({ match }) => {
-  const projectId = match.params._id;
+  const projectId = match.params.project_id;
   const subscription = Meteor.subscribe('projects.view', projectId);
 
   return {

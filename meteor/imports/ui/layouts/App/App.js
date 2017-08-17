@@ -28,6 +28,8 @@ import NewProject from '../../pages/NewProject/NewProject';
 import ViewProject from '../../pages/ViewProject/ViewProject';
 import EditProject from '../../pages/EditProject/EditProject';
 
+import NewMission from '../../pages/NewMission/NewMission';
+
 import Public from '../../components/Public/Public';
 import Authenticated from '../../components/Authenticated/Authenticated';
 import AdminPage from '../../components/Administrator/AdminPage';
@@ -45,8 +47,19 @@ const App = props => (
           <AdminPage exact path="/usrmng" component={UserManagementLayout} {...props} />
           <Authenticated exact path="/projects" component={Projects} {...props} />
           <Authenticated exact path="/projects/new" component={NewProject} {...props} />
-          <Authenticated exact path="/projects/:_id" component={ViewProject} {...props} />
-          <Authenticated exact path="/projects/:_id/edit" component={EditProject} {...props} />
+          <Authenticated exact path="/projects/:project_id" component={ViewProject} {...props} />
+          <Authenticated
+            exact
+            path="/projects/:project_id/edit"
+            component={EditProject}
+            {...props}
+          />
+          <Authenticated
+            exact
+            path="/projects/:project_id/newMission"
+            component={NewMission}
+            {...props}
+          />
           <Authenticated exact path="/hangar" component={Two} {...props} />
           <EmailNotVerified exact path="/profile" component={Profile} {...props} />
           <Public path="/signup" component={SignUp} {...props} />
