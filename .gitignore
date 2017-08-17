@@ -1,11 +1,33 @@
-# Other ignores:
-# Mac directory files:
-.DS_Store
+# Created by https://www.gitignore.io/api/macos
 
-# -
+### macOS ###
+*.DS_Store
+.AppleDouble
+.LSOverride
 
-# ignoring the node_modules folder for all projects
-**/node_modules/
+# Icon must end with two \r
+#Icon - this caused and error for a folder wihth the same name
+
+# Thumbnails
+._*
+
+# Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# End of https://www.gitignore.io/api/macos
 
 # Created by https://www.gitignore.io/api/webstorm
 
