@@ -104,7 +104,7 @@ class Missions extends Component {
     }
     return filteredMissions.map(({ _id, name, createdAt, updatedAt, done }) => {
       const goToMission = () => this.props.history.push(`${this.props.match.url}/${_id}`);
-      const missionClassName = classnames({ completed: done });
+      const missionClassName = classnames({ info: done });
       return (
         <tr
           className={missionClassName}
@@ -148,14 +148,14 @@ class Missions extends Component {
           deletedCount={this.props.deletedCount}
           handleRestore={this.handleRestore}
           handleHardRemove={this.handleHardRemove}
-          deletedProjects={this.props.deletedProjects}
+          deletedProjects={this.props.deletedMissions}
         />
         <div className="page-header clearfix">
           <Button
             bsStyle={!this.state.hideCompleted ? 'info' : 'default'}
             onClick={() => this.toggleHideCompleted()}
           >{!this.state.hideCompleted ? 'Hide Completed Missions' : 'Show Completed Missions'} ({this.props.completeCount})</Button>
-          <Link className="btn btn-success pull-right" to={`${match.url}/new`}>Add Mission</Link>
+          <Link className="btn btn-success pull-right" to={`${match.url}/newMission`}>Add Mission</Link>
         </div>
         {missions.length ? <Table responsive hover>
           <thead>
@@ -187,10 +187,10 @@ class Missions extends Component {
 }
 
 Missions.propTypes = {
-  projectId: PropTypes.String.isRequired,
+  projectId: PropTypes.string.isRequired,
   loading: PropTypes.bool.isRequired,
   missions: PropTypes.arrayOf(PropTypes.object).isRequired,
-  deletedProjects: PropTypes.arrayOf(PropTypes.object).isRequired,
+  deletedMissions: PropTypes.arrayOf(PropTypes.object).isRequired,
   match: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
   deletedCount: PropTypes.number.isRequired,

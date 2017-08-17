@@ -106,7 +106,7 @@ class Projects extends Component {
     }
     return filteredProjects.map(({ _id, name, createdAt, updatedAt, done }) => {
       const goToProject = () => this.props.history.push(`${this.props.match.url}/${_id}`);
-      const projectClassName = classnames({ completed: done });
+      const projectClassName = classnames({ info: done });
       return (
         <tr
           className={projectClassName}
