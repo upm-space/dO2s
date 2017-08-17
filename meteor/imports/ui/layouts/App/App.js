@@ -29,6 +29,8 @@ import ViewProject from '../../pages/ViewProject/ViewProject';
 import EditProject from '../../pages/EditProject/EditProject';
 
 import NewMission from '../../pages/NewMission/NewMission';
+import ViewMission from '../../pages/ViewMission/ViewMission';
+import EditMission from '../../pages/EditMission/EditMission';
 
 import Public from '../../components/Public/Public';
 import Authenticated from '../../components/Authenticated/Authenticated';
@@ -58,6 +60,18 @@ const App = props => (
             exact
             path="/projects/:project_id/newMission"
             component={NewMission}
+            {...props}
+          />
+          <Authenticated
+            exact
+            path="/projects/:project_id/:mission_id/edit"
+            component={EditMission}
+            {...props}
+          />
+          <Authenticated
+            exact
+            path="/projects/:project_id/:mission_id"
+            component={ViewMission}
             {...props}
           />
           <Authenticated exact path="/hangar" component={Two} {...props} />
