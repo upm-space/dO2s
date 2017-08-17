@@ -6,7 +6,7 @@ import rateLimit from '../../modules/rate-limit';
 
 const newProjectSchema = Projects.schema.pick('name', 'description', 'mapLocation');
 
-const editProjectSchema = newProjectSchema.extend({ _id: String });
+const editProjectSchema = Projects.schema.pick('name', 'description', 'mapLocation', '_id');
 
 Meteor.methods({
   'projects.insert': function projectsInsert(project) {

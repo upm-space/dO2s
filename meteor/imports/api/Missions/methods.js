@@ -6,7 +6,7 @@ import rateLimit from '../../modules/rate-limit';
 
 const newMissionSchema = Missions.schema.pick('name', 'project', 'rpaType', 'type', 'description');
 
-const editMissionSchema = newMissionSchema.extend({ _id: String });
+const editMissionSchema = Missions.schema.pick('name', 'project', 'rpaType', 'type', 'description', '_id');
 
 Meteor.methods({
   'missions.insert': function missionsInsert(mission) {
