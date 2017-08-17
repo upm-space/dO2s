@@ -1,2 +1,1 @@
-# dO2s .- Drone Online Opensource Software
-
+# dO2s .- Drone Online Opensource Service
