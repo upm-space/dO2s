@@ -53,7 +53,6 @@ class MissionEditor extends Component {
     };
 
     if (existingMission) mission._id = existingMission;
-
     Meteor.call(methodToCall, mission, (error, missionId) => {
       if (error) {
         Bert.alert(error.reason, 'danger');
@@ -61,7 +60,7 @@ class MissionEditor extends Component {
         const confirmation = existingMission ? 'Mission updated!' : 'Mission added!';
         this.form.reset();
         Bert.alert(confirmation, 'success');
-        history.push(`${this.props.match.url}/${missionId}/plan`);
+        history.push(`/projects/${this.props.match.params.project_id}/${missionId}`);
       }
     });
   }
