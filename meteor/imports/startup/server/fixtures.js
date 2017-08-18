@@ -9,14 +9,14 @@ const missionsSeed = (userId, projectId) => ({
   environments: ['development', 'staging'],
   noLimit: true,
   modelCount: 5,
-  model(dataIndex, faker) {
+  model(dataIndex) {
     return {
       owner: userId,
       project: projectId,
       name: `Mission #${dataIndex + 1}`,
       description: `This is the description of Mission #${dataIndex + 1}`,
-      rpaType: faker.commerce.product(),
-      type: faker.commerce.productAdjective(),
+      rpaType: 'fixed-wing',
+      type: 'surface-area',
     };
   },
 });

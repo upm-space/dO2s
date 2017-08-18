@@ -33,6 +33,8 @@ const mapLocationSchema = new SimpleSchema({
   zoom: {
     type: Number,
     label: 'The zoom of the location.',
+    min: 0,
+    max: 21,
   },
 });
 
