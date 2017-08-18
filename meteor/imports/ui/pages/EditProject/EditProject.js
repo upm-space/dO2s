@@ -23,7 +23,7 @@ EditProject.propTypes = {
 };
 
 export default createContainer(({ match }) => {
-  const projectId = match.params._id;
+  const projectId = match.params.project_id;
   const subscription = Meteor.subscribe('projects.view', projectId);
 
   return {

@@ -1,42 +1,37 @@
+/* eslint-disable meteor/audit-argument-checks */
 import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
 import Projects from './Projects';
 import rateLimit from '../../modules/rate-limit';
 
+const newProjectSchema = Projects.schema.pick('name', 'description', 'mapLocation');
+
+const editProjectSchema = Projects.schema.pick('name', 'description', 'mapLocation');
+editProjectSchema.extend({ _id: String });
+
 Meteor.methods({
   'projects.insert': function projectsInsert(project) {
-    check(project, {
-      name: String,
-      description: String,
-      location: {
-        longitude: Number,
-        latitude: Number,
-        zoom: Number,
-      },
-    });
-
     try {
+      newProjectSchema.validate(project);
       return Projects.insert({ owner: this.userId, ...project });
     } catch (exception) {
+      if (exception.error === 'validation-error') {
+        throw new Meteor.Error(500, exception.message);
+      }
       throw new Meteor.Error('500', exception);
     }
   },
   'projects.update': function projectsUpdate(project) {
-    check(project, {
-      _id: String,
-      name: String,
-      description: String,
-      location: {
-        longitude: Number,
-        latitude: Number,
-        zoom: Number,
-      },
-    });
     try {
+      editProjectSchema.validate(project);
       const projectId = project._id;
       Projects.update(projectId, { $set: project });
-      return projectId; // Return _id so we can redirect to document after update.
+      return projectId;
+       // Return _id so we can redirect to document after update.
     } catch (exception) {
+      if (exception.error === 'validation-error') {
+        throw new Meteor.Error(500, exception.message);
+      }
       throw new Meteor.Error('500', exception);
     }
   },
