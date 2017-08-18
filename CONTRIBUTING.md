@@ -9,6 +9,7 @@
     *  [Syncing your Fork](#syncing-your-fork)
     *  [How to make a Pull Request](#how-to-make-a-pull-request)
     *  [What to do after your Pull Request is merged](#what-to-do-after-my-pull-request-is-merged)
+    *  [Guide for dummies](#guide-for-dummies)
 *   [Styleguides](#styleguides)
     *   [Git Commit Messages](#git-commit-messages)
     *   [JavaScript Styleguide](#javascript-styleguide)
@@ -87,6 +88,42 @@ As recommended in the link after your pull request is merged on the main reposit
    git push origin --delete <branch_name>
    git branch -d <branch_name>
    ```
+### Guide for dummies
+
+**PREPARING YOUR FORK**
+
+//TODO (an explanation of what is a fork and why we do this, no more than 3 lines)
+
+1. From the [dO2s github page](https://github.com/upm-space/dO2s) click on the Fork button (upper right button). This will create a new fork in your repository with the dO2s code.
+1. Go to your repository search your dO2s project and clone it (copy the path of your project by clicking on the **Clone or download button**)
+   ```bash
+   git clone <your coppied fork path>
+   ```
+1. Create a branch (remember, branches should be named based on the content or work you will be doing, and do not forget the notation _branch-name_). To create a new branch both locally and on the remote:
+   ```bash
+   git checkout -b <branch-name>
+   git push -u <remote-name> <branch-name>
+   ```
+1. **!!CONGRATS!!** you can start to make your big contribution by modifying the code on your local repo. 
+
+**UPLOADING YOUR CODE TO YOUR REMOTE FORK FROM YOUR WEBSTORM IDE**
+
+(sorry for Atom users ;-) )
+
+1. Once you consider you have to upload your code to your remote repo, click on the dO2s directory (on the project section) and go to VCS|Git|Commit directory menu option.
+ 
+2. A modal form will appear called _Commit Change_. Introduce a commit message about your work (what have you done from your last commit). click on the downer right button _Commit_ and choose the option _Commit and Push_. After that it will appear two message confirming the operation (the first one for the commit and the second one for the push).
+ 
+ **ASKING FOR A PULL REQUEST**
+ 
+ On your github webpage click Pull request button. By doing this operation you will you will ask to the dO2s administator to incorporate your contribution to the dO2s project. Do that when you consider you have finish a complete module.
+ 
+ Once you are sure the administrator has incorporate your code, proceed to delete your local and your remote branch.
+ ```bash
+    git push origin --delete <branch_name>
+    git branch -d <branch_name>
+ ```
+ 
 
 
 ## Styleguides
