@@ -74,6 +74,24 @@ const App = props => (
             component={ViewMission}
             {...props}
           />
+          <Authenticated
+            exact
+            path="/projects/:project_id/:mission_id/plan"
+            component={ViewMission}
+            {...props}
+          />
+          <Authenticated
+            exact
+            path="/projects/:project_id/:mission_id/flight"
+            component={ViewMission}
+            {...props}
+          />
+          <Authenticated
+            exact
+            path="/projects/:project_id/:mission_id/analysis"
+            component={ViewMission}
+            {...props}
+          />
           <Authenticated exact path="/hangar" component={Two} {...props} />
           <EmailNotVerified exact path="/profile" component={Profile} {...props} />
           <Public path="/signup" component={SignUp} {...props} />
