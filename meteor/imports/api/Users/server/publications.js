@@ -1,10 +1,13 @@
+
 import { Meteor } from 'meteor/meteor';
+import { check } from 'meteor/check';
 import { Roles } from 'meteor/alanning:roles';
 
-Meteor.publish('users', function users() {
-  if (Roles.userIsInRole(this.userId, ['admin'])) {
+Meteor.publish('users.management', function users(userId) {
+  check(userId, String);
+  if (Roles.userIsInRole(userId, ['admin'])) {
     return [
-      Meteor.users.find({}, { fields: { emails: 1, roles: 1, profile: 1 } }),
+      Meteor.users.find({}, { fields: { emails: 1, roles: 1, profile: 1, services: 1, deleted: 1, createdAt: 1 } }),
       Roles.getAllRoles(),
     ];
   }

@@ -37,7 +37,7 @@ import Authenticated from '../../components/Authenticated/Authenticated';
 import AdminPage from '../../components/Administrator/AdminPage';
 import EmailNotVerified from '../../components/EmailNotVerified/EmailNotVerified';
 
-import UserManagementLayout from '../../pages/UserManagement/UserMngLayout';
+import UserManagement from '../../pages/UserManagement/UserManagement';
 
 const App = props => (
   <Router>
@@ -46,7 +46,7 @@ const App = props => (
       <Grid fluid>
         <Switch>
           <Route exact name="index" path="/" component={Index} />
-          <AdminPage exact path="/usrmng" component={UserManagementLayout} {...props} />
+          <AdminPage exact path="/usrmng" component={UserManagement} {...props} />
           <Authenticated exact path="/projects" component={Projects} {...props} />
           <Authenticated exact path="/projects/new" component={NewProject} {...props} />
           <Authenticated exact path="/projects/:project_id" component={ViewProject} {...props} />

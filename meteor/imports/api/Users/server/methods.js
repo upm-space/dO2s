@@ -7,11 +7,14 @@ import editProfile from './edit-profile';
 import rateLimit from '../../../modules/rate-limit';
 
 Meteor.methods({
-  'users.changeRole': function usersChangeRole(update) {
-    check(update, { _id: String, role: String });
+  'users.changeRole': function usersChangeRole(userId, newRole) {
+    check(userId, String);
+    check(newRole, String);
 
     if (Roles.userIsInRole(this.userId, ['admin'])) {
-      Roles.setUserRoles(update._id, update.role);
+      Roles.setUserRoles(userId, newRole);
+    } else if (Roles.userIsInRole(userId, ['admin'])) {
+      throw new Meteor.Error('500', 'No way Jose');
     } else {
       throw new Meteor.Error('500', 'Ha! Nice try, slick.');
     }
@@ -43,6 +46,8 @@ Meteor.methods({
     try {
       if (Roles.userIsInRole(this.userId, ['admin'])) {
         Meteor.users.update(userId, { $set: { deleted: (new Date()).toISOString() } });
+      } else if (Roles.userIsInRole(userId, ['admin'])) {
+        throw new Meteor.Error('500', 'No way Jose');
       } else {
         throw new Meteor.Error('500', 'Ha! Nice try, slick.');
       }
@@ -67,6 +72,8 @@ Meteor.methods({
     try {
       if (Roles.userIsInRole(this.userId, ['admin'])) {
         Meteor.users.remove(userId);
+      } else if (Roles.userIsInRole(userId, ['admin'])) {
+        throw new Meteor.Error('500', 'No way Jose');
       } else {
         throw new Meteor.Error('500', 'Ha! Nice try, slick.');
       }
