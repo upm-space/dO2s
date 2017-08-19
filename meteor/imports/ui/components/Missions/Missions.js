@@ -148,7 +148,7 @@ class Missions extends Component {
           deletedCount={this.props.deletedCount}
           handleRestore={this.handleRestore}
           handleHardRemove={this.handleHardRemove}
-          deletedProjects={this.props.deletedMissions}
+          deletedItems={this.props.deletedMissions}
         />
         <div className="page-header clearfix">
           <Button

@@ -150,7 +150,7 @@ class Projects extends Component {
           deletedCount={this.props.deletedCount}
           handleRestore={this.handleRestore}
           handleHardRemove={this.handleHardRemove}
-          deletedProjects={this.props.deletedProjects}
+          deletedItems={this.props.deletedProjects}
         />
         <div className="page-header clearfix">
           <Button
