@@ -6,8 +6,8 @@ import { Meteor } from 'meteor/meteor';
 
 const handleLogout = () => Meteor.logout();
 
-const UserMngButton = (<LinkContainer to="/usrmng">
-  <NavItem eventKey={3} href="/usrmng">
+const UserMngButton = (<LinkContainer to="/users">
+  <NavItem eventKey={3} href="/users">
     <i className="fa fa-users" aria-hidden="true" /> User Manager
   </NavItem>
 </LinkContainer>);

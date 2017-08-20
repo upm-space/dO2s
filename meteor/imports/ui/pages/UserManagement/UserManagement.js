@@ -123,7 +123,7 @@ class UserManagement extends Component {
     });
   }
   renderOAuthUser(user) {
-    const goToUser = () => this.props.history.push(`${this.props.match.url}/${user._id}`);
+    const goToUser = () => this.props.history.push(`${this.props.match.url}/${user._id}/edit`);
     return (<td onClick={goToUser} className="OAuthCell">
       {Object.keys(user.services).map(service => (
         <div key={service} className={`LoggedInWith ${service}`}>
@@ -135,7 +135,7 @@ class UserManagement extends Component {
   }
 
   renderPasswordUser(user) {
-    const goToUser = () => this.props.history.push(`${this.props.match.url}/${user._id}`);
+    const goToUser = () => this.props.history.push(`${this.props.match.url}/${user._id}/edit`);
     return <td className={user.emails[0].verified ? '' : 'warning'} onClick={goToUser}>{user.emails[0].address}</td>;
   }
 
@@ -157,7 +157,7 @@ class UserManagement extends Component {
           userRoles += `${user.roles[i]}, `;
         }
       }
-      const goToUser = () => this.props.history.push(`${this.props.match.url}/${user._id}`);
+      const goToUser = () => this.props.history.push(`${this.props.match.url}/${user._id}/edit`);
       return (
         <tr
           disabled={currentUserId === user._id}
@@ -194,6 +194,7 @@ class UserManagement extends Component {
           deletedItems={this.props.deletedUsers}
         />
         <div className="page-header clearfix">
+          <h4 className="pull-left">User Manager</h4>
           <Link className="btn btn-success pull-right" to={`${match.url}/new`}>Add User</Link>
         </div>
         {users.length ? <Table responsive hover>
@@ -229,7 +230,6 @@ UserManagement.propTypes = {
   loading: PropTypes.bool.isRequired,
   currentUserId: PropTypes.string,
   users: PropTypes.arrayOf(PropTypes.object).isRequired,
-  applicationRoles: PropTypes.array.isRequired,
   deletedUsers: PropTypes.arrayOf(PropTypes.object).isRequired,
   match: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
@@ -239,12 +239,10 @@ UserManagement.propTypes = {
 
 export default createContainer(() => {
   const currentUserId = Meteor.userId();
-  const usersSub = Meteor.subscribe('users.management', currentUserId);
-  const rolesSub = Meteor.subscribe('users.roles');
+  const usersSub = Meteor.subscribe('users.management');
   return {
     currentUserId,
-    applicationRoles: Roles.getAllRoles().fetch(),
-    loading: !usersSub.ready() && !rolesSub.ready(),
+    loading: !usersSub.ready(),
     users: Meteor.users.find({ deleted: { $eq: 'no' } }).fetch(),
     deletedUsers: Meteor.users.find({ deleted: { $ne: 'no' } }).fetch(),
     deletedCount: Meteor.users.find({ deleted: { $ne: 'no' } }).count(),
