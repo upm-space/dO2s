@@ -1,12 +1,18 @@
 /* eslint-disable consistent-return */
 import { Meteor } from 'meteor/meteor';
-import { Bert } from 'meteor/themeteorchef:bert';
+import { Accounts } from 'meteor/accounts-base';
+
 
 let action;
 
 const updateUser = (userId, { emailAddress, profile }) => {
+  console.log(userId, emailAddress, JSON.stringify(profile));
   try {
-    if (emailAddress === Meteor.user().emails[0].address) {
+    const currentEmail = Meteor.users.find({ _id: userId },
+      { fields: {
+        emails: 1,
+      } }).fetch()[0].emails[0].address;
+    if (emailAddress === currentEmail) {
       Meteor.users.update(userId, {
         $set: { profile },
       });
@@ -17,12 +23,11 @@ const updateUser = (userId, { emailAddress, profile }) => {
           'emails.0.verified': false,
           profile,
         },
-      });
-      Meteor.call('users.sendVerificationEmail', (error) => {
+      }, (error) => {
         if (error) {
-          Bert.alert(error.reason, 'danger');
+          throw new Meteor.Error('500', error.reason);
         } else {
-          Bert.alert(`Verification sent to ${emailAddress}!`, 'success');
+          Accounts.sendVerificationEmail(userId);
         }
       });
     }
@@ -32,6 +37,8 @@ const updateUser = (userId, { emailAddress, profile }) => {
 };
 
 const editProfile = ({ userId, profile }, promise) => {
+  console.log('calls inside edit-profile');
+  console.log(userId, JSON.stringify(profile));
   try {
     action = promise;
     updateUser(userId, profile);

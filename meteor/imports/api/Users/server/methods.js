@@ -146,6 +146,8 @@ Meteor.methods({
     }
   },
   'users.update': function usersUpdate(user) {
+    console.log('calling users.update');
+    console.log(JSON.stringify(user));
     try {
       editUserSchema.validate(user);
       const userProfile = {
@@ -157,6 +159,7 @@ Meteor.methods({
           },
         },
       };
+      console.log(`userProfile ${JSON.stringify(userProfile)}`);
       return editProfile({ userId: user._id, userProfile })
       .then(response => response)
       .catch((exception) => {
