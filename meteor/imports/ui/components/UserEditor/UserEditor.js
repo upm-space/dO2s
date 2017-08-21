@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import { Row, Col, FormGroup, ControlLabel, Button, FormControl } from 'react-bootstrap';
 import _ from 'lodash';
 import { Meteor } from 'meteor/meteor';
-import { Accounts } from 'meteor/accounts-base';
 import { Bert } from 'meteor/themeteorchef:bert';
 
 import validate from '../../../modules/validate';

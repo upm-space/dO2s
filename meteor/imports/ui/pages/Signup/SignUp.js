@@ -1,3 +1,4 @@
+/* eslint-disable no-return-assign */
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Row, Col, FormGroup, ControlLabel, Button } from 'react-bootstrap';
