@@ -1,10 +1,33 @@
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { NavDropdown, MenuItem, NavItem, Nav } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { Meteor } from 'meteor/meteor';
+import { matchPath } from 'react-router-dom';
 
 const handleLogout = () => Meteor.logout();
+
+const isProject = (location) => {
+  const match = matchPath(location.pathname, {
+    path: '/projects/:project_id',
+  });
+
+  if (match && match.params && match.params.hasOwnProperty('project_id') && match.params.project_id !== 'new') {
+    return true;
+  }
+  return false;
+};
+
+const ProjectButton = (location) => {
+  const match = matchPath(location.pathname, {
+    path: '/projects/:project_id',
+  });
+  return (match.params.project_id ?
+    <LinkContainer to={`/projects/${match.params.project_id}`}>
+      <NavItem eventKey={5} href={`/projects/${match.params.project_id}`}> Current Project</NavItem>
+    </LinkContainer> : null);
+};
 
 const UserMngButton = (<LinkContainer to="/users">
   <NavItem eventKey={3} href="/users">
@@ -12,13 +35,14 @@ const UserMngButton = (<LinkContainer to="/users">
   </NavItem>
 </LinkContainer>);
 
-const AuthenticatedNavigation = ({ isAdmin, name }) => (
+const AuthenticatedNavigation = ({ isAdmin, name, location }) => (
   <div>
     <Nav>
       <LinkContainer to="/projects">
         <NavItem eventKey={1} href="/projects">
           <i className="fa fa-map" aria-hidden="true" /> Projects</NavItem>
       </LinkContainer>
+      {isProject(location) ? ProjectButton(location) : ''}
       <LinkContainer to="/hangar">
         <NavItem eventKey={2} href="/hangar">
           <i className="fa fa-paper-plane" aria-hidden="true" /> Hangar</NavItem>
@@ -40,6 +64,7 @@ const AuthenticatedNavigation = ({ isAdmin, name }) => (
 AuthenticatedNavigation.propTypes = {
   name: PropTypes.string.isRequired,
   isAdmin: PropTypes.bool.isRequired,
+  location: PropTypes.object.isRequired,
 };
 
 export default AuthenticatedNavigation;
