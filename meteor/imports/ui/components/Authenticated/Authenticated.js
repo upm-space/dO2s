@@ -7,7 +7,7 @@ import { Meteor } from 'meteor/meteor';
 import { Bert } from 'meteor/themeteorchef:bert';
 
 const sendVerificationEmail = (emailAddress) => {
-  Meteor.call('users.sendVerificationEmail', (error) => {
+  Meteor.call('users.sendVerificationEmail', Meteor.userId(), (error) => {
     if (error) {
       Bert.alert(error.reason, 'danger');
     } else {

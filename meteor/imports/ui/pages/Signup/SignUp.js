@@ -1,9 +1,9 @@
+/* eslint-disable no-return-assign */
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Row, Col, FormGroup, ControlLabel, Button } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import { Meteor } from 'meteor/meteor';
-import { Accounts } from 'meteor/accounts-base';
 import { Bert } from 'meteor/themeteorchef:bert';
 
 
@@ -69,8 +69,7 @@ class SignUp extends Component {
 
   handleSubmit() {
     const { history } = this.props;
-
-    Accounts.createUser({
+    const user = {
       email: this.emailAddress.value,
       password: this.password.value,
       profile: {
@@ -79,13 +78,20 @@ class SignUp extends Component {
           last: this.lastName.value,
         },
       },
-    }, (error) => {
+    };
+    Meteor.call('users.insert', user, (error, userId) => {
       if (error) {
         Bert.alert(error.reason, 'danger');
       } else {
-        Meteor.call('users.sendVerificationEmail');
-        Bert.alert('Welcome!', 'success');
-        history.push('/projects');
+        Meteor.call('users.sendVerificationEmail', userId);
+        Meteor.loginWithPassword(user.email, user.password, (errorLogIn) => {
+          if (errorLogIn) {
+            Bert.alert(errorLogIn.reason, 'danger');
+          } else {
+            Bert.alert('Welcome!', 'success');
+            history.push('/projects');
+          }
+        });
       }
     });
   }

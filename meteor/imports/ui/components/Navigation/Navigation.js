@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Navbar } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
+
 
 import AuthenticatedNavigation from '../AuthenticatedNavigation/AuthenticatedNavigation';
 import PublicNavigation from '../PublicNavigation/PublicNavigation';
@@ -31,4 +32,4 @@ Navigation.propTypes = {
   isAdmin: PropTypes.bool.isRequired,
 };
 
-export default Navigation;
+export default withRouter(Navigation);

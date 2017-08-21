@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions, no-alert */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
@@ -148,7 +149,7 @@ class Missions extends Component {
           deletedCount={this.props.deletedCount}
           handleRestore={this.handleRestore}
           handleHardRemove={this.handleHardRemove}
-          deletedProjects={this.props.deletedMissions}
+          deletedItems={this.props.deletedMissions}
         />
         <div className="page-header clearfix">
           <Button
@@ -187,7 +188,6 @@ class Missions extends Component {
 }
 
 Missions.propTypes = {
-  projectId: PropTypes.string.isRequired,
   loading: PropTypes.bool.isRequired,
   missions: PropTypes.arrayOf(PropTypes.object).isRequired,
   deletedMissions: PropTypes.arrayOf(PropTypes.object).isRequired,

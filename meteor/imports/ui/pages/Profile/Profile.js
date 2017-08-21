@@ -1,4 +1,4 @@
-/* eslint-disable no-underscore-dangle */
+/* eslint-disable no-underscore-dangle, no-return-assign */
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';

@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions, no-alert  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
@@ -150,7 +151,7 @@ class Projects extends Component {
           deletedCount={this.props.deletedCount}
           handleRestore={this.handleRestore}
           handleHardRemove={this.handleHardRemove}
-          deletedProjects={this.props.deletedProjects}
+          deletedItems={this.props.deletedProjects}
         />
         <div className="page-header clearfix">
           <Button
