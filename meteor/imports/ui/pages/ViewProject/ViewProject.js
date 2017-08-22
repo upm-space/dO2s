@@ -37,11 +37,15 @@ const renderProject = (project, match, history) => (project && project.deleted =
       </ButtonToolbar>
     </div>
     <Row>
-      <Col xs={12} sm={4}>
+      <Col xs={12} sm={3}>
         { project && project.description }
       </Col>
-      <Col xs={12} sm={8}>
-        <MapComponent location={project && project.mapLocation} />
+      <Col xs={12} sm={9}>
+        <MapComponent
+          location={project && project.mapLocation}
+          height="200px"
+          onLocationChange={() => {}}
+        />
       </Col>
     </Row>
     <Row>

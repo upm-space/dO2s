@@ -25,7 +25,7 @@ const ProjectButton = (location) => {
   });
   return (match.params.project_id ?
     <LinkContainer to={`/projects/${match.params.project_id}`}>
-      <NavItem eventKey={5} href={`/projects/${match.params.project_id}`}> Current Project</NavItem>
+      <NavItem eventKey={5} href={`/projects/${match.params.project_id}`}><i className="fa fa-map-marker fa-lg" aria-hidden="true" /> Current Project</NavItem>
     </LinkContainer> : null);
 };
 
