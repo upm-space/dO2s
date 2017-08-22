@@ -11,6 +11,10 @@ class MapComponent extends Component {
   constructor(props) {
     super(props);
     this.searchLocation = this.searchLocation.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+    this.state = {
+      searchLoc: '',
+    };
   }
   componentDidMount() {
     let currentLocation = this.props.location;
@@ -41,12 +45,19 @@ class MapComponent extends Component {
     }
   }
 
+  handleChange(event) {
+    this.setState({ searchLoc: event.target.value });
+  }
+
   searchLocation() {
     const urlforPlace = location => `http://nominatim.openstreetmap.org/search?format=json&limit=5&q=${location}`;
-        // see https://derickrethans.nl/leaflet-and-nominatim.html
-    fetch(urlforPlace(this.searchLoc.value.trim()))
+    fetch(urlforPlace(this.state.searchLoc.trim()))
     .then(d => d.json())
-    .then(d => this.mymap.setView([d[0].lat, d[0].lon], 15))
+    // .then(d => console.log(d[0].display_name))
+    .then((d) => {
+      this.mymap.setView([d[0].lat, d[0].lon], 15);
+      this.setState({ searchLoc: d[0].display_name });
+    })
     .catch((error) => {
       Bert.alert('Location not found', 'warning');
     });
@@ -62,7 +73,8 @@ class MapComponent extends Component {
               type="text"
               className="form-control"
               name="searchLoc"
-              ref={searchLoc => (this.searchLoc = searchLoc)}
+              value={this.state.searchLoc}
+              onChange={this.handleChange}
             />
             <InputGroup.Button>
               <Button onClick={this.searchLocation}>Search</Button>
