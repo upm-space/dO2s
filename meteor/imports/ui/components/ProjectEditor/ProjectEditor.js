@@ -10,6 +10,15 @@ import validate from '../../../modules/validate';
 import MapComponent from '../MapComponent/MapComponent';
 
 class ProjectEditor extends React.Component {
+  constructor(props) {
+    super(props);
+    this.changeProjectLocation = this.changeProjectLocation.bind(this);
+    this.state = {
+      longitude: props.project && props.project.mapLocation.longitude,
+      latitude: props.project && props.project.mapLocation.latitude,
+      zoom: props.project && props.project.mapLocation.zoom,
+    };
+  }
   componentDidMount() {
     const component = this;
     validate(component.form, {
@@ -55,6 +64,14 @@ class ProjectEditor extends React.Component {
     });
   }
 
+  changeProjectLocation(location) {
+    this.setState({
+      longitude: location.longitude,
+      latitude: location.latitude,
+      zoom: location.zoom,
+    });
+  }
+
   handleSubmit() {
     const { history } = this.props;
     const existingProject = this.props.project && this.props.project._id;
@@ -68,6 +85,11 @@ class ProjectEditor extends React.Component {
         zoom: Number(this.zoom.value),
       },
     };
+    this.setState({
+      longitude: Number(this.longitude.value),
+      latitude: Number(this.latitude.value),
+      zoom: Number(this.zoom.value),
+    });
 
     if (existingProject) project._id = existingProject;
 
@@ -87,7 +109,7 @@ class ProjectEditor extends React.Component {
     const { project } = this.props;
     return (
       <form ref={form => (this.form = form)} onSubmit={event => event.preventDefault()}>
-        <Row><Col xs={12} sm={4}>
+        <Row><Col xs={12} sm={4} md={4} lg={4}>
           <FormGroup>
             <ControlLabel>Name</ControlLabel>
             <input
@@ -116,7 +138,8 @@ class ProjectEditor extends React.Component {
               className="form-control"
               name="longitude"
               ref={longitude => (this.longitude = longitude)}
-              defaultValue={project && project.mapLocation.longitude}
+              value={this.state.longitude}
+              onChange={() => this.setState({ longitude: Number(this.longitude.value) })}
             />
           </FormGroup>
           <FormGroup>
@@ -126,7 +149,8 @@ class ProjectEditor extends React.Component {
               className="form-control"
               name="latitude"
               ref={latitude => (this.latitude = latitude)}
-              defaultValue={project && project.mapLocation.latitude}
+              value={this.state.latitude}
+              onChange={() => this.setState({ latitude: Number(this.latitude.value) })}
             />
           </FormGroup>
           <FormGroup>
@@ -136,22 +160,26 @@ class ProjectEditor extends React.Component {
               className="form-control"
               name="zoom"
               ref={zoom => (this.zoom = zoom)}
-              defaultValue={project && project.mapLocation.zoom}
+              value={this.state.zoom}
+              onChange={() => this.setState({ zoom: Number(this.zoom.value) })}
             />
           </FormGroup>
-          <Button type="submit" bsStyle="success">
+        </Col>
+          <Col xs={12} sm={8} md={8} lg={8}>
+            <MapComponent location={this.state} onLocationChange={this.changeProjectLocation} height="75vh" searchItem />
+          </Col>
+
+        </Row>
+        <Row><Col xs={12} sm={4} md={4} lg={4}>
+          <Button className="btn-xs-block" type="submit" bsStyle="success">
             {project && project._id ? 'Save Changes' : 'Add Project'}
           </Button>
-        </Col>
-          <Col xs={12} sm={8}>
-            <MapComponent location={project && project.mapLocation} />
-          </Col>
-        </Row></form>);
+        </Col></Row></form>);
   }
 }
 
 ProjectEditor.defaultProps = {
-  project: { name: '', description: '', mapLocation: { longitude: 0, latitude: 0, zoom: 0 } },
+  project: { name: '', description: '', mapLocation: { longitude: 3.7038, latitude: 40.4168, zoom: 5 } },
 };
 
 ProjectEditor.propTypes = {
