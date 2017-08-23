@@ -4,9 +4,9 @@ import { check } from 'meteor/check';
 import Batteries from './Batteries';
 import rateLimit from '../../modules/rate-limit';
 
-const newBatterySchema = Batteries.schema.pick('model', 'registrationNumber', 'amperes', 'cellNumber');
+const newBatterySchema = Batteries.schema.pick('model', 'registrationNumber', 'amperes', 'cellNumber', 'weight');
 
-const editBatterySchema = Batteries.schema.pick('model', 'registrationNumber', 'amperes', 'cellNumber');
+const editBatterySchema = Batteries.schema.pick('model', 'registrationNumber', 'amperes', 'cellNumber', 'weight');
 editBatterySchema.extend({ _id: String });
 
 Meteor.methods({
