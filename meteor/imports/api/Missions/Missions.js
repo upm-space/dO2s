@@ -113,13 +113,13 @@ Missions.schema = new SimpleSchema({
   },
   'flightPlan.takeOffPoint': {
     type: Object,
-    label: 'All the data related to the flight',
+    label: 'The take off point for the flight',
     optional: true,
     blackbox: true,
   },
   'flightPlan.landingPoint': {
     type: Object,
-    label: 'All the data related to the flight',
+    label: 'The landing point for the flight',
     optional: true,
     blackbox: true,
   },
