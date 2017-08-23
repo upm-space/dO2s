@@ -17,44 +17,6 @@ Missions.deny({
   remove: () => true,
 });
 
-const cameraParametersSchema = new SimpleSchema({
-  cameraModel: {
-    type: String,
-    label: 'The model of the camera',
-    optional: true,
-  },
-  focalLength: {
-    type: Number,
-    label: 'The focal length of the camera in milimeters',
-    optional: true,
-    min: 0,
-  },
-  sensorWidth: {
-    type: Number,
-    label: 'The sensor width in milimeters',
-    optional: true,
-    min: 0,
-  },
-  sensorHeight: {
-    type: Number,
-    label: 'The sensor height in milimeters',
-    optional: true,
-    min: 0,
-  },
-  imageWidth: {
-    type: Number,
-    label: 'The image width in pixels',
-    optional: true,
-    min: 0,
-  },
-  imageHeight: {
-    type: Object,
-    label: 'The image height in pixels',
-    optional: true,
-    min: 0,
-  },
-});
-
 const flightParametersSchema = new SimpleSchema({
   altitude: {
     type: Number,
@@ -130,7 +92,7 @@ Missions.schema = new SimpleSchema({
     label: 'The kind of the remote propelled aircraft used.',
     optional: true,
   },
-  type: {
+  missionType: {
     type: String,
     label: 'The mission type',
     optional: true,
@@ -172,9 +134,9 @@ Missions.schema = new SimpleSchema({
     label: 'Data related to the flight',
     optional: true,
   },
-  'flightPlan.cameraParameters': {
-    type: cameraParametersSchema,
-    label: 'All the data related to the area for the flight',
+  'flightPlan.payload': {
+    type: String,
+    label: 'The ID of the payload used in this mission',
     optional: true,
   },
   'flightPlan.pictureGrid': {
