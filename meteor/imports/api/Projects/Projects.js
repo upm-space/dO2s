@@ -17,53 +17,58 @@ Projects.deny({
   remove: () => true,
 });
 
+const mapLocationSchema = new SimpleSchema({
+  longitude: {
+    type: Number,
+    label: 'The longitude of the project.',
+    max: 180,
+    min: -180,
+  },
+  latitude: {
+    type: Number,
+    label: 'The latitude of the project.',
+    max: 90,
+    min: -90,
+  },
+  zoom: {
+    type: Number,
+    label: 'The zoom of the location.',
+    min: 0,
+    max: 21,
+  },
+});
+
 Projects.schema = new SimpleSchema({
   owner: {
     type: String,
-    label: 'The ID of the user this document belongs to.',
+    label: 'The ID of the user this project belongs to.',
   },
   createdAt: {
     type: String,
-    label: 'The date this document was created.',
+    label: 'The date this project was created.',
     autoValue() {
       if (this.isInsert) return (new Date()).toISOString();
     },
   },
   updatedAt: {
     type: String,
-    label: 'The date this document was last updated.',
+    label: 'The date this project was last updated.',
     autoValue() {
       if (this.isInsert || this.isUpdate) return (new Date()).toISOString();
     },
   },
   name: {
     type: String,
-    label: 'The name of the document.',
+    label: 'The name of the project.',
   },
   description: {
     type: String,
     optional: true,
     label: 'The description of the project.',
   },
-  location: {
-    type: Object,
-    label: 'The location of the project.',
-  },
-  'location.longitude': {
-    type: Number,
-    label: 'The longitude of the project.',
-    max: 180,
-    min: -180,
-  },
-  'location.latitude': {
-    type: Number,
-    label: 'The latitude of the project.',
-    max: 90,
-    min: -90,
-  },
-  'location.zoom': {
-    type: Number,
-    label: 'The zoom of the location.',
+  mapLocation: {
+    type: mapLocationSchema,
+    label: 'The location of the project for the map.',
   },
   deleted: {
     type: String,

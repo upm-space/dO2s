@@ -5,10 +5,16 @@ import Loading from '../Loading/Loading';
 
 import './TrashModal.scss';
 
-const renderDeletedProjects = (deletedProjects, handleRestore, handleHardRemove) => (
-  deletedProjects.map(({ _id, name }) => (
+
+const getUserName = name => ({
+  string: name,
+  object: `${name.first} ${name.last}`,
+}[typeof name]);
+
+const renderDeletedItems = (deletedItems, handleRestore, handleHardRemove) => (
+  deletedItems.map(({ _id, name, profile }) => (
     <tr key={_id} className="clearfix">
-      <td>{name}</td>
+      <td>{!name ? getUserName(profile.name) : name}</td>
       <td className="button-column">
         <Button
           bsSize="small"
@@ -36,10 +42,10 @@ const TrashModal = props => (
     <Modal.Body>
       {!props.loading ? (
         <div className="recycle-bin">
-          {props.deletedProjects.length ? <Table responsive>
+          {props.deletedItems.length ? <Table responsive>
             <tbody>
-              {renderDeletedProjects(
-                props.deletedProjects,
+              {renderDeletedItems(
+                props.deletedItems,
                 props.handleRestore,
                 props.handleHardRemove)}
             </tbody>
@@ -54,7 +60,7 @@ TrashModal.propTypes = {
   show: PropTypes.bool.isRequired,
   onHide: PropTypes.func.isRequired,
   itemName: PropTypes.string.isRequired,
-  deletedProjects: PropTypes.arrayOf(PropTypes.object).isRequired,
+  deletedItems: PropTypes.arrayOf(PropTypes.object).isRequired,
   deletedCount: PropTypes.number.isRequired,
   loading: PropTypes.bool.isRequired,
   handleRestore: PropTypes.func.isRequired,

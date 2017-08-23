@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions, no-alert  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
@@ -37,8 +38,6 @@ class Projects extends Component {
 
   getInitialState() {
     return {
-      deleteModalShow: false,
-      newItemShow: false,
       trashShow: false,
     };
   }
@@ -108,7 +107,7 @@ class Projects extends Component {
     }
     return filteredProjects.map(({ _id, name, createdAt, updatedAt, done }) => {
       const goToProject = () => this.props.history.push(`${this.props.match.url}/${_id}`);
-      const projectClassName = classnames({ completed: done });
+      const projectClassName = classnames({ info: done });
       return (
         <tr
           className={projectClassName}
@@ -152,7 +151,7 @@ class Projects extends Component {
           deletedCount={this.props.deletedCount}
           handleRestore={this.handleRestore}
           handleHardRemove={this.handleHardRemove}
-          deletedProjects={this.props.deletedProjects}
+          deletedItems={this.props.deletedProjects}
         />
         <div className="page-header clearfix">
           <Button

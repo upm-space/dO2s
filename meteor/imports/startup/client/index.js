@@ -3,8 +3,10 @@ import { render } from 'react-dom';
 import { Bert } from 'meteor/themeteorchef:bert';
 import { Meteor } from 'meteor/meteor';
 
-import 'bootstrap';
+
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap';
+import 'leaflet/dist/leaflet.css';
 
 import App from '../../ui/layouts/App/App';
 import '../../ui/stylesheets/app.scss';

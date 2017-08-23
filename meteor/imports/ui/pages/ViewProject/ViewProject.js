@@ -8,6 +8,7 @@ import Projects from '../../../api/Projects/Projects';
 import NotFound from '../NotFound/NotFound';
 import Loading from '../../components/Loading/Loading';
 import MapComponent from '../../components/MapComponent/MapComponent';
+import Missions from '../../components/Missions/Missions';
 
 const handleRemove = (projectId, history) => {
   if (confirm('Move to Trash?')) {
@@ -36,11 +37,20 @@ const renderProject = (project, match, history) => (project && project.deleted =
       </ButtonToolbar>
     </div>
     <Row>
-      <Col xs={12} sm={4}>
+      <Col xs={12} sm={3}>
         { project && project.description }
       </Col>
-      <Col xs={12} sm={8}>
-        <MapComponent location={project && project.location} />
+      <Col xs={12} sm={9}>
+        <MapComponent
+          location={project && project.mapLocation}
+          height="200px"
+          onLocationChange={() => {}}
+        />
+      </Col>
+    </Row>
+    <Row>
+      <Col xs={12} sm={12} md={12} lg={12}>
+        <Missions projectId={project._id} match={match} history={history} />
       </Col>
     </Row>
 
@@ -60,7 +70,7 @@ ViewProject.propTypes = {
 };
 
 export default createContainer(({ match }) => {
-  const projectId = match.params._id;
+  const projectId = match.params.project_id;
   const subscription = Meteor.subscribe('projects.view', projectId);
 
   return {

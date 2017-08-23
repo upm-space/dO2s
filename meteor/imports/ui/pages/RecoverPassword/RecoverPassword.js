@@ -1,3 +1,4 @@
+/* eslint-disable no-return-assign */
 import React, { Component } from 'react';
 import { Row, Col, Alert, FormGroup, ControlLabel, Button } from 'react-bootstrap';
 import PropTypes from 'prop-types';

@@ -16,7 +16,7 @@ emailTemplates.resetPassword = {
   text(user, url) {
     const userEmail = user.emails[0].address;
     const urlWithoutHash = url.replace('#/', '');
-    if (Meteor.isDevelopment) console.info(`Reset Password Link: ${urlWithoutHash}`); // eslint-disable-line
+    if (Meteor.isDevelopment) console.info(`Reset Password Link: ${urlWithoutHash} to ${userEmail}`); // eslint-disable-line
     const emailBody = `A password reset has been requested for the account related to this address (${userEmail}). To reset the password, visit the following link: \n\n${urlWithoutHash}\n\n If you did not request this reset, please ignore this email. If you feel something is wrong, please contact our support team: ${email}.`;
 
     return emailBody;
@@ -30,7 +30,7 @@ emailTemplates.verifyEmail = {
   text(user, url) {
     const userEmail = user.emails[0].address;
     const urlWithoutHash = url.replace('#/', '');
-    if (Meteor.isDevelopment) console.info(`Verify Email Link: ${urlWithoutHash}`); // eslint-disable-line
+    if (Meteor.isDevelopment) console.info(`Verify Email Link: ${urlWithoutHash} to ${userEmail}`); // eslint-disable-line
     const emailBody = `Hey, ${user.profile.name.first}! Welcome to ${name}.\n\nTo verify your email address (${userEmail}), click the link below:\n\n${urlWithoutHash}\n\nIf you feel something is wrong, please contact our support team: ${email}.`;
 
     return emailBody;
