@@ -124,7 +124,16 @@ As recommended in the link after your pull request is merged on the main reposit
     git branch -d <branch_name>
  ```
  
+**MERGING THE DO2S/MASTER INTO YOUR WORKING BRANCH**
 
+First of all go to [syncing-your-fork](#syncing-your-fork) 
+
+Second
+
+```
+git chechout <branch-name>
+git merge master             # (resolve conflicts)
+```
 
 ## Styleguides
 
