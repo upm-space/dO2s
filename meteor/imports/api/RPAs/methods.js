@@ -1,19 +1,19 @@
 /* eslint-disable meteor/audit-argument-checks */
 import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
-import Projects from './Projects';
+import RPAs from './RPAs';
 import rateLimit from '../../modules/rate-limit';
 
-const newProjectSchema = Projects.schema.pick('name', 'description', 'mapLocation');
+const newRPASchema = RPAs.schema.pick('name', 'rpaType', 'model', 'registrationNumber', 'constructionDate', 'serialNumber', 'weight', 'flightParameters');
 
-const editProjectSchema = Projects.schema.pick('name', 'description', 'mapLocation');
-editProjectSchema.extend({ _id: String });
+const editRPASchema = RPAs.schema.pick('name', 'rpaType', 'model', 'registrationNumber', 'constructionDate', 'serialNumber', 'weight', 'flightParameters');
+editRPASchema.extend({ _id: String });
 
 Meteor.methods({
-  'projects.insert': function projectsInsert(project) {
+  'rpas.insert': function rpasInsert(rpa) {
     try {
-      newProjectSchema.validate(project);
-      return Projects.insert({ owner: this.userId, ...project });
+      newRPASchema.validate(rpa);
+      return RPAs.insert({ owner: this.userId, ...rpa });
     } catch (exception) {
       if (exception.error === 'validation-error') {
         throw new Meteor.Error(500, exception.message);
@@ -21,12 +21,12 @@ Meteor.methods({
       throw new Meteor.Error('500', exception);
     }
   },
-  'projects.update': function projectsUpdate(project) {
+  'rpas.update': function rpasUpdate(rpa) {
     try {
-      editProjectSchema.validate(project);
-      const projectId = project._id;
-      Projects.update(projectId, { $set: project });
-      return projectId;
+      editRPASchema.validate(rpa);
+      const rpaId = rpa._id;
+      RPAs.update(rpaId, { $set: rpa });
+      return rpaId;
        // Return _id so we can redirect to document after update.
     } catch (exception) {
       if (exception.error === 'validation-error') {
@@ -35,35 +35,26 @@ Meteor.methods({
       throw new Meteor.Error('500', exception);
     }
   },
-  'projects.softDelete': function projectsSoftDelete(projectId) {
-    check(projectId, String);
+  'rpas.softDelete': function rpasSoftDelete(rpaId) {
+    check(rpaId, String);
     try {
-      Projects.update(projectId, { $set: { deleted: (new Date()).toISOString() } });
+      RPAs.update(rpaId, { $set: { deleted: (new Date()).toISOString() } });
     } catch (exception) {
       throw new Meteor.Error('500', exception);
     }
   },
-  'projects.restore': function projectsRestore(projectId) {
-    check(projectId, String);
+  'rpas.restore': function rpasRestore(rpaId) {
+    check(rpaId, String);
     try {
-      Projects.update(projectId, { $set: { deleted: 'no' } });
+      RPAs.update(rpaId, { $set: { deleted: 'no' } });
     } catch (exception) {
       throw new Meteor.Error('500', exception);
     }
   },
-  'projects.hardDelete': function projectsHardDelete(projectId) {
-    check(projectId, String);
+  'rpas.hardDelete': function rpasHardDelete(rpaId) {
+    check(rpaId, String);
     try {
-      return Projects.remove(projectId);
-    } catch (exception) {
-      throw new Meteor.Error('500', exception);
-    }
-  },
-  'projects.setDone': function projectsSetDone(projectId, setDone) {
-    check(projectId, String);
-    check(setDone, Boolean);
-    try {
-      Projects.update(projectId, { $set: { done: setDone } });
+      return RPAs.remove(rpaId);
     } catch (exception) {
       throw new Meteor.Error('500', exception);
     }
@@ -72,12 +63,11 @@ Meteor.methods({
 
 rateLimit({
   methods: [
-    'projects.insert',
-    'projects.update',
-    'projects.softDelete',
-    'projects.restore',
-    'projects.hardDelete',
-    'projects.setDone',
+    'rpas.insert',
+    'rpas.update',
+    'rpas.softDelete',
+    'rpas.restore',
+    'rpas.hardDelete',
   ],
   limit: 5,
   timeRange: 1000,

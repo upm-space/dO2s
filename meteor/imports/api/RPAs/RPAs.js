@@ -1,5 +1,4 @@
 /* eslint-disable consistent-return */
-
 import { Mongo } from 'meteor/mongo';
 import SimpleSchema from 'simpl-schema';
 
@@ -45,7 +44,7 @@ const flightParametersSchema = new SimpleSchema({
   maxLandSpeed: {
     type: SimpleSchema.Integer,
     label: 'The max landing speed for the copter rpa in cm/s',
-    min: 30,
+    min: 0,
     max: 200,
   },
 });
