@@ -1,18 +1,17 @@
-/* eslint-disable jsx-a11y/no-noninteractive-element-interactions, no-alert  */
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Table, Alert, Button, Glyphicon } from 'react-bootstrap';
-import { timeago, monthDayYearAtTime } from '@cleverbeagle/dates';
 import { Meteor } from 'meteor/meteor';
 import { createContainer } from 'meteor/react-meteor-data';
 import { Bert } from 'meteor/themeteorchef:bert';
-import classnames from 'classnames';
 
 
 import ProjectsCollection from '../../../api/Projects/Projects';
 import Loading from '../../components/Loading/Loading';
 import TrashModal from '../../components/TrashModal/TrashModal';
+import List from '../../components/List/List';
 
 import './Projects.scss';
 
@@ -25,7 +24,6 @@ class Projects extends Component {
     this.handleSoftRemove = this.handleSoftRemove.bind(this);
     this.handleRestore = this.handleRestore.bind(this);
     this.toggleHideCompleted = this.toggleHideCompleted.bind(this);
-    this.renderProjects = this.renderProjects.bind(this);
     this.trashClose = this.trashClose.bind(this);
 
     this.state = {
@@ -100,44 +98,6 @@ class Projects extends Component {
     });
   }
 
-  renderProjects(projects) {
-    let filteredProjects = projects;
-    if (this.state.hideCompleted) {
-      filteredProjects = filteredProjects.filter(project => !project.done);
-    }
-    return filteredProjects.map(({ _id, name, createdAt, updatedAt, done }) => {
-      const goToProject = () => this.props.history.push(`${this.props.match.url}/${_id}`);
-      const projectClassName = classnames({ info: done });
-      return (
-        <tr
-          className={projectClassName}
-          key={_id}
-        >
-          <td onClick={goToProject}>{name}</td>
-          <td onClick={goToProject}>
-            {timeago(updatedAt)}</td>
-          <td onClick={goToProject}>
-            {monthDayYearAtTime(createdAt)}</td>
-          <td className="button-column">
-            <Button
-              bsStyle={done ? 'success' : 'default'}
-              onClick={() => this.toggleDone(_id, done)}
-            >
-              {done ?
-                <i className="fa fa-check-square-o" aria-hidden="true" /> :
-                <i className="fa fa-square-o" aria-hidden="true" />}
-            </Button>
-          </td>
-          <td className="button-column">
-            <Button
-              bsStyle="danger"
-              onClick={() => this.handleSoftRemove(_id)}
-            ><i className="fa fa-times" aria-hidden="true" /></Button>
-          </td>
-        </tr>);
-    });
-  }
-
   render() {
     const { loading, projects, match } = this.props;
     return (!loading ? (
@@ -180,9 +140,16 @@ class Projects extends Component {
               ><Glyphicon glyph="trash" /></Button></th>
             </tr>
           </thead>
-          <tbody>
-            {this.renderProjects(projects)}
-          </tbody>
+          <List
+            loading={loading}
+            completedColumn
+            items={projects}
+            match={match}
+            hideCompleted={this.state.hideCompleted}
+            history={this.props.history}
+            softDeleteItem={this.handleSoftRemove}
+            completeItem={this.toggleDone}
+          />
         </Table> : <Alert bsStyle="warning">No projects yet!</Alert>}
       </div>
     ) : <Loading />);
