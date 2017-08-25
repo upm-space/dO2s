@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import WidgetAirSpeed from'../WidgetAirSpeed/WidjetAirSpeed.js'
+import WidgetAirSpeed from'../FlightWidgets/WidjetAirSpeed.js';
+import WidgetAltimeter from'../FlightWidgets/WidjetAltimeter.js';
 
 class MissionFlight extends React.Component {
     constructor(props){
@@ -22,6 +23,7 @@ class MissionFlight extends React.Component {
                 onChange={() => this.setState({ speed: Number(this.speed.value) })}
             />
             <WidgetAirSpeed instSize="400" id="wAirSpeed" speedProp={this.state.speed}/>
+            <WidgetAltimeter instSize="400" id="wAltimeter" altitudeProp={this.state.speed}/>
             <input type="button"   value="set speed" />
         </div>)
     }
