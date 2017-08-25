@@ -4,9 +4,9 @@ import { check } from 'meteor/check';
 import Missions from './Missions';
 import rateLimit from '../../modules/rate-limit';
 
-const newMissionSchema = Missions.schema.pick('name', 'project', 'rpaType', 'type', 'description');
+const newMissionSchema = Missions.schema.pick('name', 'project', 'rpaType', 'missionType', 'description');
 
-const editMissionSchema = Missions.schema.pick('name', 'project', 'rpaType', 'type', 'description');
+const editMissionSchema = Missions.schema.pick('name', 'project', 'rpaType', 'missionType', 'description');
 editMissionSchema.extend({ _id: String });
 
 Meteor.methods({

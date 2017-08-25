@@ -21,7 +21,7 @@ class MissionEditor extends Component {
         rpaType: {
           required: true,
         },
-        type: {
+        missionType: {
           required: true,
         },
       },
@@ -32,7 +32,7 @@ class MissionEditor extends Component {
         rpaType: {
           required: 'This needs a RPA type, please.',
         },
-        type: {
+        missionType: {
           required: 'This needs a mission type, please.',
         },
       },
@@ -49,7 +49,7 @@ class MissionEditor extends Component {
       description: this.description.value.trim(),
       project: this.props.match.params.project_id,
       rpaType: this.rpaType.value.trim(),
-      type: this.type.value.trim(),
+      missionType: this.missionType.value.trim(),
     };
 
     if (existingMission) mission._id = existingMission;
@@ -109,9 +109,9 @@ class MissionEditor extends Component {
             <select
               type="text"
               className="form-control"
-              name="type"
-              ref={type => (this.type = type)}
-              defaultValue={mission && mission.type}
+              name="missionType"
+              ref={missionType => (this.missionType = missionType)}
+              defaultValue={mission && mission.missionType}
               placeholder="Congratulations! Today is your day. You're off to Great Places! You're off and away!"
             >
               <option value="surface-area">Surface Area</option>
@@ -126,7 +126,7 @@ class MissionEditor extends Component {
 }
 
 MissionEditor.defaultProps = {
-  mission: { name: '', description: '', rpaType: 'fixed-wing', type: 'surface-area', project: '' },
+  mission: { name: '', description: '', rpaType: 'fixed-wing', missionType: 'surface-area', project: '' },
 };
 
 MissionEditor.propTypes = {
