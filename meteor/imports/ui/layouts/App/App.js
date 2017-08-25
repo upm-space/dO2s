@@ -9,7 +9,6 @@ import { Roles } from 'meteor/alanning:roles';
 
 import Navigation from '../../components/Navigation/Navigation';
 import Index from '../../pages/Index/Index';
-import Two from '../../pages/Two/Two';
 import NotFound from '../../pages/NotFound/NotFound';
 import SignUp from '../../pages/Signup/SignUp';
 import Login from '../../pages/Login/Login';
@@ -31,6 +30,8 @@ import EditProject from '../../pages/EditProject/EditProject';
 import NewMission from '../../pages/NewMission/NewMission';
 import ViewMission from '../../pages/ViewMission/ViewMission';
 import EditMission from '../../pages/EditMission/EditMission';
+
+import Hangar from '../../pages/Hangar/Hangar';
 
 import Public from '../../components/Public/Public';
 import Authenticated from '../../components/Authenticated/Authenticated';
@@ -96,7 +97,39 @@ const App = props => (
             component={ViewMission}
             {...props}
           />
-          <Authenticated exact path="/hangar" component={Two} {...props} />
+          <Authenticated exact path="/hangar" component={Hangar} {...props} />
+          <Authenticated exact path="/hangar/rpas" component={Hangar} {...props} />
+          <Authenticated exact path="/hangar/rpas/new" component={Hangar} {...props} />
+          <Authenticated exact path="/hangar/rpas/:rpa_id" component={Hangar} {...props} />
+          <Authenticated exact path="/hangar/rpas/:rpa_id/edit" component={Hangar} {...props} />
+          <Authenticated exact path="/hangar/payloads" component={Hangar} {...props} />
+          <Authenticated exact path="/hangar/payloads/new" component={Hangar} {...props} />
+          <Authenticated
+            exact
+            path="/hangar/payloads/:payload_id"
+            component={Hangar}
+            {...props}
+          />
+          <Authenticated
+            exact
+            path="/hangar/payloads/:payload_id/edit"
+            component={Hangar}
+            {...props}
+          />
+          <Authenticated exact path="/hangar/batteries" component={Hangar} {...props} />
+          <Authenticated exact path="/hangar/batteries/new" component={Hangar} {...props} />
+          <Authenticated
+            exact
+            path="/hangar/batteries/:battery_id"
+            component={Hangar}
+            {...props}
+          />
+          <Authenticated
+            exact
+            path="/hangar/batteries/:battery_id/edit"
+            component={Hangar}
+            {...props}
+          />
           <EmailNotVerified exact path="/profile" component={Profile} {...props} />
           <Public path="/signup" component={SignUp} {...props} />
           <Public path="/login" component={Login} {...props} />
