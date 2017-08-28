@@ -15,7 +15,7 @@ const handleRemove = (rpaId, history) => {
         Bert.alert(error.reason, 'danger');
       } else {
         Bert.alert('RPA deleted!', 'warning');
-        history.push('/rpas');
+        history.push('/hangar/rpas');
       }
     });
   }

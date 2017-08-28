@@ -105,7 +105,7 @@ class RPAEditor extends Component {
         const confirmation = existingRPA ? 'RPA updated!' : 'RPA added!';
         this.form.reset();
         Bert.alert(confirmation, 'success');
-        history.push(`hangar/rpas/${rpaId}`);
+        history.push(`/hangar/rpas/${rpaId}`);
       }
     });
   }
@@ -287,7 +287,6 @@ RPAEditor.defaultProps = {
 RPAEditor.propTypes = {
   rpa: PropTypes.object,
   history: PropTypes.object.isRequired,
-  match: PropTypes.object.isRequired,
 };
 
 export default RPAEditor;
