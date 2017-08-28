@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import WidgetAirSpeed from'../FlightWidgets/WidjetAirSpeed.js';
 import WidgetAltimeter from'../FlightWidgets/WidjetAltimeter.js';
+import WidgetAttitude from'../FlightWidgets/WidjetAttitude.js';
 
 class MissionFlight extends React.Component {
     constructor(props){
@@ -24,6 +25,7 @@ class MissionFlight extends React.Component {
             />
             <WidgetAirSpeed instSize="400" id="wAirSpeed" speedProp={this.state.speed}/>
             <WidgetAltimeter instSize="400" id="wAltimeter" altitudeProp={this.state.speed}/>
+            <WidgetAttitude instSize="400" id="wAltimeter" pitchProp={this.state.speed} rollProp={this.state.speed}/>
             <input type="button"   value="set speed" />
         </div>)
     }
