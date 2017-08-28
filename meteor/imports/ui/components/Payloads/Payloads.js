@@ -13,8 +13,6 @@ import Loading from '../../components/Loading/Loading';
 import TrashModal from '../../components/TrashModal/TrashModal';
 import List from '../../components/List/List';
 
-// import './Payloads.scss';
-
 class Payloads extends Component {
   constructor(props) {
     super(props);
@@ -102,7 +100,7 @@ class Payloads extends Component {
         <div className="page-header clearfix">
           <Link className="btn btn-success pull-right" to={`${match.url}/new`}>Add Payload</Link>
         </div>
-        {payloads.length ? <Table responsive hover>
+        {payloads.length ? <div className="ItemList"><Table responsive hover>
           <thead>
             <tr>
               <th>
@@ -125,7 +123,7 @@ class Payloads extends Component {
             history={history}
             softDeleteItem={this.handleSoftRemove}
           />
-        </Table> : <Alert bsStyle="warning">No payloads yet!</Alert>}
+        </Table></div> : <Alert bsStyle="warning">No payloads yet!</Alert>}
       </div>
     ) : <Loading />);
   }

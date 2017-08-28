@@ -13,8 +13,6 @@ import Loading from '../Loading/Loading';
 import TrashModal from '../TrashModal/TrashModal';
 import List from '../List/List';
 
-// import './RPAs.scss';
-
 class RPAs extends Component {
   constructor(props) {
     super(props);
@@ -102,7 +100,7 @@ class RPAs extends Component {
         <div className="page-header clearfix">
           <Link className="btn btn-success pull-right" to={`${match.url}/new`}>Add RPA</Link>
         </div>
-        {rpas.length ? <Table responsive hover>
+        {rpas.length ? <div className="ItemList"><Table responsive hover>
           <thead>
             <tr>
               <th>
@@ -125,7 +123,7 @@ class RPAs extends Component {
             history={this.props.history}
             softDeleteItem={this.handleSoftRemove}
           />
-        </Table> : <Alert bsStyle="warning">No rpas yet!</Alert>}
+        </Table></div> : <Alert bsStyle="warning">No rpas yet!</Alert>}
       </div>
     ) : <Loading />);
   }

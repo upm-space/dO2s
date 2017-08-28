@@ -7,9 +7,6 @@ import classnames from 'classnames';
 
 import Loading from '../../components/Loading/Loading';
 
-
-import './List.scss';
-
 const renderListItems =
 ({ history, match, items, hideCompleted, completedColumn, softDeleteItem, completeItem }) => {
   let filteredItems = items;

@@ -1,4 +1,4 @@
-.Projects table {
+.ItemList table {
     thead tr th.center-column{
         text-align: center;
     }
@@ -19,4 +19,28 @@
             width: 1px;
         }
     }
+    .OAuthCell {
+      .LoggedInWith {
+        p {
+          margin: 0;
+          color: #000;
+        }
+
+        .ServiceIcon {
+          float: left;
+          width: auto;
+          margin-right: 15px;
+          i {
+            font-size: 20px;
+          }
+      }
+          &.facebook {
+            color: $facebook;
+          }
+
+          &.google {
+            color: $google;
+          }
+        }
+      }
 }

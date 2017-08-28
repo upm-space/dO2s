@@ -13,8 +13,6 @@ import Loading from '../../components/Loading/Loading';
 import TrashModal from '../../components/TrashModal/TrashModal';
 import List from '../../components/List/List';
 
-import './Projects.scss';
-
 class Projects extends Component {
   constructor(props) {
     super(props);
@@ -120,7 +118,7 @@ class Projects extends Component {
           >{!this.state.hideCompleted ? 'Hide Completed Projects' : 'Show Completed Projects'} ({this.props.completeCount})</Button>
           <Link className="btn btn-success pull-right" to={`${match.url}/new`}>Add Project</Link>
         </div>
-        {projects.length ? <Table responsive hover>
+        {projects.length ? <div className="ItemList"><Table responsive hover>
           <thead>
             <tr>
               <th>
@@ -150,7 +148,7 @@ class Projects extends Component {
             softDeleteItem={this.handleSoftRemove}
             completeItem={this.toggleDone}
           />
-        </Table> : <Alert bsStyle="warning">No projects yet!</Alert>}
+        </Table></div> : <Alert bsStyle="warning">No projects yet!</Alert>}
       </div>
     ) : <Loading />);
   }
