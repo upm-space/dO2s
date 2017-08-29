@@ -28,7 +28,7 @@ class PayloadEditor extends Component {
           required: true,
         },
         model: {
-          required: false,
+          required: true,
         },
         registrationNumber: {
           required: false,
@@ -55,6 +55,9 @@ class PayloadEditor extends Component {
       messages: {
         name: {
           required: 'Need a name in here, Seuss.',
+        },
+        model: {
+          required: 'We need a model for this payload.',
         },
         payloadType: {
           required: 'This needs a Payload type, please.',
