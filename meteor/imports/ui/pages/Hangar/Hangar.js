@@ -4,14 +4,14 @@ import { NavItem, Nav } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { Redirect } from 'react-router-dom';
 
-import RPAs from '../../components/RPAs/RPAs';
+import RPAS from '../../components/RPAS/RPAS';
 import Payloads from '../../components/Payloads/Payloads';
 import Batteries from '../../components/Batteries/Batteries';
 import NotFound from '../NotFound/NotFound';
 
-import NewRPA from '../NewRPA/NewRPA';
-import ViewRPA from '../ViewRPA/ViewRPA';
-import EditRPA from '../EditRPA/EditRPA';
+import NewRPAS from '../NewRPAS/NewRPAS';
+import ViewRPAS from '../ViewRPAS/ViewRPAS';
+import EditRPAS from '../EditRPAS/EditRPAS';
 import NewPayload from '../NewPayload/NewPayload';
 import ViewPayload from '../ViewPayload/ViewPayload';
 import EditPayload from '../EditPayload/EditPayload';
@@ -20,22 +20,21 @@ import ViewBattery from '../ViewBattery/ViewBattery';
 import EditBattery from '../EditBattery/EditBattery';
 
 const handleHangarNav = (match, history) => {
-  console.log(match.path);
   if (match.path === '/hangar/rpas') {
-    return <RPAs match={match} history={history} />;
+    return <RPAS match={match} history={history} />;
   } else if (match.path === '/hangar/rpas/new') {
-    return <NewRPA match={match} history={history} />;
-  } else if (match.path === '/hangar/rpas/:rpa_id') {
-    return <ViewRPA match={match} history={history} />;
-  } else if (match.path === '/hangar/rpas/:rpa_id/edit') {
-    return <EditRPA match={match} history={history} />;
+    return <NewRPAS match={match} history={history} />;
+  } else if (match.path === '/hangar/rpas/:rpas_id') {
+    return <ViewRPAS match={match} history={history} />;
+  } else if (match.path === '/hangar/rpas/:rpas_id/edit') {
+    return <EditRPAS match={match} history={history} />;
   } else if (match.path === '/hangar/payloads') {
     return <Payloads match={match} history={history} />;
   } else if (match.path === '/hangar/payloads/new') {
     return <NewPayload match={match} history={history} />;
   } else if (match.path === '/hangar/payloads/:payload_id') {
     return <ViewPayload match={match} history={history} />;
-  } else if (match.path === '/hangar/payloads:payload_id/edit') {
+  } else if (match.path === '/hangar/payloads/:payload_id/edit') {
     return <EditPayload match={match} history={history} />;
   } else if (match.path === '/hangar/batteries') {
     return <Batteries match={match} history={history} />;
@@ -57,7 +56,7 @@ const Hangar = ({ match, history }) => (
     <div className="page-header clearfix">
       <Nav bsStyle="pills" justified activeKey={1}>
         <LinkContainer to="/hangar/rpas">
-          <NavItem eventKey={1} href="/hangar/rpas">RPAs</NavItem>
+          <NavItem eventKey={1} href="/hangar/rpas">RPAS</NavItem>
         </LinkContainer>
         <LinkContainer to="/hangar/payloads">
           <NavItem eventKey={2} title="/hangar/payloads">Payloads</NavItem>

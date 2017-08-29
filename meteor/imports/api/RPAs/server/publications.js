@@ -1,13 +1,13 @@
 import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
-import RPAs from '../RPAs';
+import RPAS from '../RPAS';
 
 Meteor.publish('rpas', function rpas() {
-  return RPAs.find({ owner: this.userId });
+  return RPAS.find({ owner: this.userId });
 });
 
 // Note: documents.view is also used when editing an existing document.
-Meteor.publish('rpas.view', function rpasView(rpaId) {
-  check(rpaId, String);
-  return RPAs.find({ _id: rpaId, owner: this.userId });
+Meteor.publish('rpas.view', function rpasView(rpasId) {
+  check(rpasId, String);
+  return RPAS.find({ _id: rpasId, owner: this.userId });
 });

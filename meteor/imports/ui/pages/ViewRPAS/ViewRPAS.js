@@ -4,31 +4,31 @@ import { ButtonToolbar, ButtonGroup, Button, Row, Col } from 'react-bootstrap';
 import { createContainer } from 'meteor/react-meteor-data';
 import { Meteor } from 'meteor/meteor';
 import { Bert } from 'meteor/themeteorchef:bert';
-import RPAs from '../../../api/RPAs/RPAs';
+import RPAS from '../../../api/RPAS/RPAS';
 import NotFound from '../NotFound/NotFound';
 import Loading from '../../components/Loading/Loading';
 
-const handleRemove = (rpaId, history) => {
+const handleRemove = (rpasId, history) => {
   if (confirm('Move to Trash?')) {
-    Meteor.call('rpas.softDelete', rpaId, (error) => {
+    Meteor.call('rpas.softDelete', rpasId, (error) => {
       if (error) {
         Bert.alert(error.reason, 'danger');
       } else {
-        Bert.alert('RPA deleted!', 'warning');
+        Bert.alert('RPAS deleted!', 'warning');
         history.push('/hangar/rpas');
       }
     });
   }
 };
 
-const renderRPA = (rpa, match, history) => (rpa && rpa.deleted === 'no' ? (
-  <div className="ViewRPA">
+const renderRPAS = (rpas, match, history) => (rpas && rpas.deleted === 'no' ? (
+  <div className="ViewRPAS">
     <div className="page-header clearfix">
-      <h4 className="pull-left">{ rpa && rpa.name }</h4>
+      <h4 className="pull-left">{ rpas && rpas.name }</h4>
       <ButtonToolbar className="pull-right">
         <ButtonGroup bsSize="small">
           <Button onClick={() => history.push(`${match.url}/edit`)}>Edit</Button>
-          <Button onClick={() => handleRemove(rpa._id, history)} className="text-danger">
+          <Button onClick={() => handleRemove(rpas._id, history)} className="text-danger">
             Delete
           </Button>
         </ButtonGroup>
@@ -36,7 +36,7 @@ const renderRPA = (rpa, match, history) => (rpa && rpa.deleted === 'no' ? (
     </div>
     <Row>
       <Col xs={12} sm={3}>
-        { rpa && rpa.description }
+        { rpas && rpas.description }
       </Col>
       <Col xs={12} sm={9} />
     </Row>
@@ -44,23 +44,23 @@ const renderRPA = (rpa, match, history) => (rpa && rpa.deleted === 'no' ? (
   </div>
 ) : <NotFound />);
 
-const ViewRPA = ({ loading, rpa, match, history }) => (
-  !loading ? renderRPA(rpa, match, history) : <Loading />
+const ViewRPAS = ({ loading, rpas, match, history }) => (
+  !loading ? renderRPAS(rpas, match, history) : <Loading />
 );
 
-ViewRPA.propTypes = {
+ViewRPAS.propTypes = {
   loading: PropTypes.bool.isRequired,
-  rpa: PropTypes.object,
+  rpas: PropTypes.object,
   match: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
 };
 
 export default createContainer(({ match }) => {
-  const rpaId = match.params.rpa_id;
-  const subscription = Meteor.subscribe('rpas.view', rpaId);
+  const rpasId = match.params.rpas_id;
+  const subscription = Meteor.subscribe('rpas.view', rpasId);
 
   return {
     loading: !subscription.ready(),
-    rpa: RPAs.findOne(rpaId),
+    rpas: RPAS.findOne(rpasId),
   };
-}, ViewRPA);
+}, ViewRPAS);
