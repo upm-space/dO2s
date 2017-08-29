@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { createContainer } from 'meteor/react-meteor-data';
 import { Meteor } from 'meteor/meteor';
-import RPASs from '../../../api/RPASs/RPASs';
+import RPAS from '../../../api/RPAS/RPAS';
 import RPASEditor from '../../components/RPASEditor/RPASEditor';
 import NotFound from '../NotFound/NotFound';
 
@@ -28,6 +28,6 @@ export default createContainer(({ match }) => {
   const subscription = Meteor.subscribe('rpas.view', rpasId);
   return {
     loading: !subscription.ready(),
-    rpas: RPASs.findOne(rpasId),
+    rpas: RPAS.findOne(rpasId),
   };
 }, EditRPAS);

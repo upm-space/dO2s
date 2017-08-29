@@ -100,8 +100,8 @@ const App = props => (
           <Authenticated exact path="/hangar" component={Hangar} {...props} />
           <Authenticated exact path="/hangar/rpas" component={Hangar} {...props} />
           <Authenticated exact path="/hangar/rpas/new" component={Hangar} {...props} />
-          <Authenticated exact path="/hangar/rpas/:rpa_id" component={Hangar} {...props} />
-          <Authenticated exact path="/hangar/rpas/:rpa_id/edit" component={Hangar} {...props} />
+          <Authenticated exact path="/hangar/rpas/:rpas_id" component={Hangar} {...props} />
+          <Authenticated exact path="/hangar/rpas/:rpas_id/edit" component={Hangar} {...props} />
           <Authenticated exact path="/hangar/payloads" component={Hangar} {...props} />
           <Authenticated exact path="/hangar/payloads/new" component={Hangar} {...props} />
           <Authenticated
