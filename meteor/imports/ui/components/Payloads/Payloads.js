@@ -120,7 +120,7 @@ class Payloads extends Component {
             completedColumn={false}
             items={payloads}
             match={match}
-            history={history}
+            history={this.props.history}
             softDeleteItem={this.handleSoftRemove}
           />
         </Table></div> : <Alert bsStyle="warning">No payloads yet!</Alert>}

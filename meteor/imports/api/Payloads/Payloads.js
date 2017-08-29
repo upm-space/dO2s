@@ -64,9 +64,13 @@ Payloads.schema = new SimpleSchema({
       if (this.isInsert || this.isUpdate) return (new Date()).toISOString();
     },
   },
+  name: {
+    type: String,
+    label: 'A name to identify the payload.',
+  },
   registrationNumber: {
     type: String,
-    label: 'The serial number to identify the battery.',
+    label: 'The serial number to identify the payload.',
     optional: true,
   },
   model: {
@@ -92,11 +96,7 @@ Payloads.schema = new SimpleSchema({
     },
   },
   sensorParameters: {
-    type: (() => {
-      if (this.field('type').value === 'Camera') {
-        return cameraParametersSchema;
-      }
-    }),
+    type: SimpleSchema.oneOf(cameraParametersSchema),
     label: 'The parameters for the payload sensor.',
   },
 });

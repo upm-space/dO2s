@@ -4,9 +4,9 @@ import { check } from 'meteor/check';
 import Payloads from './Payloads';
 import rateLimit from '../../modules/rate-limit';
 
-const newPayloadSchema = Payloads.schema.pick('registrationNumber', 'model', 'weight', 'payloadType', 'sensorParameters');
+const newPayloadSchema = Payloads.schema.pick('name', 'registrationNumber', 'model', 'weight', 'payloadType', 'sensorParameters');
 
-const editPayloadSchema = Payloads.schema.pick('registrationNumber', 'model', 'weight', 'payloadType', 'sensorParameters');
+const editPayloadSchema = Payloads.schema.pick('name', 'registrationNumber', 'model', 'weight', 'payloadType', 'sensorParameters');
 editPayloadSchema.extend({ _id: String });
 
 Meteor.methods({
