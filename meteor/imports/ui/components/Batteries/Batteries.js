@@ -106,8 +106,8 @@ class Batteries extends Component {
               <th>
                 Batteries ({this.props.totalCount})
               </th>
-              <th>Last Updated</th>
-              <th>Created</th>
+              <th className="hidden-xs">Last Updated</th>
+              <th className="hidden-xs">Created</th>
               <th><Button
                 bsStyle="default"
                 onClick={() => this.setState({ trashShow: true })}
@@ -120,7 +120,7 @@ class Batteries extends Component {
             completedColumn={false}
             items={batteries}
             match={match}
-            history={history}
+            history={this.props.history}
             softDeleteItem={this.handleSoftRemove}
           />
         </Table></div> : <Alert bsStyle="warning">No batteries yet!</Alert>}

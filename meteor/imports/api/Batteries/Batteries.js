@@ -37,6 +37,10 @@ Batteries.schema = new SimpleSchema({
       if (this.isInsert || this.isUpdate) return (new Date()).toISOString();
     },
   },
+  name: {
+    type: String,
+    label: 'A name to identify the battery.',
+  },
   model: {
     type: String,
     label: 'The model of the battery.',
