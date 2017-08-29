@@ -31,7 +31,18 @@ import NewMission from '../../pages/NewMission/NewMission';
 import ViewMission from '../../pages/ViewMission/ViewMission';
 import EditMission from '../../pages/EditMission/EditMission';
 
-import Hangar from '../../pages/Hangar/Hangar';
+import RPAS from '../../pages/RPAS/RPAS';
+import Payloads from '../../pages/Payloads/Payloads';
+import Batteries from '../../pages/Batteries/Batteries';
+import NewRPAS from '../../pages/NewRPAS/NewRPAS';
+import ViewRPAS from '../../pages/ViewRPAS/ViewRPAS';
+import EditRPAS from '../../pages/EditRPAS/EditRPAS';
+import NewPayload from '../../pages/NewPayload/NewPayload';
+import ViewPayload from '../../pages/ViewPayload/ViewPayload';
+import EditPayload from '../../pages/EditPayload/EditPayload';
+import NewBattery from '../../pages/NewBattery/NewBattery';
+import ViewBattery from '../../pages/ViewBattery/ViewBattery';
+import EditBattery from '../../pages/EditBattery/EditBattery';
 
 import Public from '../../components/Public/Public';
 import Authenticated from '../../components/Authenticated/Authenticated';
@@ -97,37 +108,37 @@ const App = props => (
             component={ViewMission}
             {...props}
           />
-          <Authenticated exact path="/hangar" component={Hangar} {...props} />
-          <Authenticated exact path="/hangar/rpas" component={Hangar} {...props} />
-          <Authenticated exact path="/hangar/rpas/new" component={Hangar} {...props} />
-          <Authenticated exact path="/hangar/rpas/:rpas_id" component={Hangar} {...props} />
-          <Authenticated exact path="/hangar/rpas/:rpas_id/edit" component={Hangar} {...props} />
-          <Authenticated exact path="/hangar/payloads" component={Hangar} {...props} />
-          <Authenticated exact path="/hangar/payloads/new" component={Hangar} {...props} />
+          <Authenticated exact path="/hangar" component={RPAS} {...props} />
+          <Authenticated exact path="/hangar/rpas" component={RPAS} {...props} />
+          <Authenticated exact path="/hangar/rpas/new" component={NewRPAS} {...props} />
+          <Authenticated exact path="/hangar/rpas/:rpas_id" component={ViewRPAS} {...props} />
+          <Authenticated exact path="/hangar/rpas/:rpas_id/edit" component={EditRPAS} {...props} />
+          <Authenticated exact path="/hangar/payloads" component={Payloads} {...props} />
+          <Authenticated exact path="/hangar/payloads/new" component={NewPayload} {...props} />
           <Authenticated
             exact
             path="/hangar/payloads/:payload_id"
-            component={Hangar}
+            component={ViewPayload}
             {...props}
           />
           <Authenticated
             exact
             path="/hangar/payloads/:payload_id/edit"
-            component={Hangar}
+            component={EditPayload}
             {...props}
           />
-          <Authenticated exact path="/hangar/batteries" component={Hangar} {...props} />
-          <Authenticated exact path="/hangar/batteries/new" component={Hangar} {...props} />
+          <Authenticated exact path="/hangar/batteries" component={Batteries} {...props} />
+          <Authenticated exact path="/hangar/batteries/new" component={NewBattery} {...props} />
           <Authenticated
             exact
             path="/hangar/batteries/:battery_id"
-            component={Hangar}
+            component={ViewBattery}
             {...props}
           />
           <Authenticated
             exact
             path="/hangar/batteries/:battery_id/edit"
-            component={Hangar}
+            component={EditBattery}
             {...props}
           />
           <EmailNotVerified exact path="/profile" component={Profile} {...props} />

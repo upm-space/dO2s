@@ -9,9 +9,9 @@ import { Bert } from 'meteor/themeteorchef:bert';
 
 
 import RPASCollection from '../../../api/RPAS/RPAS';
-import Loading from '../Loading/Loading';
-import TrashModal from '../TrashModal/TrashModal';
-import List from '../List/List';
+import Loading from '../../components/Loading/Loading';
+import TrashModal from '../../components/TrashModal/TrashModal';
+import List from '../../components/List/List';
 
 class RPAS extends Component {
   constructor(props) {

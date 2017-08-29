@@ -43,10 +43,23 @@ const AuthenticatedNavigation = ({ isAdmin, name, location }) => (
           <i className="fa fa-map" aria-hidden="true" /> Projects</NavItem>
       </LinkContainer>
       {isProject(location) ? ProjectButton(location) : ''}
-      <LinkContainer to="/hangar">
-        <NavItem eventKey={2} href="/hangar">
-          <i className="fa fa-paper-plane" aria-hidden="true" /> Hangar</NavItem>
-      </LinkContainer>
+
+      <NavDropdown
+        eventKey={2}
+        title={<div ><i className="fa fa-paper-plane" aria-hidden="true" /> Hangar</div>}
+        id="hangar-dropdown"
+        noCaret
+      >
+        <LinkContainer to="/hangar/rpas">
+          <NavItem eventKey={2.1} href="/hangar/rpas">RPAS</NavItem>
+        </LinkContainer>
+        <LinkContainer to="/hangar/payloads">
+          <NavItem eventKey={2.2} href="/hangar/payloads">Payloads</NavItem>
+        </LinkContainer>
+        <LinkContainer to="/hangar/batteries">
+          <NavItem eventKey={2.3} href="/hangar/batteries">Batteries</NavItem>
+        </LinkContainer>
+      </NavDropdown>
       {isAdmin ? UserMngButton : ''}
     </Nav>
     <Nav pullRight>
