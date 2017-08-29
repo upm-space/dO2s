@@ -22,9 +22,9 @@ const renderListItems =
         key={item._id}
       >
         <td onClick={goToItem}>{item.name}</td>
-        <td onClick={goToItem}>
+        <td onClick={goToItem} className="hidden-xs">
           {timeago(item.updatedAt)}</td>
-        <td onClick={goToItem}>
+        <td onClick={goToItem} className="hidden-xs">
           {monthDayYearAtTime(item.createdAt)}</td>
         {completedColumn ? (
           <td className="button-column">
