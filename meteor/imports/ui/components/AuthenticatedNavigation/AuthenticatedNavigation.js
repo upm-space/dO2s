@@ -46,9 +46,8 @@ const AuthenticatedNavigation = ({ isAdmin, name, location }) => (
 
       <NavDropdown
         eventKey={2}
-        title={<div ><i className="fa fa-paper-plane" aria-hidden="true" /> Hangar</div>}
+        title={<div className="pull-left"><i className="fa fa-paper-plane" aria-hidden="true" /> Hangar </div>}
         id="hangar-dropdown"
-        noCaret
       >
         <LinkContainer to="/hangar/rpas">
           <NavItem eventKey={2.1} href="/hangar/rpas">RPAs</NavItem>

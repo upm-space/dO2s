@@ -199,7 +199,7 @@ class RPAEditor extends Component {
           </FormGroup>
         </Col>
           <Col xs={12} sm={6} md={6} lg={6}>
-            <h3><small>Flight Parameters</small></h3>
+            <legend>Flight Parameters</legend>
             <FormGroup>
               <ControlLabel>Max Descend Slope (%)</ControlLabel>
               <input

@@ -183,67 +183,68 @@ class PayloadEditor extends Component {
         ref={form => (this.form = form)}
         onSubmit={event => event.preventDefault()}
       >
-        <Row><Col xs={12} sm={6} md={6} lg={6}>
-          <FormGroup>
-            <ControlLabel>Name</ControlLabel>
-            <input
-              type="text"
-              className="form-control"
-              name="name"
-              ref={name => (this.name = name)}
-              defaultValue={payload && payload.name}
-              placeholder="Give a name to your payload"
-            />
-          </FormGroup>
-          <FormGroup>
-            <ControlLabel>Model</ControlLabel>
-            <input
-              type="text"
-              className="form-control"
-              name="model"
-              ref={model => (this.model = model)}
-              defaultValue={payload && payload.model}
-              placeholder="The model of your payload"
-            />
-          </FormGroup>
-          <FormGroup>
-            <ControlLabel>Registration Number</ControlLabel>
-            <input
-              type="text"
-              className="form-control"
-              name="registrationNumber"
-              ref={registrationNumber => (this.registrationNumber = registrationNumber)}
-              defaultValue={payload && payload.registrationNumber}
-              placeholder="The registration number of your payload"
-            />
-          </FormGroup>
-          <FormGroup>
-            <ControlLabel>Weight (g)</ControlLabel>
-            <input
-              type="number"
-              className="form-control"
-              name="weight"
-              ref={weight => (this.weight = weight)}
-              defaultValue={payload && payload.weight}
-              placeholder="The weight of your payload"
-            />
-          </FormGroup>
-          <FormGroup>
-            <ControlLabel>Payload Type</ControlLabel>
-            <select
-              type="text"
-              className="form-control"
-              name="payloadType"
-              ref={payloadType => (this.payloadType = payloadType)}
-              value={this.state.payloadType}
-              onChange={() => this.setState({ payloadType: this.payloadType.value })}
-            >
-              <option value="Camera">Camera</option>
-            </select>
-          </FormGroup>
-        </Col>
+        <Row>
           <Col xs={12} sm={6} md={6} lg={6}>
-            <h3><small>Sensor Parameters</small></h3>
+            <FormGroup>
+              <ControlLabel>Name</ControlLabel>
+              <input
+                type="text"
+                className="form-control"
+                name="name"
+                ref={name => (this.name = name)}
+                defaultValue={payload && payload.name}
+                placeholder="Give a name to your payload"
+              />
+            </FormGroup>
+            <FormGroup>
+              <ControlLabel>Model</ControlLabel>
+              <input
+                type="text"
+                className="form-control"
+                name="model"
+                ref={model => (this.model = model)}
+                defaultValue={payload && payload.model}
+                placeholder="The model of your payload"
+              />
+            </FormGroup>
+            <FormGroup>
+              <ControlLabel>Registration Number</ControlLabel>
+              <input
+                type="text"
+                className="form-control"
+                name="registrationNumber"
+                ref={registrationNumber => (this.registrationNumber = registrationNumber)}
+                defaultValue={payload && payload.registrationNumber}
+                placeholder="The registration number of your payload"
+              />
+            </FormGroup>
+            <FormGroup>
+              <ControlLabel>Weight (g)</ControlLabel>
+              <input
+                type="number"
+                className="form-control"
+                name="weight"
+                ref={weight => (this.weight = weight)}
+                defaultValue={payload && payload.weight}
+                placeholder="The weight of your payload"
+              />
+            </FormGroup>
+            <FormGroup>
+              <ControlLabel>Payload Type</ControlLabel>
+              <select
+                type="text"
+                className="form-control"
+                name="payloadType"
+                ref={payloadType => (this.payloadType = payloadType)}
+                value={this.state.payloadType}
+                onChange={() => this.setState({ payloadType: this.payloadType.value })}
+              >
+                <option value="Camera">Camera</option>
+              </select>
+            </FormGroup>
+          </Col>
+          <Col xs={12} sm={6} md={6} lg={6}>
+            <legend>Sensor Parameters</legend>
             {(this.state.payloadType === 'Camera') ? this.renderCameraParameters(payload) : ''}
           </Col>
         </Row>
