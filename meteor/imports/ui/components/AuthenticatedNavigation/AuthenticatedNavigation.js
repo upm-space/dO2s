@@ -51,7 +51,7 @@ const AuthenticatedNavigation = ({ isAdmin, name, location }) => (
         noCaret
       >
         <LinkContainer to="/hangar/rpas">
-          <NavItem eventKey={2.1} href="/hangar/rpas">RPAS</NavItem>
+          <NavItem eventKey={2.1} href="/hangar/rpas">RPAs</NavItem>
         </LinkContainer>
         <LinkContainer to="/hangar/payloads">
           <NavItem eventKey={2.2} href="/hangar/payloads">Payloads</NavItem>

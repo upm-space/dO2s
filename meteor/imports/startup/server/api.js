@@ -4,8 +4,8 @@ import '../../api/Projects/server/publications';
 import '../../api/Missions/methods';
 import '../../api/Missions/server/publications';
 
-import '../../api/RPAS/methods';
-import '../../api/RPAS/server/publications';
+import '../../api/RPAs/methods';
+import '../../api/RPAs/server/publications';
 
 import '../../api/Payloads/methods';
 import '../../api/Payloads/server/publications';

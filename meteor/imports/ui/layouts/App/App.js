@@ -31,12 +31,12 @@ import NewMission from '../../pages/NewMission/NewMission';
 import ViewMission from '../../pages/ViewMission/ViewMission';
 import EditMission from '../../pages/EditMission/EditMission';
 
-import RPAS from '../../pages/RPAS/RPAS';
+import RPAs from '../../pages/RPAs/RPAs';
 import Payloads from '../../pages/Payloads/Payloads';
 import Batteries from '../../pages/Batteries/Batteries';
-import NewRPAS from '../../pages/NewRPAS/NewRPAS';
-import ViewRPAS from '../../pages/ViewRPAS/ViewRPAS';
-import EditRPAS from '../../pages/EditRPAS/EditRPAS';
+import NewRPA from '../../pages/NewRPA/NewRPA';
+import ViewRPA from '../../pages/ViewRPA/ViewRPA';
+import EditRPA from '../../pages/EditRPA/EditRPA';
 import NewPayload from '../../pages/NewPayload/NewPayload';
 import ViewPayload from '../../pages/ViewPayload/ViewPayload';
 import EditPayload from '../../pages/EditPayload/EditPayload';
@@ -108,11 +108,11 @@ const App = props => (
             component={ViewMission}
             {...props}
           />
-          <Authenticated exact path="/hangar" component={RPAS} {...props} />
-          <Authenticated exact path="/hangar/rpas" component={RPAS} {...props} />
-          <Authenticated exact path="/hangar/rpas/new" component={NewRPAS} {...props} />
-          <Authenticated exact path="/hangar/rpas/:rpas_id" component={ViewRPAS} {...props} />
-          <Authenticated exact path="/hangar/rpas/:rpas_id/edit" component={EditRPAS} {...props} />
+          <Authenticated exact path="/hangar" component={RPAs} {...props} />
+          <Authenticated exact path="/hangar/rpas" component={RPAs} {...props} />
+          <Authenticated exact path="/hangar/rpas/new" component={NewRPA} {...props} />
+          <Authenticated exact path="/hangar/rpas/:rpa_id" component={ViewRPA} {...props} />
+          <Authenticated exact path="/hangar/rpas/:rpa_id/edit" component={EditRPA} {...props} />
           <Authenticated exact path="/hangar/payloads" component={Payloads} {...props} />
           <Authenticated exact path="/hangar/payloads/new" component={NewPayload} {...props} />
           <Authenticated

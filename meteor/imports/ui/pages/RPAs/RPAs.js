@@ -8,12 +8,12 @@ import { createContainer } from 'meteor/react-meteor-data';
 import { Bert } from 'meteor/themeteorchef:bert';
 
 
-import RPASCollection from '../../../api/RPAS/RPAS';
+import RPAsCollection from '../../../api/RPAs/RPAs';
 import Loading from '../../components/Loading/Loading';
 import TrashModal from '../../components/TrashModal/TrashModal';
 import List from '../../components/List/List';
 
-class RPAS extends Component {
+class RPAs extends Component {
   constructor(props) {
     super(props);
 
@@ -34,37 +34,37 @@ class RPAS extends Component {
     };
   }
 
-  handleSoftRemove(rpasId) {
+  handleSoftRemove(rpaId) {
     if (confirm('Move to Trash?')) {
-      Meteor.call('rpas.softDelete', rpasId, (error) => {
+      Meteor.call('rpas.softDelete', rpaId, (error) => {
         if (error) {
           Bert.alert(error.reason, 'danger');
         } else {
-          Bert.alert('RPAS moved to Trash!', 'warning');
+          Bert.alert('RPA moved to Trash!', 'warning');
         }
       });
     }
   }
 
-  handleRestore(rpasId) {
-    if (confirm('Restore RPAS?')) {
-      Meteor.call('rpas.restore', rpasId, (error) => {
+  handleRestore(rpaId) {
+    if (confirm('Restore RPA?')) {
+      Meteor.call('rpas.restore', rpaId, (error) => {
         if (error) {
           Bert.alert(error.reason, 'danger');
         } else {
-          Bert.alert('RPAS Restored!', 'success');
+          Bert.alert('RPA Restored!', 'success');
         }
       });
     }
   }
 
-  handleHardRemove(rpasId) {
+  handleHardRemove(rpaId) {
     if (confirm('Are you sure? This is permanent!')) {
-      Meteor.call('rpas.hardDelete', rpasId, (error) => {
+      Meteor.call('rpas.hardDelete', rpaId, (error) => {
         if (error) {
           Bert.alert(error.reason, 'danger');
         } else {
-          Bert.alert('RPAS deleted!', 'danger');
+          Bert.alert('RPA deleted!', 'danger');
         }
       });
     }
@@ -85,26 +85,26 @@ class RPAS extends Component {
   render() {
     const { loading, rpas, match } = this.props;
     return (!loading ? (
-      <div className="RPAS">
+      <div className="RPAs">
         <TrashModal
           title="Recycle Bin"
           show={this.state.trashShow}
           onHide={() => this.trashClose()}
-          itemName="RPAS"
+          itemName="RPAs"
           loading={loading}
           deletedCount={this.props.deletedCount}
           handleRestore={this.handleRestore}
           handleHardRemove={this.handleHardRemove}
-          deletedItems={this.props.deletedRPAS}
+          deletedItems={this.props.deletedRPAs}
         />
         <div className="page-header clearfix">
-          <Link className="btn btn-success pull-right" to={`${match.url}/new`}>Add RPAS</Link>
+          <Link className="btn btn-success pull-right" to={`${match.url}/new`}>Add RPA</Link>
         </div>
         {rpas.length ? <div className="ItemList"><Table responsive hover>
           <thead>
             <tr>
               <th>
-                RPAS ({this.props.totalCount})
+                RPAs ({this.props.totalCount})
               </th>
               <th className="hidden-xs">Last Updated</th>
               <th className="hidden-xs">Created</th>
@@ -123,16 +123,16 @@ class RPAS extends Component {
             history={this.props.history}
             softDeleteItem={this.handleSoftRemove}
           />
-        </Table></div> : <Alert bsStyle="warning">No rpas yet!</Alert>}
+        </Table></div> : <Alert bsStyle="warning">No RPAs yet!</Alert>}
       </div>
     ) : <Loading />);
   }
 }
 
-RPAS.propTypes = {
+RPAs.propTypes = {
   loading: PropTypes.bool.isRequired,
   rpas: PropTypes.arrayOf(PropTypes.object).isRequired,
-  deletedRPAS: PropTypes.arrayOf(PropTypes.object).isRequired,
+  deletedRPAs: PropTypes.arrayOf(PropTypes.object).isRequired,
   match: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
   deletedCount: PropTypes.number.isRequired,
@@ -143,9 +143,9 @@ export default createContainer(() => {
   const rpasSub = Meteor.subscribe('rpas');
   return {
     loading: !rpasSub.ready(),
-    rpas: RPASCollection.find({ deleted: { $eq: 'no' } }).fetch(),
-    deletedRPAS: RPASCollection.find({ deleted: { $ne: 'no' } }).fetch(),
-    deletedCount: RPASCollection.find({ deleted: { $ne: 'no' } }).count(),
-    totalCount: RPASCollection.find({ deleted: { $eq: 'no' } }).count(),
+    rpas: RPAsCollection.find({ deleted: { $eq: 'no' } }).fetch(),
+    deletedRPAs: RPAsCollection.find({ deleted: { $ne: 'no' } }).fetch(),
+    deletedCount: RPAsCollection.find({ deleted: { $ne: 'no' } }).count(),
+    totalCount: RPAsCollection.find({ deleted: { $eq: 'no' } }).count(),
   };
-}, RPAS);
+}, RPAs);

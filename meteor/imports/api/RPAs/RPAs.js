@@ -2,15 +2,15 @@
 import { Mongo } from 'meteor/mongo';
 import SimpleSchema from 'simpl-schema';
 
-const RPAS = new Mongo.Collection('RPAS');
+const RPAs = new Mongo.Collection('RPAs');
 
-RPAS.allow({
+RPAs.allow({
   insert: () => false,
   update: () => false,
   remove: () => false,
 });
 
-RPAS.deny({
+RPAs.deny({
   insert: () => true,
   update: () => true,
   remove: () => true,
@@ -49,7 +49,7 @@ const flightParametersSchema = new SimpleSchema({
   },
 });
 
-RPAS.schema = new SimpleSchema({
+RPAs.schema = new SimpleSchema({
   owner: {
     type: String,
     label: 'The ID of the user this rpas belongs to.',
@@ -72,7 +72,7 @@ RPAS.schema = new SimpleSchema({
     type: String,
     label: 'The name of the rpas.',
   },
-  rpasType: {
+  rpaType: {
     type: String,
     label: 'The type of the rpas.',
     allowedValues: ['Plane', 'MultiCopter'],
@@ -116,6 +116,6 @@ RPAS.schema = new SimpleSchema({
   },
 });
 
-RPAS.attachSchema(RPAS.schema);
+RPAs.attachSchema(RPAs.schema);
 
-export default RPAS;
+export default RPAs;

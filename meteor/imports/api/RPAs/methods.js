@@ -1,19 +1,19 @@
 /* eslint-disable meteor/audit-argument-checks */
 import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
-import RPAS from './RPAS';
+import RPAs from './RPAs';
 import rateLimit from '../../modules/rate-limit';
 
-const newRPASchema = RPAS.schema.pick('name', 'rpasType', 'model', 'registrationNumber', 'constructionDate', 'serialNumber', 'weight', 'flightParameters');
+const newRPASchema = RPAs.schema.pick('name', 'rpaType', 'model', 'registrationNumber', 'constructionDate', 'serialNumber', 'weight', 'flightParameters');
 
-const editRPASchema = RPAS.schema.pick('name', 'rpasType', 'model', 'registrationNumber', 'constructionDate', 'serialNumber', 'weight', 'flightParameters');
+const editRPASchema = RPAs.schema.pick('name', 'rpaType', 'model', 'registrationNumber', 'constructionDate', 'serialNumber', 'weight', 'flightParameters');
 editRPASchema.extend({ _id: String });
 
 Meteor.methods({
-  'rpas.insert': function rpasInsert(rpas) {
+  'rpas.insert': function rpasInsert(rpa) {
     try {
-      newRPASchema.validate(rpas);
-      return RPAS.insert({ owner: this.userId, ...rpas });
+      newRPASchema.validate(rpa);
+      return RPAs.insert({ owner: this.userId, ...rpa });
     } catch (exception) {
       if (exception.error === 'validation-error') {
         throw new Meteor.Error(500, exception.message);
@@ -21,12 +21,12 @@ Meteor.methods({
       throw new Meteor.Error('500', exception);
     }
   },
-  'rpas.update': function rpasUpdate(rpas) {
+  'rpas.update': function rpasUpdate(rpa) {
     try {
-      editRPASchema.validate(rpas);
-      const rpasId = rpas._id;
-      RPAS.update(rpasId, { $set: rpas });
-      return rpasId;
+      editRPASchema.validate(rpa);
+      const rpaId = rpa._id;
+      RPAs.update(rpaId, { $set: rpa });
+      return rpaId;
        // Return _id so we can redirect to document after update.
     } catch (exception) {
       if (exception.error === 'validation-error') {
@@ -35,18 +35,18 @@ Meteor.methods({
       throw new Meteor.Error('500', exception);
     }
   },
-  'rpas.softDelete': function rpasSoftDelete(rpasId) {
-    check(rpasId, String);
+  'rpas.softDelete': function rpasSoftDelete(rpaId) {
+    check(rpaId, String);
     try {
-      RPAS.update(rpasId, { $set: { deleted: (new Date()).toISOString() } });
+      RPAs.update(rpaId, { $set: { deleted: (new Date()).toISOString() } });
     } catch (exception) {
       throw new Meteor.Error('500', exception);
     }
   },
-  'rpas.restore': function rpasRestore(rpasId) {
-    check(rpasId, String);
+  'rpas.restore': function rpasRestore(rpaId) {
+    check(rpaId, String);
     try {
-      RPAS.update(rpasId, { $set: { deleted: 'no' } });
+      RPAs.update(rpaId, { $set: { deleted: 'no' } });
     } catch (exception) {
       throw new Meteor.Error('500', exception);
     }
@@ -54,7 +54,7 @@ Meteor.methods({
   'rpas.hardDelete': function rpasHardDelete(rpasId) {
     check(rpasId, String);
     try {
-      return RPAS.remove(rpasId);
+      return RPAs.remove(rpasId);
     } catch (exception) {
       throw new Meteor.Error('500', exception);
     }
