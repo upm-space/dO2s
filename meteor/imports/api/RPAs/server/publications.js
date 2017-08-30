@@ -14,6 +14,6 @@ Meteor.publish('rpas.view', function rpasView(rpaId) {
 
 Meteor.publish('rpas.mission', function rpasMission() {
   return RPAs.find({ owner: this.userId }, { fields: {
-    name: 1 },
+    name: 1, rpaType: 1 },
   });
 });

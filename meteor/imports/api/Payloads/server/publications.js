@@ -11,3 +11,9 @@ Meteor.publish('payloads.view', function payloadsView(payloadId) {
   check(payloadId, String);
   return Payloads.find({ _id: payloadId, owner: this.userId });
 });
+
+Meteor.publish('payloads.mission', function payloadsMission() {
+  return Payloads.find({ owner: this.userId }, { fields: {
+    name: 1, model: 1 },
+  });
+});

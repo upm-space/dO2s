@@ -21,19 +21,16 @@ const flightParametersSchema = new SimpleSchema({
   altitude: {
     type: Number,
     label: 'The altitude of the flight in meters',
-    optional: true,
     min: 0,
   },
   speed: {
     type: Number,
     label: 'The speed of the flight in meters per second',
-    optional: true,
     min: 0,
   },
   entryMargin: {
     type: Number,
     label: 'The entry margin for the fixed wing rpa in meters',
-    optional: true,
     min: 0,
   },
 });
@@ -42,14 +39,12 @@ const pictureGridSchema = new SimpleSchema({
   overlap: {
     type: Number,
     label: 'The overlap in %',
-    optional: true,
     max: 0,
     min: 100,
   },
   sidelap: {
     type: Object,
     label: 'The sidelap in %',
-    optional: true,
     max: 0,
     min: 100,
   },
@@ -87,15 +82,17 @@ Missions.schema = new SimpleSchema({
     label: 'The description of the mission.',
     optional: true,
   },
-  rpaType: {
+  rpa: {
     type: String,
-    label: 'The kind of the remote propelled aircraft used.',
-    optional: true,
+    label: 'The ID of the remote propelled aircraft used.',
+  },
+  payload: {
+    type: String,
+    label: 'The ID of the payload used.',
   },
   missionType: {
     type: String,
     label: 'The mission type',
-    optional: true,
   },
   layers: {
     type: Array,
@@ -132,11 +129,6 @@ Missions.schema = new SimpleSchema({
   'flightPlan.flightParameters': {
     type: flightParametersSchema,
     label: 'Data related to the flight',
-    optional: true,
-  },
-  'flightPlan.payload': {
-    type: String,
-    label: 'The ID of the payload used in this mission',
     optional: true,
   },
   'flightPlan.pictureGrid': {

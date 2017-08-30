@@ -1,4 +1,4 @@
-/* eslint-disable jsx-a11y/no-noninteractive-element-interactions, no-alert */
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
