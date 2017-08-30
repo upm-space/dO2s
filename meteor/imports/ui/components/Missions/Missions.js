@@ -1,4 +1,4 @@
-/* eslint-disable jsx-a11y/no-noninteractive-element-interactions, no-alert */
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
@@ -9,12 +9,9 @@ import { createContainer } from 'meteor/react-meteor-data';
 import { Bert } from 'meteor/themeteorchef:bert';
 import classnames from 'classnames';
 
-
 import MissionsCollection from '../../../api/Missions/Missions';
 import Loading from '../../components/Loading/Loading';
 import TrashModal from '../../components/TrashModal/TrashModal';
-
-import './Missions.scss';
 
 class Missions extends Component {
   constructor(props) {
@@ -112,9 +109,9 @@ class Missions extends Component {
           key={_id}
         >
           <td onClick={goToMission}>{name}</td>
-          <td onClick={goToMission}>
+          <td onClick={goToMission} className="hidden-xs">
             {timeago(updatedAt)}</td>
-          <td onClick={goToMission}>
+          <td onClick={goToMission} className="hidden-xs">
             {monthDayYearAtTime(createdAt)}</td>
           <td className="button-column">
             <Button
@@ -158,7 +155,7 @@ class Missions extends Component {
           >{!this.state.hideCompleted ? 'Hide Completed Missions' : 'Show Completed Missions'} ({this.props.completeCount})</Button>
           <Link className="btn btn-success pull-right" to={`${match.url}/newMission`}>Add Mission</Link>
         </div>
-        {missions.length ? <Table responsive hover>
+        {missions.length ? <div className="ItemList"><Table responsive hover>
           <thead>
             <tr>
               <th>
@@ -166,8 +163,8 @@ class Missions extends Component {
                   {this.state.hideCompleted ? this.props.incompleteCount : this.props.totalCount}
                 )
               </th>
-              <th>Last Updated</th>
-              <th>Created</th>
+              <th className="hidden-xs">Last Updated</th>
+              <th className="hidden-xs">Created</th>
               <th className="center-column">
                 Completed
               </th>
@@ -181,7 +178,7 @@ class Missions extends Component {
           <tbody>
             {this.renderMissions(missions)}
           </tbody>
-        </Table> : <Alert bsStyle="warning">No missions yet!</Alert>}
+        </Table></div> : <Alert bsStyle="warning">No missions yet!</Alert>}
       </div>
     ) : <Loading />);
   }

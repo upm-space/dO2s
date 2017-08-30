@@ -9,7 +9,6 @@ import { Roles } from 'meteor/alanning:roles';
 
 import Navigation from '../../components/Navigation/Navigation';
 import Index from '../../pages/Index/Index';
-import Two from '../../pages/Two/Two';
 import NotFound from '../../pages/NotFound/NotFound';
 import SignUp from '../../pages/Signup/SignUp';
 import Login from '../../pages/Login/Login';
@@ -31,6 +30,19 @@ import EditProject from '../../pages/EditProject/EditProject';
 import NewMission from '../../pages/NewMission/NewMission';
 import ViewMission from '../../pages/ViewMission/ViewMission';
 import EditMission from '../../pages/EditMission/EditMission';
+
+import RPAs from '../../pages/RPAs/RPAs';
+import Payloads from '../../pages/Payloads/Payloads';
+import Batteries from '../../pages/Batteries/Batteries';
+import NewRPA from '../../pages/NewRPA/NewRPA';
+import ViewRPA from '../../pages/ViewRPA/ViewRPA';
+import EditRPA from '../../pages/EditRPA/EditRPA';
+import NewPayload from '../../pages/NewPayload/NewPayload';
+import ViewPayload from '../../pages/ViewPayload/ViewPayload';
+import EditPayload from '../../pages/EditPayload/EditPayload';
+import NewBattery from '../../pages/NewBattery/NewBattery';
+import ViewBattery from '../../pages/ViewBattery/ViewBattery';
+import EditBattery from '../../pages/EditBattery/EditBattery';
 
 import Public from '../../components/Public/Public';
 import Authenticated from '../../components/Authenticated/Authenticated';
@@ -96,7 +108,39 @@ const App = props => (
             component={ViewMission}
             {...props}
           />
-          <Authenticated exact path="/hangar" component={Two} {...props} />
+          <Authenticated exact path="/hangar" component={RPAs} {...props} />
+          <Authenticated exact path="/hangar/rpas" component={RPAs} {...props} />
+          <Authenticated exact path="/hangar/rpas/new" component={NewRPA} {...props} />
+          <Authenticated exact path="/hangar/rpas/:rpa_id" component={ViewRPA} {...props} />
+          <Authenticated exact path="/hangar/rpas/:rpa_id/edit" component={EditRPA} {...props} />
+          <Authenticated exact path="/hangar/payloads" component={Payloads} {...props} />
+          <Authenticated exact path="/hangar/payloads/new" component={NewPayload} {...props} />
+          <Authenticated
+            exact
+            path="/hangar/payloads/:payload_id"
+            component={ViewPayload}
+            {...props}
+          />
+          <Authenticated
+            exact
+            path="/hangar/payloads/:payload_id/edit"
+            component={EditPayload}
+            {...props}
+          />
+          <Authenticated exact path="/hangar/batteries" component={Batteries} {...props} />
+          <Authenticated exact path="/hangar/batteries/new" component={NewBattery} {...props} />
+          <Authenticated
+            exact
+            path="/hangar/batteries/:battery_id"
+            component={ViewBattery}
+            {...props}
+          />
+          <Authenticated
+            exact
+            path="/hangar/batteries/:battery_id/edit"
+            component={EditBattery}
+            {...props}
+          />
           <EmailNotVerified exact path="/profile" component={Profile} {...props} />
           <Public path="/signup" component={SignUp} {...props} />
           <Public path="/login" component={Login} {...props} />

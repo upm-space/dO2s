@@ -12,8 +12,6 @@ import { Bert } from 'meteor/themeteorchef:bert';
 import Loading from '../../components/Loading/Loading';
 import TrashModal from '../../components/TrashModal/TrashModal';
 
-import './UserManagement.scss';
-
 class UserManagement extends Component {
   constructor(props) {
     super(props);
@@ -198,7 +196,7 @@ class UserManagement extends Component {
           <h4 className="pull-left">User Manager</h4>
           <Link className="btn btn-success pull-right" to={`${match.url}/new`}>Add User</Link>
         </div>
-        {users.length ? <Table responsive hover>
+        {users.length ? <div className="ItemList"><Table responsive hover>
           <thead>
             <tr>
               <th>
@@ -217,7 +215,7 @@ class UserManagement extends Component {
           <tbody>
             {this.renderUsers(users)}
           </tbody>
-        </Table> : <Alert bsStyle="warning">Something went wrong!</Alert>}
+        </Table></div> : <Alert bsStyle="warning">Something went wrong!</Alert>}
       </div>
     ) : <Loading />);
   }

@@ -8,27 +8,23 @@ import { createContainer } from 'meteor/react-meteor-data';
 import { Bert } from 'meteor/themeteorchef:bert';
 
 
-import ProjectsCollection from '../../../api/Projects/Projects';
+import BatteriesCollection from '../../../api/Batteries/Batteries';
 import Loading from '../../components/Loading/Loading';
 import TrashModal from '../../components/TrashModal/TrashModal';
 import List from '../../components/List/List';
 
-class Projects extends Component {
+class Batteries extends Component {
   constructor(props) {
     super(props);
 
-    this.toggleDone = this.toggleDone.bind(this);
     this.handleHardRemove = this.handleHardRemove.bind(this);
     this.handleSoftRemove = this.handleSoftRemove.bind(this);
     this.handleRestore = this.handleRestore.bind(this);
-    this.toggleHideCompleted = this.toggleHideCompleted.bind(this);
     this.trashClose = this.trashClose.bind(this);
 
     this.state = {
       hideCompleted: false,
       trashShow: false,
-      showGrid: false,
-      showList: true,
     };
   }
 
@@ -38,50 +34,40 @@ class Projects extends Component {
     };
   }
 
-  handleSoftRemove(projectId) {
+  handleSoftRemove(batteryId) {
     if (confirm('Move to Trash?')) {
-      Meteor.call('projects.softDelete', projectId, (error) => {
+      Meteor.call('batteries.softDelete', batteryId, (error) => {
         if (error) {
           Bert.alert(error.reason, 'danger');
         } else {
-          Bert.alert('Project moved to Trash!', 'warning');
+          Bert.alert('Battery moved to Trash!', 'warning');
         }
       });
     }
   }
 
-  handleRestore(projectId) {
-    if (confirm('Restore Project?')) {
-      Meteor.call('projects.restore', projectId, (error) => {
+  handleRestore(batteryId) {
+    if (confirm('Restore Battery?')) {
+      Meteor.call('batteries.restore', batteryId, (error) => {
         if (error) {
           Bert.alert(error.reason, 'danger');
         } else {
-          Bert.alert('Project Restored!', 'success');
+          Bert.alert('Battery Restored!', 'success');
         }
       });
     }
   }
 
-  handleHardRemove(projectId) {
+  handleHardRemove(batteryId) {
     if (confirm('Are you sure? This is permanent!')) {
-      Meteor.call('projects.hardDelete', projectId, (error) => {
+      Meteor.call('batteries.hardDelete', batteryId, (error) => {
         if (error) {
           Bert.alert(error.reason, 'danger');
         } else {
-          Bert.alert('Project deleted!', 'danger');
+          Bert.alert('Battery deleted!', 'danger');
         }
       });
     }
-  }
-
-  toggleDone(projectId, done) {
-    Meteor.call('projects.setDone', projectId, !done, (error) => {
-      if (error) {
-        Bert.alert(error.reason, 'danger');
-      } else {
-        !done ? Bert.alert('Good Job', 'success') : Bert.alert('Keep up the work', 'info');
-      }
-    });
   }
 
   toggleHideCompleted() {
@@ -97,40 +83,31 @@ class Projects extends Component {
   }
 
   render() {
-    const { loading, projects, match } = this.props;
+    const { loading, batteries, match } = this.props;
     return (!loading ? (
-      <div className="Projects">
+      <div className="Batteries">
         <TrashModal
           title="Recycle Bin"
           show={this.state.trashShow}
           onHide={() => this.trashClose()}
-          itemName="Projects"
+          itemName="Batteries"
           loading={loading}
           deletedCount={this.props.deletedCount}
           handleRestore={this.handleRestore}
           handleHardRemove={this.handleHardRemove}
-          deletedItems={this.props.deletedProjects}
+          deletedItems={this.props.deletedBatteries}
         />
         <div className="page-header clearfix">
-          <Button
-            bsStyle={!this.state.hideCompleted ? 'info' : 'default'}
-            onClick={() => this.toggleHideCompleted()}
-          >{!this.state.hideCompleted ? 'Hide Completed Projects' : 'Show Completed Projects'} ({this.props.completeCount})</Button>
-          <Link className="btn btn-success pull-right" to={`${match.url}/new`}>Add Project</Link>
+          <Link className="btn btn-success pull-right" to={`${match.url}/new`}>Add Battery</Link>
         </div>
-        {projects.length ? <div className="ItemList"><Table responsive hover>
+        {batteries.length ? <div className="ItemList"><Table responsive hover>
           <thead>
             <tr>
               <th>
-                Projects (
-                  {this.state.hideCompleted ? this.props.incompleteCount : this.props.totalCount}
-                )
+                Batteries ({this.props.totalCount})
               </th>
               <th className="hidden-xs">Last Updated</th>
               <th className="hidden-xs">Created</th>
-              <th className="center-column">
-                Completed
-              </th>
               <th><Button
                 bsStyle="default"
                 onClick={() => this.setState({ trashShow: true })}
@@ -140,41 +117,35 @@ class Projects extends Component {
           </thead>
           <List
             loading={loading}
-            completedColumn
-            items={projects}
+            completedColumn={false}
+            items={batteries}
             match={match}
-            hideCompleted={this.state.hideCompleted}
             history={this.props.history}
             softDeleteItem={this.handleSoftRemove}
-            completeItem={this.toggleDone}
           />
-        </Table></div> : <Alert bsStyle="warning">No projects yet!</Alert>}
+        </Table></div> : <Alert bsStyle="warning">No batteries yet!</Alert>}
       </div>
     ) : <Loading />);
   }
 }
 
-Projects.propTypes = {
+Batteries.propTypes = {
   loading: PropTypes.bool.isRequired,
-  projects: PropTypes.arrayOf(PropTypes.object).isRequired,
-  deletedProjects: PropTypes.arrayOf(PropTypes.object).isRequired,
+  batteries: PropTypes.arrayOf(PropTypes.object).isRequired,
+  deletedBatteries: PropTypes.arrayOf(PropTypes.object).isRequired,
   match: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
   deletedCount: PropTypes.number.isRequired,
-  incompleteCount: PropTypes.number.isRequired,
-  completeCount: PropTypes.number.isRequired,
   totalCount: PropTypes.number.isRequired,
 };
 
 export default createContainer(() => {
-  const subscription = Meteor.subscribe('projects');
+  const subscription = Meteor.subscribe('batteries');
   return {
     loading: !subscription.ready(),
-    projects: ProjectsCollection.find({ deleted: { $eq: 'no' } }).fetch(),
-    deletedProjects: ProjectsCollection.find({ deleted: { $ne: 'no' } }).fetch(),
-    deletedCount: ProjectsCollection.find({ deleted: { $ne: 'no' } }).count(),
-    incompleteCount: ProjectsCollection.find({ deleted: { $eq: 'no' }, done: { $eq: false } }).count(),
-    completeCount: ProjectsCollection.find({ deleted: { $eq: 'no' }, done: { $eq: true } }).count(),
-    totalCount: ProjectsCollection.find({ deleted: { $eq: 'no' } }).count(),
+    batteries: BatteriesCollection.find({ deleted: { $eq: 'no' } }).fetch(),
+    deletedBatteries: BatteriesCollection.find({ deleted: { $ne: 'no' } }).fetch(),
+    deletedCount: BatteriesCollection.find({ deleted: { $ne: 'no' } }).count(),
+    totalCount: BatteriesCollection.find({ deleted: { $eq: 'no' } }).count(),
   };
-}, Projects);
+}, Batteries);

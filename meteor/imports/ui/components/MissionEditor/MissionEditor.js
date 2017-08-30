@@ -2,12 +2,23 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { FormGroup, ControlLabel, Button, Row, Col } from 'react-bootstrap';
+import { createContainer } from 'meteor/react-meteor-data';
+import { FormGroup, ControlLabel, Button, Row, Col, HelpBlock } from 'react-bootstrap';
+import { LinkContainer } from 'react-router-bootstrap';
 import { Meteor } from 'meteor/meteor';
 import { Bert } from 'meteor/themeteorchef:bert';
 import validate from '../../../modules/validate';
 
+import RPASCollection from '../../../api/RPAs/RPAs';
+import PayloadsCollection from '../../../api/Payloads/Payloads';
+
 class MissionEditor extends Component {
+  constructor(props) {
+    super(props);
+
+    this.renderRPAsSelect = this.renderRPAsSelect.bind(this);
+    this.renderPayloadsSelect = this.renderPayloadsSelect.bind(this);
+  }
   componentDidMount() {
     const component = this;
     validate(component.form, {
@@ -18,10 +29,13 @@ class MissionEditor extends Component {
         description: {
           required: false,
         },
-        rpaType: {
+        rpa: {
           required: true,
         },
-        type: {
+        payload: {
+          required: true,
+        },
+        missionType: {
           required: true,
         },
       },
@@ -29,16 +43,20 @@ class MissionEditor extends Component {
         name: {
           required: 'Need a name in here, Seuss.',
         },
-        rpaType: {
-          required: 'This needs a RPA type, please.',
+        rpa: {
+          required: 'This needs a RPA, please.',
         },
-        type: {
+        payload: {
+          required: 'This needs a Payload, please.',
+        },
+        missionType: {
           required: 'This needs a mission type, please.',
         },
       },
       submitHandler() { component.handleSubmit(); },
     });
   }
+
 
   handleSubmit() {
     const { history } = this.props;
@@ -48,8 +66,9 @@ class MissionEditor extends Component {
       name: this.name.value.trim(),
       description: this.description.value.trim(),
       project: this.props.match.params.project_id,
-      rpaType: this.rpaType.value.trim(),
-      type: this.type.value.trim(),
+      rpa: this.rpa.value.trim(),
+      payload: this.payload.value.trim(),
+      missionType: this.missionType.value.trim(),
     };
 
     if (existingMission) mission._id = existingMission;
@@ -64,9 +83,18 @@ class MissionEditor extends Component {
       }
     });
   }
+  renderRPAsSelect(rpas) {
+    return rpas.map(({ _id, name, rpaType }) => (
+      <option key={_id} value={_id}>{name} ({rpaType})</option>));
+  }
+
+  renderPayloadsSelect(payloads) {
+    return payloads.map(({ _id, name, model }) => (
+      <option key={_id} value={_id}>{name} {model ? ({ model }) : ''}</option>));
+  }
 
   render() {
-    const { mission } = this.props;
+    const { mission, rpas, payloads } = this.props;
     return (
       <form ref={form => (this.form = form)} onSubmit={event => event.preventDefault()}>
         <Row><Col xs={12} sm={4}>
@@ -92,27 +120,43 @@ class MissionEditor extends Component {
             />
           </FormGroup>
           <FormGroup>
-            <ControlLabel>RPA Type</ControlLabel>
+            <ControlLabel>RPA</ControlLabel>
             <select
               type="text"
               className="form-control"
-              name="rpaType"
-              ref={rpaType => (this.rpaType = rpaType)}
-              defaultValue={mission && mission.rpaType}
-              placeholder="Congratulations! Today is your day. You're off to Great Places! You're off and away!"
+              name="rpa"
+              ref={rpa => (this.rpa = rpa)}
+              defaultValue={mission && mission.rpa}
             >
-              <option value="fixed-wing">Fixed Wing</option>
+              {this.renderRPAsSelect(rpas)}
             </select>
+            {!rpas.length ? <HelpBlock><p>You don't have any RPAs saved.</p><LinkContainer to="/hangar/rpas/new">
+              <a>Add new RPA</a>
+            </LinkContainer></HelpBlock> : ''}
+          </FormGroup>
+          <FormGroup>
+            <ControlLabel>Payload</ControlLabel>
+            <select
+              type="text"
+              className="form-control"
+              name="payload"
+              ref={payload => (this.payload = payload)}
+              defaultValue={mission && mission.payload}
+            >
+              {this.renderPayloadsSelect(payloads)}
+            </select>
+            {!payloads.length ? <HelpBlock><p>You don't have any Payloads saved.</p><LinkContainer to="/hangar/payloads/new">
+              <a>Add new Payload</a>
+            </LinkContainer></HelpBlock> : ''}
           </FormGroup>
           <FormGroup>
             <ControlLabel>Mission Type</ControlLabel>
             <select
               type="text"
               className="form-control"
-              name="type"
-              ref={type => (this.type = type)}
-              defaultValue={mission && mission.type}
-              placeholder="Congratulations! Today is your day. You're off to Great Places! You're off and away!"
+              name="missionType"
+              ref={missionType => (this.missionType = missionType)}
+              defaultValue={mission && mission.missionType}
             >
               <option value="surface-area">Surface Area</option>
             </select>
@@ -126,13 +170,23 @@ class MissionEditor extends Component {
 }
 
 MissionEditor.defaultProps = {
-  mission: { name: '', description: '', rpaType: 'fixed-wing', type: 'surface-area', project: '' },
+  mission: { name: '', description: '', rpa: '', payload: '', missionType: 'surface-area', project: '' },
 };
 
 MissionEditor.propTypes = {
   mission: PropTypes.object,
   history: PropTypes.object.isRequired,
   match: PropTypes.object.isRequired,
+  rpas: PropTypes.array.isRequired,
+  payloads: PropTypes.array.isRequired,
 };
 
-export default MissionEditor;
+export default createContainer(() => {
+  const rpasSub = Meteor.subscribe('rpas.mission');
+  const payloadsSub = Meteor.subscribe('payloads.mission');
+  return {
+    loading: !rpasSub.ready() && !payloadsSub.ready(),
+    rpas: RPASCollection.find().fetch(),
+    payloads: PayloadsCollection.find().fetch(),
+  };
+}, MissionEditor);

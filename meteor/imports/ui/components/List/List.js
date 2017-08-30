@@ -1,103 +1,75 @@
-import React, { Component } from 'react';
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
+import React from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
-import { Table, Alert, Button, Glyphicon } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import { timeago, monthDayYearAtTime } from '@cleverbeagle/dates';
-import { Meteor } from 'meteor/meteor';
-import { createContainer } from 'meteor/react-meteor-data';
-import { Bert } from 'meteor/themeteorchef:bert';
 import classnames from 'classnames';
 
 import Loading from '../../components/Loading/Loading';
-import TrashModal from '../../components/TrashModal/TrashModal';
 
-
-import './List.scss';
-
-const renderListItems = (history, match, items, hideCompleted, completedColumn) => {
+const renderListItems =
+({ history, match, items, hideCompleted, completedColumn, softDeleteItem, completeItem }) => {
   let filteredItems = items;
   if (completedColumn && hideCompleted) {
     filteredItems = filteredItems.filter(item => !item.done);
   }
-  
-  return filteredItems.map(({ _id, name, createdAt, updatedAt, done }) => {
-    const goToItem = () => this.props.history.push(`${this.props.match.url}/${_id}`);
-    if
-    const itemClassName = classnames({ completed: done });
+  return filteredItems.map((item) => {
+    const goToItem = () => history.push(`${match.url}/${item._id}`);
+    const itemClassName = (completedColumn ? classnames({ info: item.done }) : '');
     return (
       <tr
-        className={projectClassName}
-        key={_id}
+        className={itemClassName}
+        key={item._id}
       >
-        <td onClick={goToProject}>{name}</td>
-        <td onClick={goToProject}>
-          {timeago(updatedAt)}</td>
-        <td onClick={goToProject}>
-          {monthDayYearAtTime(createdAt)}</td>
-        <td className="button-column">
-          <Button
-            bsStyle={done ? 'success' : 'default'}
-            onClick={() => this.toggleDone(_id, done)}
-          >
-            {done ?
-              <i className="fa fa-check-square-o" aria-hidden="true" /> :
-              <i className="fa fa-square-o" aria-hidden="true" />}
-          </Button>
-        </td>
+        <td onClick={goToItem}>{item.name}</td>
+        <td onClick={goToItem} className="hidden-xs">
+          {timeago(item.updatedAt)}</td>
+        <td onClick={goToItem} className="hidden-xs">
+          {monthDayYearAtTime(item.createdAt)}</td>
+        {completedColumn ? (
+          <td className="button-column">
+            <Button
+              bsStyle={item.done ? 'success' : 'default'}
+              onClick={() => completeItem(item._id, item.done)}
+            >
+              {item.done ?
+                <i className="fa fa-check-square-o" aria-hidden="true" /> :
+                <i className="fa fa-square-o" aria-hidden="true" />}
+            </Button>
+          </td>) : null}
         <td className="button-column">
           <Button
             bsStyle="danger"
-            onClick={() => this.handleSoftRemove(_id)}
+            onClick={() => softDeleteItem(item._id)}
           ><i className="fa fa-times" aria-hidden="true" /></Button>
         </td>
       </tr>);
   });
-}
+};
 
-renderList(columnsNumber, items, match, history) {
-  return (
-    <div className="List">
-      {items.length ? <Table responsive hover>
-        <thead>
-          <tr>
-            <th>
-              Projects (
-                {this.state.hideCompleted ? this.props.incompleteCount : this.props.totalCount}
-              )
-            </th>
-            <th>Last Updated</th>
-            <th>Created</th>
-            <th className="center-column">
-              Completed
-            </th>
-            <th><Button
-              bsStyle="default"
-              onClick={() => this.setState({ trashShow: true })}
-              block
-            ><Glyphicon glyph="trash" /></Button></th>
-          </tr>
-        </thead>
-        <tbody>
-          {this.renderProjects(projects)}
-        </tbody>
-      </Table> : <Alert bsStyle="warning">No projects yet!</Alert>}
-    </div>)
+const renderListBody = props => (
+  <tbody>
+    {renderListItems(props)}
+  </tbody>);
 
-const List = ({ loading, items, match, history }) => (
-  !loading ? renderList(columnsNumber, items, match, history) : <Loading />
+const List = props => (
+  !props.loading ? renderListBody(props) : <Loading />
 );
+
+List.defaultPropds = {
+  hideCompleted: false,
+  completeItem: (() => console.log('saluda')),
+};
 
 List.propTypes = {
   loading: PropTypes.bool.isRequired,
   completedColumn: PropTypes.bool.isRequired,
-  columnsNumber: PropTypes.number.isRequired,
-  columnHeaders: PropTypes.arrayOf(PropTypes.String).isRequired,
   items: PropTypes.arrayOf(PropTypes.object).isRequired,
   match: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
-  hideCompleted: PropTypes.bool.isRequired,
+  hideCompleted: PropTypes.bool,
   softDeleteItem: PropTypes.func.isRequired,
-  if (completedColumn === True){
-    completeItem: PropTypes.func.isRequired,
-  }
+  completeItem: PropTypes.func,
 };
+
+export default List;
