@@ -1,4 +1,6 @@
+/*Author LIM*/
 import SimpleSchema from 'simpl-schema';
+
 
 
 const Point = new SimpleSchema({
