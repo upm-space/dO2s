@@ -1,4 +1,4 @@
-/* eslint-disable max-len, no-return-assign */
+/* eslint-disable max-len, no-return-assign, no-unneeded-ternary */
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
@@ -90,7 +90,7 @@ class MissionEditor extends Component {
 
   renderPayloadsSelect(payloads) {
     return payloads.map(({ _id, name, model }) => (
-      <option key={_id} value={_id}>{name} {model ? ({ model }) : ''}</option>));
+      <option key={_id} value={_id}>{name} {model ? `(${model})` : ''}</option>));
   }
 
   render() {
