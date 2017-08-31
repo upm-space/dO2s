@@ -58,7 +58,7 @@ class MapComponent extends Component {
       this.mymap.setView([d[0].lat, d[0].lon], 15);
       this.setState({ searchLoc: d[0].display_name });
     })
-    .catch((error) => {
+    .catch(() => {
       Bert.alert('Location not found', 'warning');
     });
   }
@@ -66,7 +66,7 @@ class MapComponent extends Component {
   render() {
     return (
       <div className="MapComponent" style={{ height: this.props.height }}>
-        <div id="mymap" />
+        <div id="mymap" style={{ height: (!this.props.searchItem ? '100%' : '90%') }} />
         {this.props.searchItem ? (<FormGroup>
           <InputGroup>
             <input
