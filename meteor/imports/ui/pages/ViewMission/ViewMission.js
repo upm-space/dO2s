@@ -7,6 +7,7 @@ import { Bert } from 'meteor/themeteorchef:bert';
 import { LinkContainer } from 'react-router-bootstrap';
 import { Redirect } from 'react-router-dom';
 import Missions from '../../../api/Missions/Missions';
+import Projects from '../../../api/Projects/Projects';
 import NotFound from '../NotFound/NotFound';
 import Loading from '../../components/Loading/Loading';
 import MissionPlan from '../../components/MissionPlan/MissionPlan';
@@ -28,13 +29,13 @@ const handleRemove = (missionId, history, projectId) => {
   }
 };
 
-const handleMissionNav = (match, mission) => {
+const handleMissionNav = (match, mission, project) => {
   if (match.path === '/projects/:project_id/:mission_id/plan') {
-    return <MissionPlan mission={mission} />;
+    return <MissionPlan mission={mission} project={project} />;
   } else if (match.path === '/projects/:project_id/:mission_id/flight') {
-    return <MissionFlight mission={mission} />;
+    return <MissionFlight mission={mission} project={project} />;
   } else if (match.path === '/projects/:project_id/:mission_id/analysis') {
-    return <MissionAnalysis mission={mission} />;
+    return <MissionAnalysis mission={mission} project={project} />;
   } else if (match.path === '/projects/:project_id/:mission_id') {
     return <Redirect to={`/projects/${match.params.project_id}/${match.params.mission_id}/plan`} />;
   }
@@ -42,7 +43,7 @@ const handleMissionNav = (match, mission) => {
 };
 
 
-const renderMission = (mission, match, history) => (mission && mission.deleted === 'no' ? (
+const renderMission = (mission, match, history, project) => (mission && mission.deleted === 'no' ? (
   <div className="ViewMission">
     <div className="page-header clearfix">
       <h4 className="pull-left">{ mission && mission.name }</h4>
@@ -75,17 +76,18 @@ const renderMission = (mission, match, history) => (mission && mission.deleted =
         </div>
       </div>
     </div>
-    {handleMissionNav(match, mission)}
+    {handleMissionNav(match, mission, project)}
   </div>
 ) : <NotFound />);
 
-const ViewMission = ({ loading, mission, match, history }) => (
-  !loading ? renderMission(mission, match, history) : <Loading />
+const ViewMission = ({ loading, mission, match, history, project }) => (
+  !loading ? renderMission(mission, match, history, project) : <Loading />
 );
 
 ViewMission.propTypes = {
   loading: PropTypes.bool.isRequired,
   mission: PropTypes.object,
+  project: PropTypes.object,
   match: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
 };
@@ -93,9 +95,11 @@ ViewMission.propTypes = {
 export default createContainer(({ match }) => {
   const projectId = match.params.project_id;
   const missionId = match.params.mission_id;
-  const subscription = Meteor.subscribe('missions.view', projectId, missionId);
+  const missionSub = Meteor.subscribe('missions.view', projectId, missionId);
+  const projectSub = Meteor.subscribe('projetcs.view', projectId);
   return {
-    loading: !subscription.ready(),
+    loading: !missionSub.ready() && !projectSub.ready(),
     mission: Missions.findOne(missionId),
+    project: Projects.findOne(projectId),
   };
 }, ViewMission);

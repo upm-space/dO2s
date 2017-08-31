@@ -1,4 +1,4 @@
-/* eslint-disable max-len, no-return-assign, no-unneeded-ternary */
+/* eslint-disable no-return-assign, no-unneeded-ternary */
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
@@ -116,7 +116,8 @@ class MissionEditor extends Component {
               name="description"
               ref={description => (this.description = description)}
               defaultValue={mission && mission.description}
-              placeholder="Congratulations! Today is your day. You're off to Great Places! You're off and away!"
+              placeholder="Congratulations! Today is your day. You're off to Great Places! You're
+              off and away!"
             />
           </FormGroup>
           <FormGroup>
@@ -130,9 +131,14 @@ class MissionEditor extends Component {
             >
               {this.renderRPAsSelect(rpas)}
             </select>
-            {!rpas.length ? <HelpBlock><p>You don't have any RPAs saved.</p><LinkContainer to="/hangar/rpas/new">
-              <a>Add new RPA</a>
-            </LinkContainer></HelpBlock> : ''}
+            {!rpas.length
+              ? <HelpBlock>
+                <p>You don&apost have any RPAs saved.</p>
+                <LinkContainer to="/hangar/rpas/new">
+                  <a>Add new RPA</a>
+                </LinkContainer>
+              </HelpBlock>
+              : ''}
           </FormGroup>
           <FormGroup>
             <ControlLabel>Payload</ControlLabel>
@@ -145,9 +151,14 @@ class MissionEditor extends Component {
             >
               {this.renderPayloadsSelect(payloads)}
             </select>
-            {!payloads.length ? <HelpBlock><p>You don't have any Payloads saved.</p><LinkContainer to="/hangar/payloads/new">
-              <a>Add new Payload</a>
-            </LinkContainer></HelpBlock> : ''}
+            {!payloads.length
+              ? <HelpBlock>
+                <p>You don&apost have any Payloads saved.</p>
+                <LinkContainer to="/hangar/payloads/new">
+                  <a>Add new Payload</a>
+                </LinkContainer>
+              </HelpBlock>
+          : ''}
           </FormGroup>
           <FormGroup>
             <ControlLabel>Mission Type</ControlLabel>
