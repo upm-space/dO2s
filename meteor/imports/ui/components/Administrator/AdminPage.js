@@ -32,7 +32,7 @@ const AdminPage = ({ loggingIn, authenticated, isAdmin, component, emailVerified
   <Route
     {...rest}
     render={(props) => {
-      const adminComponent = isAdmin ? React.createElement(component, { ...props, ...rest, loggingIn, authenticated, isAdmin }) : <Redirect to="/projects" />;
+      const adminComponent = isAdmin ? React.createElement(component, { ...props, ...rest, loggingIn, authenticated, isAdmin, emailVerified, emailAddress }) : <Redirect to="/projects" />;
       const emailVerifiedComponent = emailVerified ? adminComponent : verifyEmailAlert(emailAddress);
       return authenticated ? emailVerifiedComponent : <Redirect to="/logout" />;
     }}
