@@ -1,10 +1,11 @@
-{
+   {
   "name": "dO2s",
   "private": true,
   "scripts": {
     "db": "mongod --dbpath ~/myGitprojects/data/db",
     "start": "meteor --settings settings-development.json",
-    "demo": "env MONGO_URL=mongodb://localhost:27017/do2sdb meteor --settings settings-demo.json"
+    "demo": "env MONGO_URL=mongodb://localhost:27017/do2sdb meteor --settings settings-demo.json",
+    "test": "jest"
   },
   "dependencies": {
     "@cleverbeagle/dates": "^0.5.1",
@@ -24,7 +25,7 @@
     "react-bootstrap": "^0.31.2",
     "react-dom": "^15.6.1",
     "react-router": "^4.2.0",
-    "react-router-bootstrap": "^0.24.2",
+    "react-router-bootstrap": "^0.24.3",
     "react-router-dom": "^4.2.2",
     "simpl-schema": "^0.3.2"
   },
