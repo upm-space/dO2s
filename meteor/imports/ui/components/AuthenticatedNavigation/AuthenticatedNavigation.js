@@ -35,6 +35,12 @@ const UserMngButton = (<LinkContainer to="/users">
   </NavItem>
 </LinkContainer>);
 
+const hangarDropdownTitle = (
+  <div className="pull-left">
+    <i className="fa fa-paper-plane" aria-hidden="true" /> Hangar
+  </div>
+);
+
 const AuthenticatedNavigation = ({ isAdmin, name, location }) => (
   <div>
     <Nav>
@@ -46,7 +52,7 @@ const AuthenticatedNavigation = ({ isAdmin, name, location }) => (
 
       <NavDropdown
         eventKey={2}
-        title={<div className="pull-left"><i className="fa fa-paper-plane" aria-hidden="true" /> Hangar </div>}
+        title={hangarDropdownTitle}
         id="hangar-dropdown"
       >
         <LinkContainer to="/hangar/rpas">
