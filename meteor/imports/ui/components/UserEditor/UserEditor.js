@@ -18,7 +18,6 @@ class UserEditor extends Component {
     this.renderPasswordUser = this.renderPasswordUser.bind(this);
     this.renderProfileForm = this.renderProfileForm.bind(this);
     this.handleResetPassword = this.handleResetPassword.bind(this);
-    this.getUserType = this.getUserType.bind(this);
   }
 
   componentDidMount() {
@@ -68,7 +67,7 @@ class UserEditor extends Component {
         Bert.alert('User password reset to (password)', 'success');
       }
     },
-  );
+    );
   }
 
   handleSubmit() {
