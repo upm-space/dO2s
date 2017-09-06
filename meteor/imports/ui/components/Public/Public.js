@@ -6,10 +6,10 @@ const Public = ({ loggingIn, authenticated, component, ...rest }) => (
   <Route
     {...rest}
     render={props => (
-            !authenticated ?
-            (React.createElement(component, { ...props, loggingIn, authenticated })) :
-            (<Redirect to="/projects" />)
-        )}
+      !authenticated ?
+        (React.createElement(component, { ...props, ...rest, loggingIn, authenticated })) :
+        (<Redirect to="/projects" />)
+    )}
   />
 );
 

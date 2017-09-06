@@ -24,7 +24,7 @@ const verifyEmailAlert = emailAddress => (<Alert bsStyle="warning">
       href="#"
     >
     Re-send verification email
-  </Button>
+    </Button>
   </p>
 </Alert>);
 
@@ -33,8 +33,8 @@ const Authenticated = ({ loggingIn, authenticated, component, emailVerified, ema
     {...rest}
     render={(props) => {
       const emailVerifiedComponent = emailVerified
-      ? React.createElement(component, { ...props, loggingIn, authenticated })
-      : verifyEmailAlert(emailAddress);
+        ? React.createElement(component, { ...props, ...rest, loggingIn, authenticated })
+        : verifyEmailAlert(emailAddress);
 
       return authenticated ? emailVerifiedComponent : <Redirect to="/logout" />;
     }}
