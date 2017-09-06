@@ -70,3 +70,4 @@ To use Font Awesome we'll use a CDN. We'll add it to the head of `main.html`, we
 -   [Meteor bootstrap package](https://atmospherejs.com/twbs/bootstrap), is still on 3.3.6
 -   [SASS project structure](http://vanseodesign.com/css/sass-directory-structures/)
 -   [Sass Language Documentation](http://sass-lang.com/documentation/)
+-   [Using bootstrap 4 in meteor](https://github.com/juliancwirko/meteor-bootstrap-npm-test)
