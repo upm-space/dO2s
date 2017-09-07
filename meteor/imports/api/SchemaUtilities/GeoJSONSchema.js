@@ -208,6 +208,7 @@ export const Feature = new SimpleSchema({
   id: {
     type: SimpleSchema.oneOf(String, Number),
     label: 'Commonly used identifier',
+    optional: true,
   },
   bbox: {
     type: Array,
@@ -218,6 +219,7 @@ export const Feature = new SimpleSchema({
     type: Number,
   },
   geometry: {
+    // BUG does not work - SimpleSchema only keeps the last schema
     type: SimpleSchema.oneOf(Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon, GeometryCollection),
     label: 'The value of the geometry member SHALL be either a Geometry object as defined above or, in the case that the Feature is unlocated, a JSON null value.',
   },
@@ -247,15 +249,181 @@ export const FeatureCollection = new SimpleSchema({
     label: 'An array of the features',
   },
   'features.$': {
+    // BUG does not work - SimpleSchema only keeps the last schema
     type: Feature,
     label: 'A feature object',
   },
 });
 
+
 export const GeoJSONSchemaDef = new SimpleSchema({
+  // BUG does not work - SimpleSchema only keeps the last schema
   GeoJSON: {
     type: SimpleSchema.oneOf(Point, LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon, GeometryCollection, Feature, FeatureCollection),
   },
 });
 
 // export default GeoJSONSchemaDef;
+
+// FIXME Workarounds to SimpleSchema limitations
+export const FeaturePoint = new SimpleSchema({
+  type: {
+    type: String,
+    label: 'A Feature object represents a spatially bounded entity.',
+    allowedValues: ['Feature'],
+  },
+  id: {
+    type: SimpleSchema.oneOf(String, Number),
+    label: 'Commonly used identifier',
+    optional: true,
+  },
+  bbox: {
+    type: Array,
+    label: 'Includes information on the coordinate range. Length 2*n where n is the number of dimensions represented in the contained geometries. Axes order of bbox follows the axes order of geometries',
+    optional: true,
+  },
+  'bbox.$': {
+    type: Number,
+  },
+  geometry: {
+    type: SimpleSchema.oneOf(Point),
+    label: 'The value of the geometry member SHALL be either a Geometry object as defined above or, in the case that the Feature is unlocated, a JSON null value.',
+  },
+  properties: {
+    type: Object,
+    label: 'Extra properties for the feature',
+    blackbox: true,
+  },
+});
+
+export const FeatureLineString = new SimpleSchema({
+  type: {
+    type: String,
+    label: 'A Feature object represents a spatially bounded entity.',
+    allowedValues: ['Feature'],
+  },
+  id: {
+    type: SimpleSchema.oneOf(String, Number),
+    label: 'Commonly used identifier',
+    optional: true,
+  },
+  bbox: {
+    type: Array,
+    label: 'Includes information on the coordinate range. Length 2*n where n is the number of dimensions represented in the contained geometries. Axes order of bbox follows the axes order of geometries',
+    optional: true,
+  },
+  'bbox.$': {
+    type: Number,
+  },
+  geometry: {
+    type: SimpleSchema.oneOf(LineString),
+    label: 'The value of the geometry member SHALL be either a Geometry object as defined above or, in the case that the Feature is unlocated, a JSON null value.',
+  },
+  properties: {
+    type: Object,
+    label: 'Extra properties for the feature',
+    blackbox: true,
+  },
+});
+
+export const FeaturePolygon = new SimpleSchema({
+  type: {
+    type: String,
+    label: 'A Feature object represents a spatially bounded entity.',
+    allowedValues: ['Feature'],
+  },
+  id: {
+    type: SimpleSchema.oneOf(String, Number),
+    label: 'Commonly used identifier',
+    optional: true,
+  },
+  bbox: {
+    type: Array,
+    label: 'Includes information on the coordinate range. Length 2*n where n is the number of dimensions represented in the contained geometries. Axes order of bbox follows the axes order of geometries',
+    optional: true,
+  },
+  'bbox.$': {
+    type: Number,
+  },
+  geometry: {
+    type: SimpleSchema.oneOf(Polygon),
+    label: 'The value of the geometry member SHALL be either a Geometry object as defined above or, in the case that the Feature is unlocated, a JSON null value.',
+  },
+  properties: {
+    type: Object,
+    label: 'Extra properties for the feature',
+    blackbox: true,
+  },
+});
+
+export const FeatureCollectionPoints = new SimpleSchema({
+  type: {
+    type: String,
+    label: 'The type of the feature.',
+    allowedValues: ['FeatureCollection'],
+  },
+  bbox: {
+    type: Array,
+    label: 'Includes information on the coordinate range. Length 2*n where n is the number of dimensions represented in the contained geometries. Axes order of bbox follows the axes order of geometries',
+    optional: true,
+  },
+  'bbox.$': {
+    type: Number,
+  },
+  features: {
+    type: Array,
+    label: 'An array of the features',
+  },
+  'features.$': {
+    type: FeaturePoint,
+    label: 'A feature object',
+  },
+});
+
+export const FeatureCollectionLineStrings = new SimpleSchema({
+  type: {
+    type: String,
+    label: 'The type of the feature.',
+    allowedValues: ['FeatureCollection'],
+  },
+  bbox: {
+    type: Array,
+    label: 'Includes information on the coordinate range. Length 2*n where n is the number of dimensions represented in the contained geometries. Axes order of bbox follows the axes order of geometries',
+    optional: true,
+  },
+  'bbox.$': {
+    type: Number,
+  },
+  features: {
+    type: Array,
+    label: 'An array of the features',
+  },
+  'features.$': {
+    type: FeatureLineString,
+    label: 'A feature object',
+  },
+});
+
+export const FeatureCollectionPolygons = new SimpleSchema({
+  type: {
+    type: String,
+    label: 'The type of the feature.',
+    allowedValues: ['FeatureCollection'],
+  },
+  bbox: {
+    type: Array,
+    label: 'Includes information on the coordinate range. Length 2*n where n is the number of dimensions represented in the contained geometries. Axes order of bbox follows the axes order of geometries',
+    optional: true,
+  },
+  'bbox.$': {
+    type: Number,
+  },
+  features: {
+    type: Array,
+    label: 'An array of the features',
+  },
+  'features.$': {
+    type: FeaturePolygon,
+    label: 'A feature object',
+  },
+});

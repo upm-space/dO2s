@@ -1,8 +1,6 @@
 /* eslint-disable no-undef */
 import SimpleSchema from 'simpl-schema';
-import { Point, LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon, GeometryCollection, Feature, FeatureCollection, GeoJSONSchemaDef } from './GeoJSONSchema';
-
-console.log(GeometryCollection);
+import { Point, LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon, GeometryCollection, Feature, FeatureCollection, GeoJSONSchemaDef, FeaturePoint, FeatureLineString, FeaturePolygon, FeatureCollectionPoints, FeatureCollectionLineStrings, FeatureCollectionPolygons } from './GeoJSONSchema';
 
 expect.extend({
   toGiveValidationErrorIn(objectToValidate, schemaUsed) {
@@ -347,11 +345,11 @@ const FeatureExamplePolygonGood = {
     type: 'Polygon',
     coordinates: [
       [
-        [100.0, 0.0],
-        [101.0, 0.0],
-        [101.0, 1.0],
-        [100.0, 1.0],
-        [100.0, 0.0],
+        [100.0, 0.0, 50],
+        [101.0, 0.0, 50],
+        [101.0, 1.0, 50],
+        [100.0, 1.0, 50],
+        [100.0, 0.0, 50],
       ],
     ],
   },
@@ -413,6 +411,156 @@ const FeatureCollectionExampleGood = {
   }],
 };
 
+const FeatureCollectionPointsExampleGood = {
+  type: 'FeatureCollection',
+  bbox: [100.0, 0.0, 105.0, 1.0],
+  features: [{
+    type: 'Feature',
+    geometry: {
+      type: 'Point',
+      coordinates: [102.0, 0.5, 24],
+    },
+    properties: {
+      prop0: 'value0',
+    },
+  }, {
+    type: 'Feature',
+    geometry: {
+      type: 'Point',
+      coordinates: [102.0, 0.5, 34],
+    },
+    properties: {
+      prop0: 'value0',
+      prop1: 0.0,
+    },
+  }, {
+    type: 'Feature',
+    geometry: {
+      type: 'Point',
+      coordinates: [102.0, 0.5, 34],
+    },
+    properties: {
+      prop0: 'value0',
+      prop1: {
+        this: 'that',
+      },
+    },
+  }],
+};
+
+const FeatureCollectionLineStringsExampleGood = {
+  type: 'FeatureCollection',
+  bbox: [100.0, 0.0, 105.0, 1.0],
+  features: [{
+    type: 'Feature',
+    geometry: {
+      type: 'LineString',
+      coordinates: [
+        [102.0, 0.0, 24],
+        [103.0, 1.0, 24],
+        [104.0, 0.0, 24],
+        [105.0, 1.0, 24],
+      ],
+    },
+    properties: {
+      prop0: 'value0',
+    },
+  }, {
+    type: 'Feature',
+    geometry: {
+      type: 'LineString',
+      coordinates: [
+        [102.0, 0.0, 24],
+        [103.0, 1.0, 24],
+        [104.0, 0.0, 24],
+        [105.0, 1.0, 24],
+      ],
+    },
+    properties: {
+      prop0: 'value0',
+      prop1: 0.0,
+    },
+  }, {
+    type: 'Feature',
+    geometry: {
+      type: 'LineString',
+      coordinates: [
+        [102.0, 0.0, 24],
+        [103.0, 1.0, 24],
+        [104.0, 0.0, 24],
+        [105.0, 1.0, 24],
+      ],
+    },
+    properties: {
+      prop0: 'value0',
+      prop1: {
+        this: 'that',
+      },
+    },
+  }],
+};
+
+const FeatureCollectionPolygonsExampleGood = {
+  type: 'FeatureCollection',
+  bbox: [100.0, 0.0, 105.0, 1.0],
+  features: [{
+    type: 'Feature',
+    geometry: {
+      type: 'Polygon',
+      coordinates: [
+        [
+          [100.0, 0.0, 24],
+          [101.0, 0.0, 24],
+          [101.0, 1.0, 24],
+          [100.0, 1.0, 24],
+          [100.0, 0.0, 24],
+        ],
+      ],
+    },
+    properties: {
+      prop0: 'value0',
+    },
+  }, {
+    type: 'Feature',
+    geometry: {
+      type: 'Polygon',
+      coordinates: [
+        [
+          [100.0, 0.0, 24],
+          [101.0, 0.0, 24],
+          [101.0, 1.0, 24],
+          [100.0, 1.0, 24],
+          [100.0, 0.0, 24],
+        ],
+      ],
+    },
+    properties: {
+      prop0: 'value0',
+      prop1: 0.0,
+    },
+  }, {
+    type: 'Feature',
+    geometry: {
+      type: 'Polygon',
+      coordinates: [
+        [
+          [100.0, 0.0, 24],
+          [101.0, 0.0, 24],
+          [101.0, 1.0, 24],
+          [100.0, 1.0, 24],
+          [100.0, 0.0, 24],
+        ],
+      ],
+    },
+    properties: {
+      prop0: 'value0',
+      prop1: {
+        this: 'that',
+      },
+    },
+  }],
+};
+
 // validation contexts
 const pointValidationContext = Point.newContext();
 const lineStringValidationContext = LineString.newContext();
@@ -424,6 +572,13 @@ const geometryCollectionValidationContext = GeometryCollection.newContext();
 const featureValidationContext = Feature.newContext();
 const featureCollectionValidationContext = FeatureCollection.newContext();
 const geoJSONSchemaDefValidationContext = GeoJSONSchemaDef.newContext();
+
+const featurePointValidationContext = FeaturePoint.newContext();
+const featureCollectionPointsValidationContext = FeatureCollectionPoints.newContext();
+const featureLineStringValidationContext = FeatureLineString.newContext();
+const featureCollectionLineStringsValidationContext = FeatureCollectionLineStrings.newContext();
+const featurePolygonValidationContext = FeaturePolygon.newContext();
+const featureCollectionPolygonsValidationContext = FeatureCollectionPolygons.newContext();
 
 test('Point Example Good', () => {
   expect(pointValidationContext.validate(PointExampleGood)).toBeTruthy();
@@ -537,42 +692,90 @@ describe('MultiPolygon validation error', () => {
   });
 });
 
-// test('GeometryCollection Example Good Point', () => {
-//   expect(geometryCollectionValidationContext.validate(GeometryCollectionExampleGood1)).toBeTruthy();
-// });
-//
-// test('GeometryCollection Example Good Point no error thrown', () => {
-//   expect(GeometryCollectionExampleGood1).not.toGiveValidationErrorIn(GeometryCollection);
-// });
-//
-// test('GeometryCollection Example Good Point + Linstring', () => {
-//   expect(geometryCollectionValidationContext.validate(GeometryCollectionExampleGood2)).toBeTruthy();
-// });
-//
-// test('GeometryCollection Example Good Point + Linstring no error thrown', () => {
-//   expect(GeometryCollectionExampleGood2).not.toGiveValidationErrorIn(GeometryCollection);
-// });
-//
-// test('GeometryCollection Example Good Linetringsx2', () => {
-//   expect(geometryCollectionValidationContext.validate(GeometryCollectionExampleGood3)).toBeTruthy();
-// });
-//
-// test('GeometryCollection Example Good Linetringsx2 no error thrown', () => {
-//   expect(GeometryCollectionExampleGood3).not.toGiveValidationErrorIn(GeometryCollection);
-// });
+test.skip('GeometryCollection Example Good Point', () => {
+  expect(geometryCollectionValidationContext.validate(GeometryCollectionExampleGood1)).toBeTruthy();
+});
 
-test('Feature Point Example Good', () => {
+test.skip('GeometryCollection Example Good Point no error thrown', () => {
+  expect(GeometryCollectionExampleGood1).not.toGiveValidationErrorIn(GeometryCollection);
+});
+
+test.skip('GeometryCollection Example Good Point + Linstring', () => {
+  expect(geometryCollectionValidationContext.validate(GeometryCollectionExampleGood2)).toBeTruthy();
+});
+
+test.skip('GeometryCollection Example Good Point + Linstring no error thrown', () => {
+  expect(GeometryCollectionExampleGood2).not.toGiveValidationErrorIn(GeometryCollection);
+});
+
+test.skip('GeometryCollection Example Good Linetringsx2', () => {
+  expect(geometryCollectionValidationContext.validate(GeometryCollectionExampleGood3)).toBeTruthy();
+});
+
+test.skip('GeometryCollection Example Good Linetringsx2 no error thrown', () => {
+  expect(GeometryCollectionExampleGood3).not.toGiveValidationErrorIn(GeometryCollection);
+});
+
+test.skip('Feature Point Example Good', () => {
   expect(featureValidationContext.validate(FeatureExamplePointGood)).toBeTruthy();
 });
 
-test('Feature LineString Example Good', () => {
+test.skip('Feature LineString Example Good', () => {
   expect(featureValidationContext.validate(FeatureExampleLineStringGood)).toBeTruthy();
 });
 
-test('Feature Polygon Example Good', () => {
+test.skip('Feature Polygon Example Good', () => {
   expect(featureValidationContext.validate(FeatureExamplePolygonGood)).toBeTruthy();
 });
 
-test('Feature Collection Example Good', () => {
+test.skip('Feature Collection Example Good', () => {
   expect(featureCollectionValidationContext.validate(FeatureCollectionExampleGood)).toBeTruthy();
+});
+
+test('FeaturePoint Example Good', () => {
+  expect(featurePointValidationContext.validate(FeatureExamplePointGood)).toBeTruthy();
+});
+
+test('FeaturePoint Example Good no error thrown', () => {
+  expect(FeatureExamplePointGood).not.toGiveValidationErrorIn(FeaturePoint);
+});
+
+test('FeatureLineString Example Good', () => {
+  expect(featureLineStringValidationContext.validate(FeatureExampleLineStringGood)).toBeTruthy();
+});
+
+test('FeatureLineString Example Good no error thrown', () => {
+  expect(FeatureExampleLineStringGood).not.toGiveValidationErrorIn(FeatureLineString);
+});
+
+test('FeaturePolygon Example Good', () => {
+  expect(featurePolygonValidationContext.validate(FeatureExamplePolygonGood)).toBeTruthy();
+});
+
+test('FeaturePolygon Example Good no error thrown', () => {
+  expect(FeatureExamplePolygonGood).not.toGiveValidationErrorIn(FeaturePolygon);
+});
+
+test('FeatureCollectionPoints Example Good', () => {
+  expect(featureCollectionPointsValidationContext.validate(FeatureCollectionPointsExampleGood)).toBeTruthy();
+});
+
+test('FeatureCollectionPoints Example Good no error thrown', () => {
+  expect(FeatureCollectionPointsExampleGood).not.toGiveValidationErrorIn(FeatureCollectionPoints);
+});
+
+test('FeatureCollectionLineStrings Example Good', () => {
+  expect(featureCollectionLineStringsValidationContext.validate(FeatureCollectionLineStringsExampleGood)).toBeTruthy();
+});
+
+test('FeatureCollectionLineStrings Example Good no error thrown', () => {
+  expect(FeatureCollectionLineStringsExampleGood).not.toGiveValidationErrorIn(FeatureCollectionLineStrings);
+});
+
+test('FeatureCollectionPolygons Example Good', () => {
+  expect(featureCollectionPolygonsValidationContext.validate(FeatureCollectionPolygonsExampleGood)).toBeTruthy();
+});
+
+test('FeatureCollectionPolygons Example Good no error thrown', () => {
+  expect(FeatureCollectionPolygonsExampleGood).not.toGiveValidationErrorIn(FeatureCollectionPolygons);
 });
