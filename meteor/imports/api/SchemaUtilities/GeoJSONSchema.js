@@ -1,8 +1,13 @@
 /* eslint-disable consistent-return,max-len */
 import SimpleSchema from 'simpl-schema';
 
-// Fundalmental geometry definitions
-export const Position = new SimpleSchema({
+// Geometry Primitives
+export const Point = new SimpleSchema({
+  type: {
+    type: String,
+    label: 'The type of the feature.',
+    allowedValues: ['Point'],
+  },
   coordinates: {
     type: Array,
     label: 'A single position. Fundamental geometry construct. The order for the elements is longitude (easting) and latitude (northing), in that precise order, altitude or elevation MAY be included.',
@@ -15,24 +20,12 @@ export const Position = new SimpleSchema({
   },
 });
 
-export const PositionArray = new SimpleSchema({
-  coordinates: {
-    type: Array,
-    label: 'An array of positions',
+export const LineString = new SimpleSchema({
+  type: {
+    type: String,
+    label: 'The type of the feature.',
+    allowedValues: ['LineString'],
   },
-  'coordinates.$': {
-    type: Array,
-    label: 'A single position.',
-    minCount: 3,
-    maxCount: 3,
-  },
-  'coordinates.$.$': {
-    type: Number,
-    label: 'A number representing longitude (easting), latitude (northing), altitude or elevation',
-  },
-});
-
-export const LineStringDef = new SimpleSchema({
   coordinates: {
     type: Array,
     label: 'An array of two or more positions',
@@ -50,29 +43,12 @@ export const LineStringDef = new SimpleSchema({
   },
 });
 
-export const LineStringArray = new SimpleSchema({
-  coordinates: {
-    type: Array,
-    label: 'An array of lineStrings',
+export const Polygon = new SimpleSchema({
+  type: {
+    type: String,
+    label: 'The type of the feature.',
+    allowedValues: ['Polygon'],
   },
-  'coordinates.$': {
-    type: Array,
-    label: 'A single lineString. An array of two or more positions',
-    minCount: 2,
-  },
-  'coordinates.$.$': {
-    type: Array,
-    label: 'A single position.',
-    minCount: 3,
-    maxCount: 3,
-  },
-  'coordinates.$.$.$': {
-    type: Number,
-    label: 'A number representing longitude (easting), latitude (northing), altitude or elevation',
-  },
-});
-
-export const PolygonDef = new SimpleSchema({
   coordinates: {
     type: Array,
     label: 'An array of linear rings, the first must be the exterior ring, any others must be the interior rings',
@@ -105,7 +81,62 @@ export const PolygonDef = new SimpleSchema({
   },
 });
 
-export const PolygonArray = new SimpleSchema({
+// Multipart Geometries
+export const MultiPoint = new SimpleSchema({
+  type: {
+    type: String,
+    label: 'The type of the feature.',
+    allowedValues: ['MultiPoint'],
+  },
+  coordinates: {
+    type: Array,
+    label: 'An array of positions',
+  },
+  'coordinates.$': {
+    type: Array,
+    label: 'A single position.',
+    minCount: 3,
+    maxCount: 3,
+  },
+  'coordinates.$.$': {
+    type: Number,
+    label: 'A number representing longitude (easting), latitude (northing), altitude or elevation',
+  },
+});
+
+export const MultiLineString = new SimpleSchema({
+  type: {
+    type: String,
+    label: 'The type of the feature.',
+    allowedValues: ['MultiLineString'],
+  },
+  coordinates: {
+    type: Array,
+    label: 'An array of lineStrings',
+  },
+  'coordinates.$': {
+    type: Array,
+    label: 'A single lineString. An array of two or more positions',
+    minCount: 2,
+  },
+  'coordinates.$.$': {
+    type: Array,
+    label: 'A single position.',
+    minCount: 3,
+    maxCount: 3,
+  },
+  'coordinates.$.$.$': {
+    type: Number,
+    label: 'A number representing longitude (easting), latitude (northing), altitude or elevation',
+  },
+});
+
+export const MultiPolygon = new SimpleSchema({
+  type: {
+    type: String,
+    label: 'The type of the feature.',
+    allowedValues: ['MultiPolygon'],
+  },
   coordinates: {
     type: Array,
     label: 'An array of polygons',
@@ -142,62 +173,6 @@ export const PolygonArray = new SimpleSchema({
   },
 });
 
-// Geometry Primitives
-export const Point = new SimpleSchema({
-  type: {
-    type: String,
-    label: 'The type of the feature.',
-    allowedValues: ['Point'],
-  },
-});
-Point.extend(Position.pick('coordinates'));
-
-export const LineString = new SimpleSchema({
-  type: {
-    type: String,
-    label: 'The type of the feature.',
-    allowedValues: ['LineString'],
-  },
-});
-LineString.extend(LineStringDef.pick('coordinates'));
-
-export const Polygon = new SimpleSchema({
-  type: {
-    type: String,
-    label: 'The type of the feature.',
-    allowedValues: ['Polygon'],
-  },
-});
-Polygon.extend(PolygonDef.pick('coordinates'));
-
-// Multipart Geometries
-export const MultiPoint = new SimpleSchema({
-  type: {
-    type: String,
-    label: 'The type of the feature.',
-    allowedValues: ['MultiPoint'],
-  },
-});
-MultiPoint.extend(PositionArray.pick('coordinates'));
-
-export const MultiLineString = new SimpleSchema({
-  type: {
-    type: String,
-    label: 'The type of the feature.',
-    allowedValues: ['MultiLineString'],
-  },
-});
-MultiLineString.extend(LineStringArray.pick('coordinates'));
-
-export const MultiPolygon = new SimpleSchema({
-  type: {
-    type: String,
-    label: 'The type of the feature.',
-    allowedValues: ['MultiPolygon'],
-  },
-});
-MultiPolygon.extend(PolygonArray.pick('coordinates'));
-
 // Collections
 export const GeometryCollection = new SimpleSchema({
   type: {
@@ -218,6 +193,7 @@ export const GeometryCollection = new SimpleSchema({
     label: 'An array of GeoJSON Geometry objects',
   },
   'geometries.$': {
+    // BUG does not work - SimpleSchema only keeps the last schema
     type: SimpleSchema.oneOf(Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon),
     label: 'GeoJSON Geometry objects',
   },
