@@ -1,5 +1,4 @@
 /* eslint-disable no-underscore-dangle, no-return-assign */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Row, Col, FormGroup, ControlLabel, Button } from 'react-bootstrap';

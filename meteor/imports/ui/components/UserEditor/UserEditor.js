@@ -110,8 +110,8 @@ class UserEditor extends Component {
     return (<div className="OAuthProfile">
       {Object.keys(user.services).map(service => (
         <div key={service} className={`LoggedInWith ${service}`}>
-          <div className="ServiceIcon"><i className={`fa fa-${service === 'facebook' ? 'facebook-official' : service}`} /></div>
-          <p>{`This user is registered with ${_.capitalize(service)} using the email address ${user.services[service].email}.`}</p>
+          <img src={`/${service}.svg`} alt={service} />
+          <p>{`This user is logged in with ${_.capitalize(service)} using the email address ${user.services[service].email}.`}</p>
         </div>
       ))}
     </div>);
