@@ -38,10 +38,10 @@ class UserEditor extends Component {
       },
       messages: {
         firstName: {
-          required: 'What\'s your first name?',
+          required: 'What\u0027s your first name?',
         },
         lastName: {
-          required: 'What\'s your last name?',
+          required: 'What\u0027s your last name?',
         },
         emailAddress: {
           required: 'Need an email address here.',
