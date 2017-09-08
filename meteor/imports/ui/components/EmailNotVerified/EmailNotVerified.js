@@ -1,21 +1,22 @@
-/* eslint-disable max-len, consistent-return */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Route, Redirect } from 'react-router-dom';
 
-const EmailNotVerified = ({ loggingIn, authenticated, component, ...rest }) => (
+const EmailNotVerified = ({ authenticated, component, path, exact, ...rest }) => (
   <Route
-    {...rest}
+    path={path}
+    exact={exact}
     render={props => (
       authenticated ?
-        (React.createElement(component, { ...props, ...rest, loggingIn, authenticated })) :
-        (<Redirect to="/logout" />)
+        (React.createElement(component, { ...props, ...rest, authenticated })) :
+        (<Redirect to="/login" />)
     )}
   />
 );
 
 EmailNotVerified.propTypes = {
-  loggingIn: PropTypes.bool.isRequired,
+  path: PropTypes.string.isRequired,
+  exact: PropTypes.bool,
   authenticated: PropTypes.bool.isRequired,
   component: PropTypes.func.isRequired,
 };
