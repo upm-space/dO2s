@@ -1,4 +1,4 @@
-   {
+{
   "name": "dO2s",
   "private": true,
   "scripts": {
@@ -14,8 +14,10 @@
     "bcrypt": "^1.0.3",
     "bootstrap": "^3.3.7",
     "commonmark": "^0.28.1",
+    "handlebars": "^4.0.10",
     "jquery": "^3.2.1",
     "jquery-validation": "^1.17.0",
+    "juice": "^4.1.1",
     "leaflet": "^1.2.0",
     "loadash": "^1.0.0",
     "lodash": "^4.17.4",
@@ -34,7 +36,7 @@
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-react": "^6.24.1",
     "enzyme": "^2.9.1",
-    "eslint": "^4.5.0",
+    "eslint": "^4.6.0",
     "eslint-config-airbnb": "^15.1.0",
     "eslint-plugin-import": "^2.7.0",
     "eslint-plugin-jsx-a11y": "^5.1.1",
