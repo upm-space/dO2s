@@ -1,7 +1,7 @@
 /* eslint-disable consistent-return */
-
 import { Mongo } from 'meteor/mongo';
 import SimpleSchema from 'simpl-schema';
+import { FeaturePoint } from '../SchemaUtilities/GeoJSONSchema.js';
 
 const Projects = new Mongo.Collection('Projects');
 
@@ -67,7 +67,7 @@ Projects.schema = new SimpleSchema({
     label: 'The description of the project.',
   },
   mapLocation: {
-    type: mapLocationSchema,
+    type: FeaturePoint,
     label: 'The location of the project for the map.',
   },
   deleted: {

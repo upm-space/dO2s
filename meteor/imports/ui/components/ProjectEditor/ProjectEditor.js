@@ -9,14 +9,15 @@ import validate from '../../../modules/validate';
 
 import MapComponent from '../MapComponent/MapComponent';
 
+import { featurePoint2latlong, latlong2featurePoint, featurePointGetZoom, featurePointSetZoom, featurePointSetLatitude, featurePointSetLongitude, featurePointGetLongitude, featurePointGetLatitude } from '../../../modules/geojson-converter';
+
+
 class ProjectEditor extends React.Component {
   constructor(props) {
     super(props);
     this.changeProjectLocation = this.changeProjectLocation.bind(this);
     this.state = {
-      longitude: props.project && props.project.mapLocation.longitude,
-      latitude: props.project && props.project.mapLocation.latitude,
-      zoom: props.project && props.project.mapLocation.zoom,
+      location: props.project && props.project.mapLocation,
     };
   }
   componentDidMount() {
@@ -66,10 +67,16 @@ class ProjectEditor extends React.Component {
 
   changeProjectLocation(location) {
     this.setState({
-      longitude: location.longitude,
-      latitude: location.latitude,
-      zoom: location.zoom,
-    });
+      location: {
+        type: 'Feature',
+        geometry: {
+          type: 'Point',
+          coordinates: [featurePointGetLongitude(location), featurePointGetLatitude(location), 0],
+        },
+        properties: {
+          zoom: featurePointGetZoom(location),
+        },
+      } });
   }
 
   handleSubmit() {
@@ -80,16 +87,27 @@ class ProjectEditor extends React.Component {
       name: this.name.value.trim(),
       description: this.description.value.trim(),
       mapLocation: {
-        longitude: Number(this.longitude.value),
-        latitude: Number(this.latitude.value),
-        zoom: Number(this.zoom.value),
+        type: 'Feature',
+        geometry: {
+          type: 'Point',
+          coordinates: [Number(this.longitude.value), Number(this.latitude.value), 0],
+        },
+        properties: {
+          zoom: Number(this.zoom.value),
+        },
       },
     };
     this.setState({
-      longitude: Number(this.longitude.value),
-      latitude: Number(this.latitude.value),
-      zoom: Number(this.zoom.value),
-    });
+      location: {
+        type: 'Feature',
+        geometry: {
+          type: 'Point',
+          coordinates: [Number(this.longitude.value), Number(this.latitude.value), 0],
+        },
+        properties: {
+          zoom: Number(this.zoom.value),
+        },
+      } });
 
     if (existingProject) project._id = existingProject;
 
@@ -139,8 +157,8 @@ class ProjectEditor extends React.Component {
                 className="form-control"
                 name="longitude"
                 ref={longitude => (this.longitude = longitude)}
-                value={this.state.longitude}
-                onChange={() => this.setState({ longitude: Number(this.longitude.value) })}
+                value={featurePointGetLongitude(this.state.location)}
+                onChange={() => this.setState({ 'location.geometry.coordinates[0]': Number(this.longitude.value) })}
               />
             </FormGroup>
             <FormGroup>
@@ -150,8 +168,8 @@ class ProjectEditor extends React.Component {
                 className="form-control"
                 name="latitude"
                 ref={latitude => (this.latitude = latitude)}
-                value={this.state.latitude}
-                onChange={() => this.setState({ latitude: Number(this.latitude.value) })}
+                value={featurePointGetLatitude(this.state.location)}
+                onChange={() => this.setState({ 'location.geometry.coordinates[1]': Number(this.latitude.value) })}
               />
             </FormGroup>
             <FormGroup>
@@ -161,13 +179,13 @@ class ProjectEditor extends React.Component {
                 className="form-control"
                 name="zoom"
                 ref={zoom => (this.zoom = zoom)}
-                value={this.state.zoom}
-                onChange={() => this.setState({ zoom: Number(this.zoom.value) })}
+                value={featurePointGetZoom(this.state.location)}
+                onChange={() => this.setState({ 'location.properties.zoom': Number(this.zoom.value) })}
               />
             </FormGroup>
           </Col>
           <Col xs={12} sm={8} md={8} lg={8}>
-            <MapComponent location={this.state} onLocationChange={this.changeProjectLocation} height="75vh" searchItem />
+            <MapComponent location={this.state.location} onLocationChange={this.changeProjectLocation} height="75vh" searchItem />
           </Col>
 
         </Row>
@@ -180,7 +198,19 @@ class ProjectEditor extends React.Component {
 }
 
 ProjectEditor.defaultProps = {
-  project: { name: '', description: '', mapLocation: { longitude: 3.7038, latitude: 40.4168, zoom: 5 } },
+  project: {
+    name: '',
+    description: '',
+    mapLocation: {
+      type: 'Feature',
+      geometry: {
+        type: 'Point',
+        coordinates: [-3.7038, 40.4168, 0],
+      },
+      properties: {
+        zoom: 12,
+      },
+    } },
 };
 
 ProjectEditor.propTypes = {
