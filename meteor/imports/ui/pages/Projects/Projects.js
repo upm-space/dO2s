@@ -123,7 +123,7 @@ class Projects extends Component {
             <tr>
               <th>
                 Projects (
-                  {this.state.hideCompleted ? this.props.incompleteCount : this.props.totalCount}
+                {this.state.hideCompleted ? this.props.incompleteCount : this.props.totalCount}
                 )
               </th>
               <th className="hidden-xs">Last Updated</th>
