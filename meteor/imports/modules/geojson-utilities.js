@@ -1,3 +1,13 @@
+/* eslint-disable no-param-reassign */
+
+export const newEmptyFeaturePoint = () => ({
+  type: 'Feature',
+  geometry: {
+    type: 'Point',
+    coordinates: [],
+  },
+});
+
 export const featurePoint2latlong = featurePoint => ({
   lat: featurePoint.geometry.coordinates[1],
   lng: featurePoint.geometry.coordinates[0],
@@ -8,9 +18,6 @@ export const latlong2featurePoint = latlong => ({
   geometry: {
     type: 'Point',
     coordinates: [latlong.lng, latlong.lat, 0],
-  },
-  properties: {
-    zoom: 15,
   },
 });
 
@@ -27,6 +34,10 @@ export const featurePointGetLatitude = featurePoint => (
 );
 
 export function featurePointSetZoom(featurePoint, zoom) {
+  if (!featurePoint.properties) {
+    featurePoint.properties = {};
+    featurePoint.properties.zoom = zoom;
+  }
   featurePoint.properties.zoom = zoom;
 }
 
@@ -35,5 +46,5 @@ export function featurePointSetLongitude(featurePoint, long) {
 }
 
 export function featurePointSetLatitude(featurePoint, lat) {
-  featurePoint.geometry.coordinates[1] = lat;
+  featurePoint.geometry.coordinates[0] = lat;
 }

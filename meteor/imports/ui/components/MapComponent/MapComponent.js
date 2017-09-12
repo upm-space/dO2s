@@ -4,7 +4,7 @@ import L from 'leaflet';
 import { Button, FormGroup, InputGroup } from 'react-bootstrap';
 import { Bert } from 'meteor/themeteorchef:bert';
 
-import { featurePoint2latlong, latlong2featurePoint, featurePointGetZoom, featurePointSetZoom, featurePointGetLongitude, featurePointGetLatitude } from '../../../modules/geojson-converter';
+import { featurePoint2latlong, latlong2featurePoint, featurePointGetZoom, featurePointSetZoom, featurePointGetLongitude, featurePointGetLatitude } from '../../../modules/geojson-utilities';
 
 
 import './MapComponent.scss';

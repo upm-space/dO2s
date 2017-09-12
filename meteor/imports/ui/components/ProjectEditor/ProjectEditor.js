@@ -9,7 +9,7 @@ import validate from '../../../modules/validate';
 
 import MapComponent from '../MapComponent/MapComponent';
 
-import { featurePoint2latlong, latlong2featurePoint, featurePointGetZoom, featurePointSetZoom, featurePointSetLatitude, featurePointSetLongitude, featurePointGetLongitude, featurePointGetLatitude } from '../../../modules/geojson-converter';
+import { featurePointGetZoom, featurePointGetLongitude, featurePointGetLatitude } from '../../../modules/geojson-utilities';
 
 
 class ProjectEditor extends React.Component {
