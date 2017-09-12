@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
+import { Meteor } from 'meteor/meteor';
 import PropTypes from 'prop-types';
 import { Button, Row, Col, ButtonToolbar } from 'react-bootstrap';
-import MapComponent from '../MapComponent/MapComponent';
+import { Bert } from 'meteor/themeteorchef:bert';
+
+import MissionMap from '../MissionMap/MissionMap';
 import WayPointList from '../WayPointList/WayPointList';
 
 import './MissionPlan.scss';
@@ -9,11 +12,55 @@ import './MissionPlan.scss';
 class MissionPlan extends Component {
   constructor(props) {
     super(props);
+    this.toogleButtonSwtich = this.toggleButtonSwitch.bind(this);
+    this.setTakeOffPoint = this.setTakeOffPoint.bind(this);
+    this.setLandingPoint = this.setLandingPoint.bind(this);
     this.state = {
       showWayPoints: false,
+      buttonStates: {
+        takeOffButtonActive: false,
+        landingButtonActive: false,
+        defineAreaButtonActive: false,
+      },
     };
   }
 
+  setTakeOffPoint(takeOffPoint) {
+    Meteor.call('missions.setTakeOffPoint', this.props.mission._id, takeOffPoint, (error) => {
+      if (error) {
+        Bert.alert(error.reason, 'danger');
+      } else {
+        Bert.alert('Take Off Point Set', 'success');
+      }
+    });
+  }
+
+  setLandingPoint(landingPoint) {
+    Meteor.call('missions.setLandingPoint', this.props.mission._id, landingPoint, (error) => {
+      if (error) {
+        Bert.alert(error.reason, 'danger');
+      } else {
+        Bert.alert('Landing Point Set', 'success');
+      }
+    });
+  }
+
+  toggleButtonSwitch(thisButton) {
+    this.setState((prevState) => {
+      const myButtons = Object.keys(prevState.buttonStates);
+      const newButtonStates = prevState.buttonStates;
+      for (let i = 0; i < myButtons.length; i += 1) {
+        if (thisButton === myButtons[i]) {
+          continue;
+        }
+        if (prevState.buttonStates[myButtons[i]]) {
+          newButtonStates[myButtons[i]] = false;
+        }
+      }
+      newButtonStates[thisButton] = !prevState.buttonStates[thisButton];
+      return { buttonStates: newButtonStates };
+    });
+  }
 
   render() {
     const { project, mission } = this.props;
@@ -22,15 +69,28 @@ class MissionPlan extends Component {
         <Row>
           <Col xs={12} sm={3} md={3} lg={3}>
             <ButtonToolbar>
-              <Button bsStyle="primary" >
+              <Button
+                bsStyle="primary"
+                onClick={() => this.toogleButtonSwtich('takeOffButtonActive')}
+                active={this.state.buttonStates.takeOffButtonActive}
+                className="btn-xs-block"
+              >
                 <div><i className="fa fa-arrow-circle-up fa-lg" aria-hidden="true" /></div>
                 <div>Take Off <br /> Point</div>
               </Button>
-              <Button bsStyle="primary" >
+              <Button
+                bsStyle="primary"
+                onClick={() => this.toogleButtonSwtich('landingButtonActive')}
+                active={this.state.buttonStates.landingButtonActive}
+              >
                 <div><i className="fa fa-arrow-circle-down fa-lg" aria-hidden="true" /></div>
                 <div>Landing <br /> Point</div>
               </Button>
-              <Button bsStyle="primary" >
+              <Button
+                bsStyle="primary"
+                onClick={() => this.toogleButtonSwtich('defineAreaButtonActive')}
+                active={this.state.buttonStates.defineAreaButtonActive}
+              >
                 <div><i className="fa fa-paint-brush fa-lg" aria-hidden="true" /></div>
                 <div>Define <br />Area</div>
               </Button>
@@ -78,7 +138,7 @@ class MissionPlan extends Component {
             </ButtonToolbar>
             <br />
             <ButtonToolbar>
-              <Button bsStyle="danger" >
+              <Button bsStyle="danger" block>
                 <div><i className="fa fa-trash fa-lg" aria-hidden="true" /></div>
                 <div>Clear WayPoints</div></Button>
             </ButtonToolbar>
@@ -103,10 +163,16 @@ class MissionPlan extends Component {
             </ButtonToolbar>
           </Col>
           <Col xs={12} sm={9} md={9} lg={9}>
-            <MapComponent
+            <MissionMap
               location={project && project.mapLocation}
+              mission={mission}
               height="80vh"
               onLocationChange={() => {}}
+              takeOffPointActive={this.state.buttonStates.takeOffButtonActive}
+              landingPointActive={this.state.buttonStates.landingButtonActive}
+              defineAreaActive={this.state.buttonStates.defineAreaButtonActive}
+              setTakeOffPoint={this.setTakeOffPoint}
+              setLandingPoint={this.setLandingPoint}
             />
             {this.state.showWayPoints ? <WayPointList /> : ''}
           </Col>

@@ -69,6 +69,7 @@ class MissionEditor extends Component {
       rpa: this.rpa.value.trim(),
       payload: this.payload.value.trim(),
       missionType: this.missionType.value.trim(),
+      flightPlan: {},
     };
 
     if (existingMission) mission._id = existingMission;
@@ -170,7 +171,8 @@ class MissionEditor extends Component {
                 ref={missionType => (this.missionType = missionType)}
                 defaultValue={mission && mission.missionType}
               >
-                <option value="surface-area">Surface Area</option>
+                <option value="Surface Area">Surface Area</option>
+                <option value="Linear Area">Linear Area</option>
               </select>
             </FormGroup>
             <Button type="submit" bsStyle="success">

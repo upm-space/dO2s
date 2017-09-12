@@ -3,10 +3,11 @@ import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
 import Missions from './Missions';
 import rateLimit from '../../modules/rate-limit';
+import { FeaturePoint } from '../SchemaUtilities/GeoJSONSchema.js';
 
-const newMissionSchema = Missions.schema.pick('name', 'project', 'rpa', 'missionType', 'description', 'payload');
+const newMissionSchema = Missions.schema.pick('name', 'project', 'rpa', 'missionType', 'description', 'payload', 'flightPlan');
 
-const editMissionSchema = Missions.schema.pick('name', 'project', 'rpa', 'missionType', 'description', 'payload');
+const editMissionSchema = Missions.schema.pick('name', 'project', 'rpa', 'missionType', 'description', 'payload', 'flightPlan');
 editMissionSchema.extend({ _id: String });
 
 Meteor.methods({
@@ -64,6 +65,34 @@ Meteor.methods({
     try {
       Missions.update(missionId, { $set: { done: setDone } });
     } catch (exception) {
+      throw new Meteor.Error('500', exception);
+    }
+  },
+  'missions.setTakeOffPoint': function missionsSetDone(missionId, takeOffPoint) {
+    check(missionId, String);
+    try {
+      FeaturePoint.validate(takeOffPoint);
+      Missions.update(missionId, { $set: { 'flightPlan.takeOffPoint': takeOffPoint } });
+    } catch (exception) {
+      if (exception.error === 'validation-error') {
+        throw new Meteor.Error(500, exception.message);
+      }
+      throw new Meteor.Error('500', exception);
+    }
+  },
+  'missions.setLandingPoint': function missionsSetDone(missionId, landingPoint) {
+    check(missionId, String);
+    try {
+      const mission = Missions.findOne(missionId);
+      FeaturePoint.validate(landingPoint);
+      if (!mission.flightPlan) {
+        Missions.update(missionId, { $set: { flightPlan: {} } });
+      }
+      Missions.update(missionId, { $set: { 'flightPlan.landingPoint': landingPoint } });
+    } catch (exception) {
+      if (exception.error === 'validation-error') {
+        throw new Meteor.Error(500, exception.message);
+      }
       throw new Meteor.Error('500', exception);
     }
   },

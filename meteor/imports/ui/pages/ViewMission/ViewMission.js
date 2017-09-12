@@ -5,7 +5,7 @@ import { createContainer } from 'meteor/react-meteor-data';
 import { Meteor } from 'meteor/meteor';
 import { Bert } from 'meteor/themeteorchef:bert';
 import { LinkContainer } from 'react-router-bootstrap';
-import { Redirect } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import Missions from '../../../api/Missions/Missions';
 import Projects from '../../../api/Projects/Projects';
 import NotFound from '../NotFound/NotFound';
@@ -28,20 +28,6 @@ const handleRemove = (missionId, history, projectId) => {
     });
   }
 };
-
-const handleMissionNav = (match, mission, project) => {
-  if (match.path === '/projects/:project_id/:mission_id/plan') {
-    return <MissionPlan mission={mission} project={project} />;
-  } else if (match.path === '/projects/:project_id/:mission_id/flight') {
-    return <MissionFlight mission={mission} project={project} />;
-  } else if (match.path === '/projects/:project_id/:mission_id/analysis') {
-    return <MissionAnalysis mission={mission} project={project} />;
-  } else if (match.path === '/projects/:project_id/:mission_id') {
-    return <Redirect to={`/projects/${match.params.project_id}/${match.params.mission_id}/plan`} />;
-  }
-  return <NotFound />;
-};
-
 
 const renderMission = (mission, match, history, project) => (mission && mission.deleted === 'no' ? (
   <div className="ViewMission">
@@ -76,7 +62,29 @@ const renderMission = (mission, match, history, project) => (mission && mission.
         </div>
       </div>
     </div>
-    {handleMissionNav(match, mission, project)}
+    <Switch>
+      <Route
+        exact
+        path="/projects/:project_id/:mission_id/"
+        render={props => (React.createElement(MissionPlan, { mission, project, ...props }))}
+      />
+      <Route
+        exact
+        path="/projects/:project_id/:mission_id/plan"
+        render={props => (React.createElement(MissionPlan, { mission, project, ...props }))}
+      />
+      <Route
+        exact
+        path="/projects/:project_id/:mission_id/flight"
+        render={props => (React.createElement(MissionFlight, { mission, project, ...props }))}
+      />
+      <Route
+        exact
+        path="/projects/:project_id/:mission_id/analysis"
+        render={props => (React.createElement(MissionAnalysis, { mission, project, ...props }))}
+      />
+      <Route component={NotFound} />
+    </Switch>
   </div>
 ) : <NotFound />);
 
@@ -96,7 +104,7 @@ export default createContainer(({ match }) => {
   const projectId = match.params.project_id;
   const missionId = match.params.mission_id;
   const missionSub = Meteor.subscribe('missions.view', projectId, missionId);
-  const projectSub = Meteor.subscribe('projetcs.view', projectId);
+  const projectSub = Meteor.subscribe('projects.view', projectId);
   return {
     loading: !missionSub.ready() && !projectSub.ready(),
     mission: Missions.findOne(missionId),
