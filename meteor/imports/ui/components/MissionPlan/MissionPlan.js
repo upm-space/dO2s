@@ -21,6 +21,11 @@ class MissionPlan extends Component {
         takeOffButtonActive: false,
         landingButtonActive: false,
         defineAreaButtonActive: false,
+        flightParametersButtonActive: false,
+        payloadParamsButtonActive: false,
+        pictureGridButtonActive: false,
+        showWayPointsButtonActive: false,
+        showMissionDataButtonActive: false,
       },
     };
   }
@@ -45,7 +50,7 @@ class MissionPlan extends Component {
     });
   }
 
-  toggleButtonSwitch(thisButton) {
+  toggleButtonSwitch(thisButton = '') {
     this.setState((prevState) => {
       const myButtons = Object.keys(prevState.buttonStates);
       const newButtonStates = prevState.buttonStates;
@@ -97,29 +102,50 @@ class MissionPlan extends Component {
             </ButtonToolbar>
             <br />
             <ButtonToolbar>
-              <Button bsStyle="success" >
+              <Button
+                bsStyle="success"
+                onClick={() => this.toogleButtonSwtich()}
+              >
                 <div><i className="fa fa-superpowers fa-lg" aria-hidden="true" /></div>
                 <div>Draw Mission</div>
               </Button>
-              <Button bsStyle="success" >
+              <Button
+                bsStyle="success"
+                onClick={() => this.toogleButtonSwtich()}
+              >
                 <div><i className="fa fa-rotate-right fa-lg" aria-hidden="true" /></div>
                 <div>Change Mission Direction</div>
               </Button>
-              <Button bsStyle="success" >
+              <Button
+                bsStyle="success"
+                onClick={() => this.toogleButtonSwtich()}
+              >
                 <div><i className="fa fa-long-arrow-up fa-lg" aria-hidden="true" /></div>
                 <div>Get WPS Altitude</div>
               </Button>
             </ButtonToolbar>
             <br />
             <ButtonToolbar>
-              <Button bsStyle="info" >
+              <Button
+                bsStyle="info"
+                onClick={() => this.toogleButtonSwtich('flightParametersButtonActive')}
+                active={this.state.buttonStates.flightParametersButtonActive}
+              >
                 <div><i className="fa fa-paper-plane fa-lg" aria-hidden="true" /></div>
                 <div>Flight Parameters</div>
               </Button>
-              <Button bsStyle="info" >
+              <Button
+                bsStyle="info"
+                onClick={() => this.toogleButtonSwtich('payloadParamsButtonActive')}
+                active={this.state.buttonStates.payloadParamsButtonActive}
+              >
                 <div><i className="fa fa-camera fa-lg" aria-hidden="true" /></div>
                 <div>Payload Parameters</div></Button>
-              <Button bsStyle="info" >
+              <Button
+                bsStyle="info"
+                onClick={() => this.toogleButtonSwtich('pictureGridButtonActive')}
+                active={this.state.buttonStates.pictureGridButtonActive}
+              >
                 <div><i className="fa fa-picture-o fa-lg" aria-hidden="true" /></div>
                 <div>Picture Grid</div></Button>
             </ButtonToolbar>
@@ -127,37 +153,57 @@ class MissionPlan extends Component {
             <ButtonToolbar>
               <Button
                 bsStyle="primary"
-                onClick={() => this.setState({ showWayPoints: !this.state.showWayPoints })}
-                active={this.state.showWayPoints}
+                onClick={() => this.toogleButtonSwtich('showWayPointsButtonActive')}
+                active={this.state.buttonStates.showWayPointsButtonActive}
               >
                 <div><i className="fa fa-map-marker fa-lg" aria-hidden="true" /></div>
                 <div>Show WayPoints</div></Button>
-              <Button bsStyle="primary" >
+              <Button
+                bsStyle="primary"
+                onClick={() => this.toogleButtonSwtich('showMissionDataButtonActive')}
+                active={this.state.buttonStates.showMissionDataButtonActive}
+              >
                 <div><i className="fa fa-bullseye fa-lg" aria-hidden="true" /></div>
                 <div>Show Mission Data</div></Button>
             </ButtonToolbar>
             <br />
             <ButtonToolbar>
-              <Button bsStyle="danger" block>
+              <Button
+                bsStyle="danger"
+                block
+                onClick={() => this.toogleButtonSwtich()}
+              >
                 <div><i className="fa fa-trash fa-lg" aria-hidden="true" /></div>
                 <div>Clear WayPoints</div></Button>
             </ButtonToolbar>
             <br />
             <ButtonToolbar>
-              <Button bsStyle="default" >
+              <Button
+                bsStyle="default"
+                onClick={() => this.toogleButtonSwtich()}
+              >
                 <div><i className="fa fa-download fa-lg" aria-hidden="true" /></div>
                 <div>Export Mission</div></Button>
-              <Button bsStyle="default" >
+              <Button
+                bsStyle="default"
+                onClick={() => this.toogleButtonSwtich()}
+              >
                 <div><i className="fa fa-upload fa-lg" aria-hidden="true" /></div>
                 <div>Import Mission</div></Button>
 
             </ButtonToolbar>
             <br />
             <ButtonToolbar>
-              <Button bsStyle="default" >
+              <Button
+                bsStyle="default"
+                onClick={() => this.toogleButtonSwtich()}
+              >
                 <div><i className="fa fa-square-o fa-lg" aria-hidden="true" /></div>
                 <div>Perimeter KML</div></Button>
-              <Button bsStyle="default" >
+              <Button
+                bsStyle="default"
+                onClick={() => this.toogleButtonSwtich()}
+              >
                 <div><i className="fa fa-map fa-lg" aria-hidden="true" /></div>
                 <div>Mission KML</div></Button>
             </ButtonToolbar>
