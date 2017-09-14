@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import L from 'leaflet';
 import 'leaflet-draw';
-import { Bert } from 'meteor/themeteorchef:bert';
 
 import { featurePoint2latlong, latlong2featurePoint, featurePointGetZoom, featurePointSetZoom, featurePointGetLongitude, featurePointGetLatitude, featureSetAltitudeToZero } from '../../../modules/geojson-utilities';
 
