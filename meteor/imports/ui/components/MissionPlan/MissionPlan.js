@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import React, { Component } from 'react';
 import { Meteor } from 'meteor/meteor';
 import PropTypes from 'prop-types';
@@ -6,6 +7,9 @@ import { Bert } from 'meteor/themeteorchef:bert';
 
 import MissionMap from '../MissionMap/MissionMap';
 import WayPointList from '../WayPointList/WayPointList';
+import MissionFlightParameters from '../MissionFlightParameters/MissionFlightParameters';
+import MissionPayloadParameters from '../MissionPayloadParameters/MissionPayloadParameters';
+import MissionPictureGrid from '../MissionPictureGrid/MissionPictureGrid';
 
 import './MissionPlan.scss';
 
@@ -102,7 +106,7 @@ class MissionPlan extends Component {
   }
 
   render() {
-    const { project, mission } = this.props;
+    const { project, mission, history } = this.props;
     return (
       <div className="MissionPlan">
         <Row>
@@ -245,19 +249,26 @@ class MissionPlan extends Component {
             </ButtonToolbar>
           </Col>
           <Col xs={12} sm={9} md={9} lg={9}>
-            <MissionMap
-              location={project && project.mapLocation}
-              mission={mission}
-              height="80vh"
-              onLocationChange={() => {}}
-              takeOffPointActive={this.state.buttonStates.takeOffButtonActive}
-              landingPointActive={this.state.buttonStates.landingButtonActive}
-              defineAreaActive={this.state.buttonStates.defineAreaButtonActive}
-              setTakeOffPoint={this.setTakeOffPoint}
-              setLandingPoint={this.setLandingPoint}
-              setMissionGeometry={this.setMissionGeometry}
-            />
-            {this.state.showWayPoints ? <WayPointList /> : ''}
+            {this.state.buttonStates.flightParametersButtonActive ?
+              <MissionFlightParameters mission={mission} /> :
+              (this.state.buttonStates.payloadParamsButtonActive ?
+                <MissionPayloadParameters mission={mission} history={history} /> :
+                (this.state.buttonStates.pictureGridButtonActive ?
+                  <MissionPictureGrid mission={mission} /> :
+                  <MissionMap
+                    location={project && project.mapLocation}
+                    mission={mission}
+                    height="80vh"
+                    onLocationChange={() => {}}
+                    takeOffPointActive={this.state.buttonStates.takeOffButtonActive}
+                    landingPointActive={this.state.buttonStates.landingButtonActive}
+                    defineAreaActive={this.state.buttonStates.defineAreaButtonActive}
+                    setTakeOffPoint={this.setTakeOffPoint}
+                    setLandingPoint={this.setLandingPoint}
+                    setMissionGeometry={this.setMissionGeometry}
+                  />
+                ))}
+            {this.state.buttonStates.showWayPointsButtonActive ? <WayPointList /> : ''}
           </Col>
         </Row>
       </div>

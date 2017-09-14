@@ -40,14 +40,14 @@ const pictureGridSchema = new SimpleSchema({
   overlap: {
     type: Number,
     label: 'The overlap in %',
-    max: 0,
-    min: 100,
+    min: 0,
+    max: 100,
   },
   sidelap: {
-    type: Object,
+    type: Number,
     label: 'The sidelap in %',
-    max: 0,
-    min: 100,
+    min: 0,
+    max: 100,
   },
 });
 
