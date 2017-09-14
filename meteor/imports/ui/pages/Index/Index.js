@@ -11,7 +11,7 @@ const Index = () => (
     />
     <h1>dO2s</h1>
     <p>Drone Online Opensource Service</p>
-    <p>The only drone tool you&aposll ever need.</p>
+    <p>{'The only drone tool you\u0027ll ever need.'}</p>
     <p>WIP</p>
     <div>
       <Button href="#docs">Read the Docs</Button>

@@ -2,7 +2,7 @@
 
 import { Mongo } from 'meteor/mongo';
 import SimpleSchema from 'simpl-schema';
-import FeatureCollection from '../SchemaUtilities/GeoJSONSchema.js';
+import { FeaturePoint, FeaturePolygon, FeatureLineString } from '../SchemaUtilities/GeoJSONSchema.js';
 
 const Missions = new Mongo.Collection('Missions');
 
@@ -94,6 +94,7 @@ Missions.schema = new SimpleSchema({
   missionType: {
     type: String,
     label: 'The mission type',
+    allowedValues: ['Surface Area', 'Linear Area'],
   },
   layers: {
     type: Array,
@@ -110,20 +111,24 @@ Missions.schema = new SimpleSchema({
     optional: true,
   },
   'flightPlan.takeOffPoint': {
-    type: FeatureCollection,
+    type: FeaturePoint,
     label: 'The take off point for the flight',
     optional: true,
   },
   'flightPlan.landingPoint': {
-    type: FeatureCollection,
+    type: FeaturePoint,
     label: 'The landing point for the flight',
     optional: true,
   },
-  'flightPlan.area': {
-    type: Object,
+  'flightPlan.missionArea': {
+    type: FeaturePolygon,
     label: 'All the data related to the area for the flight',
     optional: true,
-    blackbox: true,
+  },
+  'flightPlan.missionAxis': {
+    type: FeatureLineString,
+    label: 'All the data related to the axis for the flight',
+    optional: true,
   },
   'flightPlan.flightParameters': {
     type: flightParametersSchema,

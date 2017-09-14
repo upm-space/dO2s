@@ -6,7 +6,6 @@ import { Row, Col, FormGroup, ControlLabel, Button } from 'react-bootstrap';
 import { Meteor } from 'meteor/meteor';
 import { Bert } from 'meteor/themeteorchef:bert';
 
-
 import OAuthLoginButtons from '../../components/OAuthLoginButtons/OAuthLoginButtons';
 import AccountPageFooter from '../../components/AccountPageFooter/AccountPageFooter';
 import validate from '../../../modules/validate';
@@ -51,7 +50,6 @@ class Login extends Component {
         Bert.alert(error.reason, 'warning');
       } else {
         Bert.alert('Welcome back!', 'success');
-        history.push('/projects');
       }
     });
   }

@@ -24,25 +24,31 @@ const verifyEmailAlert = emailAddress => (<Alert bsStyle="warning">
       href="#"
     >
     Re-send verification email
-  </Button>
+    </Button>
   </p>
 </Alert>);
 
-const Authenticated = ({ loggingIn, authenticated, component, emailVerified, emailAddress, ...rest }) => (
+const Authenticated = ({ authenticated, component, emailVerified, emailAddress, path, exact, ...rest }) => (
   <Route
-    {...rest}
+    path={path}
+    exact={exact}
     render={(props) => {
       const emailVerifiedComponent = emailVerified
-      ? React.createElement(component, { ...props, loggingIn, authenticated })
-      : verifyEmailAlert(emailAddress);
+        ? React.createElement(component, { ...props, ...rest, authenticated, emailVerified, emailAddress })
+        : verifyEmailAlert(emailAddress);
 
-      return authenticated ? emailVerifiedComponent : <Redirect to="/logout" />;
+      return authenticated ? emailVerifiedComponent : <Redirect to="/login" />;
     }}
   />
 );
 
+Authenticated.defaultProps = {
+  emailAddress: '',
+};
+
 Authenticated.propTypes = {
-  loggingIn: PropTypes.bool.isRequired,
+  path: PropTypes.string.isRequired,
+  exact: PropTypes.bool,
   authenticated: PropTypes.bool.isRequired,
   isAdmin: PropTypes.bool.isRequired,
   emailAddress: PropTypes.string,

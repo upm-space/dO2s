@@ -4,6 +4,8 @@ import L from 'leaflet';
 import { Button, FormGroup, InputGroup } from 'react-bootstrap';
 import { Bert } from 'meteor/themeteorchef:bert';
 
+import { featurePoint2latlong, latlong2featurePoint, featurePointGetZoom, featurePointSetZoom, featurePointGetLongitude, featurePointGetLatitude } from '../../../modules/geojson-utilities';
+
 
 import './MapComponent.scss';
 
@@ -18,18 +20,15 @@ class MapComponent extends Component {
   }
   componentDidMount() {
     let currentLocation = this.props.location;
-    const mymap = L.map('mymap').setView([currentLocation.latitude, currentLocation.longitude], currentLocation.zoom);
+    const mymap = L.map('mymap').setView(featurePoint2latlong(currentLocation), featurePointGetZoom(currentLocation));
     this.mymap = mymap;
     L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
     }).addTo(mymap);
 
     mymap.on('moveend', () => {
-      currentLocation = {
-        longitude: mymap.getCenter().wrap().lng,
-        latitude: mymap.getCenter().wrap().lat,
-        zoom: mymap.getZoom(),
-      };
+      currentLocation = latlong2featurePoint(mymap.getCenter().wrap());
+      featurePointSetZoom(currentLocation, mymap.getZoom());
       this.props.onLocationChange(currentLocation);
     });
   }
@@ -37,11 +36,12 @@ class MapComponent extends Component {
   componentDidUpdate(prevProps) {
     const oldLocation = prevProps.location;
     const newLocation = this.props.location;
-    const isLongSame = newLocation.longitude === oldLocation.longitude;
-    const isLatSame = newLocation.latitude === oldLocation.latitude;
-    const isZoomSame = newLocation.zoom === oldLocation.zoom;
+    const isLongSame =
+      featurePointGetLongitude(newLocation) === featurePointGetLongitude(oldLocation);
+    const isLatSame = featurePointGetLatitude(newLocation) === featurePointGetLatitude(oldLocation);
+    const isZoomSame = featurePointGetZoom(newLocation) === featurePointGetZoom(oldLocation);
     if (!isLongSame || !isLatSame || !isZoomSame) {
-      this.mymap.setView([newLocation.latitude, newLocation.longitude], newLocation.zoom);
+      this.mymap.setView(featurePoint2latlong(newLocation), featurePointGetZoom(newLocation));
     }
   }
 
@@ -52,21 +52,20 @@ class MapComponent extends Component {
   searchLocation() {
     const urlforPlace = location => `http://nominatim.openstreetmap.org/search?format=json&limit=5&q=${location}`;
     fetch(urlforPlace(this.state.searchLoc.trim()))
-    .then(d => d.json())
-    // .then(d => console.log(d[0].display_name))
-    .then((d) => {
-      this.mymap.setView([d[0].lat, d[0].lon], 15);
-      this.setState({ searchLoc: d[0].display_name });
-    })
-    .catch((error) => {
-      Bert.alert('Location not found', 'warning');
-    });
+      .then(d => d.json())
+      .then((d) => {
+        this.mymap.setView([d[0].lat, d[0].lon], 15);
+        this.setState({ searchLoc: d[0].display_name });
+      })
+      .catch(() => {
+        Bert.alert('Location not found', 'warning');
+      });
   }
 
   render() {
     return (
       <div className="MapComponent" style={{ height: this.props.height }}>
-        <div id="mymap" />
+        <div id="mymap" style={{ height: (!this.props.searchItem ? '100%' : '90%') }} />
         {this.props.searchItem ? (<FormGroup>
           <InputGroup>
             <input
@@ -86,7 +85,16 @@ class MapComponent extends Component {
 }
 
 MapComponent.defaultProps = {
-  location: { longitude: 3.7038, latitude: 40.4168, zoom: 12 },
+  location: {
+    type: 'Feature',
+    geometry: {
+      type: 'Point',
+      coordinates: [-3.7038, 40.4168, 0],
+    },
+    properties: {
+      zoom: 12,
+    },
+  },
   searchItem: false,
 };
 

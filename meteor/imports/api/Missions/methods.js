@@ -3,10 +3,11 @@ import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
 import Missions from './Missions';
 import rateLimit from '../../modules/rate-limit';
+import { FeaturePoint, FeaturePolygon, FeatureLineString } from '../SchemaUtilities/GeoJSONSchema.js';
 
-const newMissionSchema = Missions.schema.pick('name', 'project', 'rpa', 'missionType', 'description', 'payload');
+const newMissionSchema = Missions.schema.pick('name', 'project', 'rpa', 'missionType', 'description', 'payload', 'flightPlan');
 
-const editMissionSchema = Missions.schema.pick('name', 'project', 'rpa', 'missionType', 'description', 'payload');
+const editMissionSchema = Missions.schema.pick('name', 'project', 'rpa', 'missionType', 'description', 'payload', 'flightPlan');
 editMissionSchema.extend({ _id: String });
 
 Meteor.methods({
@@ -67,6 +68,70 @@ Meteor.methods({
       throw new Meteor.Error('500', exception);
     }
   },
+  'missions.setTakeOffPoint': function missionsSetTakeOffPoint(missionId, takeOffPoint) {
+    check(missionId, String);
+    try {
+      FeaturePoint.validate(takeOffPoint);
+      Missions.update(missionId, { $set: { 'flightPlan.takeOffPoint': takeOffPoint } });
+    } catch (exception) {
+      if (exception.error === 'validation-error') {
+        throw new Meteor.Error(500, exception.message);
+      }
+      throw new Meteor.Error('500', exception);
+    }
+  },
+  'missions.setLandingPoint': function missionsSetLandingPoint(missionId, landingPoint) {
+    check(missionId, String);
+    try {
+      FeaturePoint.validate(landingPoint);
+      Missions.update(missionId, { $set: { 'flightPlan.landingPoint': landingPoint } });
+    } catch (exception) {
+      if (exception.error === 'validation-error') {
+        throw new Meteor.Error(500, exception.message);
+      }
+      throw new Meteor.Error('500', exception);
+    }
+  },
+  'missions.setMissionGeometry': function missionsSetMissionGeometry(missionId, missionGeometry) {
+    check(missionId, String);
+    try {
+      const mission = Missions.findOne(missionId);
+      if (missionGeometry) {
+        if (mission.missionType === 'Surface Area') {
+          FeaturePolygon.validate(missionGeometry);
+          Missions.update(missionId, { $set: { 'flightPlan.missionArea': missionGeometry } });
+        } else if (mission.missionType === 'Linear Area') {
+          FeatureLineString.validate(missionGeometry);
+          Missions.update(missionId, { $set: { 'flightPlan.missionAxis': missionGeometry } });
+        }
+      } else if (!missionGeometry) {
+        if (mission.missionType === 'Surface Area') {
+          Missions.update(missionId, { $unset: { 'flightPlan.missionArea': '' } });
+        } else if (mission.missionType === 'Linear Area') {
+          Missions.update(missionId, { $unset: { 'flightPlan.missionAxis': '' } });
+        }
+      }
+    } catch (exception) {
+      if (exception.error === 'validation-error') {
+        throw new Meteor.Error(500, exception.message);
+      }
+      throw new Meteor.Error('500', exception);
+    }
+  },
+  'missions.setMissionAxisBuffer': function missionsSetMissionAxisBuffer(missionId, missionAxisBuffer) {
+    check(missionId, String);
+    check(missionAxisBuffer, Number);
+    try {
+      const mission = Missions.findOne(missionId);
+      if (mission.missionType === 'Surface Area') {
+        throw new Meteor.Error(500, 'How on earth did you get here!!');
+      } else if (mission.missionType === 'Linear Area') {
+        Missions.update(missionId, { $set: { 'flightPlan.missionAxis.properties.axisBuffer': missionAxisBuffer } });
+      }
+    } catch (exception) {
+      throw new Meteor.Error('500', exception);
+    }
+  },
 });
 
 rateLimit({
@@ -77,6 +142,10 @@ rateLimit({
     'missions.restore',
     'missions.hardDelete',
     'missions.setDone',
+    'missions.setLandingPoint',
+    'missions.setTakeOffPoint',
+    'missions.setMissionGeometry',
+    'missions.setMissionAxisBuffer',
   ],
   limit: 5,
   timeRange: 1000,

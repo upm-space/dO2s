@@ -117,87 +117,88 @@ class RPAEditor extends Component {
         ref={form => (this.form = form)}
         onSubmit={event => event.preventDefault()}
       >
-        <Row><Col xs={12} sm={6} md={6} lg={6}>
-          <FormGroup>
-            <ControlLabel>Name</ControlLabel>
-            <input
-              type="text"
-              className="form-control"
-              name="name"
-              ref={name => (this.name = name)}
-              defaultValue={rpa && rpa.name}
-              placeholder="Oh, The Places You'll Go!"
-            />
-          </FormGroup>
-          <FormGroup>
-            <ControlLabel>Model</ControlLabel>
-            <input
-              type="text"
-              className="form-control"
-              name="model"
-              ref={model => (this.model = model)}
-              defaultValue={rpa && rpa.model}
-              placeholder="The model of your RPA"
-            />
-          </FormGroup>
-          <FormGroup>
-            <ControlLabel>Registration Number</ControlLabel>
-            <input
-              type="text"
-              className="form-control"
-              name="registrationNumber"
-              ref={registrationNumber => (this.registrationNumber = registrationNumber)}
-              defaultValue={rpa && rpa.registrationNumber}
-              placeholder="The registrtaion number of your RPA"
-            />
-          </FormGroup>
-          <FormGroup>
-            <ControlLabel>Construction Date</ControlLabel>
-            <input
-              type="date"
-              className="form-control"
-              name="constructionDate"
-              max={(new Date()).toISOString()}
-              ref={constructionDate => (this.constructionDate = constructionDate)}
-              defaultValue={rpa && rpa.constructionDate}
-            />
-          </FormGroup>
-          <FormGroup>
-            <ControlLabel>Serial Number</ControlLabel>
-            <input
-              type="text"
-              className="form-control"
-              name="serialNumber"
-              ref={serialNumber => (this.serialNumber = serialNumber)}
-              defaultValue={rpa && rpa.serialNumber}
-              placeholder="The serial number of your RPA"
-            />
-          </FormGroup>
-          <FormGroup>
-            <ControlLabel>Weight (g)</ControlLabel>
-            <input
-              type="text"
-              className="form-control"
-              name="weight"
-              ref={weight => (this.weight = weight)}
-              defaultValue={rpa && rpa.weight}
-              placeholder="The weight of your RPA"
-            />
-          </FormGroup>
-          <FormGroup>
-            <ControlLabel>RPA Type</ControlLabel>
-            <select
-              type="text"
-              className="form-control"
-              name="rpaType"
-              ref={rpaType => (this.rpaType = rpaType)}
-              defaultValue={rpa && rpa.rpasType}
-            >
-              <option value="Plane">Plane</option>
-              <option value="MultiCopter">MultiCopter</option>
-            </select>
-          </FormGroup>
-        </Col>
+        <Row>
+          <Col xs={12} sm={6} md={6} lg={6}>
+            <FormGroup>
+              <ControlLabel>Name</ControlLabel>
+              <input
+                type="text"
+                className="form-control"
+                name="name"
+                ref={name => (this.name = name)}
+                defaultValue={rpa && rpa.name}
+                placeholder="Oh, The Places You'll Go!"
+              />
+            </FormGroup>
+            <FormGroup>
+              <ControlLabel>Model</ControlLabel>
+              <input
+                type="text"
+                className="form-control"
+                name="model"
+                ref={model => (this.model = model)}
+                defaultValue={rpa && rpa.model}
+                placeholder="The model of your RPA"
+              />
+            </FormGroup>
+            <FormGroup>
+              <ControlLabel>Registration Number</ControlLabel>
+              <input
+                type="text"
+                className="form-control"
+                name="registrationNumber"
+                ref={registrationNumber => (this.registrationNumber = registrationNumber)}
+                defaultValue={rpa && rpa.registrationNumber}
+                placeholder="The registrtaion number of your RPA"
+              />
+            </FormGroup>
+            <FormGroup>
+              <ControlLabel>Construction Date</ControlLabel>
+              <input
+                type="date"
+                className="form-control"
+                name="constructionDate"
+                max={(new Date()).toISOString()}
+                ref={constructionDate => (this.constructionDate = constructionDate)}
+                defaultValue={rpa && rpa.constructionDate}
+              />
+            </FormGroup>
+            <FormGroup>
+              <ControlLabel>Serial Number</ControlLabel>
+              <input
+                type="text"
+                className="form-control"
+                name="serialNumber"
+                ref={serialNumber => (this.serialNumber = serialNumber)}
+                defaultValue={rpa && rpa.serialNumber}
+                placeholder="The serial number of your RPA"
+              />
+            </FormGroup>
+            <FormGroup>
+              <ControlLabel>Weight (g)</ControlLabel>
+              <input
+                type="text"
+                className="form-control"
+                name="weight"
+                ref={weight => (this.weight = weight)}
+                defaultValue={rpa && rpa.weight}
+                placeholder="The weight of your RPA"
+              />
+            </FormGroup>
+            <FormGroup>
+              <ControlLabel>RPA Type</ControlLabel>
+              <select
+                type="text"
+                className="form-control"
+                name="rpaType"
+                ref={rpaType => (this.rpaType = rpaType)}
+                defaultValue={rpa && rpa.rpasType}
+              >
+                <option value="Plane">Plane</option>
+                <option value="MultiCopter">MultiCopter</option>
+              </select>
+            </FormGroup>
+          </Col>
           <Col xs={12} sm={6} md={6} lg={6}>
             <legend>Flight Parameters</legend>
             <FormGroup>

@@ -3,10 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { NavDropdown, MenuItem, NavItem, Nav } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
-import { Meteor } from 'meteor/meteor';
-import { matchPath } from 'react-router-dom';
-
-const handleLogout = () => Meteor.logout();
+import { matchPath, withRouter } from 'react-router-dom';
 
 const isProject = (location) => {
   const match = matchPath(location.pathname, {
@@ -35,7 +32,13 @@ const UserMngButton = (<LinkContainer to="/users">
   </NavItem>
 </LinkContainer>);
 
-const AuthenticatedNavigation = ({ isAdmin, name, location }) => (
+const hangarDropdownTitle = (
+  <div className="pull-left">
+    <i className="fa fa-paper-plane" aria-hidden="true" /> Hangar
+  </div>
+);
+
+const AuthenticatedNavigation = ({ isAdmin, name, location, history }) => (
   <div>
     <Nav>
       <LinkContainer to="/projects">
@@ -46,7 +49,7 @@ const AuthenticatedNavigation = ({ isAdmin, name, location }) => (
 
       <NavDropdown
         eventKey={2}
-        title={<div className="pull-left"><i className="fa fa-paper-plane" aria-hidden="true" /> Hangar </div>}
+        title={hangarDropdownTitle}
         id="hangar-dropdown"
       >
         <LinkContainer to="/hangar/rpas">
@@ -67,7 +70,7 @@ const AuthenticatedNavigation = ({ isAdmin, name, location }) => (
           <NavItem eventKey={4.1} href="/profile">Profile</NavItem>
         </LinkContainer>
         <MenuItem divider />
-        <MenuItem eventKey={4.2} onClick={handleLogout}>Logout</MenuItem>
+        <MenuItem eventKey={4.2} onClick={() => history.push('/logout')}>Logout</MenuItem>
       </NavDropdown>
     </Nav>
   </div>
@@ -77,6 +80,7 @@ AuthenticatedNavigation.propTypes = {
   name: PropTypes.string.isRequired,
   isAdmin: PropTypes.bool.isRequired,
   location: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired,
 };
 
-export default AuthenticatedNavigation;
+export default withRouter(AuthenticatedNavigation);

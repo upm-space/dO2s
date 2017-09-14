@@ -1,4 +1,5 @@
 import { Accounts } from 'meteor/accounts-base';
+import sendWelcomeEmail from '../../../api/Users/server/send-welcome-email';
 
 Accounts.onCreateUser((options, user) => {
   const userToCreate = user;
@@ -11,5 +12,6 @@ Accounts.onCreateUser((options, user) => {
   if (options.profile) userToCreate.profile = options.profile;
   userToCreate.deleted = 'no';
 
+  sendWelcomeEmail(options, user);
   return userToCreate;
 });

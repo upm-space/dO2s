@@ -1,5 +1,4 @@
 /* eslint-disable no-underscore-dangle, no-return-assign */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Row, Col, FormGroup, ControlLabel, Button } from 'react-bootstrap';
@@ -130,8 +129,16 @@ class Profile extends Component {
     return !loading ? (<div className="OAuthProfile">
       {Object.keys(user.services).map(service => (
         <div key={service} className={`LoggedInWith ${service}`}>
-          <div className="ServiceIcon"><i className={`fa fa-${service === 'facebook' ? 'facebook-official' : service}`} /></div>
+          <img src={`/${service}.svg`} alt={service} />
           <p>{`You're logged in with ${_.capitalize(service)} using the email address ${user.services[service].email}.`}</p>
+          <Button
+            className={`btn btn-${service}`}
+            href={{
+              facebook: 'https://www.facebook.com/settings',
+              google: 'https://myaccount.google.com/privacy#personalinfo',
+            }[service]}
+            target="_blank"
+          >Edit Profile on {_.capitalize(service)}</Button>
         </div>
       ))}
     </div>) : <div />;

@@ -89,10 +89,10 @@ Meteor.methods({
       },
     });
     return editProfile({ userId: this.userId, profile })
-    .then(response => response)
-    .catch((exception) => {
-      throw new Meteor.Error('500', exception);
-    });
+      .then(response => response)
+      .catch((exception) => {
+        throw new Meteor.Error('500', exception);
+      });
   },
   'users.softDelete': function usersSoftDelete(userId) {
     check(userId, String);
@@ -161,10 +161,10 @@ Meteor.methods({
       };
       console.log(`userProfile ${JSON.stringify(userProfile)}`);
       return editProfile({ userId: user._id, userProfile })
-      .then(response => response)
-      .catch((exception) => {
-        throw new Meteor.Error('500', exception);
-      });
+        .then(response => response)
+        .catch((exception) => {
+          throw new Meteor.Error('500', exception);
+        });
     } catch (exception) {
       if (exception.error === 'validation-error') {
         throw new Meteor.Error(500, exception.message);

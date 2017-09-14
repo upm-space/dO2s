@@ -1,4 +1,4 @@
-/* eslint-disable jsx-a11y/no-noninteractive-element-interactions, no-alert, consistent-return */
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions, consistent-return */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link, Redirect } from 'react-router-dom';
@@ -121,8 +121,10 @@ class UserManagement extends Component {
       trashShow: false,
     });
   }
-  renderOAuthUser(user) {
-    const goToUser = () => this.props.history.push(`${this.props.match.url}/${user._id}/edit`);
+
+  renderOAuthUser(user, currentUserId) {
+    const isThisCurrentUser = currentUserId === user._id;
+    const goToUser = () => { !isThisCurrentUser ? this.props.history.push(`${this.props.match.url}/${user._id}/edit`) : ''; };
     return (<td onClick={goToUser} className="OAuthCell">
       {Object.keys(user.services).map(service => (
         <div key={service} className={`LoggedInWith ${service}`}>
@@ -133,16 +135,17 @@ class UserManagement extends Component {
     </td>);
   }
 
-  renderPasswordUser(user) {
-    const goToUser = () => this.props.history.push(`${this.props.match.url}/${user._id}/edit`);
+  renderPasswordUser(user, currentUserId) {
+    const isThisCurrentUser = currentUserId === user._id;
+    const goToUser = () => { !isThisCurrentUser ? this.props.history.push(`${this.props.match.url}/${user._id}/edit`) : ''; };
     return <td className={user.emails[0].verified ? '' : 'warning'} onClick={goToUser}>{user.emails[0].address}</td>;
   }
 
-  renderEmailCell(user) {
+  renderEmailCell(user, currentUserId) {
     return ({
       password: this.renderPasswordUser,
       oauth: this.renderOAuthUser,
-    }[this.getUserType(user)])(user);
+    }[this.getUserType(user)])(user, currentUserId);
   }
 
 
@@ -156,14 +159,14 @@ class UserManagement extends Component {
           userRoles += `${user.roles[i]}, `;
         }
       }
-      const goToUser = () => this.props.history.push(`${this.props.match.url}/${user._id}/edit`);
+      const isThisCurrentUser = currentUserId === user._id;
+      const goToUser = () => { !isThisCurrentUser ? this.props.history.push(`${this.props.match.url}/${user._id}/edit`) : ''; };
       return (
         <tr
-          disabled={currentUserId === user._id}
           key={user._id}
         >
           <td onClick={goToUser}>{this.getUserName(user.profile.name)}</td>
-          {this.renderEmailCell(user)}
+          {this.renderEmailCell(user, currentUserId)}
           <td onClick={goToUser}>{userRoles}</td>
           <td onClick={goToUser}>
             {monthDayYearAtTime(user.createdAt)}</td>
@@ -171,6 +174,7 @@ class UserManagement extends Component {
             <Button
               bsStyle="danger"
               onClick={() => this.handleSoftRemove(user._id)}
+              disabled={isThisCurrentUser}
             ><i className="fa fa-times" aria-hidden="true" /></Button>
           </td>
         </tr>);
@@ -178,7 +182,7 @@ class UserManagement extends Component {
   }
 
   render() {
-    const { loading, users, match } = this.props;
+    const { loading, users, match, userId: currentUserId } = this.props;
     return (!loading ? (
       <div className="UserManagement">
         <TrashModal
@@ -213,7 +217,7 @@ class UserManagement extends Component {
             </tr>
           </thead>
           <tbody>
-            {this.renderUsers(users)}
+            {this.renderUsers(users, currentUserId)}
           </tbody>
         </Table></div> : <Alert bsStyle="warning">Something went wrong!</Alert>}
       </div>
@@ -221,13 +225,9 @@ class UserManagement extends Component {
   }
 }
 
-UserManagement.defaultProps = {
-  currentUserId: '',
-};
-
 UserManagement.propTypes = {
   loading: PropTypes.bool.isRequired,
-  currentUserId: PropTypes.string,
+  userId: PropTypes.string.isRequired,
   users: PropTypes.arrayOf(PropTypes.object).isRequired,
   deletedUsers: PropTypes.arrayOf(PropTypes.object).isRequired,
   match: PropTypes.object.isRequired,
@@ -237,10 +237,8 @@ UserManagement.propTypes = {
 };
 
 export default createContainer(() => {
-  const currentUserId = Meteor.userId();
   const usersSub = Meteor.subscribe('users.management');
   return {
-    currentUserId,
     loading: !usersSub.ready(),
     users: Meteor.users.find({ deleted: { $eq: 'no' } }).fetch(),
     deletedUsers: Meteor.users.find({ deleted: { $ne: 'no' } }).fetch(),

@@ -27,7 +27,7 @@ Meteor.methods({
       const projectId = project._id;
       Projects.update(projectId, { $set: project });
       return projectId;
-       // Return _id so we can redirect to project after update.
+      // Return _id so we can redirect to project after update.
     } catch (exception) {
       if (exception.error === 'validation-error') {
         throw new Meteor.Error(500, exception.message);

@@ -20,7 +20,7 @@ class VerifyEmail extends Component {
         setTimeout(() => {
           Bert.alert('All set, thanks!', 'success');
           history.push('/projects');
-        }, 2000);
+        }, 1500);
       }
     });
   }

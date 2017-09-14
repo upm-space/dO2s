@@ -18,7 +18,6 @@ class UserEditor extends Component {
     this.renderPasswordUser = this.renderPasswordUser.bind(this);
     this.renderProfileForm = this.renderProfileForm.bind(this);
     this.handleResetPassword = this.handleResetPassword.bind(this);
-    this.getUserType = this.getUserType.bind(this);
   }
 
   componentDidMount() {
@@ -39,10 +38,10 @@ class UserEditor extends Component {
       },
       messages: {
         firstName: {
-          required: 'What\'s your first name?',
+          required: 'What\u0027s your first name?',
         },
         lastName: {
-          required: 'What\'s your last name?',
+          required: 'What\u0027s your last name?',
         },
         emailAddress: {
           required: 'Need an email address here.',
@@ -68,7 +67,7 @@ class UserEditor extends Component {
         Bert.alert('User password reset to (password)', 'success');
       }
     },
-  );
+    );
   }
 
   handleSubmit() {
@@ -111,8 +110,8 @@ class UserEditor extends Component {
     return (<div className="OAuthProfile">
       {Object.keys(user.services).map(service => (
         <div key={service} className={`LoggedInWith ${service}`}>
-          <div className="ServiceIcon"><i className={`fa fa-${service === 'facebook' ? 'facebook-official' : service}`} /></div>
-          <p>{`This user is registered with ${_.capitalize(service)} using the email address ${user.services[service].email}.`}</p>
+          <img src={`/${service}.svg`} alt={service} />
+          <p>{`This user is logged in with ${_.capitalize(service)} using the email address ${user.services[service].email}.`}</p>
         </div>
       ))}
     </div>);

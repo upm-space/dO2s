@@ -1,8 +1,11 @@
 import { Meteor } from 'meteor/meteor';
 import { Accounts } from 'meteor/accounts-base';
+import getPrivateFile from '../../../modules/server/get-private-file';
+import templateToHTML from '../../../modules/server/handlebars-email-to-html';
+import templateToText from '../../../modules/server/handlebars-email-to-text';
 
 const name = 'dO2s';
-const email = '<dO2s.app@gmail.com>';
+const email = '<do2s.app@gmail.com>';
 const from = `${name} ${email}`;
 const emailTemplates = Accounts.emailTemplates;
 
@@ -13,13 +16,23 @@ emailTemplates.resetPassword = {
   subject() {
     return `[${name}] Reset Your Password`;
   },
+  html(user, url) {
+    return templateToHTML(getPrivateFile('email-templates/reset-password.html'), {
+      firstName: user.profile.name.first,
+      applicationName: name,
+      emailAddress: user.emails[0].address,
+      resetUrl: url.replace('#/', ''),
+    });
+  },
   text(user, url) {
-    const userEmail = user.emails[0].address;
     const urlWithoutHash = url.replace('#/', '');
-    if (Meteor.isDevelopment) console.info(`Reset Password Link: ${urlWithoutHash} to ${userEmail}`); // eslint-disable-line
-    const emailBody = `A password reset has been requested for the account related to this address (${userEmail}). To reset the password, visit the following link: \n\n${urlWithoutHash}\n\n If you did not request this reset, please ignore this email. If you feel something is wrong, please contact our support team: ${email}.`;
-
-    return emailBody;
+    if (Meteor.isDevelopment) console.info(`Reset Password Link: ${urlWithoutHash}`); // eslint-disable-line
+    return templateToText(getPrivateFile('email-templates/reset-password.txt'), {
+      firstName: user.profile.name.first,
+      applicationName: name,
+      emailAddress: user.emails[0].address,
+      resetUrl: urlWithoutHash,
+    });
   },
 };
 
@@ -27,12 +40,20 @@ emailTemplates.verifyEmail = {
   subject() {
     return `[${name}] Verify Your Email Address`;
   },
+  html(user, url) {
+    return templateToHTML(getPrivateFile('email-templates/verify-email.html'), {
+      applicationName: name,
+      firstName: user.profile.name.first,
+      verifyUrl: url.replace('#/', ''),
+    });
+  },
   text(user, url) {
-    const userEmail = user.emails[0].address;
     const urlWithoutHash = url.replace('#/', '');
-    if (Meteor.isDevelopment) console.info(`Verify Email Link: ${urlWithoutHash} to ${userEmail}`); // eslint-disable-line
-    const emailBody = `Hey, ${user.profile.name.first}! Welcome to ${name}.\n\nTo verify your email address (${userEmail}), click the link below:\n\n${urlWithoutHash}\n\nIf you feel something is wrong, please contact our support team: ${email}.`;
-
-    return emailBody;
+    if (Meteor.isDevelopment) console.info(`Verify Email Link: ${urlWithoutHash}`); // eslint-disable-line
+    return templateToText(getPrivateFile('email-templates/verify-email.txt'), {
+      applicationName: name,
+      firstName: user.profile.name.first,
+      verifyUrl: urlWithoutHash,
+    });
   },
 };
