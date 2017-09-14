@@ -15,6 +15,9 @@ class MissionPlan extends Component {
     this.toogleButtonSwtich = this.toggleButtonSwitch.bind(this);
     this.setTakeOffPoint = this.setTakeOffPoint.bind(this);
     this.setLandingPoint = this.setLandingPoint.bind(this);
+    this.setMissionGeometry = this.setMissionGeometry.bind(this);
+    this.setMissionAxisBuffer = this.setMissionAxisBuffer.bind(this);
+    this.buttonGeometryName = this.buttonGeometryName.bind(this);
     this.state = {
       showWayPoints: false,
       buttonStates: {
@@ -50,19 +53,50 @@ class MissionPlan extends Component {
     });
   }
 
+  setMissionGeometry(missionGeometry = '') {
+    Meteor.call('missions.setMissionGeometry', this.props.mission._id, missionGeometry, (error) => {
+      if (error) {
+        Bert.alert(error.reason, 'danger');
+      } else if (missionGeometry) {
+        Bert.alert('Mission Geometry Set', 'success');
+      } else {
+        Bert.alert('Mission Geometry Deleted', 'warning');
+      }
+    });
+  }
+
+  setMissionAxisBuffer(axisBuffer) {
+    Meteor.call('missions.setMissionAxisBuffer', this.props.mission._id, axisBuffer, (error) => {
+      if (error) {
+        Bert.alert(error.reason, 'danger');
+      } else {
+        Bert.alert('Mission Axis Buffer Set', 'success');
+      }
+    });
+  }
+
+  buttonGeometryName(mission) {
+    if (mission && mission.missionType && mission.missionType === 'Surface Area') {
+      return 'Area';
+    } else if (mission && mission.missionType && mission.missionType === 'Linear Area') {
+      return 'Axis';
+    }
+  }
+
   toggleButtonSwitch(thisButton = '') {
     this.setState((prevState) => {
       const myButtons = Object.keys(prevState.buttonStates);
       const newButtonStates = prevState.buttonStates;
       for (let i = 0; i < myButtons.length; i += 1) {
-        if (thisButton === myButtons[i]) {
-          continue;
-        }
-        if (prevState.buttonStates[myButtons[i]]) {
-          newButtonStates[myButtons[i]] = false;
+        if (thisButton !== myButtons[i]) {
+          if (prevState.buttonStates[myButtons[i]]) {
+            newButtonStates[myButtons[i]] = false;
+          }
         }
       }
-      newButtonStates[thisButton] = !prevState.buttonStates[thisButton];
+      if (thisButton) {
+        newButtonStates[thisButton] = !prevState.buttonStates[thisButton];
+      }
       return { buttonStates: newButtonStates };
     });
   }
@@ -97,7 +131,9 @@ class MissionPlan extends Component {
                 active={this.state.buttonStates.defineAreaButtonActive}
               >
                 <div><i className="fa fa-paint-brush fa-lg" aria-hidden="true" /></div>
-                <div>Define <br />Area</div>
+                <div>Define <br />
+                  {this.buttonGeometryName(mission)}
+                </div>
               </Button>
             </ButtonToolbar>
             <br />
@@ -219,6 +255,7 @@ class MissionPlan extends Component {
               defineAreaActive={this.state.buttonStates.defineAreaButtonActive}
               setTakeOffPoint={this.setTakeOffPoint}
               setLandingPoint={this.setLandingPoint}
+              setMissionGeometry={this.setMissionGeometry}
             />
             {this.state.showWayPoints ? <WayPointList /> : ''}
           </Col>

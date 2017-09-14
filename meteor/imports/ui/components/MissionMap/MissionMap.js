@@ -4,7 +4,7 @@ import L from 'leaflet';
 import 'leaflet-draw';
 import { Bert } from 'meteor/themeteorchef:bert';
 
-import { featurePoint2latlong, latlong2featurePoint, featurePointGetZoom, featurePointSetZoom, featurePointGetLongitude, featurePointGetLatitude } from '../../../modules/geojson-utilities';
+import { featurePoint2latlong, latlong2featurePoint, featurePointGetZoom, featurePointSetZoom, featurePointGetLongitude, featurePointGetLatitude, featureSetAltitudeToZero } from '../../../modules/geojson-utilities';
 
 
 import './MissionMap.scss';
@@ -31,14 +31,80 @@ class MissionMap extends Component {
     });
 
     // FeatureGroup is to store editable layers
-    const drawnItems = new L.FeatureGroup();
-    const drawControl = new L.Control.Draw({
+    const drawnItems = new L.FeatureGroup().addTo(missionmap);
+
+    if (this.props.mission.flightPlan) {
+      let missionGeometry = '';
+      if (this.props.mission.flightPlan.missionArea) {
+        missionGeometry = this.props.mission.flightPlan.missionArea;
+      } else if (this.props.mission.flightPlan.missionAxis) {
+        missionGeometry = this.props.mission.flightPlan.missionAxis;
+      }
+      if (missionGeometry) {
+        const myMissionGeomtryLayer = L.geoJSON(missionGeometry);
+        drawnItems.addLayer(myMissionGeomtryLayer.getLayers()[0]);
+      }
+    }
+
+    const drawControlFull = new L.Control.Draw({
       edit: {
         featureGroup: drawnItems,
+        poly: {
+          allowIntersection: false,
+        },
+      },
+      draw: {
+        polygon: (this.props.mission.missionType === 'Surface Area' ?
+          {
+            allowIntersection: false,
+            showArea: true,
+          } : false),
+        marker: false,
+        circle: false,
+        polyline: (this.props.mission.missionType === 'Linear Area'),
+        rectangle: false,
+        circlemarker: false,
       },
     });
+
+    const drawControlEditOnly = new L.Control.Draw({
+      edit: {
+        featureGroup: drawnItems,
+        poly: {
+          allowIntersection: false,
+        },
+      },
+      draw: false,
+    });
+
     this.drawnItems = drawnItems;
-    this.drawControl = drawControl;
+    this.drawControlFull = drawControlFull;
+    this.drawControlEdit = drawControlEditOnly;
+
+    missionmap.on(L.Draw.Event.CREATED, (event) => {
+      const layer = event.layer;
+      drawnItems.addLayer(layer);
+      const featureFromLayer = drawnItems.getLayers()[0].toGeoJSON();
+      featureSetAltitudeToZero(featureFromLayer);
+      this.props.setMissionGeometry(featureFromLayer);
+      missionmap.removeControl(drawControlFull);
+      missionmap.addControl(drawControlEditOnly);
+    });
+
+    missionmap.on(L.Draw.Event.EDITED, (event) => {
+      const editedLayer = event.layers.getLayers()[0];
+      const featureFromEditedLayer = editedLayer.toGeoJSON();
+      featureSetAltitudeToZero(featureFromEditedLayer);
+      this.props.setMissionGeometry(featureFromEditedLayer);
+    });
+
+    missionmap.on(L.Draw.Event.DELETED, () => {
+      if (drawnItems.getLayers().length === 0) {
+        this.props.setMissionGeometry();
+        missionmap.removeControl(drawControlEditOnly);
+        missionmap.addControl(drawControlFull);
+      }
+    });
 
     let geoJSONTakeOffPointLayer = '';
     let geoJSONLandingPointLayer = '';
@@ -87,11 +153,14 @@ class MissionMap extends Component {
       this.missionmap.setView(featurePoint2latlong(newLocation), featurePointGetZoom(newLocation));
     }
     if (this.props.defineAreaActive) {
-      this.missionmap.addLayer(this.drawnItems);
-      this.missionmap.addControl(this.drawControl);
-    } else {
-      this.missionmap.removeLayer(this.drawnItems);
-      this.missionmap.removeControl(this.drawControl);
+      if (this.drawnItems.getLayers().length === 0) {
+        this.missionmap.addControl(this.drawControlFull);
+      } else {
+        this.missionmap.addControl(this.drawControlEdit);
+      }
+    } else if (!this.props.defineAreaActive) {
+      this.drawControlFull.remove();
+      this.drawControlEdit.remove();
     }
   }
 
@@ -126,6 +195,7 @@ MissionMap.propTypes = {
   defineAreaActive: PropTypes.bool.isRequired,
   setTakeOffPoint: PropTypes.func.isRequired,
   setLandingPoint: PropTypes.func.isRequired,
+  setMissionGeometry: PropTypes.func.isRequired,
 };
 
 export default MissionMap;
