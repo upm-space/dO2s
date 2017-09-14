@@ -132,6 +132,34 @@ Meteor.methods({
       throw new Meteor.Error('500', exception);
     }
   },
+  'missions.setFlightParams': function missionsSetFlightParams(missionId, flightParameters) {
+    check(missionId, String);
+    try {
+      const flightParamsSchema = Missions.schema.getObjectSchema('flightPlan.flightParameters');
+      flightParamsSchema.validate(flightParameters);
+      Missions.update(missionId, { $set: { 'flightPlan.flightParameters': flightParameters,
+      } });
+    } catch (exception) {
+      if (exception.error === 'validation-error') {
+        throw new Meteor.Error(500, exception.message);
+      }
+      throw new Meteor.Error('500', exception);
+    }
+  },
+  'missions.setPictureGrid': function missionsSetPictureGrid(missionId, pictureGrid) {
+    check(missionId, String);
+    try {
+      const pictureGridSchema = Missions.schema.getObjectSchema('flightPlan.pictureGrid');
+      pictureGridSchema.validate(pictureGrid);
+      Missions.update(missionId, { $set: { 'flightPlan.pictureGrid': pictureGrid,
+      } });
+    } catch (exception) {
+      if (exception.error === 'validation-error') {
+        throw new Meteor.Error(500, exception.message);
+      }
+      throw new Meteor.Error('500', exception);
+    }
+  },
 });
 
 rateLimit({
@@ -146,6 +174,8 @@ rateLimit({
     'missions.setTakeOffPoint',
     'missions.setMissionGeometry',
     'missions.setMissionAxisBuffer',
+    'missions.setFlightParams',
+    'missions.setPictureGrid',
   ],
   limit: 5,
   timeRange: 1000,
