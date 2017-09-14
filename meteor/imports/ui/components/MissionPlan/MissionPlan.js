@@ -10,6 +10,7 @@ import WayPointList from '../WayPointList/WayPointList';
 import MissionFlightParameters from '../MissionFlightParameters/MissionFlightParameters';
 import MissionPayloadParameters from '../MissionPayloadParameters/MissionPayloadParameters';
 import MissionPictureGrid from '../MissionPictureGrid/MissionPictureGrid';
+import MissionData from '../MissionData/MissionData';
 
 import './MissionPlan.scss';
 
@@ -269,6 +270,7 @@ class MissionPlan extends Component {
                   />
                 ))}
             {this.state.buttonStates.showWayPointsButtonActive ? <WayPointList /> : ''}
+            {this.state.buttonStates.showMissionDataButtonActive ? <MissionData mission={mission} /> : ''}
           </Col>
         </Row>
       </div>
