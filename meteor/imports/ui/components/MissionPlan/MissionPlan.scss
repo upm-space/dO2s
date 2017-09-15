@@ -1,12 +1,19 @@
 .MissionPlan{
   button{
+    padding: 6px;
     div{
       display: inline-block;
       vertical-align: middle;
       clear:both;
       i{
-        margin-right: 10px;
+        margin-right: 7px;
       }
     }
+  }
+  .padding2{
+    padding: 0px 2px;
+  }
+  .margin-bottom{
+    margin: 2px 0px;
   }
 }

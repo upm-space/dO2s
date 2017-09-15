@@ -109,145 +109,188 @@ class MissionPlan extends Component {
   render() {
     const { project, mission, history } = this.props;
     return (
-      <div className="MissionPlan">
+      <div className="MissionPlan container-fluid">
         <Row>
           <Col xs={12} sm={3} md={3} lg={3}>
-            <ButtonToolbar>
-              <Button
-                bsStyle="primary"
-                onClick={() => this.toogleButtonSwtich('takeOffButtonActive')}
-                active={this.state.buttonStates.takeOffButtonActive}
-                className="btn-xs-block"
-              >
-                <div><i className="fa fa-arrow-circle-up fa-lg" aria-hidden="true" /></div>
-                <div>Take Off <br /> Point</div>
-              </Button>
-              <Button
-                bsStyle="primary"
-                onClick={() => this.toogleButtonSwtich('landingButtonActive')}
-                active={this.state.buttonStates.landingButtonActive}
-              >
-                <div><i className="fa fa-arrow-circle-down fa-lg" aria-hidden="true" /></div>
-                <div>Landing <br /> Point</div>
-              </Button>
-              <Button
-                bsStyle="primary"
-                onClick={() => this.toogleButtonSwtich('defineAreaButtonActive')}
-                active={this.state.buttonStates.defineAreaButtonActive}
-              >
-                <div><i className="fa fa-paint-brush fa-lg" aria-hidden="true" /></div>
-                <div>Define <br />
-                  {this.buttonGeometryName(mission)}
-                </div>
-              </Button>
-            </ButtonToolbar>
-            <br />
-            <ButtonToolbar>
-              <Button
-                bsStyle="success"
-                onClick={() => this.toogleButtonSwtich()}
-              >
-                <div><i className="fa fa-superpowers fa-lg" aria-hidden="true" /></div>
-                <div>Draw Mission</div>
-              </Button>
-              <Button
-                bsStyle="success"
-                onClick={() => this.toogleButtonSwtich()}
-              >
-                <div><i className="fa fa-rotate-right fa-lg" aria-hidden="true" /></div>
-                <div>Change Mission Direction</div>
-              </Button>
-              <Button
-                bsStyle="success"
-                onClick={() => this.toogleButtonSwtich()}
-              >
-                <div><i className="fa fa-long-arrow-up fa-lg" aria-hidden="true" /></div>
-                <div>Get WPS Altitude</div>
-              </Button>
-            </ButtonToolbar>
-            <br />
-            <ButtonToolbar>
-              <Button
-                bsStyle="info"
-                onClick={() => this.toogleButtonSwtich('flightParametersButtonActive')}
-                active={this.state.buttonStates.flightParametersButtonActive}
-              >
-                <div><i className="fa fa-paper-plane fa-lg" aria-hidden="true" /></div>
-                <div>Flight Parameters</div>
-              </Button>
-              <Button
-                bsStyle="info"
-                onClick={() => this.toogleButtonSwtich('payloadParamsButtonActive')}
-                active={this.state.buttonStates.payloadParamsButtonActive}
-              >
-                <div><i className="fa fa-camera fa-lg" aria-hidden="true" /></div>
-                <div>Payload Parameters</div></Button>
-              <Button
-                bsStyle="info"
-                onClick={() => this.toogleButtonSwtich('pictureGridButtonActive')}
-                active={this.state.buttonStates.pictureGridButtonActive}
-              >
-                <div><i className="fa fa-picture-o fa-lg" aria-hidden="true" /></div>
-                <div>Picture Grid</div></Button>
-            </ButtonToolbar>
-            <br />
-            <ButtonToolbar>
-              <Button
-                bsStyle="primary"
-                onClick={() => this.toogleButtonSwtich('showWayPointsButtonActive')}
-                active={this.state.buttonStates.showWayPointsButtonActive}
-              >
-                <div><i className="fa fa-map-marker fa-lg" aria-hidden="true" /></div>
-                <div>Show WayPoints</div></Button>
-              <Button
-                bsStyle="primary"
-                onClick={() => this.toogleButtonSwtich('showMissionDataButtonActive')}
-                active={this.state.buttonStates.showMissionDataButtonActive}
-              >
-                <div><i className="fa fa-bullseye fa-lg" aria-hidden="true" /></div>
-                <div>Show Mission Data</div></Button>
-            </ButtonToolbar>
-            <br />
-            <ButtonToolbar>
-              <Button
-                bsStyle="danger"
-                block
-                onClick={() => this.toogleButtonSwtich()}
-              >
-                <div><i className="fa fa-trash fa-lg" aria-hidden="true" /></div>
-                <div>Clear WayPoints</div></Button>
-            </ButtonToolbar>
-            <br />
-            <ButtonToolbar>
-              <Button
-                bsStyle="default"
-                onClick={() => this.toogleButtonSwtich()}
-              >
-                <div><i className="fa fa-download fa-lg" aria-hidden="true" /></div>
-                <div>Export Mission</div></Button>
-              <Button
-                bsStyle="default"
-                onClick={() => this.toogleButtonSwtich()}
-              >
-                <div><i className="fa fa-upload fa-lg" aria-hidden="true" /></div>
-                <div>Import Mission</div></Button>
+            <Row>
+              <Col xs={12} sm={12} md={12} lg={4} className="padding2 margin-bottom">
+                <Button
+                  bsStyle="primary"
+                  onClick={() => this.toogleButtonSwtich('takeOffButtonActive')}
+                  active={this.state.buttonStates.takeOffButtonActive}
+                  block
+                >
+                  <div><i className="fa fa-arrow-circle-up fa-lg" aria-hidden="true" /></div>
+                  <div>Set<br />Take Off</div>
+                </Button>
+              </Col>
+              <Col xs={12} sm={12} md={12} lg={4} className="padding2 margin-bottom">
+                <Button
+                  bsStyle="primary"
+                  onClick={() => this.toogleButtonSwtich('landingButtonActive')}
+                  active={this.state.buttonStates.landingButtonActive}
+                  block
+                >
+                  <div><i className="fa fa-arrow-circle-down fa-lg" aria-hidden="true" /></div>
+                  <div>Set<br />Landing</div>
+                </Button>
+              </Col>
+              <Col xs={12} sm={12} md={12} lg={4} className="padding2 margin-bottom">
+                <Button
+                  bsStyle="primary"
+                  onClick={() => this.toogleButtonSwtich('defineAreaButtonActive')}
+                  active={this.state.buttonStates.defineAreaButtonActive}
+                  block
+                >
+                  <div><i className="fa fa-paint-brush fa-lg" aria-hidden="true" /></div>
+                  <div>Define<br />{this.buttonGeometryName(mission)}</div>
+                </Button>
+              </Col>
 
-            </ButtonToolbar>
+            </Row>
             <br />
-            <ButtonToolbar>
-              <Button
-                bsStyle="default"
-                onClick={() => this.toogleButtonSwtich()}
-              >
-                <div><i className="fa fa-square-o fa-lg" aria-hidden="true" /></div>
-                <div>Perimeter KML</div></Button>
-              <Button
-                bsStyle="default"
-                onClick={() => this.toogleButtonSwtich()}
-              >
-                <div><i className="fa fa-map fa-lg" aria-hidden="true" /></div>
-                <div>Mission KML</div></Button>
-            </ButtonToolbar>
+            <Row>
+              <Col xs={12} sm={6} md={6} lg={6} className="padding2 margin-bottom">
+                <Button
+                  bsStyle="success"
+                  onClick={() => this.toogleButtonSwtich()}
+                  block
+                >
+                  <div><i className="fa fa-superpowers fa-lg" aria-hidden="true" /></div>
+                  <div>Draw<br />Mission</div>
+                </Button>
+              </Col>
+              <Col xs={12} sm={6} md={6} lg={6} className="padding2 margin-bottom">
+                <Button
+                  bsStyle="success"
+                  onClick={() => this.toogleButtonSwtich()}
+                  block
+                >
+                  <div><i className="fa fa-long-arrow-up fa-lg" aria-hidden="true" /></div>
+                  <div>Get WPS<br />Altitude<br /></div>
+                </Button>
+              </Col>
+              <Col xs={12} sm={12} md={12} lg={12} className="padding2 margin-bottom">
+                <Button
+                  bsStyle="success"
+                  onClick={() => this.toogleButtonSwtich()}
+                  block
+                >
+                  <div><i className="fa fa-rotate-right fa-lg" aria-hidden="true" /></div>
+                  <div>Change Mission Direction</div>
+                </Button>
+              </Col>
+            </Row>
+            <br />
+            <Row>
+              <Col xs={12} sm={12} md={12} lg={4} className="padding2 margin-bottom">
+                <Button
+                  bsStyle="info"
+                  onClick={() => this.toogleButtonSwtich('flightParametersButtonActive')}
+                  active={this.state.buttonStates.flightParametersButtonActive}
+                  block
+                >
+                  <div><i className="fa fa-paper-plane fa-lg" aria-hidden="true" /></div>
+                  <div>Flight<br />Params</div></Button>
+              </Col>
+              <Col xs={12} sm={12} md={12} lg={4} className="padding2 margin-bottom">
+                <Button
+                  bsStyle="info"
+                  onClick={() => this.toogleButtonSwtich('payloadParamsButtonActive')}
+                  active={this.state.buttonStates.payloadParamsButtonActive}
+                  block
+                >
+                  <div><i className="fa fa-camera fa-lg" aria-hidden="true" /></div>
+                  <div>Payload<br />Params</div></Button>
+              </Col>
+              <Col xs={12} sm={12} md={12} lg={4} className="padding2 margin-bottom">
+                <Button
+                  bsStyle="info"
+                  onClick={() => this.toogleButtonSwtich('pictureGridButtonActive')}
+                  active={this.state.buttonStates.pictureGridButtonActive}
+                  block
+                >
+                  <div><i className="fa fa-picture-o fa-lg" aria-hidden="true" /></div>
+                  <div>Picture<br />Grid</div></Button>
+              </Col>
+            </Row>
+            <br />
+            <Row>
+              <Col xs={12} sm={6} md={6} lg={6} className="padding2 margin-bottom">
+                <Button
+                  bsStyle="primary"
+                  onClick={() => this.toogleButtonSwtich('showWayPointsButtonActive')}
+                  active={this.state.buttonStates.showWayPointsButtonActive}
+                  block
+                >
+                  <div><i className="fa fa-map-marker fa-lg" aria-hidden="true" /></div>
+                  <div>Show<br />WayPoints</div></Button>
+              </Col>
+              <Col xs={12} sm={6} md={6} lg={6} className="padding2 margin-bottom">
+                <Button
+                  bsStyle="primary"
+                  onClick={() => this.toogleButtonSwtich('showMissionDataButtonActive')}
+                  active={this.state.buttonStates.showMissionDataButtonActive}
+                  block
+                >
+                  <div><i className="fa fa-bullseye fa-lg" aria-hidden="true" /></div>
+                  <div>Show<br />Mission Data</div></Button>
+              </Col>
+            </Row>
+            <br />
+            <Row>
+              <Col xs={12} sm={12} md={12} lg={12} className="padding2 margin-bottom">
+                <Button
+                  bsStyle="danger"
+                  block
+                  onClick={() => this.toogleButtonSwtich()}
+                >
+                  <div><i className="fa fa-trash fa-lg" aria-hidden="true" /></div>
+                  <div>Clear WayPoints</div></Button>
+              </Col>
+            </Row>
+            <br />
+            <Row>
+              <Col xs={12} sm={6} md={6} lg={6} className="padding2 margin-bottom">
+                <Button
+                  bsStyle="default"
+                  onClick={() => this.toogleButtonSwtich()}
+                  block
+                >
+                  <div><i className="fa fa-download fa-lg" aria-hidden="true" /></div>
+                  <div>Export<br /> Mission</div></Button>
+              </Col>
+              <Col xs={12} sm={6} md={6} lg={6} className="padding2 margin-bottom">
+                <Button
+                  bsStyle="default"
+                  onClick={() => this.toogleButtonSwtich()}
+                  block
+                >
+                  <div><i className="fa fa-upload fa-lg" aria-hidden="true" /></div>
+                  <div>Import<br /> Mission</div></Button>
+              </Col>
+            </Row>
+            <br />
+            <Row>
+              <Col xs={12} sm={6} md={6} lg={6} className="padding2 margin-bottom">
+                <Button
+                  bsStyle="default"
+                  onClick={() => this.toogleButtonSwtich()}
+                  block
+                >
+                  <div><i className="fa fa-square-o fa-lg" aria-hidden="true" /></div>
+                  <div>Perimeter<br /> KML</div></Button>
+              </Col>
+              <Col xs={12} sm={6} md={6} lg={6} className="padding2 margin-bottom">
+                <Button
+                  bsStyle="default"
+                  onClick={() => this.toogleButtonSwtich()}
+                  block
+                >
+                  <div><i className="fa fa-map fa-lg" aria-hidden="true" /></div>
+                  <div>Mission<br /> KML</div></Button>
+              </Col>
+            </Row>
           </Col>
           <Col xs={12} sm={9} md={9} lg={9}>
             {this.state.buttonStates.flightParametersButtonActive ?
