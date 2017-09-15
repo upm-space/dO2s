@@ -5,7 +5,7 @@ import { Row, Col, Form, FormGroup, FormControl, ControlLabel } from 'react-boot
 import './MissionData.scss';
 
 const MissionData = () => (
-  <div fluid className="MissionData" >
+  <div className="MissionData" >
     <Row>
       <Form horizontal>
         <Col xs={12} sm={4} md={4} lg={4}>

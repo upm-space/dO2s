@@ -3,8 +3,7 @@ import PropTypes from 'prop-types';
 import L from 'leaflet';
 import 'leaflet-draw';
 
-import { featurePoint2latlong, latlong2featurePoint, featurePointGetZoom, featurePointSetZoom, featurePointGetLongitude, featurePointGetLatitude, featureSetAltitudeToZero } from '../../../modules/geojson-utilities';
-
+import { featurePoint2latlong, latlong2featurePoint, featurePointGetZoom, featureSetAltitudeToZero } from '../../../modules/geojson-utilities';
 
 import './MissionMap.scss';
 
@@ -16,23 +15,29 @@ class MissionMap extends Component {
   }
 
   componentDidMount() {
-    let currentLocation = this.props.location;
+    const currentLocation = this.props.location;
     const missionmap = L.map('missionmap').setView(featurePoint2latlong(currentLocation), featurePointGetZoom(currentLocation));
     this.missionmap = missionmap;
     L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
     }).addTo(missionmap);
 
-    missionmap.on('moveend', () => {
-      currentLocation = latlong2featurePoint(missionmap.getCenter().wrap());
-      featurePointSetZoom(currentLocation, missionmap.getZoom());
-      this.props.onLocationChange(currentLocation);
-    });
-
     // FeatureGroup is to store editable layers
     const drawnItems = new L.FeatureGroup().addTo(missionmap);
+    const geoJSONTakeOffPointLayer = L.geoJSON().addTo(missionmap);
+    const geoJSONLandingPointLayer = L.geoJSON().addTo(missionmap);
+    this.drawnItems = drawnItems;
+    this.geoJSONTakeOffPointLayer = geoJSONTakeOffPointLayer;
+    this.geoJSONLandingPointLayer = geoJSONLandingPointLayer;
 
     if (this.props.mission.flightPlan) {
+      if (this.props.mission.flightPlan.takeOffPoint) {
+        geoJSONTakeOffPointLayer.addData(this.props.mission.flightPlan.takeOffPoint);
+      }
+      if (this.props.mission.flightPlan.landingPoint) {
+        geoJSONLandingPointLayer.addData(this.props.mission.flightPlan.landingPoint);
+      }
+
       let missionGeometry = '';
       if (this.props.mission.flightPlan.missionArea) {
         missionGeometry = this.props.mission.flightPlan.missionArea;
@@ -44,6 +49,7 @@ class MissionMap extends Component {
         drawnItems.addLayer(myMissionGeomtryLayer.getLayers()[0]);
       }
     }
+
 
     const drawControlFull = new L.Control.Draw({
       edit: {
@@ -80,10 +86,27 @@ class MissionMap extends Component {
     this.drawControlFull = drawControlFull;
     this.drawControlEdit = drawControlEditOnly;
 
+    missionmap.on('click', (e) => {
+      if (this.props.takeOffPointActive) {
+        const myTakeOffPoint = latlong2featurePoint(e.latlng.wrap());
+        myTakeOffPoint.properties = {};
+        myTakeOffPoint.properties.waypointType = 'take-off';
+        geoJSONTakeOffPointLayer.clearLayers();
+        this.props.setTakeOffPoint(myTakeOffPoint);
+      }
+
+      if (this.props.landingPointActive) {
+        const myLandingPoint = latlong2featurePoint(e.latlng.wrap());
+        myLandingPoint.properties = {};
+        myLandingPoint.properties.waypointType = 'landing';
+        geoJSONLandingPointLayer.clearLayers();
+        this.props.setLandingPoint(myLandingPoint);
+      }
+    });
+
     missionmap.on(L.Draw.Event.CREATED, (event) => {
-      const layer = event.layer;
-      drawnItems.addLayer(layer);
-      const featureFromLayer = drawnItems.getLayers()[0].toGeoJSON();
+      const newGeometryLayer = event.layer;
+      const featureFromLayer = newGeometryLayer.toGeoJSON();
       featureSetAltitudeToZero(featureFromLayer);
       this.props.setMissionGeometry(featureFromLayer);
       missionmap.removeControl(drawControlFull);
@@ -91,10 +114,12 @@ class MissionMap extends Component {
     });
 
     missionmap.on(L.Draw.Event.EDITED, (event) => {
-      const editedLayer = event.layers.getLayers()[0];
-      const featureFromEditedLayer = editedLayer.toGeoJSON();
+      drawnItems.clearLayers();
+      const editedGeometryLayer = event.layers.getLayers()[0];
+      const featureFromEditedLayer = editedGeometryLayer.toGeoJSON();
       featureSetAltitudeToZero(featureFromEditedLayer);
       this.props.setMissionGeometry(featureFromEditedLayer);
+      drawnItems.clearLayers();
     });
 
     missionmap.on(L.Draw.Event.DELETED, () => {
@@ -104,52 +129,30 @@ class MissionMap extends Component {
         missionmap.addControl(drawControlFull);
       }
     });
-
-    let geoJSONTakeOffPointLayer = '';
-    let geoJSONLandingPointLayer = '';
-    if (this.props.mission.flightPlan && this.props.mission.flightPlan.takeOffPoint) {
-      geoJSONTakeOffPointLayer = L.geoJSON(this.props.mission.flightPlan.takeOffPoint).addTo(missionmap);
-    }
-    if (this.props.mission.flightPlan && this.props.mission.flightPlan.landingPoint) {
-      geoJSONLandingPointLayer = L.geoJSON(this.props.mission.flightPlan.landingPoint).addTo(missionmap);
-    }
-
-
-    missionmap.on('click', (e) => {
-      if (this.props.takeOffPointActive) {
-        const myTakeOffPoint = latlong2featurePoint(e.latlng.wrap());
-        myTakeOffPoint.properties = {};
-        myTakeOffPoint.properties.waypointType = 'take-off';
-        if (geoJSONTakeOffPointLayer) {
-          missionmap.removeLayer(geoJSONTakeOffPointLayer);
-        }
-        geoJSONTakeOffPointLayer = L.geoJSON(myTakeOffPoint).addTo(missionmap);
-        this.props.setTakeOffPoint(myTakeOffPoint);
-      }
-
-      if (this.props.landingPointActive) {
-        const myLandingPoint = latlong2featurePoint(e.latlng.wrap());
-        myLandingPoint.properties = {};
-        myLandingPoint.properties.waypointType = 'landing';
-
-        if (geoJSONLandingPointLayer) {
-          missionmap.removeLayer(geoJSONLandingPointLayer);
-        }
-        geoJSONLandingPointLayer = L.geoJSON(myLandingPoint).addTo(missionmap);
-        this.props.setLandingPoint(myLandingPoint);
-      }
-    });
   }
 
   componentDidUpdate(prevProps) {
-    const oldLocation = prevProps.location;
-    const newLocation = this.props.location;
-    const isLongSame =
-      featurePointGetLongitude(newLocation) === featurePointGetLongitude(oldLocation);
-    const isLatSame = featurePointGetLatitude(newLocation) === featurePointGetLatitude(oldLocation);
-    const isZoomSame = featurePointGetZoom(newLocation) === featurePointGetZoom(oldLocation);
-    if (!isLongSame || !isLatSame || !isZoomSame) {
-      this.missionmap.setView(featurePoint2latlong(newLocation), featurePointGetZoom(newLocation));
+    if (this.props.mission.flightPlan) {
+      if (this.props.mission.flightPlan.takeOffPoint) {
+        this.geoJSONTakeOffPointLayer.clearLayers();
+        this.geoJSONTakeOffPointLayer.addData(this.props.mission.flightPlan.takeOffPoint);
+      }
+      if (this.props.mission.flightPlan.landingPoint) {
+        this.geoJSONLandingPointLayer.clearLayers();
+        this.geoJSONLandingPointLayer.addData(this.props.mission.flightPlan.landingPoint);
+      }
+
+      let missionGeometry = '';
+      if (this.props.mission.flightPlan.missionArea) {
+        missionGeometry = this.props.mission.flightPlan.missionArea;
+      } else if (this.props.mission.flightPlan.missionAxis) {
+        missionGeometry = this.props.mission.flightPlan.missionAxis;
+      }
+      if (missionGeometry) {
+        this.drawnItems.clearLayers();
+        const myMissionGeomtryLayer = L.geoJSON(missionGeometry);
+        this.drawnItems.addLayer(myMissionGeomtryLayer.getLayers()[0]);
+      }
     }
     if (this.props.defineAreaActive) {
       if (this.drawnItems.getLayers().length === 0) {
