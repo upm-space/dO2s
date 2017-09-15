@@ -69,7 +69,6 @@ class MissionEditor extends Component {
       rpa: this.rpa.value.trim(),
       payload: this.payload.value.trim(),
       missionType: this.missionType.value.trim(),
-      flightPlan: {},
     };
 
     if (existingMission) mission._id = existingMission;
