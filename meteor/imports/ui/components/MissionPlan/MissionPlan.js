@@ -11,6 +11,7 @@ import MissionFlightParameters from '../MissionFlightParameters/MissionFlightPar
 import MissionPayloadParameters from '../MissionPayloadParameters/MissionPayloadParameters';
 import MissionPictureGrid from '../MissionPictureGrid/MissionPictureGrid';
 import MissionData from '../MissionData/MissionData';
+import MissionBuilderDO2sParser from '../../../modules/mission-planning/MissionBuilderDO2sParser.jsx';
 
 import './MissionPlan.scss';
 
@@ -106,6 +107,16 @@ class MissionPlan extends Component {
     });
   }
 
+  drawMission(){
+      this.toogleButtonSwtich();
+      //let missionJson = {"pyload":"","mission":""}
+      let dO2sBuilder = new MissionBuilderDO2sParser(this.props.mission);
+      dO2sBuilder.calculateMission();
+      let mData = dO2sBuilder.getMission();
+      console.log(mData);
+
+  }
+
   render() {
     const { project, mission, history } = this.props;
     return (
@@ -153,7 +164,7 @@ class MissionPlan extends Component {
               <Col xs={12} sm={6} md={6} lg={6} className="padding2 margin-bottom">
                 <Button
                   bsStyle="success"
-                  onClick={() => this.toogleButtonSwtich()}
+                  onClick={() => this.drawMission()}
                   block
                 >
                   <div><i className="fa fa-superpowers fa-lg" aria-hidden="true" /></div>
