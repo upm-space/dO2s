@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import L from 'leaflet';
 import 'leaflet-draw';
 
-import { featurePoint2latlong, latlong2featurePoint, featurePointGetZoom, featureSetAltitudeToZero } from '../../../modules/geojson-utilities';
+import { featurePoint2latlong, latlong2featurePoint, featurePointGetZoom } from '../../../modules/geojson-utilities';
 
 import './MissionMap.scss';
 
@@ -107,7 +107,6 @@ class MissionMap extends Component {
     missionmap.on(L.Draw.Event.CREATED, (event) => {
       const newGeometryLayer = event.layer;
       const featureFromLayer = newGeometryLayer.toGeoJSON();
-      featureSetAltitudeToZero(featureFromLayer);
       this.props.setMissionGeometry(featureFromLayer);
       missionmap.removeControl(drawControlFull);
       missionmap.addControl(drawControlEditOnly);
@@ -117,7 +116,6 @@ class MissionMap extends Component {
       drawnItems.clearLayers();
       const editedGeometryLayer = event.layers.getLayers()[0];
       const featureFromEditedLayer = editedGeometryLayer.toGeoJSON();
-      featureSetAltitudeToZero(featureFromEditedLayer);
       this.props.setMissionGeometry(featureFromEditedLayer);
       drawnItems.clearLayers();
     });
