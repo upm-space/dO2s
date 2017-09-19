@@ -48,10 +48,10 @@ export default function LatLon(lat, lon, height, radius) {
  */
 LatLon.prototype.distanceTo = function (point) {
   const R = this.radius;
-  let phi1 = this.lat.toRadians(),
-    lambda1 = this.lon.toRadians();
-  let phi2 = point.lat.toRadians(),
-    lambda2 = point.lon.toRadians();
+  const phi1 = this.lat.toRadians();
+  const lambda1 = this.lon.toRadians();
+  const phi2 = point.lat.toRadians();
+  const lambda2 = point.lon.toRadians();
   const Deltaphi = phi2 - phi1;
   const Deltalambda = lambda2 - lambda1;
 
@@ -82,7 +82,7 @@ LatLon.prototype.calculateSurface = function (points) {
 
   let area = this.getDeterminant(localPoints[localPoints.length - 1], localPoints[0]);
 
-  for (let i = 1; i < localPoints.length; i++) {
+  for (let i = 1; i < localPoints.length; i += 1) {
     area += this.getDeterminant(localPoints[i - 1], localPoints[i]);
   }
   return Math.abs(area / 2);
@@ -138,18 +138,18 @@ LatLon.prototype.calculateBoundingBox = function (points) {
 LatLon.intersection = function (p1, brng1, p2, brng2) {
   // see http://williams.best.vwh.net/avform.htm#Intersection
 
-  let phi1 = p1.lat.toRadians(),
-    lambda1 = p1.lon.toRadians();
-  let phi2 = p2.lat.toRadians(),
-    lambda2 = p2.lon.toRadians();
-  let theta13 = Number(brng1).toRadians(),
-    theta23 = Number(brng2).toRadians();
-  let Deltaphi = phi2 - phi1,
-    Deltalambda = lambda2 - lambda1;
+  const phi1 = p1.lat.toRadians();
+  const lambda1 = p1.lon.toRadians();
+  const phi2 = p2.lat.toRadians();
+  const lambda2 = p2.lon.toRadians();
+  const theta13 = Number(brng1).toRadians();
+  const theta23 = Number(brng2).toRadians();
+  const Deltaphi = phi2 - phi1;
+  const Deltalambda = lambda2 - lambda1;
 
   const delta12 = 2 * Math.asin(Math.sqrt(Math.sin(Deltaphi / 2) * Math.sin(Deltaphi / 2) +
             Math.cos(phi1) * Math.cos(phi2) * Math.sin(Deltalambda / 2) * Math.sin(Deltalambda / 2)));
-  if (delta12 == 0) { return null; }
+  if (delta12 === 0) { return null; }
 
   // initial/final bearings between points
   let theta1 = Math.acos((Math.sin(phi2) - Math.sin(phi1) * Math.cos(delta12)) /
@@ -158,8 +158,8 @@ LatLon.intersection = function (p1, brng1, p2, brng2) {
   const theta2 = Math.acos((Math.sin(phi1) - Math.sin(phi2) * Math.cos(delta12)) /
         (Math.sin(delta12) * Math.cos(phi2)));
 
-  let theta12,
-    theta21;
+  let theta12;
+  let theta21;
   if (Math.sin(lambda2 - lambda1) > 0) {
     theta12 = theta1;
     theta21 = 2 * Math.PI - theta2;
@@ -171,7 +171,7 @@ LatLon.intersection = function (p1, brng1, p2, brng2) {
   const alpha1 = (theta13 - theta12 + Math.PI) % (2 * Math.PI) - Math.PI; // angle 2-1-3
   const alpha2 = (theta21 - theta23 + Math.PI) % (2 * Math.PI) - Math.PI; // angle 1-2-3
 
-  if (Math.sin(alpha1) == 0 && Math.sin(alpha2) == 0) { return null; } // infinite intersections
+  if (Math.sin(alpha1) === 0 && Math.sin(alpha2) === 0) { return null; } // infinite intersections
   // if (Math.sin(alpha1)*Math.sin(alpha2) < 0) return null; // comentado por LIM      // ambiguous intersection
 
   // alpha1 = Math.abs(alpha1);
@@ -261,8 +261,8 @@ LatLon.prototype.calculateBearing = function (point) {
  *     var b1 = p1.bearingTo(p2); // b1.toFixed(1): 156.2
  */
 LatLon.prototype.bearingTo = function (point) {
-  let phi1 = this.lat.toRadians(),
-    phi2 = point.lat.toRadians();
+  const phi1 = this.lat.toRadians();
+  const phi2 = point.lat.toRadians();
   const Deltalambda = (point.lon - this.lon).toRadians();
 
   // see http://mathforum.org/library/drmath/view/55417.html
@@ -287,8 +287,8 @@ LatLon.prototype.bearingTo = function (point) {
 LatLon.prototype.midpointTo = function (point) {
   // see http://mathforum.org/library/drmath/view/51822.html for derivation
 
-  let phi1 = this.lat.toRadians(),
-    lambda1 = this.lon.toRadians();
+  const phi1 = this.lat.toRadians();
+  const lambda1 = this.lon.toRadians();
   const phi2 = point.lat.toRadians();
   const Deltalambda = (point.lon - this.lon).toRadians();
 
@@ -311,7 +311,7 @@ LatLon.prototype.midpointTo = function (point) {
  */
 LatLon.prototype.clockwise = function (points) {
   let accumulatedValue = 0;
-  for (let i = 0; i < points.length - 1; i++) {
+  for (let i = 0; i < points.length - 1; i += 1) {
     const diffLat = points[i + 1].lat + points[i].lat;
     const diffLon = points[i + 1].lon - points[i].lon;
     const result = diffLat * diffLon;
@@ -330,10 +330,10 @@ LatLon.prototype.clockwise = function (points) {
  * @returns {points}- Points in clockwise order
  */
 LatLon.prototype.returnedClockwise = function (points) {
-  if (this.clockwise(points) == false) {
+  if (this.clockwise(points) === false) {
     const tempPoints = [];
     const num = points.length - 1;
-    for (let i = 0; i < num + 1; i++) {
+    for (let i = 0; i < num + 1; i += 1) {
       const temp = points[num - i];
       tempPoints[i] = temp;
     }
@@ -386,7 +386,7 @@ LatLon.prototype.furthestPoint = function (points) {
 LatLon.prototype.findLineIntersection = function (start1, end1, start2, end2) {
   const denom = ((end1.lon - start1.lon) * (end2.lat - start2.lat)) - ((end1.lat - start1.lat) * (end2.lon - start2.lon));
   //  AB & CD are parallel
-  if (denom == 0) {
+  if (denom === 0) {
     return null;
   }
   const numer = ((start1.lat - start2.lat) * (end2.lon - start2.lon)) - ((start1.lon - start2.lon) * (end2.lat - start2.lat));
@@ -477,18 +477,18 @@ LatLon.prototype.pointsToLatLon = function (coors) {
  */
 LatLon.prototype.convertOL3ToPoints = function (geometry) {
   const points = [];
-  if (geometry.getType() == 'Point') {
+  if (geometry.getType() === 'Point') {
     const coors = geometry.getCoordinates();
     const point = new LatLon(coors[1], coors[0]);
     points.push(point);
   }
-  if (geometry.getType() == 'LineString') {
+  if (geometry.getType() === 'LineString') {
     geometry.getCoordinates().forEach((coors) => {
       const point = new LatLon(coors[1], coors[0]);
       points.push(point);
     });
   }
-  if (geometry.getType() == 'Polygon') {
+  if (geometry.getType() === 'Polygon') {
     geometry.getCoordinates().forEach((geo2) => {
       geo2.forEach((coors) => {
         const point = new LatLon(coors[1], coors[0]);
@@ -516,7 +516,7 @@ if (typeof Number.prototype.toDegrees === 'undefined') {
 // return: an array with the removed element; false otherwise.
 Array.prototype.remove = function (value) {
   const idx = this.indexOf(value);
-  if (idx != -1) {
+  if (idx !== -1) {
     return this.splice(idx, 1); // The second parameter is the number of elements to remove.
   }
   return false;

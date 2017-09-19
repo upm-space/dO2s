@@ -152,7 +152,7 @@ MissionBuilder.prototype.calculateGrid = function (/* missionSide */) {
   if (this._mission.initialSegment > 0) {
     LargestSegment = this._mission.initialSegment - 1;
   } else {
-    for (let i = 0; i < points.length - 1; i++) {
+    for (let i = 0; i < points.length - 1; i += 1) {
       const dist = points[i].distanceTo(points[i + 1]);
       if (dist > minVal) {
         minVal = dist;
@@ -163,7 +163,7 @@ MissionBuilder.prototype.calculateGrid = function (/* missionSide */) {
 
   /* calculate waypoints */
   let bearingToPoint = null;
-  if (this._mission.boundaries == LargestSegment - 1) {
+  if (this._mission.boundaries === LargestSegment - 1) {
     bearingToPoint = points[0]; // if is the last point them bearing to initial point of the polygon
   } else {
     bearingToPoint = points[LargestSegment + 1];
@@ -181,9 +181,9 @@ MissionBuilder.prototype.calculateGrid = function (/* missionSide */) {
   const diagDist = minPoint.distanceTo(maxPoint);
   let numberOfSegments = diagDist / distance;
   const lines = [];
-  for (var k = 0; k <= numberOfSegments; k++) {
+  for (let k = 0; k <= numberOfSegments; k += 1) {
     var deltaInit = 0;
-    if (k == 0) { deltaInit = 0.0002; } // we move 20 cm the first line to force cutting with the other perpendiculars
+    if (k === 0) { deltaInit = 0.0002; } // we move 20 cm the first line to force cutting with the other perpendiculars
     var projectedMidPoint = midPoint.destinationPoint(perpendicularBearing, distance * k + deltaInit);
     var p1 = projectedMidPoint.destinationPoint(bearing, diagDist);
     var p2 = projectedMidPoint.destinationPoint(bearing + 180, diagDist);
@@ -203,9 +203,9 @@ MissionBuilder.prototype.calculateGrid = function (/* missionSide */) {
   bearing = points[LargestSegment].bearingTo(points[LargestSegment + 1]);
 
   const Picslines = [];
-  for (var k = 0; k <= numberOfSegments * 2; k++) {
+  for (let k = 0; k <= numberOfSegments * 2; k += 1) {
     var deltaInit = 0;
-    if (k == 0) { deltaInit = 0.0002; } // we move 20 cm the first line to force cutting with the other perpendiculars
+    if (k === 0) { deltaInit = 0.0002; } // we move 20 cm the first line to force cutting with the other perpendiculars
     var projectedMidPoint = midPoint.destinationPoint(bearing, distance * k + deltaInit);
     var p1 = projectedMidPoint.destinationPoint(perpendicularBearing, diagDist);
     var p2 = projectedMidPoint.destinationPoint(perpendicularBearing + 180, diagDist);
@@ -253,8 +253,8 @@ MissionBuilder.prototype.calculateGrid = function (/* missionSide */) {
  */
 MissionBuilder.prototype.cutGrid = function (lines, boundaries) {
   // ensure the last coordinate is the first of the polygon
-  if (boundaries[0].lat != boundaries[boundaries.length - 1].lat
-        || boundaries[0].lng != boundaries[boundaries.length - 1].lng) {
+  if (boundaries[0].lat !== boundaries[boundaries.length - 1].lat
+        || boundaries[0].lng !== boundaries[boundaries.length - 1].lng) {
     boundaries.push(boundaries[0]);
   }
   const helper = new LatLon(0, 0);
@@ -262,13 +262,13 @@ MissionBuilder.prototype.cutGrid = function (lines, boundaries) {
   let ii = 0;
   const toRemove = [];
   lines.forEach((line) => {
-    ii++;
-    let p1,
-      p2 = null;
+    ii += 1;
+    let p1 = null;
+    let p2 = null;
     // for(var i = 0; i< mm.boundaries.length - 1;i++){
     //    var segmentP1 = new LatLon(mm.boundaries[i].lat,mm.boundaries[i].lon);
     //    var segmentP2 = new LatLon(mm.boundaries[i + 1].lat,mm.boundaries[i +1].lon);
-    for (let i = 0; i < boundaries.length - 1; i++) {
+    for (let i = 0; i < boundaries.length - 1; i += 1) {
       const segmentP1 = new LatLon(boundaries[i].lat, boundaries[i].lng);
       const segmentP2 = new LatLon(boundaries[i + 1].lat, boundaries[i + 1].lng);
       const result = helper.findLineIntersection(line[0], line[1], segmentP1, segmentP2);
@@ -308,7 +308,7 @@ MissionBuilder.prototype.calculateBuffer = function () {
   const points = helper.pointsToLatLon(this._mission.boundaries);
   // var points = helper.coorsArrayToLatLon(this._mission.boundaries);
   this._mission.surface = 0;
-  for (let k = 0; k < points.length - 1; k++) {
+  for (let k = 0; k < points.length - 1; k += 1) {
     this._mission.surface += points[k].distanceTo(points[k + 1]);
   }
   this._mission.surface = this._mission.surface.toFixed(2);
@@ -316,13 +316,13 @@ MissionBuilder.prototype.calculateBuffer = function () {
   this._mission.shootTime = parameters.pictureShootTime;
   this._mission.timePics = parameters.pictureShootTime;
   this._mission.distPics = parameters.pictureHeightWithOverlap;
-  if (this._mission.buffer == 0) {
+  if (this._mission.buffer === 0) {
     return [points];
   }
   const lines = Math.floor((this._mission.buffer * 0.001) / distance);
 
 
-  if (lines == 0) {
+  if (lines === 0) {
     this._mission.points = [points];
     return [points];
     // at least 1;
@@ -332,10 +332,10 @@ MissionBuilder.prototype.calculateBuffer = function () {
   const segments = [];
   const distances = [];
   // var plines = []; //perpendicular lines
-  for (let j = 0; j <= lines; j++) {
+  for (let j = 0; j <= lines; j += 1) {
     distances.push((distance * j) - (distance * (lines / 2)));
   }
-  for (let i = 0; i < points.length; i++) {
+  for (let i = 0; i < points.length; i += 1) {
     let bearing = 0;
     let middlePoint = null;
     if (i < points.length - 1) {
@@ -353,7 +353,7 @@ MissionBuilder.prototype.calculateBuffer = function () {
     };
     // var  item = [bearing,middlePoint];
 
-    for (let jj = 0; jj <= lines; jj++) {
+    for (let jj = 0; jj <= lines; jj += 1) {
       let projectedPoint = null;
       let projectedDistance = distances[jj];
       let projectedBearing = bearing;
@@ -364,7 +364,7 @@ MissionBuilder.prototype.calculateBuffer = function () {
         projectedBearing = bearing + 90;
       }
 
-      if (i == 0) {
+      if (i === 0) {
         projectedPoint = points[0].destinationPoint(projectedBearing, projectedDistance);
         item.projectedPoins.push(projectedPoint);
         item.cutPoints.push(projectedPoint);
@@ -378,7 +378,7 @@ MissionBuilder.prototype.calculateBuffer = function () {
         const cutPoint = LatLon.intersection(projectedPoint, bearing, previousProjectedPoint, previousBearing);
         item.cutPoints.push(cutPoint);
       }
-      if (i == points.length - 1) {
+      if (i === points.length - 1) {
         projectedPoint = points[points.length - 1].destinationPoint(projectedBearing, projectedDistance);
         item.projectedPoins.push(projectedPoint);
         item.cutPoints.push(projectedPoint);
@@ -387,7 +387,7 @@ MissionBuilder.prototype.calculateBuffer = function () {
     segments.push(item);
   }
   const Arrlines = [];
-  for (let ij = 0; ij <= lines; ij++) {
+  for (let ij = 0; ij <= lines; ij += 1) {
     const line = [];
     Arrlines.push(line);
   }
@@ -395,7 +395,7 @@ MissionBuilder.prototype.calculateBuffer = function () {
     let i = 0;
     segment.cutPoints.forEach((point) => {
       Arrlines[i].push(point);
-      i++;
+      i += 1;
     });
   });
   this._mission.points = Arrlines;
@@ -419,25 +419,25 @@ MissionBuilder.prototype.buildPolyline = function (takeoff, lines) {
   let up = true;
   const points = [];
 
-  if (arrL != 0) {
-    if (closestPoint == lines[0][0]) {
+  if (arrL !== 0) {
+    if (closestPoint === lines[0][0]) {
       lines[0].forEach((point) => {
         points.push(point);
       });
     }
-    if (closestPoint == lines[0][lenLine]) {
+    if (closestPoint === lines[0][lenLine]) {
       lines[0].reverse();
       lines[0].forEach((point) => {
         points.push(point);
       });
     }
-    if (closestPoint == lines[arrL][0]) {
+    if (closestPoint === lines[arrL][0]) {
       lines[arrL].forEach((point) => {
         points.push(point);
       });
       up = false;
     }
-    if (closestPoint == lines[arrL][lenLine]) {
+    if (closestPoint === lines[arrL][lenLine]) {
       lines[arrL].reverse();
       lines[arrL].forEach((point) => {
         points.push(point);
@@ -447,9 +447,9 @@ MissionBuilder.prototype.buildPolyline = function (takeoff, lines) {
     closestPoint = points[points.length - 1];
     let closestPoint2 = null;
     if (up) {
-      for (let i = 1; i <= arrL; i++) {
+      for (let i = 1; i <= arrL; i += 1) {
         closestPoint2 = closestPoint.closestPoint([lines[i][0], lines[i][lenLine]]);
-        if (lines[i][0] == closestPoint2) {
+        if (lines[i][0] === closestPoint2) {
           lines[i].forEach((point) => {
             points.push(point);
           });
@@ -463,9 +463,9 @@ MissionBuilder.prototype.buildPolyline = function (takeoff, lines) {
         }
       }
     } else {
-      for (let ii = arrL - 1; ii >= 0; ii--) {
+      for (let ii = arrL - 1; ii >= 0; ii -= 1) {
         closestPoint2 = closestPoint.closestPoint([lines[ii][0], lines[ii][lenLine]]);
-        if (lines[ii][0] == closestPoint2) {
+        if (lines[ii][0] === closestPoint2) {
           lines[ii].forEach((point) => {
             points.push(point);
           });
@@ -489,7 +489,7 @@ MissionBuilder.prototype.buildPolyline = function (takeoff, lines) {
   // var coors = [];
 
   this._mission.pathLength = 0;
-  for (let i3 = 0; i3 < points.length; i3++) {
+  for (let i3 = 0; i3 < points.length; i3 += 1) {
     // coors.push([points[i].lon,points[i].lat]);
     if (i3 < points.length - 1) {
       this._mission.pathLength += points[i3].distanceTo(points[i3 + 1]);
@@ -501,8 +501,8 @@ MissionBuilder.prototype.buildPolyline = function (takeoff, lines) {
   this._mission.flightTimeMinutes = flightTIme;
   let minutesStr = (Math.floor(flightTIme / 60)).toString();
   let secondsStr = (flightTIme - ((Math.floor(flightTIme / 60)) * 60)).toString();
-  if (minutesStr.length == 1) { minutesStr = `0${minutesStr}`; }
-  if (secondsStr.length == 1) { secondsStr = `0${secondsStr}`; }
+  if (minutesStr.length === 1) { minutesStr = `0${minutesStr}`; }
+  if (secondsStr.length === 1) { secondsStr = `0${secondsStr}`; }
   this._mission.flightTime = `${minutesStr}:${secondsStr}`;
 
   return points;
@@ -518,11 +518,11 @@ MissionBuilder.prototype.cutLines = function (lines1, lines2) {
   let ii = 0;
   const linesResult = [];
   lines1.forEach((line1) => {
-    ii++;
+    ii += 1;
     const p = [];
-    let p1,
-      p2 = null;
-    for (let i = 0; i < lines2.length; i++) {
+    let p1 = null;
+    let p2 = null;
+    for (let i = 0; i < lines2.length; i += 1) {
       const result = helper.findLineIntersection(line1[0], line1[1], lines2[i][0], lines2[i][1]);
       p[i] = result;
       if (result != null) {
@@ -599,7 +599,7 @@ MissionBuilder.prototype.buildWaypoints = function () {
   const numberOfVertex = this._mission.boundaries.length;
   let vertexCounter = 0;
 
-  for (i == 0; i < points.length; i++) {
+  for (i = 0; i < points.length; i += 1) {
     if (takePic) {
       const ptOrig = new LatLon(points[i].lat, points[i].lon);
       let bearing;
@@ -612,7 +612,7 @@ MissionBuilder.prototype.buildWaypoints = function () {
       }
 
       /* Parche para entidades lineales */
-      if (this._mission.type == 'lineal' && vertexCounter == numberOfVertex == 0) {
+      if (this._mission.type === 'lineal' && vertexCounter === numberOfVertex === 0) {
         const pt1Line = new LatLon(points[numberOfVertex - 1].lat, points[numberOfVertex - 1].lon);
         const pt2Line = new LatLon(points[numberOfVertex - 2].lat, points[numberOfVertex - 2].lon);
         const positiveBearingLine = pt1Line.bearingTo(pt2Line);
@@ -631,7 +631,7 @@ MissionBuilder.prototype.buildWaypoints = function () {
       const wpOrig = this.generateWaypoint({ lng: ptOrig.lon, lat: ptOrig.lat, altRelative: this._mission.altitude, type: wpStartPic });
       wpOrig.param2 = this._mission.distPics;
 
-      if (this._mission.type == 'lineal') {
+      if (this._mission.type === 'lineal') {
         if (vertexCounter <= 0) {
           this._mission.waypoints.push(wpProjected);
           takePic = false;
@@ -661,7 +661,7 @@ MissionBuilder.prototype.buildWaypoints = function () {
       }
 
       /* Parche para entidades lineales */
-      if (this._mission.type == 'lineal' && vertexCounter == numberOfVertex - 1) {
+      if (this._mission.type === 'lineal' && vertexCounter === numberOfVertex - 1) {
         const pt1Line = new LatLon(points[numberOfVertex - 2].lat, points[numberOfVertex - 2].lon);
         const pt2Line = new LatLon(points[numberOfVertex - 1].lat, points[numberOfVertex - 1].lon);
         const positiveBearingLine = pt1Line.bearingTo(pt2Line);
@@ -679,14 +679,14 @@ MissionBuilder.prototype.buildWaypoints = function () {
       const ptProjected = ptOrig.destinationPoint(bearing, this._mission.entryMarging / 1000);
       const wpProjected = this.generateWaypoint({ lng: ptProjected.lon, lat: ptProjected.lat, altRelative: this._mission.altitude, type: wpNewPosition });
       let wpOrig = this.generateWaypoint({ lng: ptOrig.lon, lat: ptOrig.lat, altRelative: this._mission.altitude, type: wpStopPic });
-      if (this._mission.type == 'lineal' && vertexCounter < numberOfVertex - 1) {
+      if (this._mission.type === 'lineal' && vertexCounter < numberOfVertex - 1) {
         wpOrig = this.generateWaypoint({ lng: ptOrig.lon, lat: ptOrig.lat, altRelative: this._mission.altitude, type: wpNewPosition });
       }
       wpOrig.param2 = this._mission.distPics;
       this._mission.waypoints.push(wpOrig);
 
-      if (this._mission.type == 'lineal') {
-        if (vertexCounter == numberOfVertex - 1) {
+      if (this._mission.type === 'lineal') {
+        if (vertexCounter === numberOfVertex - 1) {
           this._mission.waypoints.push(wpProjected);
           takePic = true;
         }
@@ -699,8 +699,8 @@ MissionBuilder.prototype.buildWaypoints = function () {
       // with takePic = true allways wil project an overshoot (waypoint exit and entry), if takePic = false only will take the overshoot when exit
       // takePic = true;
     }
-    vertexCounter++;
-    if (vertexCounter == numberOfVertex) {
+    vertexCounter += 1;
+    if (vertexCounter === numberOfVertex) {
       vertexCounter = 0;
     }
   }
@@ -755,13 +755,13 @@ MissionBuilder.prototype.enumerateWayPoints = function () {
   let counterReal = 0; // contador real para el imu
   let counterMap = 0; // contador para pintar en el mapa
   this._mission.waypoints.forEach((wp) => {
-    counterReal++;
+    counterReal += 1;
     wp.param1 = counterReal;
-    if (wp.type == 3 || wp.type == 4) { // the server script generates two waypoints when start/stop taking pictures
-      counterReal++;
+    if (wp.type === 3 || wp.type === 4) { // the server script generates two waypoints when start/stop taking pictures
+      counterReal += 1;
     }
-    if (wp.type == 5) { // only enumerate on the map type 5 (new possition)
-      counterMap++;
+    if (wp.type === 5) { // only enumerate on the map type 5 (new possition)
+      counterMap += 1;
       wp.param3 = counterMap;
     } else {
       wp.param3 = '';
@@ -774,7 +774,7 @@ MissionBuilder.prototype.generateUUID = function () {
   const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
     const r = (d + Math.random() * 16) % 16 | 0;
     d = Math.floor(d / 16);
-    return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+    return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
   });
   return uuid;
 };
