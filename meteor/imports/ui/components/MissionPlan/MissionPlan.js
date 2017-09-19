@@ -4,7 +4,10 @@ import { Meteor } from 'meteor/meteor';
 import PropTypes from 'prop-types';
 import { Button, Row, Col } from 'react-bootstrap';
 import { Bert } from 'meteor/themeteorchef:bert';
+import { createContainer } from 'meteor/react-meteor-data';
 
+import Payloads from '../../../api/Payloads/Payloads';
+import Loading from '../../components/Loading/Loading';
 import MissionMap from '../MissionMap/MissionMap';
 import WayPointList from '../WayPointList/WayPointList';
 import MissionFlightParameters from '../MissionFlightParameters/MissionFlightParameters';
@@ -116,8 +119,8 @@ class MissionPlan extends Component {
   }
 
   render() {
-    const { project, mission, history, payload } = this.props;
-    return (
+    const { project, mission, history, payload, loading } = this.props;
+    return (!loading ? (
       <div className="MissionPlan container-fluid">
         <Row>
           <Col xs={12} sm={3} md={3} lg={3}>
@@ -325,16 +328,22 @@ class MissionPlan extends Component {
             {this.state.buttonStates.showMissionDataButtonActive ? <MissionData mission={mission} /> : ''}
           </Col>
         </Row>
-      </div>
-    );
+      </div>) : <Loading />);
   }
 }
 
 MissionPlan.propTypes = {
+  loading: PropTypes.bool.isRequired,
   mission: PropTypes.object,
   project: PropTypes.object,
   payload: PropTypes.object,
   history: PropTypes.object.isRequired,
 };
 
-export default MissionPlan;
+export default createContainer(({ mission }) => {
+  const payloadsSub = Meteor.subscribe('payloads.view', mission.payload);
+  return {
+    loading: !payloadsSub.ready(),
+    payload: Payloads.findOne(mission.payload),
+  };
+}, MissionPlan);
