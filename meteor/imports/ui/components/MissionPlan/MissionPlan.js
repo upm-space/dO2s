@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { Meteor } from 'meteor/meteor';
 import PropTypes from 'prop-types';
-import { Button, Row, Col, ButtonToolbar } from 'react-bootstrap';
+import { Button, Row, Col } from 'react-bootstrap';
 import { Bert } from 'meteor/themeteorchef:bert';
 
 import MissionMap from '../MissionMap/MissionMap';
@@ -107,18 +107,16 @@ class MissionPlan extends Component {
     });
   }
 
-  drawMission(){
-      this.toogleButtonSwtich();
-      //let missionJson = {"pyload":"","mission":""}
-      let dO2sBuilder = new MissionBuilderDO2sParser(this.props.mission);
-      dO2sBuilder.calculateMission();
-      let mData = dO2sBuilder.getMission();
-      console.log(mData);
-
+  drawMission() {
+    this.toogleButtonSwtich();
+    const dO2sBuilder = new MissionBuilderDO2sParser(this.props.mission, this.props.payload);
+    dO2sBuilder.calculateMission();
+    const mData = dO2sBuilder.getMission();
+    console.log(mData);
   }
 
   render() {
-    const { project, mission, history } = this.props;
+    const { project, mission, history, payload } = this.props;
     return (
       <div className="MissionPlan container-fluid">
         <Row>
@@ -307,7 +305,7 @@ class MissionPlan extends Component {
             {this.state.buttonStates.flightParametersButtonActive ?
               <MissionFlightParameters mission={mission} /> :
               (this.state.buttonStates.payloadParamsButtonActive ?
-                <MissionPayloadParameters mission={mission} history={history} /> :
+                <MissionPayloadParameters mission={mission} history={history} payload={payload} /> :
                 (this.state.buttonStates.pictureGridButtonActive ?
                   <MissionPictureGrid mission={mission} /> :
                   <MissionMap
@@ -335,6 +333,8 @@ class MissionPlan extends Component {
 MissionPlan.propTypes = {
   mission: PropTypes.object,
   project: PropTypes.object,
+  payload: PropTypes.object,
+  history: PropTypes.object.isRequired,
 };
 
 export default MissionPlan;
