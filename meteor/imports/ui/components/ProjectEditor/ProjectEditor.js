@@ -90,7 +90,7 @@ class ProjectEditor extends React.Component {
         type: 'Feature',
         geometry: {
           type: 'Point',
-          coordinates: [Number(this.longitude.value), Number(this.latitude.value), 0],
+          coordinates: [Number(this.longitude.value), Number(this.latitude.value)],
         },
         properties: {
           zoom: Number(this.zoom.value),
@@ -102,7 +102,7 @@ class ProjectEditor extends React.Component {
         type: 'Feature',
         geometry: {
           type: 'Point',
-          coordinates: [Number(this.longitude.value), Number(this.latitude.value), 0],
+          coordinates: [Number(this.longitude.value), Number(this.latitude.value)],
         },
         properties: {
           zoom: Number(this.zoom.value),
@@ -205,7 +205,7 @@ ProjectEditor.defaultProps = {
       type: 'Feature',
       geometry: {
         type: 'Point',
-        coordinates: [-3.7038, 40.4168, 0],
+        coordinates: [-3.7038, 40.4168],
       },
       properties: {
         zoom: 12,
