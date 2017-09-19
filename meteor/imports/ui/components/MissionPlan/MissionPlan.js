@@ -11,7 +11,7 @@ import MissionFlightParameters from '../MissionFlightParameters/MissionFlightPar
 import MissionPayloadParameters from '../MissionPayloadParameters/MissionPayloadParameters';
 import MissionPictureGrid from '../MissionPictureGrid/MissionPictureGrid';
 import MissionData from '../MissionData/MissionData';
-import MissionBuilderDO2sParser from '../../../modules/mission-planning/MissionBuilderDO2sParser.jsx';
+import MissionBuilderDO2sParser from '../../../modules/mission-planning/MissionBuilderDO2sParser';
 
 import './MissionPlan.scss';
 
