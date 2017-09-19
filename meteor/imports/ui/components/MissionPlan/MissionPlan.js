@@ -90,6 +90,7 @@ class MissionPlan extends Component {
     } else if (mission && mission.missionType && mission.missionType === 'Linear Area') {
       return 'Axis';
     }
+    return '??';
   }
 
   toggleButtonSwitch(thisButton = '') {
@@ -111,11 +112,37 @@ class MissionPlan extends Component {
   }
 
   drawMission() {
+    if (!this.props.mission.flightPlan.flightParameters) {
+      Bert.alert('You need to define the Flight Parameters', 'danger');
+      return;
+    } else if (!this.props.mission.flightPlan.pictureGrid) {
+      Bert.alert('You need to define the Picture Grid', 'danger');
+      return;
+    } else if (!this.props.mission.flightPlan.takeOffPoint) {
+      Bert.alert('You need to define the Take Off Point', 'danger');
+      return;
+    } else if (!this.props.mission.flightPlan.landingPoint) {
+      Bert.alert('You need to define the Landing Point', 'danger');
+      return;
+    } else if (this.props.mission.missionType === 'Surface Area' && !this.props.mission.flightPlan.missionArea) {
+      Bert.alert('You need to define the Mission Area', 'danger');
+      return;
+    } else if (this.props.mission.missionType === 'Linear Area' && !this.props.mission.flightPlan.missionAxis) {
+      Bert.alert('You need to define the Mission Axis', 'danger');
+      return;
+    }
+
     this.toogleButtonSwtich();
     const dO2sBuilder = new MissionBuilderDO2sParser(this.props.mission, this.props.payload);
     dO2sBuilder.calculateMission();
     const mData = dO2sBuilder.getMission();
-    console.log(mData);
+    Meteor.call('missions.setMissionCalculations', this.props.mission._id, mData, (error) => {
+      if (error) {
+        Bert.alert(error.reason, 'danger');
+      } else {
+        Bert.alert('Calculation of Waypoints Saved', 'success');
+      }
+    });
   }
 
   render() {
@@ -308,7 +335,7 @@ class MissionPlan extends Component {
             {this.state.buttonStates.flightParametersButtonActive ?
               <MissionFlightParameters mission={mission} /> :
               (this.state.buttonStates.payloadParamsButtonActive ?
-                <MissionPayloadParameters mission={mission} history={history} payload={payload} /> :
+                <MissionPayloadParameters history={history} payload={payload} /> :
                 (this.state.buttonStates.pictureGridButtonActive ?
                   <MissionPictureGrid mission={mission} /> :
                   <MissionMap

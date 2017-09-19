@@ -4,7 +4,13 @@ import { Row, Col, Form, FormGroup, FormControl, ControlLabel } from 'react-boot
 
 import './MissionData.scss';
 
-const MissionData = () => (
+const renderMissionData = (mission, misionData) => ((mission &&
+  mission.flightPlan &&
+  mission.flightPlan.missionCalculation &&
+  mission.flightPlan.missionCalculation.missionCalculatedData &&
+  mission.flightPlan.missionCalculation.missionCalculatedData[misionData]) ? mission.flightPlan.missionCalculation.missionCalculatedData[misionData] : '-');
+
+const MissionData = ({ mission }) => (
   <div className="MissionData" >
     <Row>
       <Form horizontal>
@@ -15,7 +21,7 @@ const MissionData = () => (
             </Col>
             <Col xs={12} sm={4} md={4} lg={4}>
               <FormControl.Static>
-                10 m
+                {renderMissionData(mission, 'pathLength')} m
               </FormControl.Static>
             </Col>
           </FormGroup>
@@ -25,7 +31,7 @@ const MissionData = () => (
             </Col>
             <Col xs={12} sm={4} md={4} lg={4}>
               <FormControl.Static>
-                10 ha
+                {renderMissionData(mission, 'totalArea')} ha
               </FormControl.Static>
             </Col>
           </FormGroup>
@@ -35,7 +41,7 @@ const MissionData = () => (
             </Col>
             <Col xs={12} sm={4} md={4} lg={4}>
               <FormControl.Static>
-                2.94 cm/px
+                {renderMissionData(mission, 'resolution')} cm/px
               </FormControl.Static>
             </Col>
           </FormGroup>
@@ -47,7 +53,9 @@ const MissionData = () => (
             </Col>
             <Col xs={12} sm={4} md={4} lg={4}>
               <FormControl.Static>
-                20 (m/s)
+                {(mission && mission.flightPlan &&
+                 mission.flightPlan.flightParameters &&
+                 mission.flightPlan.flightParameters.speed) ? mission.flightPlan.flightParameters.speed : '-'} (m/s)
               </FormControl.Static>
             </Col>
           </FormGroup>
@@ -57,7 +65,9 @@ const MissionData = () => (
             </Col>
             <Col xs={12} sm={4} md={4} lg={4}>
               <FormControl.Static>
-                120 (m)
+                {(mission && mission.flightPlan &&
+                 mission.flightPlan.flightParameters &&
+                 mission.flightPlan.flightParameters.altitude) ? mission.flightPlan.flightParameters.altitude : '-'} (m)
               </FormControl.Static>
             </Col>
           </FormGroup>
@@ -67,7 +77,7 @@ const MissionData = () => (
             </Col>
             <Col xs={12} sm={4} md={4} lg={4}>
               <FormControl.Static>
-                 00: 41 (min)
+                {renderMissionData(mission, 'flightTime')} (min)
               </FormControl.Static>
             </Col>
           </FormGroup>
@@ -79,7 +89,7 @@ const MissionData = () => (
             </Col>
             <Col xs={12} sm={4} md={4} lg={4}>
               <FormControl.Static>
-                23.34 (m)
+                ?? (m)
               </FormControl.Static>
             </Col>
           </FormGroup>
@@ -89,7 +99,7 @@ const MissionData = () => (
             </Col>
             <Col xs={12} sm={4} md={4} lg={4}>
               <FormControl.Static>
-                1.223 (s)
+                {renderMissionData(mission, 'shootTime')} (s)
               </FormControl.Static>
             </Col>
           </FormGroup>
