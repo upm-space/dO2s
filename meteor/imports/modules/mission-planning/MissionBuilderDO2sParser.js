@@ -1,5 +1,5 @@
-import MissionBuilder from './MissionBuilder.jsx';
-import Latlon from './GeoHelper.jsx';
+import MissionBuilder from './MissionBuilder.js';
+import Latlon from './GeoHelper.js';
 
 const blankMission = { _id: '',
   deletedAt: null,

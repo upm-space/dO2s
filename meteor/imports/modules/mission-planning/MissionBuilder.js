@@ -1,4 +1,4 @@
-import LatLon from './GeoHelper.jsx';
+import LatLon from './GeoHelper.js';
 
 /**
  * Created by luis on 05/12/14.
