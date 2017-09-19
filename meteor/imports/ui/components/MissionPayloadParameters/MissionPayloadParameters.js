@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { ButtonToolbar, ButtonGroup, Button, Row, Col, Form, FormGroup, FormControl, ControlLabel } from 'react-bootstrap';
 import NotFound from '../../pages/NotFound/NotFound';
 
-const MissionPayloadParameters = (payload, history) => (payload && payload.deleted === 'no' ? (
+const MissionPayloadParameters = ({ payload, history }) => (payload && payload.deleted === 'no' ? (
   <div className="Payload Parameters">
     <div className="page-header clearfix">
       <h4 className="pull-left">
@@ -119,9 +119,8 @@ const MissionPayloadParameters = (payload, history) => (payload && payload.delet
 ) : <NotFound />);
 
 MissionPayloadParameters.propTypes = {
-  payload: PropTypes.object,
+  payload: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
-  mission: PropTypes.object.isRequired,
 };
 
 export default MissionPayloadParameters;
