@@ -8,7 +8,6 @@ import { LinkContainer } from 'react-router-bootstrap';
 import { Route, Switch } from 'react-router-dom';
 import Missions from '../../../api/Missions/Missions';
 import Projects from '../../../api/Projects/Projects';
-import Payloads from '../../../api/Payloads/Payloads';
 import NotFound from '../NotFound/NotFound';
 import Loading from '../../components/Loading/Loading';
 import MissionPlan from '../../components/MissionPlan/MissionPlan';
@@ -30,7 +29,7 @@ const handleRemove = (missionId, history, projectId) => {
   }
 };
 
-const renderMission = (mission, match, history, project, payload) => (mission && mission.deleted === 'no' ? (
+const renderMission = (mission, match, history, project) => (mission && mission.deleted === 'no' ? (
   <div className="ViewMission">
     <div className="page-header clearfix">
       <h4 className="pull-left">{ mission && mission.name }</h4>
@@ -68,13 +67,13 @@ const renderMission = (mission, match, history, project, payload) => (mission &&
         exact
         path="/projects/:project_id/:mission_id/"
         render={props =>
-          (React.createElement(MissionPlan, { mission, project, payload, ...props }))}
+          (React.createElement(MissionPlan, { mission, project, ...props }))}
       />
       <Route
         exact
         path="/projects/:project_id/:mission_id/plan"
         render={props =>
-          (React.createElement(MissionPlan, { mission, project, payload, ...props }))}
+          (React.createElement(MissionPlan, { mission, project, ...props }))}
       />
       <Route
         exact
@@ -91,15 +90,14 @@ const renderMission = (mission, match, history, project, payload) => (mission &&
   </div>
 ) : <NotFound />);
 
-const ViewMission = ({ loading, mission, match, history, project, payload }) => (
-  !loading ? renderMission(mission, match, history, project, payload) : <Loading />
+const ViewMission = ({ loading, mission, match, history, project }) => (
+  !loading ? renderMission(mission, match, history, project) : <Loading />
 );
 
 ViewMission.propTypes = {
   loading: PropTypes.bool.isRequired,
   mission: PropTypes.object,
   project: PropTypes.object,
-  payload: PropTypes.object,
   match: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
 };
@@ -109,12 +107,9 @@ export default createContainer(({ match }) => {
   const missionId = match.params.mission_id;
   const missionSub = Meteor.subscribe('missions.view', projectId, missionId);
   const projectSub = Meteor.subscribe('projects.view', projectId);
-  const mission = Missions.findOne(missionId);
-  const payloadSub = Meteor.subscribe('payloads.view', mission && mission.payload);
   return {
-    loading: !missionSub.ready() && !projectSub.ready() && !payloadSub.ready(),
-    mission,
+    loading: !missionSub.ready() && !projectSub.ready(),
+    mission: Missions.findOne(missionId),
     project: Projects.findOne(projectId),
-    payload: Payloads.findOne(mission && mission.payload),
   };
 }, ViewMission);
