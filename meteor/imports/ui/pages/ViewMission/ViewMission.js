@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { ButtonToolbar, ButtonGroup, Button, NavItem, Nav } from 'react-bootstrap';
-import { createContainer } from 'meteor/react-meteor-data';
+import { withTracker } from 'meteor/react-meteor-data';
 import { Meteor } from 'meteor/meteor';
 import { Bert } from 'meteor/themeteorchef:bert';
 import { LinkContainer } from 'react-router-bootstrap';
@@ -102,7 +102,7 @@ ViewMission.propTypes = {
   history: PropTypes.object.isRequired,
 };
 
-export default createContainer(({ match }) => {
+export default withTracker(({ match }) => {
   const projectId = match.params.project_id;
   const missionId = match.params.mission_id;
   const missionSub = Meteor.subscribe('missions.view', projectId, missionId);
@@ -112,4 +112,4 @@ export default createContainer(({ match }) => {
     mission: Missions.findOne(missionId),
     project: Projects.findOne(projectId),
   };
-}, ViewMission);
+})(ViewMission);

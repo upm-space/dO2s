@@ -4,7 +4,7 @@ import { Meteor } from 'meteor/meteor';
 import PropTypes from 'prop-types';
 import { Button, Row, Col } from 'react-bootstrap';
 import { Bert } from 'meteor/themeteorchef:bert';
-import { createContainer } from 'meteor/react-meteor-data';
+import { withTracker } from 'meteor/react-meteor-data';
 
 import Payloads from '../../../api/Payloads/Payloads';
 import Loading from '../../components/Loading/Loading';
@@ -367,10 +367,10 @@ MissionPlan.propTypes = {
   history: PropTypes.object.isRequired,
 };
 
-export default createContainer(({ mission }) => {
+export default withTracker(({ mission }) => {
   const payloadsSub = Meteor.subscribe('payloads.view', mission.payload);
   return {
     loading: !payloadsSub.ready(),
     payload: Payloads.findOne(mission.payload),
   };
-}, MissionPlan);
+})(MissionPlan);

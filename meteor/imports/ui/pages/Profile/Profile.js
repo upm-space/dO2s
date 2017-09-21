@@ -6,7 +6,7 @@ import _ from 'lodash';
 import { Meteor } from 'meteor/meteor';
 import { Accounts } from 'meteor/accounts-base';
 import { Bert } from 'meteor/themeteorchef:bert';
-import { createContainer } from 'meteor/react-meteor-data';
+import { withTracker } from 'meteor/react-meteor-data';
 
 import InputHint from '../../components/InputHint/InputHint';
 import validate from '../../../modules/validate';
@@ -242,11 +242,11 @@ Profile.propTypes = {
   user: PropTypes.object.isRequired,
 };
 
-export default createContainer(() => {
+export default withTracker(() => {
   const subscription = Meteor.subscribe('users.editProfile');
 
   return {
     loading: !subscription.ready(),
     user: Meteor.user(),
   };
-}, Profile);
+})(Profile);
