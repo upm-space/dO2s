@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { createContainer } from 'meteor/react-meteor-data';
+import { withTracker } from 'meteor/react-meteor-data';
 import { Meteor } from 'meteor/meteor';
 import UserEditor from '../../components/UserEditor/UserEditor';
 import NotFound from '../NotFound/NotFound';
@@ -26,7 +26,7 @@ EditUser.propTypes = {
   history: PropTypes.object.isRequired,
 };
 
-export default createContainer(({ match }) => {
+export default withTracker(({ match }) => {
   const userId = match.params.user_id;
   const userSub = Meteor.subscribe('users.view', userId);
 
@@ -34,4 +34,4 @@ export default createContainer(({ match }) => {
     loading: !userSub.ready(),
     user: Meteor.users.findOne(userId),
   };
-}, EditUser);
+})(EditUser);

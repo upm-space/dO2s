@@ -2,7 +2,7 @@
 
 import { Mongo } from 'meteor/mongo';
 import SimpleSchema from 'simpl-schema';
-import { FeaturePoint, FeaturePolygon, FeatureLineString } from '../SchemaUtilities/GeoJSONSchema.js';
+import { FeaturePoint, FeaturePolygon, FeatureLineString, FeatureCollectionPoints } from '../SchemaUtilities/GeoJSONSchema.js';
 
 const Missions = new Mongo.Collection('Missions');
 
@@ -48,6 +48,63 @@ const pictureGridSchema = new SimpleSchema({
     label: 'The sidelap in %',
     min: 0,
     max: 100,
+  },
+});
+
+const missionCalculatedDataSchema = new SimpleSchema({
+  flightTime: {
+    type: String,
+    label: 'The time it takes to complete the mission',
+    min: 0,
+    optional: true,
+  },
+  flightTimeMinutes: {
+    type: Number,
+    label: 'The time it takes to complete the mission in minutes',
+    min: 0,
+    optional: true,
+  },
+  pathLength: {
+    type: Number,
+    label: 'The length the rpa is going to travel in meters',
+    min: 0,
+    optional: true,
+  },
+  resolution: {
+    type: Number,
+    label: 'The ground resolution obtained in cm/px',
+    min: 0,
+    optional: true,
+  },
+  shootTime: {
+    type: Number,
+    label: 'Time betweeen photos in seconds',
+    min: 0,
+    optional: true,
+  },
+  totalArea: {
+    type: Number,
+    label: 'The total area for the photogrametric image in hectares',
+    min: 0,
+    optional: true,
+  },
+});
+
+const missionCalculationSchema = new SimpleSchema({
+  rpaPath: {
+    type: FeatureLineString,
+    label: 'This is a geoJSON feature representing the path the rpa is going to follow',
+    optional: true,
+  },
+  waypointList: {
+    type: FeatureCollectionPoints,
+    label: 'Feature Collection representing the waypoints for the mission',
+    optional: true,
+  },
+  missionCalculatedData: {
+    type: missionCalculatedDataSchema,
+    label: 'This is the data obtained from calculating the mission',
+    optional: true,
   },
 });
 
@@ -138,6 +195,11 @@ Missions.schema = new SimpleSchema({
   'flightPlan.pictureGrid': {
     type: pictureGridSchema,
     label: 'All the data related to the area for the flight',
+    optional: true,
+  },
+  'flightPlan.missionCalculation': {
+    type: missionCalculationSchema,
+    label: 'This is where we store the data from the waypoint calculation',
     optional: true,
   },
   deleted: {

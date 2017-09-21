@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { createContainer } from 'meteor/react-meteor-data';
+import { withTracker } from 'meteor/react-meteor-data';
 import { FormGroup, ControlLabel, Button, Row, Col, HelpBlock } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { Meteor } from 'meteor/meteor';
@@ -194,7 +194,7 @@ MissionEditor.propTypes = {
   payloads: PropTypes.array.isRequired,
 };
 
-export default createContainer(() => {
+export default withTracker(() => {
   const rpasSub = Meteor.subscribe('rpas.mission');
   const payloadsSub = Meteor.subscribe('payloads.mission');
   return {
@@ -202,4 +202,4 @@ export default createContainer(() => {
     rpas: RPASCollection.find().fetch(),
     payloads: PayloadsCollection.find().fetch(),
   };
-}, MissionEditor);
+})(MissionEditor);

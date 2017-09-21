@@ -89,7 +89,7 @@ MapComponent.defaultProps = {
     type: 'Feature',
     geometry: {
       type: 'Point',
-      coordinates: [-3.7038, 40.4168, 0],
+      coordinates: [-3.7038, 40.4168],
     },
     properties: {
       zoom: 12,

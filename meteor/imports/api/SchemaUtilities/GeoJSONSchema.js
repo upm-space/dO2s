@@ -11,7 +11,7 @@ export const Point = new SimpleSchema({
   coordinates: {
     type: Array,
     label: 'A single position. Fundamental geometry construct. The order for the elements is longitude (easting) and latitude (northing), in that precise order, altitude or elevation MAY be included.',
-    minCount: 3,
+    minCount: 2,
     maxCount: 3,
   },
   'coordinates.$': {
@@ -34,7 +34,7 @@ export const LineString = new SimpleSchema({
   'coordinates.$': {
     type: Array,
     label: 'A single position.',
-    minCount: 3,
+    minCount: 2,
     maxCount: 3,
   },
   'coordinates.$.$': {
@@ -72,7 +72,7 @@ export const Polygon = new SimpleSchema({
   'coordinates.$.$': {
     type: Array,
     label: 'A single position.',
-    minCount: 3,
+    minCount: 2,
     maxCount: 3,
   },
   'coordinates.$.$.$': {
@@ -95,7 +95,7 @@ export const MultiPoint = new SimpleSchema({
   'coordinates.$': {
     type: Array,
     label: 'A single position.',
-    minCount: 3,
+    minCount: 2,
     maxCount: 3,
   },
   'coordinates.$.$': {
@@ -122,7 +122,7 @@ export const MultiLineString = new SimpleSchema({
   'coordinates.$.$': {
     type: Array,
     label: 'A single position.',
-    minCount: 3,
+    minCount: 2,
     maxCount: 3,
   },
   'coordinates.$.$.$': {
@@ -164,7 +164,7 @@ export const MultiPolygon = new SimpleSchema({
   'coordinates.$.$.$': {
     type: Array,
     label: 'A single position.',
-    minCount: 3,
+    minCount: 2,
     maxCount: 3,
   },
   'coordinates.$.$.$.$': {

@@ -6,7 +6,7 @@ import { Table, Alert, Button, Glyphicon } from 'react-bootstrap';
 import { monthDayYearAtTime } from '@cleverbeagle/dates';
 import { Meteor } from 'meteor/meteor';
 import { Roles } from 'meteor/alanning:roles';
-import { createContainer } from 'meteor/react-meteor-data';
+import { withTracker } from 'meteor/react-meteor-data';
 import { Bert } from 'meteor/themeteorchef:bert';
 
 import Loading from '../../components/Loading/Loading';
@@ -236,7 +236,7 @@ UserManagement.propTypes = {
   totalCount: PropTypes.number.isRequired,
 };
 
-export default createContainer(() => {
+export default withTracker(() => {
   const usersSub = Meteor.subscribe('users.management');
   return {
     loading: !usersSub.ready(),
@@ -245,4 +245,4 @@ export default createContainer(() => {
     deletedCount: Meteor.users.find({ deleted: { $ne: 'no' } }).count(),
     totalCount: Meteor.users.find({ deleted: { $eq: 'no' } }).count(),
   };
-}, UserManagement);
+})(UserManagement);

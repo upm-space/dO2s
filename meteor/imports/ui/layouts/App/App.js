@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Grid } from 'react-bootstrap';
 import { Meteor } from 'meteor/meteor';
-import { createContainer } from 'meteor/react-meteor-data';
+import { withTracker } from 'meteor/react-meteor-data';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { Roles } from 'meteor/alanning:roles';
 
@@ -173,7 +173,7 @@ const getUserName = name => ({
   object: `${name.first} ${name.last}`,
 }[typeof name]);
 
-export default createContainer(() => {
+export default withTracker(() => {
   const loggingIn = Meteor.loggingIn();
   const user = Meteor.user();
   const userId = Meteor.userId();
@@ -196,4 +196,4 @@ export default createContainer(() => {
     emailAddress,
     emailVerified,
   };
-}, App);
+})(App);
