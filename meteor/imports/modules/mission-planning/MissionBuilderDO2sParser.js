@@ -1,5 +1,8 @@
+
 import MissionBuilder from './MissionBuilder.js';
 import Latlon from './GeoHelper.js';
+import Payloads from '../../api/Payloads/Payloads';
+
 
 const blankMission = { _id: '',
   deletedAt: null,
@@ -135,10 +138,10 @@ const payloadExample = {
   deleted: 'no',
 };
 
-const _m2 = { mission: missionSuperficial, payload: payloadExample };
+// const _m2 = { mission: missionSuperficial, payload: payloadExample };
 
 export default class MissionBuilderDO2sParser {
-  constructor(dO2sMission, dO2sPayload) {
+  constructor(dO2sMission) {
     // super();
     // TODO: make the conversion between dO2Mission to this.mission
 
@@ -146,7 +149,7 @@ export default class MissionBuilderDO2sParser {
     // Cuando pasemos a dO2s, cambiar esto
     // this.m2 = _m2;
     // por esto
-    this.m2 = { mission: dO2sMission, payload: dO2sPayload };
+    this.m2 = { mission: dO2sMission, payload: null };
     this.setMission();
     this.mBuilder = new MissionBuilder(this.mission);
     // this.calculateMission();
@@ -200,9 +203,17 @@ export default class MissionBuilderDO2sParser {
         coordinates: [],
       } };
 
+    waypointLine.geometry.coordinates.push(
+      [this.m2.mission.flightPlan.takeOffPoint.geometry.coordinates[0],
+        this.m2.mission.flightPlan.takeOffPoint.geometry.coordinates[1]]);
+
     this.mission.points.forEach((point) => {
       waypointLine.geometry.coordinates.push([point.lon, point.lat]);
     });
+
+    waypointLine.geometry.coordinates.push(
+      [this.m2.mission.flightPlan.landingPoint.geometry.coordinates[0],
+        this.m2.mission.flightPlan.landingPoint.geometry.coordinates[1]]);
 
     const flightData = {
       flightTime: this.mission.flightTime,
@@ -220,6 +231,9 @@ export default class MissionBuilderDO2sParser {
     this.mission = blankMission;
     // TODO: convert to dO2sMission and return dO2sMission insteadof this.mission
     // this.m2.mission = _mission;
+    const payloadId = this.m2.mission.payload;
+    const subscription = Meteor.subscribe('payloads.view', payloadId);
+    this.m2.payload = Payloads.findOne(payloadId);
 
     this.mission.altitude = this.m2.mission.flightPlan.flightParameters.altitude;
     this.mission.buffer = 0; // TODO
