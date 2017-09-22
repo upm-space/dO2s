@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Table, Alert, Button, Glyphicon } from 'react-bootstrap';
 import { Meteor } from 'meteor/meteor';
-import { createContainer } from 'meteor/react-meteor-data';
+import { withTracker } from 'meteor/react-meteor-data';
 import { Bert } from 'meteor/themeteorchef:bert';
 
 
@@ -139,7 +139,7 @@ Batteries.propTypes = {
   totalCount: PropTypes.number.isRequired,
 };
 
-export default createContainer(() => {
+export default withTracker(() => {
   const subscription = Meteor.subscribe('batteries');
   return {
     loading: !subscription.ready(),
@@ -148,4 +148,4 @@ export default createContainer(() => {
     deletedCount: BatteriesCollection.find({ deleted: { $ne: 'no' } }).count(),
     totalCount: BatteriesCollection.find({ deleted: { $eq: 'no' } }).count(),
   };
-}, Batteries);
+})(Batteries);

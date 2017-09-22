@@ -1,16 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { ButtonToolbar, ButtonGroup, Button, Row, Col, Form, FormGroup, FormControl, ControlLabel } from 'react-bootstrap';
-import { createContainer } from 'meteor/react-meteor-data';
-import { Meteor } from 'meteor/meteor';
-import Payloads from '../../../api/Payloads/Payloads';
 import NotFound from '../../pages/NotFound/NotFound';
-import Loading from '../Loading/Loading';
 
-const renderPayload = (payload, history) => (payload && payload.deleted === 'no' ? (
+const MissionPayloadParameters = ({ payload, history }) => (payload && payload.deleted === 'no' ? (
   <div className="Payload Parameters">
     <div className="page-header clearfix">
-      <h4 className="pull-left">{ payload && payload.name } ({ payload && payload.model }) Parameters</h4>
+      <h4 className="pull-left">
+        { payload && payload.name } ({ payload && payload.model }) Parameters
+      </h4>
       <ButtonToolbar className="pull-right">
         <ButtonGroup bsSize="small">
           <Button onClick={() => history.push(`/hangar/payloads/${payload._id}/edit`)}>Edit</Button>
@@ -120,23 +118,9 @@ const renderPayload = (payload, history) => (payload && payload.deleted === 'no'
   </div>
 ) : <NotFound />);
 
-const MissionPayloadParameters = ({ loading, payload, history }) => (
-  !loading ? renderPayload(payload, history) : <Loading />
-);
-
 MissionPayloadParameters.propTypes = {
-  loading: PropTypes.bool.isRequired,
-  payload: PropTypes.object,
+  payload: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
-  mission: PropTypes.object.isRequired,
 };
 
-export default createContainer(({ mission }) => {
-  const payloadId = mission.payload;
-  const subscription = Meteor.subscribe('payloads.view', payloadId);
-
-  return {
-    loading: !subscription.ready(),
-    payload: Payloads.findOne(payloadId),
-  };
-}, MissionPayloadParameters);
+export default MissionPayloadParameters;

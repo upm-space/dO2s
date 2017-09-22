@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { ButtonToolbar, ButtonGroup, Button, Row, Col, Form, FormGroup, FormControl, ControlLabel } from 'react-bootstrap';
-import { createContainer } from 'meteor/react-meteor-data';
+import { withTracker } from 'meteor/react-meteor-data';
 import { Meteor } from 'meteor/meteor';
 import { Bert } from 'meteor/themeteorchef:bert';
 import Payloads from '../../../api/Payloads/Payloads';
@@ -148,7 +148,7 @@ ViewPayload.propTypes = {
   history: PropTypes.object.isRequired,
 };
 
-export default createContainer(({ match }) => {
+export default withTracker(({ match }) => {
   const payloadId = match.params.payload_id;
   const subscription = Meteor.subscribe('payloads.view', payloadId);
 
@@ -156,4 +156,4 @@ export default createContainer(({ match }) => {
     loading: !subscription.ready(),
     payload: Payloads.findOne(payloadId),
   };
-}, ViewPayload);
+})(ViewPayload);

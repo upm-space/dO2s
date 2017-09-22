@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { ButtonToolbar, ButtonGroup, Button, Row, Col } from 'react-bootstrap';
-import { createContainer } from 'meteor/react-meteor-data';
+import { withTracker } from 'meteor/react-meteor-data';
 import { Meteor } from 'meteor/meteor';
 import { Bert } from 'meteor/themeteorchef:bert';
 import Projects from '../../../api/Projects/Projects';
@@ -69,7 +69,7 @@ ViewProject.propTypes = {
   history: PropTypes.object.isRequired,
 };
 
-export default createContainer(({ match }) => {
+export default withTracker(({ match }) => {
   const projectId = match.params.project_id;
   const subscription = Meteor.subscribe('projects.view', projectId);
 
@@ -77,4 +77,4 @@ export default createContainer(({ match }) => {
     loading: !subscription.ready(),
     project: Projects.findOne(projectId),
   };
-}, ViewProject);
+})(ViewProject);

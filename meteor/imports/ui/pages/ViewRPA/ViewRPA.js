@@ -2,7 +2,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { ButtonToolbar, ButtonGroup, Button, Row, Col, Form, FormControl, ControlLabel, FormGroup } from 'react-bootstrap';
-import { createContainer } from 'meteor/react-meteor-data';
+import { withTracker } from 'meteor/react-meteor-data';
 import { monthDayYear } from '@cleverbeagle/dates';
 import { Meteor } from 'meteor/meteor';
 import { Bert } from 'meteor/themeteorchef:bert';
@@ -171,7 +171,7 @@ ViewRPA.propTypes = {
   history: PropTypes.object.isRequired,
 };
 
-export default createContainer(({ match }) => {
+export default withTracker(({ match }) => {
   const rpaId = match.params.rpa_id;
   const subscription = Meteor.subscribe('rpas.view', rpaId);
 
@@ -179,4 +179,4 @@ export default createContainer(({ match }) => {
     loading: !subscription.ready(),
     rpa: RPAs.findOne(rpaId),
   };
-}, ViewRPA);
+})(ViewRPA);

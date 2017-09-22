@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { Table, Alert, Button, Glyphicon } from 'react-bootstrap';
 import { timeago, monthDayYearAtTime } from '@cleverbeagle/dates';
 import { Meteor } from 'meteor/meteor';
-import { createContainer } from 'meteor/react-meteor-data';
+import { withTracker } from 'meteor/react-meteor-data';
 import { Bert } from 'meteor/themeteorchef:bert';
 import classnames from 'classnames';
 
@@ -160,7 +160,7 @@ class Missions extends Component {
             <tr>
               <th>
                 Missions (
-                  {this.state.hideCompleted ? this.props.incompleteCount : this.props.totalCount}
+                {this.state.hideCompleted ? this.props.incompleteCount : this.props.totalCount}
                 )
               </th>
               <th className="hidden-xs">Last Updated</th>
@@ -196,7 +196,7 @@ Missions.propTypes = {
   totalCount: PropTypes.number.isRequired,
 };
 
-export default createContainer(({ projectId }) => {
+export default withTracker(({ projectId }) => {
   const subscription = Meteor.subscribe('missions', projectId);
   return {
     loading: !subscription.ready(),
@@ -207,4 +207,4 @@ export default createContainer(({ projectId }) => {
     completeCount: MissionsCollection.find({ deleted: { $eq: 'no' }, done: { $eq: true } }).count(),
     totalCount: MissionsCollection.find({ deleted: { $eq: 'no' } }).count(),
   };
-}, Missions);
+})(Missions);

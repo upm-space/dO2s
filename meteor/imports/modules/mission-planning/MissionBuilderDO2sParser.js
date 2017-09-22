@@ -1,6 +1,6 @@
 
-import MissionBuilder from './MissionBuilder.jsx';
-import Latlon from './GeoHelper.jsx';
+import MissionBuilder from './MissionBuilder.js';
+import Latlon from './GeoHelper.js';
 import Payloads from '../../api/Payloads/Payloads';
 
 

@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Table, Alert, Button, Glyphicon } from 'react-bootstrap';
 import { Meteor } from 'meteor/meteor';
-import { createContainer } from 'meteor/react-meteor-data';
+import { withTracker } from 'meteor/react-meteor-data';
 import { Bert } from 'meteor/themeteorchef:bert';
 
 
@@ -139,7 +139,7 @@ RPAs.propTypes = {
   totalCount: PropTypes.number.isRequired,
 };
 
-export default createContainer(() => {
+export default withTracker(() => {
   const rpasSub = Meteor.subscribe('rpas');
   return {
     loading: !rpasSub.ready(),
@@ -148,4 +148,4 @@ export default createContainer(() => {
     deletedCount: RPAsCollection.find({ deleted: { $ne: 'no' } }).count(),
     totalCount: RPAsCollection.find({ deleted: { $eq: 'no' } }).count(),
   };
-}, RPAs);
+})(RPAs);

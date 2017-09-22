@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { createContainer } from 'meteor/react-meteor-data';
+import { withTracker } from 'meteor/react-meteor-data';
 import { Meteor } from 'meteor/meteor';
 import RPAs from '../../../api/RPAs/RPAs';
 import RPAEditor from '../../components/RPAEditor/RPAEditor';
@@ -23,11 +23,11 @@ EditRPA.propTypes = {
   match: PropTypes.object.isRequired,
 };
 
-export default createContainer(({ match }) => {
+export default withTracker(({ match }) => {
   const rpaId = match.params.rpa_id;
   const subscription = Meteor.subscribe('rpas.view', rpaId);
   return {
     loading: !subscription.ready(),
     rpa: RPAs.findOne(rpaId),
   };
-}, EditRPA);
+})(EditRPA);

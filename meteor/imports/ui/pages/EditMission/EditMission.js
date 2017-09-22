@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { createContainer } from 'meteor/react-meteor-data';
+import { withTracker } from 'meteor/react-meteor-data';
 import { Meteor } from 'meteor/meteor';
 import Missions from '../../../api/Missions/Missions';
 import MissionEditor from '../../components/MissionEditor/MissionEditor';
@@ -23,7 +23,7 @@ EditMission.propTypes = {
   match: PropTypes.object.isRequired,
 };
 
-export default createContainer(({ match }) => {
+export default withTracker(({ match }) => {
   const projectId = match.params.project_id;
   const missionId = match.params.mission_id;
   const subscription = Meteor.subscribe('missions.view', projectId, missionId);
@@ -31,4 +31,4 @@ export default createContainer(({ match }) => {
     loading: !subscription.ready(),
     mission: Missions.findOne(missionId),
   };
-}, EditMission);
+})(EditMission);
