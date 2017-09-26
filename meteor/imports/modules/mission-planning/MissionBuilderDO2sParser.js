@@ -139,7 +139,7 @@ const payloadExample = {
 // const _m2 = { mission: missionSuperficial, payload: payloadExample };
 
 export default class MissionBuilderDO2sParser {
-  constructor(dO2sMission) {
+  constructor(dO2sMission, dO2sPayload) {
     // super();
     // TODO: make the conversion between dO2Mission to this.mission
 
@@ -147,7 +147,7 @@ export default class MissionBuilderDO2sParser {
     // Cuando pasemos a dO2s, cambiar esto
     // this.m2 = _m2;
     // por esto
-    this.m2 = { mission: dO2sMission, payload: null };
+    this.m2 = { mission: dO2sMission, payload: dO2sPayload };
     this.setMission();
     this.mBuilder = new MissionBuilder(this.mission);
     // this.calculateMission();
@@ -229,9 +229,6 @@ export default class MissionBuilderDO2sParser {
     this.mission = blankMission;
     // TODO: convert to dO2sMission and return dO2sMission insteadof this.mission
     // this.m2.mission = _mission;
-    const payloadId = this.m2.mission.payload;
-    const subscription = Meteor.subscribe('payloads.view', payloadId);
-    this.m2.payload = Payloads.findOne(payloadId);
 
     this.mission.altitude = this.m2.mission.flightPlan.flightParameters.altitude;
     this.mission.buffer = 0; // TODO
