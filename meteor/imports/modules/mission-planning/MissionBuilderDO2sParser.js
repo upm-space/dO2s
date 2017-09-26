@@ -1,8 +1,6 @@
 
-import MissionBuilder from './MissionBuilder.js';
-import Latlon from './GeoHelper.js';
-import Payloads from '../../api/Payloads/Payloads';
-
+import MissionBuilder from './MissionBuilder';
+import Latlon from './GeoHelper';
 
 const blankMission = { _id: '',
   deletedAt: null,
