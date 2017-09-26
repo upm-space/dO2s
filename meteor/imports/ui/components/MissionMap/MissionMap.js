@@ -130,8 +130,16 @@ class MissionMap extends Component {
       draw: false,
     });
 
+    const editControlWaypointPath = new L.Control.Draw({
+      edit: {
+        featureGroup: geoJSONRpaPathLayer,
+      },
+      draw: false,
+    });
+
     this.drawControlFull = drawControlFull;
     this.drawControlEdit = drawControlEditOnly;
+    this.editControlWaypointPath = editControlWaypointPath;
 
     // moving take off and landing on click
     missionmap.on('click', (e) => {
@@ -234,6 +242,17 @@ class MissionMap extends Component {
       this.drawControlFull.remove();
       this.drawControlEdit.remove();
     }
+
+    if (this.props.editWayPoints) {
+      if (this.drawnItems.getLayers().length === 0) {
+        this.missionmap.addControl(this.drawControlFull);
+      } else {
+        this.missionmap.addControl(this.drawControlEdit);
+      }
+    } else if (!this.props.defineAreaActive) {
+      this.drawControlFull.remove();
+      this.drawControlEdit.remove();
+    }
   }
 
   render() {
@@ -267,6 +286,7 @@ MissionMap.propTypes = {
   setTakeOffPoint: PropTypes.func.isRequired,
   setLandingPoint: PropTypes.func.isRequired,
   setMissionGeometry: PropTypes.func.isRequired,
+  editWayPoints: PropTypes.bool.isRequired,
 };
 
 export default MissionMap;

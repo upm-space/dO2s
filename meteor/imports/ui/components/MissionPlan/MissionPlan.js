@@ -349,6 +349,7 @@ class MissionPlan extends Component {
                     setTakeOffPoint={this.setTakeOffPoint}
                     setLandingPoint={this.setLandingPoint}
                     setMissionGeometry={this.setMissionGeometry}
+                    editWayPoints={this.state.buttonStates.showWayPointsButtonActive}
                   />
                 ))}
             {this.state.buttonStates.showWayPointsButtonActive ? <WayPointList /> : ''}
