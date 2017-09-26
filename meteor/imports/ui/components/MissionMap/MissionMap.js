@@ -5,45 +5,13 @@ import L from 'leaflet';
 import 'leaflet-draw';
 
 import { featurePoint2latlong, latlong2featurePoint, featurePointGetZoom } from '../../../modules/geojson-utilities';
+import { waypointIcon, waypointSize, waypointAnchor } from '../../../modules/waypoint-style-chooser.js';
 
 import './MissionMap.scss';
 
 if (Meteor.isClient) {
   L.Icon.Default.imagePath = '/images/';
 }
-
-const waypointIcon = (waypointType) => {
-  switch (waypointType) {
-  case 1 : return '/waypoints/fa-arrow-circle-up.svg';
-  case 2 : return '/waypoints/fa-arrow-circle-down.svg';
-  case 3 : return '/waypoints/fa-camera-on.svg';
-  case 4 : return '/waypoints/fa-camera-off.svg';
-  case 5 : return '/waypoints/fa-flag.svg';
-  default : return '/images/marker-icon.png';
-  }
-};
-
-const waypointSize = (waypointType) => {
-  switch (waypointType) {
-  case 1 : return [50, 50];
-  case 2 : return [50, 50];
-  case 3 : return [40, 40];
-  case 4 : return [40, 40];
-  case 5 : return [28, 41];
-  default : return [25, 41];
-  }
-};
-
-const waypointAnchor = (waypointType) => {
-  switch (waypointType) {
-  case 1 : return [24.3, 40];
-  case 2 : return [24.3, 40];
-  case 3 : return [20, 22];
-  case 4 : return [20, 22];
-  case 5 : return [3, 32];
-  default : return [12, 41];
-  }
-};
 
 class MissionMap extends Component {
   constructor(props) {
@@ -82,7 +50,8 @@ class MissionMap extends Component {
     const geoJSONRpaPathLayer = L.geoJSON().addTo(missionmap);
     const geoJSONWaypointListLayer = L.geoJSON().addTo(missionmap);
 
-
+    // with this we load these variables in the component to access them
+    // in other functions.
     this.drawnItems = drawnItems;
     this.waypoints = waypoints;
     this.geoJSONTakeOffPointLayer = geoJSONTakeOffPointLayer;
@@ -90,6 +59,7 @@ class MissionMap extends Component {
     this.geoJSONRpaPathLayer = geoJSONRpaPathLayer;
     this.geoJSONWaypointListLayer = geoJSONWaypointListLayer;
 
+    // Here we load the current mission data on the map if it exists
     if (this.props.mission.flightPlan) {
       if (this.props.mission.flightPlan.takeOffPoint) {
         const myTakeOffPoint = this.props.mission.flightPlan.takeOffPoint;
@@ -128,7 +98,7 @@ class MissionMap extends Component {
       }
     }
 
-
+    // defining draw controls
     const drawControlFull = new L.Control.Draw({
       edit: {
         featureGroup: drawnItems,
@@ -163,6 +133,7 @@ class MissionMap extends Component {
     this.drawControlFull = drawControlFull;
     this.drawControlEdit = drawControlEditOnly;
 
+    // moving take off and landing on click
     missionmap.on('click', (e) => {
       if (this.props.takeOffPointActive) {
         const myTakeOffPoint = latlong2featurePoint(e.latlng.wrap());
@@ -181,6 +152,7 @@ class MissionMap extends Component {
       }
     });
 
+    // passing the new mission area geometry to the database
     missionmap.on(L.Draw.Event.CREATED, (event) => {
       const newGeometryLayer = event.layer;
       const featureFromLayer = newGeometryLayer.toGeoJSON();
@@ -189,6 +161,7 @@ class MissionMap extends Component {
       missionmap.addControl(drawControlEditOnly);
     });
 
+    // updating the mission area geometry if edited
     missionmap.on(L.Draw.Event.EDITED, (event) => {
       drawnItems.clearLayers();
       const editedGeometryLayer = event.layers.getLayers()[0];
@@ -197,6 +170,7 @@ class MissionMap extends Component {
       drawnItems.clearLayers();
     });
 
+    // deleting the mission area geometry
     missionmap.on(L.Draw.Event.DELETED, () => {
       if (drawnItems.getLayers().length === 0) {
         this.props.setMissionGeometry();
@@ -206,7 +180,8 @@ class MissionMap extends Component {
     });
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate() {
+    // re lodaing the mission if anything changes
     if (this.props.mission.flightPlan) {
       if (this.props.mission.flightPlan.takeOffPoint) {
         this.geoJSONTakeOffPointLayer.clearLayers();
@@ -248,6 +223,7 @@ class MissionMap extends Component {
       }
     }
 
+    // making controls visible when clicking the area button
     if (this.props.defineAreaActive) {
       if (this.drawnItems.getLayers().length === 0) {
         this.missionmap.addControl(this.drawControlFull);
