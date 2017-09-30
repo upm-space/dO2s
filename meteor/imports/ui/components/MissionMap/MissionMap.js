@@ -48,6 +48,8 @@ class MissionMap extends Component {
     const geoJSONLandingPointLayer = L.geoJSON().addTo(missionmap);
     const waypoints = new L.FeatureGroup().addTo(missionmap);
     const geoJSONRpaPathLayer = L.geoJSON().addTo(missionmap);
+    // const geoJSONRpaPathLayer = L.geoJSON();
+    // waypoints.addLayer(geoJSONRpaPathLayer);
     const geoJSONWaypointListLayer = L.geoJSON().addTo(missionmap);
 
     // with this we load these variables in the component to access them
@@ -133,6 +135,10 @@ class MissionMap extends Component {
     const editControlWaypointPath = new L.Control.Draw({
       edit: {
         featureGroup: geoJSONRpaPathLayer,
+        remove: false,
+        polyline: {
+          allowIntersection: false,
+        },
       },
       draw: false,
     });
@@ -162,29 +168,123 @@ class MissionMap extends Component {
 
     // passing the new mission area geometry to the database
     missionmap.on(L.Draw.Event.CREATED, (event) => {
-      const newGeometryLayer = event.layer;
-      const featureFromLayer = newGeometryLayer.toGeoJSON();
-      this.props.setMissionGeometry(featureFromLayer);
-      missionmap.removeControl(drawControlFull);
-      missionmap.addControl(drawControlEditOnly);
+      if (this.props.defineAreaActive) {
+        const newGeometryLayer = event.layer;
+        const featureFromLayer = newGeometryLayer.toGeoJSON();
+        this.props.setMissionGeometry(featureFromLayer);
+        missionmap.removeControl(drawControlFull);
+        missionmap.addControl(drawControlEditOnly);
+      }
     });
 
     // updating the mission area geometry if edited
+    missionmap.on('draw:edited', () => {
+      console.log('draw:edited en missionmap');
+    });
+    missionmap.on('draw:editmove', () => {
+      console.log('draw:editmove en missionmap');
+    });
+    missionmap.on('edit', () => {
+      console.log('edit en missionmap');
+    });
+    geoJSONRpaPathLayer.on('edit', () => {
+      console.log('edit en geoJSONRpaPathLayer');
+    });
+    geoJSONRpaPathLayer.on('draw:edited', () => {
+      console.log('draw:edited en geoJSONRpaPathLayer');
+    });
+    geoJSONRpaPathLayer.on('draw:editmove', () => {
+      console.log('draw:editmove en geoJSONRpaPathLayer');
+    });
+    geoJSONRpaPathLayer.getLayers()[0].on('edit', () => {
+      console.log('edit en la capa 0 de geoJSONRpaPathLayer');
+    });
+    geoJSONRpaPathLayer.getLayers()[0].on('draw:edited', () => {
+      console.log('draw:edited en la capa 0 de geoJSONRpaPathLayer');
+    });
+    geoJSONRpaPathLayer.getLayers()[0].on('draw:editmove', () => {
+      console.log('draw:editmove en la capa 0 de geoJSONRpaPathLayer');
+    });
+    missionmap.on('dragend', () => {
+      console.log('drag end en missionmap');
+    });
+    geoJSONRpaPathLayer.on('dragend', () => {
+      console.log('drag end en geoJSONRpaPathLayer');
+    });
+    geoJSONRpaPathLayer.getLayers()[0].on('dragend', () => {
+      console.log('drag end en la capa 0 de geoJSONRpaPathLayer');
+    });
+    missionmap.on('', (event) => {
+      console.log(event.type);
+    });
+
     missionmap.on(L.Draw.Event.EDITED, (event) => {
-      drawnItems.clearLayers();
-      const editedGeometryLayer = event.layers.getLayers()[0];
-      const featureFromEditedLayer = editedGeometryLayer.toGeoJSON();
-      this.props.setMissionGeometry(featureFromEditedLayer);
-      drawnItems.clearLayers();
+      if (this.props.defineAreaActive) {
+        console.log('estoy editando el area');
+        if (event.layers.getLayers().length !== 0) {
+          drawnItems.clearLayers();
+          const editedGeometryLayer = event.layers.getLayers()[0];
+          const featureFromEditedLayer = editedGeometryLayer.toGeoJSON();
+          this.props.setMissionGeometry(featureFromEditedLayer);
+        }
+      }
+      console.log('estoy draw:edited callback en missionmap');
+    });
+
+    missionmap.on(L.Draw.Event.CREATED, () => {
+      console.log('estoy draw:created callback en missionmap');
+    });
+
+    missionmap.on(L.Draw.Event.DRAWSTART, () => {
+      console.log('estoy draw:drawstart  callback en missionmap');
+    });
+
+    missionmap.on(L.Draw.Event.DRAWSTOP, () => {
+      console.log('estoy draw:drawstop callback en missionmap');
+    });
+
+    missionmap.on(L.Draw.Event.DRAWVERTEX, () => {
+      console.log('estoy draw:draWvertex callback en missionmap');
+    });
+
+    missionmap.on(L.Draw.Event.EDITSTART, () => {
+      console.log('estoy draw:editstart callback en missionmap');
+    });
+
+    missionmap.on(L.Draw.Event.EDITMOVE, () => {
+      console.log('estoy draw:editmove callback en missionmap');
+    });
+
+    missionmap.on(L.Draw.Event.EDITRESIZE, () => {
+      console.log('estoy draw:editresize callback en missionmap');
+    });
+
+    missionmap.on(L.Draw.Event.EDITVERTEX, () => {
+      console.log('estoy draw:editvertex callback en missionmap');
+    });
+
+    missionmap.on(L.Draw.Event.EDITSTOP, () => {
+      console.log('estoy draw:editstop callback en missionmap');
+    });
+
+    missionmap.on(L.Draw.Event.DELETESTART, () => {
+      console.log('estoy draw:deletestart callback en missionmap');
+    });
+
+    missionmap.on(L.Draw.Event.DELETESTOP, () => {
+      console.log('estoy draw:deletestop callback en missionmap');
     });
 
     // deleting the mission area geometry
     missionmap.on(L.Draw.Event.DELETED, () => {
-      if (drawnItems.getLayers().length === 0) {
-        this.props.setMissionGeometry();
-        missionmap.removeControl(drawControlEditOnly);
-        missionmap.addControl(drawControlFull);
+      if (this.props.defineAreaActive) {
+        if (drawnItems.getLayers().length === 0) {
+          this.props.setMissionGeometry();
+          missionmap.removeControl(drawControlEditOnly);
+          missionmap.addControl(drawControlFull);
+        }
       }
+      console.log('estoy draw:deleted callback');
     });
   }
 
@@ -244,14 +344,11 @@ class MissionMap extends Component {
     }
 
     if (this.props.editWayPoints) {
-      if (this.drawnItems.getLayers().length === 0) {
-        this.missionmap.addControl(this.drawControlFull);
-      } else {
-        this.missionmap.addControl(this.drawControlEdit);
-      }
-    } else if (!this.props.defineAreaActive) {
-      this.drawControlFull.remove();
-      this.drawControlEdit.remove();
+      // this.missionmap.addControl(this.editControlWaypointPath);
+      this.geoJSONRpaPathLayer.getLayers()[0].editing.enable();
+    } else if (!this.props.editWayPoints) {
+      // this.editControlWaypointPath.remove();
+      this.geoJSONRpaPathLayer.getLayers()[0].editing.disable();
     }
   }
 
