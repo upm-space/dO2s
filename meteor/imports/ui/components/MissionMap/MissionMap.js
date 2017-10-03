@@ -46,16 +46,12 @@ class MissionMap extends Component {
     const drawnItems = new L.FeatureGroup().addTo(missionmap);
     const geoJSONTakeOffPointLayer = L.geoJSON().addTo(missionmap);
     const geoJSONLandingPointLayer = L.geoJSON().addTo(missionmap);
-    const waypoints = new L.FeatureGroup().addTo(missionmap);
     const geoJSONRpaPathLayer = L.geoJSON().addTo(missionmap);
-    // const geoJSONRpaPathLayer = L.geoJSON();
-    // waypoints.addLayer(geoJSONRpaPathLayer);
     const geoJSONWaypointListLayer = L.geoJSON().addTo(missionmap);
 
     // with this we load these variables in the component to access them
     // in other functions.
     this.drawnItems = drawnItems;
-    this.waypoints = waypoints;
     this.geoJSONTakeOffPointLayer = geoJSONTakeOffPointLayer;
     this.geoJSONLandingPointLayer = geoJSONLandingPointLayer;
     this.geoJSONRpaPathLayer = geoJSONRpaPathLayer;
@@ -132,6 +128,8 @@ class MissionMap extends Component {
       draw: false,
     });
 
+    // This is the waypoints edit control
+    // TODO find a way to disable edit of takeoff and landing
     const editControlWaypointPath = new L.Control.Draw({
       edit: {
         featureGroup: geoJSONRpaPathLayer,
@@ -149,6 +147,7 @@ class MissionMap extends Component {
 
     // moving take off and landing on click
     missionmap.on('click', (e) => {
+      // TODO Add alert to redraw mission if these change
       if (this.props.takeOffPointActive) {
         const myTakeOffPoint = latlong2featurePoint(e.latlng.wrap());
         myTakeOffPoint.properties = {};
@@ -169,6 +168,7 @@ class MissionMap extends Component {
     // passing the new mission area geometry to the database
     missionmap.on(L.Draw.Event.CREATED, (event) => {
       if (this.props.defineAreaActive) {
+        // TODO add alert to redraw misison
         const newGeometryLayer = event.layer;
         const featureFromLayer = newGeometryLayer.toGeoJSON();
         this.props.setMissionGeometry(featureFromLayer);
@@ -177,50 +177,9 @@ class MissionMap extends Component {
       }
     });
 
-    // updating the mission area geometry if edited
-    missionmap.on('draw:edited', () => {
-      console.log('draw:edited en missionmap');
-    });
-    missionmap.on('draw:editmove', () => {
-      console.log('draw:editmove en missionmap');
-    });
-    missionmap.on('edit', () => {
-      console.log('edit en missionmap');
-    });
-    geoJSONRpaPathLayer.on('edit', () => {
-      console.log('edit en geoJSONRpaPathLayer');
-    });
-    geoJSONRpaPathLayer.on('draw:edited', () => {
-      console.log('draw:edited en geoJSONRpaPathLayer');
-    });
-    geoJSONRpaPathLayer.on('draw:editmove', () => {
-      console.log('draw:editmove en geoJSONRpaPathLayer');
-    });
-    geoJSONRpaPathLayer.getLayers()[0].on('edit', () => {
-      console.log('edit en la capa 0 de geoJSONRpaPathLayer');
-    });
-    geoJSONRpaPathLayer.getLayers()[0].on('draw:edited', () => {
-      console.log('draw:edited en la capa 0 de geoJSONRpaPathLayer');
-    });
-    geoJSONRpaPathLayer.getLayers()[0].on('draw:editmove', () => {
-      console.log('draw:editmove en la capa 0 de geoJSONRpaPathLayer');
-    });
-    missionmap.on('dragend', () => {
-      console.log('drag end en missionmap');
-    });
-    geoJSONRpaPathLayer.on('dragend', () => {
-      console.log('drag end en geoJSONRpaPathLayer');
-    });
-    geoJSONRpaPathLayer.getLayers()[0].on('dragend', () => {
-      console.log('drag end en la capa 0 de geoJSONRpaPathLayer');
-    });
-    missionmap.on('', (event) => {
-      console.log(event.type);
-    });
-
     missionmap.on(L.Draw.Event.EDITED, (event) => {
       if (this.props.defineAreaActive) {
-        console.log('estoy editando el area');
+        // TODO add alert to redraw misison
         if (event.layers.getLayers().length !== 0) {
           drawnItems.clearLayers();
           const editedGeometryLayer = event.layers.getLayers()[0];
@@ -228,51 +187,16 @@ class MissionMap extends Component {
           this.props.setMissionGeometry(featureFromEditedLayer);
         }
       }
-      console.log('estoy draw:edited callback en missionmap');
     });
 
-    missionmap.on(L.Draw.Event.CREATED, () => {
-      console.log('estoy draw:created callback en missionmap');
-    });
-
-    missionmap.on(L.Draw.Event.DRAWSTART, () => {
-      console.log('estoy draw:drawstart  callback en missionmap');
-    });
-
-    missionmap.on(L.Draw.Event.DRAWSTOP, () => {
-      console.log('estoy draw:drawstop callback en missionmap');
-    });
-
-    missionmap.on(L.Draw.Event.DRAWVERTEX, () => {
-      console.log('estoy draw:draWvertex callback en missionmap');
-    });
-
-    missionmap.on(L.Draw.Event.EDITSTART, () => {
-      console.log('estoy draw:editstart callback en missionmap');
-    });
-
-    missionmap.on(L.Draw.Event.EDITMOVE, () => {
-      console.log('estoy draw:editmove callback en missionmap');
-    });
-
-    missionmap.on(L.Draw.Event.EDITRESIZE, () => {
-      console.log('estoy draw:editresize callback en missionmap');
-    });
-
-    missionmap.on(L.Draw.Event.EDITVERTEX, () => {
-      console.log('estoy draw:editvertex callback en missionmap');
-    });
-
-    missionmap.on(L.Draw.Event.EDITSTOP, () => {
-      console.log('estoy draw:editstop callback en missionmap');
-    });
-
-    missionmap.on(L.Draw.Event.DELETESTART, () => {
-      console.log('estoy draw:deletestart callback en missionmap');
-    });
-
-    missionmap.on(L.Draw.Event.DELETESTOP, () => {
-      console.log('estoy draw:deletestop callback en missionmap');
+    missionmap.on(L.Draw.Event.EDITVERTEX, (event) => {
+      if (this.props.editWayPoints) {
+        const currentRPAPath =
+        this.props.mission.flightPlan.missionCalculation.rpaPath;
+        const currentWaypointList =
+        this.props.mission.flightPlan.missionCalculation.waypointList;
+        const newRPAPathFeature = event.poly.toGeoJSON();
+      }
     });
 
     // deleting the mission area geometry
@@ -284,7 +208,6 @@ class MissionMap extends Component {
           missionmap.addControl(drawControlFull);
         }
       }
-      console.log('estoy draw:deleted callback');
     });
   }
 
