@@ -269,7 +269,8 @@ class MissionMap extends Component {
     if (this.props.editWayPoints) {
       // this.missionmap.addControl(this.editControlWaypointPath);
       this.geoJSONRpaPathLayer.getLayers()[0].editing.enable();
-    } else if (!this.props.editWayPoints) {
+    } else if (!this.props.editWayPoints &&
+    this.geoJSONRpaPathLayer.getLayers().length !== 0) {
       // this.editControlWaypointPath.remove();
       this.geoJSONRpaPathLayer.getLayers()[0].editing.disable();
     }
