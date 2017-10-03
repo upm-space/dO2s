@@ -104,29 +104,29 @@ As recommended in the link after your pull request is merged on the main reposit
    git checkout -b <branch-name>
    git push -u <remote-name> <branch-name>
    ```
-1. **!!CONGRATS!!** you can start to make your big contribution by modifying the code on your local repo. 
+1. **!!CONGRATS!!** you can start to make your big contribution by modifying the code on your local repo.
 
 **UPLOADING YOUR CODE TO YOUR REMOTE FORK FROM YOUR WEBSTORM IDE**
 
 (sorry for Atom users ;-) )
 
 1. Once you consider you have to upload your code to your remote repo, click on the dO2s directory (on the project section) and go to VCS|Git|Commit directory menu option.
- 
+
 2. A modal form will appear called _Commit Change_. Introduce a commit message about your work (what have you done from your last commit). click on the downer right button _Commit_ and choose the option _Commit and Push_. After that it will appear two message confirming the operation (the first one for the commit and the second one for the push).
- 
+
  **ASKING FOR A PULL REQUEST**
- 
+
  On your github webpage click Pull request button. By doing this operation you will you will ask to the dO2s administator to incorporate your contribution to the dO2s project. Do that when you consider you have finish a complete module.
- 
+
  Once you are sure the administrator has incorporate your code, proceed to delete your local and your remote branch.
  ```bash
     git push origin --delete <branch_name>
     git branch -d <branch_name>
  ```
- 
+
 **MERGING THE DO2S/MASTER INTO YOUR WORKING BRANCH**
 
-First of all go to [syncing-your-fork](#syncing-your-fork) 
+First of all go to [syncing-your-fork](#syncing-your-fork)
 
 Second
 
@@ -148,6 +148,7 @@ git merge master             # (resolve conflicts)
 
     *   :star: `:star:` when adding features
     *   :art: `:art:` when improving the format/structure of the code
+    *   :wrench: `:wrench:` when commiting work in progress (WIP)
     *   :racehorse: `:racehorse:` when improving performance
     *   :non-potable_water: `:non-potable_water:` when plugging memory leaks
     *   :memo: `:memo:` when writing docs
