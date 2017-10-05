@@ -83,19 +83,26 @@ export const arrayContains = (item, array) => {
 
 export const insertNewWaypoint = (oldWaypointList, newRPAPath) => {
   const newWaypointList = JSON.parse(JSON.stringify(oldWaypointList));
+  let currentWaypointProperties = {};
+  for (let waypoint = 0; waypoint < oldWaypointList.features.length; waypoint += 1) {
+    if (oldWaypointList.features[waypoint].properties.type === 5) {
+      currentWaypointProperties = oldWaypointList.features[waypoint].properties;
+      break;
+    }
+  }
   const oldRPAPathfromWaypoints = createRPAPath(oldWaypointList.features);
   const oldWaypointArray = oldRPAPathfromWaypoints.geometry.coordinates;
   const newRpaArray = newRPAPath.geometry.coordinates;
-  for (let i = 0; i < newRpaArray.length; i += 1) {
-    const currentWaypointProperties = oldWaypointList.features[i].properties;
+
+  for (let i = 0; i < oldWaypointArray.length; i += 1) {
     const currentRPAPosition = newRpaArray[i];
-    if (!arrayContains(currentRPAPosition, oldWaypointArray)) {
+    if (!arrayEquals(currentRPAPosition, oldWaypointArray[i])) {
       const newWaypoint = {
         type: 'Feature',
         properties: {
-          altRelative: currentWaypointProperties.altRelative,
-          altAbsolute: currentWaypointProperties.altAbsolute,
-          altGround: currentWaypointProperties.altGround,
+          altRelative: (currentWaypointProperties ? currentWaypointProperties.altRelative : 0),
+          altAbsolute: (currentWaypointProperties ? currentWaypointProperties.altAbsolute : 0),
+          altGround: (currentWaypointProperties ? currentWaypointProperties.altGround : 0),
           type: 5,
         },
         geometry: {
