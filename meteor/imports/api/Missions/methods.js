@@ -164,10 +164,7 @@ Meteor.methods({
   'missions.setMissionCalculations': function missionsSetMissionCalculations(missionId, missionCalculationsData) {
     const parseMissionCalculationData = {
       rpaPath: missionCalculationsData.waypointLine,
-      waypointList: {
-        type: 'FeatureCollection',
-        features: missionCalculationsData.waypoints,
-      },
+      waypointList: missionCalculationsData.waypointList,
       missionCalculatedData: {},
     };
     const missionCalculatedDataKeys = Object.keys(missionCalculationsData.flightData);

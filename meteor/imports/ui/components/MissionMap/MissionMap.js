@@ -7,7 +7,7 @@ import 'leaflet-draw';
 
 import { featurePoint2latlong, latlong2featurePoint, featurePointGetZoom } from '../../../modules/geojson-utilities';
 import { waypointIcon, waypointSize, waypointAnchor } from '../../../modules/waypoint-style-chooser.js';
-import { getOperationType, insertNewWaypoint, removeWaypoint, moveWaypoint } from '../../../modules/waypoint-utilities.js';
+import { getOperationType, insertNewWaypoint, removeWaypoint, moveWaypoint, setWaypointNumbers } from '../../../modules/waypoint-utilities.js';
 
 import './MissionMap.scss';
 
@@ -215,7 +215,8 @@ class MissionMap extends Component {
           newWaypointList = currentWaypointList;
           Bert.alert('You should not get themeteorchef', 'danger');
         }
-        this.props.editWayPoints(newWaypointList, newRPAPathFeature);
+        const newWaypointListWithNumbers = setWaypointNumbers(newWaypointList);
+        this.props.editWayPoints(newWaypointListWithNumbers, newRPAPathFeature);
       }
     });
 

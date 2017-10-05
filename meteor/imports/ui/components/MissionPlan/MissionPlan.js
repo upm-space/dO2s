@@ -15,7 +15,7 @@ import MissionPayloadParameters from '../MissionPayloadParameters/MissionPayload
 import MissionPictureGrid from '../MissionPictureGrid/MissionPictureGrid';
 import MissionData from '../MissionData/MissionData';
 import MissionBuilderDO2sParser from '../../../modules/mission-planning/MissionBuilderDO2sParser';
-import { createRPAPath } from '../../../modules/waypoint-utilities';
+import { createRPAPath, setWaypointNumbers } from '../../../modules/waypoint-utilities';
 
 import './MissionPlan.scss';
 
@@ -152,6 +152,11 @@ class MissionPlan extends Component {
     dO2sBuilder.calculateMission();
     const mData = dO2sBuilder.getMission();
     mData.waypointLine = createRPAPath(mData.waypoints);
+    const waypointListNoNumbers = {
+      type: 'FeatureCollection',
+      features: mData.waypoints,
+    };
+    mData.waypointList = setWaypointNumbers(waypointListNoNumbers);
     Meteor.call('missions.setMissionCalculations', this.props.mission._id, mData, (error) => {
       if (error) {
         Bert.alert(error.reason, 'danger');
