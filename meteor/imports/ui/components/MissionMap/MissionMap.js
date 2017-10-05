@@ -193,6 +193,8 @@ class MissionMap extends Component {
 
     missionmap.on(L.Draw.Event.EDITVERTEX, (event) => {
       if (this.props.editWayPointsActive) {
+        this.geoJSONRpaPathLayer.clearLayers();
+        this.geoJSONWaypointListLayer.clearLayers();
         const currentRPAPath =
         this.props.mission.flightPlan.missionCalculation.rpaPath;
         const currentWaypointList =
@@ -259,6 +261,7 @@ class MissionMap extends Component {
         const myMissionGeomtryLayer = L.geoJSON(missionGeometry);
         this.drawnItems.addLayer(myMissionGeomtryLayer.getLayers()[0]);
       }
+
       if (this.props.mission.flightPlan.missionCalculation) {
         if (this.props.mission.flightPlan.missionCalculation.rpaPath) {
           this.geoJSONRpaPathLayer.clearLayers();
@@ -294,6 +297,17 @@ class MissionMap extends Component {
     this.geoJSONRpaPathLayer.getLayers().length !== 0) {
       // this.editControlWaypointPath.remove();
       this.geoJSONRpaPathLayer.getLayers()[0].editing.disable();
+    }
+
+    const myflightPlanKeys = Object.keys(this.props.mission.flightPlan);
+    const clearedKeys = ['takeOffPoint', 'landingPoint', 'missionArea', 'missionCalculation'];
+    const myflightPlanKeysFiltered = myflightPlanKeys.filter(word => clearedKeys.includes(word));
+    if (myflightPlanKeysFiltered.length === 0) {
+      this.geoJSONTakeOffPointLayer.clearLayers();
+      this.geoJSONLandingPointLayer.clearLayers();
+      this.drawnItems.clearLayers();
+      this.geoJSONRpaPathLayer.clearLayers();
+      this.geoJSONWaypointListLayer.clearLayers();
     }
   }
 
