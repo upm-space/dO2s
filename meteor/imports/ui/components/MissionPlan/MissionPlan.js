@@ -179,6 +179,7 @@ class MissionPlan extends Component {
 
   render() {
     const { project, mission, history, payload, loading } = this.props;
+    const waypointList = mission && mission.flightPlan && mission.flightPlan.missionCalculation && mission.flightPlan.missionCalculation.waypointList && mission.flightPlan.missionCalculation.waypointList.features;
     return (!loading ? (
       <div className="MissionPlan container-fluid">
         <Row>
@@ -385,7 +386,7 @@ class MissionPlan extends Component {
                     editWayPoints={this.editWayPointList}
                   />
                 ))}
-            {this.state.buttonStates.showWayPointsButtonActive ? <WayPointList /> : ''}
+            {this.state.buttonStates.showWayPointsButtonActive ? <WayPointList waypointList={waypointList} /> : ''}
             {this.state.buttonStates.showMissionDataButtonActive ? <MissionData mission={mission} /> : ''}
           </Col>
         </Row>
