@@ -172,7 +172,7 @@ class MissionMap extends Component {
       if (this.props.defineAreaActive) {
         // TODO add alert to redraw misison
         const newGeometryLayer = event.layer;
-        const featureFromLayer = newGeometryLayer.toGeoJSON();
+        const featureFromLayer = newGeometryLayer.toGeoJSON(15);
         this.props.setMissionGeometry(featureFromLayer);
         missionmap.removeControl(drawControlFull);
         missionmap.addControl(drawControlEditOnly);
@@ -185,7 +185,7 @@ class MissionMap extends Component {
         if (event.layers.getLayers().length !== 0) {
           drawnItems.clearLayers();
           const editedGeometryLayer = event.layers.getLayers()[0];
-          const featureFromEditedLayer = editedGeometryLayer.toGeoJSON();
+          const featureFromEditedLayer = editedGeometryLayer.toGeoJSON(15);
           this.props.setMissionGeometry(featureFromEditedLayer);
         }
       }
@@ -197,7 +197,7 @@ class MissionMap extends Component {
         this.props.mission.flightPlan.missionCalculation.rpaPath;
         const currentWaypointList =
         this.props.mission.flightPlan.missionCalculation.waypointList;
-        const newRPAPathFeature = event.poly.toGeoJSON();
+        const newRPAPathFeature = event.poly.toGeoJSON(15);
         // TODO habria que hacer una comprobacion de que las listas
         // waypoints y trayectoria no estan desfasadas y borrarlas si lo estan
         let newWaypointList = {};
