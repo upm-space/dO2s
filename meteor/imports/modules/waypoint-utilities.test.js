@@ -7,7 +7,7 @@ import {
   removeWaypoint,
   moveWaypoint,
   insertNewWaypoint,
-} from 'waypoint-utilities';
+} from './waypoint-utilities';
 
 const wayPointListOriginal = {
   type: 'FeatureCollection',
@@ -828,8 +828,6 @@ const wayPointListAdd = {
         altAbsolute: 0,
         altGround: 0,
         type: 5,
-        totalNumber: 4,
-        webNumber: 2,
       },
       geometry: {
         type: 'Point',
@@ -1124,7 +1122,7 @@ describe('testing the setWaypointNumbers function', () => {
 
 describe('test the create path function', () => {
   test('create the RPA path from the Waypoint List', () => {
-    expect(createRPAPath(wayPointListOriginal)).toEqual(rpaPathCreated);
+    expect(createRPAPath(wayPointListOriginal.features)).toEqual(rpaPathCreated);
   });
 });
 
@@ -1141,23 +1139,20 @@ describe('test the get operation type function', () => {
 });
 
 describe('test array equals', () => {
-  const array1 = [[1, 2], [2, 3]];
-  const array2 = [[1, 2], [2, 3]];
   test('[[1,2],[2,3]] is equal to [[1,2],[2,3]]', () => {
-    expect(arrayEquals(array1, array2)).toBe(true);
+    expect(arrayEquals([[1, 2], [2, 3]], [[1, 2], [2, 3]])).toBeTruthy();
   });
 });
 
-describe('test array constains', () => {
-  const array1 = [[1, 2], [2, 3]];
-  test('[[1,2],[2,3]] contains 1', () => {
-    expect(arrayContains(1, array1)).toBe(true);
+describe('test array contains', () => {
+  test('[1,2,3,4] contains 1', () => {
+    expect(arrayContains(1, [1, 2, 3, 4])).toBeTruthy();
   });
-  test('[[1,2],[2,3]] contains [1,2]', () => {
-    expect(arrayContains([1, 2], array1)).toBe(true);
+  test('[[1,2],[2,3],5] contains [1,2]', () => {
+    expect(arrayContains([1, 2], [[1, 2], [3, 4], 5])).toBeTruthy();
   });
   test('[[1,2],[2,3]] does not contain [1]', () => {
-    expect(arrayContains([1], array1)).toBe(false);
+    expect(arrayContains([1], [[1, 2], [3, 4], 5])).toBeFalsy();
   });
 });
 
@@ -1168,13 +1163,13 @@ describe('test removeWaypoint', () => {
 });
 
 describe('test insertNewWaypoint', () => {
-  test('test that the waypoint is deleted correctly', () => {
+  test('test that the waypoint is added correctly', () => {
     expect(insertNewWaypoint(wayPointListWithNumbers, rpaPathAdd)).toEqual(wayPointListAdd);
   });
 });
 
 describe('test moveWaypoint', () => {
-  test('test that the waypoint is deleted correctly', () => {
+  test('test that the waypoint is moved correctly', () => {
     expect(moveWaypoint(wayPointListWithNumbers, rpaPathMove)).toEqual(wayPointListMove);
   });
 });
