@@ -15,6 +15,7 @@ import MissionPayloadParameters from '../MissionPayloadParameters/MissionPayload
 import MissionPictureGrid from '../MissionPictureGrid/MissionPictureGrid';
 import MissionData from '../MissionData/MissionData';
 import MissionBuilderDO2sParser from '../../../modules/mission-planning/MissionBuilderDO2sParser';
+import { createRPAPath } from '../../../modules/waypoint-utilities';
 
 import './MissionPlan.scss';
 
@@ -26,6 +27,8 @@ class MissionPlan extends Component {
     this.setLandingPoint = this.setLandingPoint.bind(this);
     this.setMissionGeometry = this.setMissionGeometry.bind(this);
     this.setMissionAxisBuffer = this.setMissionAxisBuffer.bind(this);
+    this.editWayPointList = this.editWayPointList.bind(this);
+    this.clearWayPoints = this.clearWayPoints.bind(this);
     this.buttonGeometryName = this.buttonGeometryName.bind(this);
     this.state = {
       showWayPoints: false,
@@ -84,6 +87,18 @@ class MissionPlan extends Component {
     });
   }
 
+  editWayPointList(newWayPointList = {}, newRPAPath = {}) {
+    Meteor.call('missions.editWayPointList', this.props.mission._id, newWayPointList, newRPAPath, (error) => {
+      if (error) {
+        Bert.alert(error.reason, 'danger');
+      } else if (newWayPointList && newRPAPath) {
+        Bert.alert('Mission Waypoints Updated', 'success');
+      } else {
+        Bert.alert('You should not get here ever', 'danger');
+      }
+    });
+  }
+
   buttonGeometryName(mission) {
     if (mission && mission.missionType && mission.missionType === 'Surface Area') {
       return 'Area';
@@ -136,11 +151,23 @@ class MissionPlan extends Component {
     const dO2sBuilder = new MissionBuilderDO2sParser(this.props.mission, this.props.payload);
     dO2sBuilder.calculateMission();
     const mData = dO2sBuilder.getMission();
+    mData.waypointLine = createRPAPath(mData.waypoints);
     Meteor.call('missions.setMissionCalculations', this.props.mission._id, mData, (error) => {
       if (error) {
         Bert.alert(error.reason, 'danger');
       } else {
         Bert.alert('Calculation of Waypoints Saved', 'success');
+      }
+    });
+  }
+
+  clearWayPoints() {
+    this.toogleButtonSwtich();
+    Meteor.call('missions.clearWayPoints', this.props.mission._id, (error) => {
+      if (error) {
+        Bert.alert(error.reason, 'danger');
+      } else {
+        Bert.alert('Mission Cleared', 'warning');
       }
     });
   }
@@ -282,7 +309,7 @@ class MissionPlan extends Component {
                 <Button
                   bsStyle="danger"
                   block
-                  onClick={() => this.toogleButtonSwtich()}
+                  onClick={() => this.clearWayPoints()}
                 >
                   <div><i className="fa fa-trash fa-lg" aria-hidden="true" /></div>
                   <div>Clear WayPoints</div></Button>
@@ -349,7 +376,8 @@ class MissionPlan extends Component {
                     setTakeOffPoint={this.setTakeOffPoint}
                     setLandingPoint={this.setLandingPoint}
                     setMissionGeometry={this.setMissionGeometry}
-                    editWayPoints={this.state.buttonStates.showWayPointsButtonActive}
+                    editWayPointsActive={this.state.buttonStates.showWayPointsButtonActive}
+                    editWayPoints={this.editWayPointList}
                   />
                 ))}
             {this.state.buttonStates.showWayPointsButtonActive ? <WayPointList /> : ''}

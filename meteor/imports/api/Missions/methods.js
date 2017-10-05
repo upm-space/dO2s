@@ -197,6 +197,34 @@ Meteor.methods({
       throw new Meteor.Error('500', exception);
     }
   },
+  'missions.editWayPointList': function missionsEditWaypointList(missionId, newWayPointList, newRPAPath) {
+    try {
+      FeatureCollectionPoints.validate(newWayPointList);
+      FeatureLineString.validate(newRPAPath);
+      Missions.update(missionId, { $set: { 'flightPlan.missionCalculation.waypointList': newWayPointList,
+      } });
+      Missions.update(missionId, { $set: { 'flightPlan.missionCalculation.rpaPath': newRPAPath,
+      } });
+    } catch (exception) {
+      if (exception.error === 'validation-error') {
+        throw new Meteor.Error(500, exception.message);
+      }
+      throw new Meteor.Error('500', exception);
+    }
+  },
+  'missions.clearWayPoints': function missionsClearWayPoints(missionId) {
+    try {
+      Missions.update(missionId, { $unset: { 'flightPlan.takeOffPoint': '' } });
+      Missions.update(missionId, { $unset: { 'flightPlan.landingPoint': '' } });
+      Missions.update(missionId, { $unset: { 'flightPlan.missionArea': '' } });
+      Missions.update(missionId, { $unset: { 'flightPlan.missionCalculation': '' } });
+    } catch (exception) {
+      if (exception.error === 'validation-error') {
+        throw new Meteor.Error(500, exception.message);
+      }
+      throw new Meteor.Error('500', exception);
+    }
+  },
 });
 
 rateLimit({
@@ -214,6 +242,8 @@ rateLimit({
     'missions.setFlightParams',
     'missions.setPictureGrid',
     'missions.setMissionCalculations',
+    'missions.editWayPointList',
+    'missions.clearWayPoints',
   ],
   limit: 5,
   timeRange: 1000,

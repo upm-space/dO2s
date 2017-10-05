@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import { Meteor } from 'meteor/meteor';
+import { Bert } from 'meteor/themeteorchef:bert';
 import PropTypes from 'prop-types';
 import L from 'leaflet';
 import 'leaflet-draw';
 
 import { featurePoint2latlong, latlong2featurePoint, featurePointGetZoom } from '../../../modules/geojson-utilities';
 import { waypointIcon, waypointSize, waypointAnchor } from '../../../modules/waypoint-style-chooser.js';
+import { getOperationType, insertNewWaypoint, removeWaypoint, moveWaypoint } from '../../../modules/waypoint-utilities.js';
 
 import './MissionMap.scss';
 
@@ -190,12 +192,30 @@ class MissionMap extends Component {
     });
 
     missionmap.on(L.Draw.Event.EDITVERTEX, (event) => {
-      if (this.props.editWayPoints) {
+      if (this.props.editWayPointsActive) {
         const currentRPAPath =
         this.props.mission.flightPlan.missionCalculation.rpaPath;
         const currentWaypointList =
         this.props.mission.flightPlan.missionCalculation.waypointList;
         const newRPAPathFeature = event.poly.toGeoJSON();
+        // TODO habria que hacer una comprobacion de que las listas
+        // waypoints y trayectoria no estan desfasadas y borrarlas si lo estan
+        let newWaypointList = {};
+        switch (getOperationType(currentRPAPath, newRPAPathFeature)) {
+        case 'add':
+          newWaypointList = insertNewWaypoint(currentWaypointList, newRPAPathFeature);
+          break;
+        case 'delete':
+          newWaypointList = removeWaypoint(currentWaypointList, newRPAPathFeature);
+          break;
+        case 'move':
+          newWaypointList = moveWaypoint(currentWaypointList, newRPAPathFeature);
+          break;
+        default:
+          newWaypointList = currentWaypointList;
+          Bert.alert('You should not get themeteorchef', 'danger');
+        }
+        this.props.editWayPoints(newWaypointList, newRPAPathFeature);
       }
     });
 
@@ -266,10 +286,10 @@ class MissionMap extends Component {
       this.drawControlEdit.remove();
     }
 
-    if (this.props.editWayPoints) {
+    if (this.props.editWayPointsActive) {
       // this.missionmap.addControl(this.editControlWaypointPath);
       this.geoJSONRpaPathLayer.getLayers()[0].editing.enable();
-    } else if (!this.props.editWayPoints &&
+    } else if (!this.props.editWayPointsActive &&
     this.geoJSONRpaPathLayer.getLayers().length !== 0) {
       // this.editControlWaypointPath.remove();
       this.geoJSONRpaPathLayer.getLayers()[0].editing.disable();
@@ -307,7 +327,8 @@ MissionMap.propTypes = {
   setTakeOffPoint: PropTypes.func.isRequired,
   setLandingPoint: PropTypes.func.isRequired,
   setMissionGeometry: PropTypes.func.isRequired,
-  editWayPoints: PropTypes.bool.isRequired,
+  editWayPointsActive: PropTypes.bool.isRequired,
+  editWayPoints: PropTypes.func.isRequired,
 };
 
 export default MissionMap;

@@ -1,4 +1,19 @@
-import { Meteor } from 'meteor/meteor';
+export const createRPAPath = (wayPointList) => {
+  const rpaPath = {
+    type: 'Feature',
+    geometry: {
+      type: 'LineString',
+      coordinates: [],
+    },
+    properties: {},
+  };
+  // this waypoint list is an array of features
+  wayPointList.forEach((feature) => {
+    rpaPath.geometry.coordinates.push(feature.geometry.coordinates);
+  });
+
+  return rpaPath;
+};
 
 export const setWaypointNumbers = (waypointFeatureCollection) => {
   const waypointFeatureCollectionCopy =
@@ -23,9 +38,9 @@ export const getOperationType = (currentRPAPath, newRPAPath) => {
   if (oldWaypointCount === newWaypointCount) {
     return 'move';
   } else if (oldWaypointCount < newWaypointCount) {
-    return 'delete';
-  } else if (oldWaypointCount > newWaypointCount) {
     return 'add';
+  } else if (oldWaypointCount > newWaypointCount) {
+    return 'delete';
   }
 };
 
@@ -67,12 +82,13 @@ const arrayContains = (item, array) => {
 
 export const insertNewWaypoint = (oldWaypointList, newRPAPath) => {
   const newWaypointList = JSON.parse(JSON.stringify(oldWaypointList));
-  const waypointArray = oldWaypointList.features;
-  const rpaArray = newRPAPath.geometry.coordinates[0];
-  for (let i = 0; rpaArray.lentgh < i; i += 1) {
-    const currentWaypointProperties = waypointArray[i].properties;
-    const currentRPAPosition = rpaArray[i].geometry.coordinates[0];
-    if (!arrayContains(currentRPAPosition, waypointArray)) {
+  const oldRPAPathfromWaypoints = createRPAPath(oldWaypointList.features);
+  const oldWaypointArray = oldRPAPathfromWaypoints.geometry.coordinates;
+  const newRpaArray = newRPAPath.geometry.coordinates;
+  for (let i = 0; i < newRpaArray.length; i += 1) {
+    const currentWaypointProperties = oldWaypointList.features[i].properties;
+    const currentRPAPosition = newRpaArray[i];
+    if (!arrayContains(currentRPAPosition, oldWaypointArray)) {
       const newWaypoint = {
         type: 'Feature',
         properties: {
@@ -95,11 +111,13 @@ export const insertNewWaypoint = (oldWaypointList, newRPAPath) => {
 
 export const removeWaypoint = (oldWaypointList, newRPAPath) => {
   const newWaypointList = JSON.parse(JSON.stringify(oldWaypointList));
-  const waypointArray = oldWaypointList.features;
-  const rpaArray = newRPAPath.geometry.coordinates[0];
-  for (let i = 0; waypointArray.lentgh < i; i += 1) {
-    const currentWaypointPosition = waypointArray[i].geometry.coordinates;
-    if (!arrayContains(currentWaypointPosition, rpaArray)) {
+  const oldRPAPathfromWaypoints = createRPAPath(oldWaypointList.features);
+  const oldWaypointArray = oldRPAPathfromWaypoints.geometry.coordinates;
+  const newRpaArray = newRPAPath.geometry.coordinates;
+
+  for (let i = 0; i < oldWaypointArray.length; i += 1) {
+    const currentWaypointPosition = oldWaypointArray[i];
+    if (!arrayContains(currentWaypointPosition, newRpaArray)) {
       newWaypointList.features.splice(i, 1);
       break;
     }
@@ -109,13 +127,14 @@ export const removeWaypoint = (oldWaypointList, newRPAPath) => {
 
 export const moveWaypoint = (oldWaypointList, newRPAPath) => {
   const newWaypointList = JSON.parse(JSON.stringify(oldWaypointList));
-  const waypointArray = oldWaypointList.features;
-  const rpaArray = newRPAPath.geometry.coordinates[0];
-  for (let i = 0; rpaArray.lentgh < i; i += 1) {
-    const currentWaypointPosition = waypointArray[i].geometry.coordinates;
-    const currentRPAPosition = rpaArray[i].geometry.coordinates[0];
-    if (!(currentWaypointPosition[0] === currentRPAPosition[0] &&
-      currentWaypointPosition[1] === currentRPAPosition[1])) {
+  const oldRPAPathfromWaypoints = createRPAPath(oldWaypointList.features);
+  const oldWaypointArray = oldRPAPathfromWaypoints.geometry.coordinates;
+  const newRpaArray = newRPAPath.geometry.coordinates;
+
+  for (let i = 0; i < newRpaArray.length; i += 1) {
+    const currentWaypointPosition = oldWaypointArray[i];
+    const currentRPAPosition = newRpaArray[i];
+    if (!arrayEquals(currentWaypointPosition, currentRPAPosition)) {
       newWaypointList.features[i].geometry.coordinates = currentRPAPosition;
       break;
     }
