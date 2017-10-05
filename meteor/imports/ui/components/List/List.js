@@ -56,9 +56,9 @@ const List = props => (
   !props.loading ? renderListBody(props) : <Loading />
 );
 
-List.defaultPropds = {
+List.defaultProps = {
   hideCompleted: false,
-  completeItem: (() => console.log('saluda')),
+  completeItem: (() => console.log('i dont have a function to complete anything')),
 };
 
 List.propTypes = {
