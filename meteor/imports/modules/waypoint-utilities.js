@@ -42,9 +42,10 @@ export const getOperationType = (currentRPAPath, newRPAPath) => {
   } else if (oldWaypointCount > newWaypointCount) {
     return 'delete';
   }
+  return 'nothing';
 };
 
-const arrayEquals = (array1, array2) => {
+export const arrayEquals = (array1, array2) => {
   // if the other array is a falsy value, return
   if (!array2) { return false; }
 
@@ -64,7 +65,7 @@ const arrayEquals = (array1, array2) => {
   return true;
 };
 
-const arrayContains = (item, array) => {
+export const arrayContains = (item, array) => {
   // if the other array is a falsy value, return false
   if (!array) { return false; }
 
