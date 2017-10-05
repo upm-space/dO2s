@@ -222,7 +222,8 @@ export default class MissionBuilderDO2sParser {
       resolution: this.resolution,
     };
 
-    return { waypoints, waypointLine, flightData };
+    // return { waypoints, waypointLine, flightData };
+    return { waypoints, flightData };
   }
 
   setMission() {
