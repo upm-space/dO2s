@@ -6,7 +6,7 @@ import L from 'leaflet';
 import 'leaflet-draw';
 
 import { featurePoint2latlong, latlong2featurePoint, featurePointGetZoom } from '../../../modules/geojson-utilities';
-import { waypointIcon, waypointSize, waypointAnchor } from '../../../modules/waypoint-style-chooser.js';
+import { getWaypointType, waypointSize, waypointAnchor, waypointHtml } from '../../../modules/waypoint-style-chooser.js';
 import { getOperationType, insertNewWaypoint, removeWaypoint, moveWaypoint, setWaypointNumbers } from '../../../modules/waypoint-utilities.js';
 
 import './MissionMap.scss';
@@ -25,10 +25,11 @@ class MissionMap extends Component {
       waypointListOptions: {
         pointToLayer(feature, latlng) {
           return L.marker(latlng, {
-            icon: L.icon({
-              iconUrl: waypointIcon(feature.properties.type),
+            icon: L.divIcon({
+              html: waypointHtml(feature.properties.type, feature.properties.webNumber),
               iconSize: waypointSize(feature.properties.type),
               iconAnchor: waypointAnchor(feature.properties.type),
+              className: `wayPointIcon ${getWaypointType(feature.properties.type)}`,
             }),
           });
         },
