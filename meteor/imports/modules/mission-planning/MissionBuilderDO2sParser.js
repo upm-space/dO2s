@@ -176,7 +176,6 @@ export default class MissionBuilderDO2sParser {
     this.mission.waypoints.forEach((waypoint) => {
       const wpjson = { type: 'Feature',
         properties: {
-          key: waypoint.key,
           altRelative: waypoint.altRelative,
           altAbsolute: waypoint.altAbsolute,
           altGround: waypoint.altGround,
