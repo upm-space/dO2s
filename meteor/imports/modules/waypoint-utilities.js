@@ -45,8 +45,9 @@ export const getOperationType = (currentRPAPath, newRPAPath) => {
   return 'nothing';
 };
 
-export const arrayEquals = (array1, array2) => {
+export const arrayEqualsCoords = (array1, array2) => {
   // if the other array is a falsy value, return
+  if (!array1) { return false; }
   if (!array2) { return false; }
 
   // compare lengths - can save a lot of time
@@ -56,8 +57,8 @@ export const arrayEquals = (array1, array2) => {
     // Check if we have nested arrays
     if (array1[i] instanceof Array && array2[i] instanceof Array) {
       // recurse into the nested arrays
-      if (!arrayEquals(array1[i], array2[i])) { return false; }
-    } else if (array1[i] !== array2[i]) {
+      if (!arrayEqualsCoords(array1[i], array2[i])) { return false; }
+    } else if (array1[i].toFixed(6) !== array2[i].toFixed(6)) {
       // Warning - two different object instances will never be equal: {x:20} != {x:20}
       return false;
     }
@@ -65,17 +66,18 @@ export const arrayEquals = (array1, array2) => {
   return true;
 };
 
-export const arrayContains = (item, array) => {
+export const arrayContainsCoords = (item, array) => {
   // if the other array is a falsy value, return false
   if (!array) { return false; }
+  if (!item) { return false; }
 
   // start by assuming the array doesn't contain the thing
   let result = false;
   for (let i = 0; i < array.length; i += 1) {
     // if anything in the array is the thing then change our mind from before
     if (array[i] instanceof Array) {
-      if (arrayEquals(item, array[i])) { result = true; }
-    } else if (array[i] === item) { result = true; }
+      if (arrayEqualsCoords(item, array[i])) { result = true; }
+    } else if (array[i].toFixed(6) === item.toFixed(6)) { result = true; }
   }
   // return the decision we left in the variable, result
   return result;
@@ -96,7 +98,7 @@ export const insertNewWaypoint = (oldWaypointList, newRPAPath) => {
 
   for (let i = 0; i < oldWaypointArray.length; i += 1) {
     const currentRPAPosition = newRpaArray[i];
-    if (!arrayEquals(currentRPAPosition, oldWaypointArray[i])) {
+    if (!arrayEqualsCoords(currentRPAPosition, oldWaypointArray[i])) {
       const newWaypoint = {
         type: 'Feature',
         properties: {
@@ -125,7 +127,7 @@ export const removeWaypoint = (oldWaypointList, newRPAPath) => {
 
   for (let i = 0; i < oldWaypointArray.length; i += 1) {
     const currentWaypointPosition = oldWaypointArray[i];
-    if (!arrayContains(currentWaypointPosition, newRpaArray)) {
+    if (!arrayContainsCoords(currentWaypointPosition, newRpaArray)) {
       newWaypointList.features.splice(i, 1);
       break;
     }
@@ -142,7 +144,7 @@ export const moveWaypoint = (oldWaypointList, newRPAPath) => {
   for (let i = 0; i < newRpaArray.length; i += 1) {
     const currentWaypointPosition = oldWaypointArray[i];
     const currentRPAPosition = newRpaArray[i];
-    if (!arrayEquals(currentWaypointPosition, currentRPAPosition)) {
+    if (!arrayEqualsCoords(currentWaypointPosition, currentRPAPosition)) {
       newWaypointList.features[i].geometry.coordinates = currentRPAPosition;
       break;
     }
