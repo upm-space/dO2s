@@ -595,10 +595,235 @@ const wayPointListwithNumbers = {
   ],
 };
 
+const wayPointListwithNumbersChangedType = {
+  type: 'FeatureCollection',
+  features: [
+    {
+      type: 'Feature',
+      properties: {
+        altRelative: 50,
+        altAbsolute: 0,
+        altGround: 0,
+        type: 1,
+        totalNumber: 0,
+      },
+      geometry: {
+        type: 'Point',
+        coordinates: [
+          -3.68893325328827,
+          40.419573348683,
+        ],
+      },
+    },
+    {
+      type: 'Feature',
+      properties: {
+        altRelative: 120,
+        altAbsolute: 0,
+        altGround: 0,
+        type: 5,
+        totalNumber: 1,
+        webNumber: 1,
+      },
+      geometry: {
+        type: 'Point',
+        coordinates: [
+          -3.6895004784754,
+          40.4157070745898,
+        ],
+      },
+    },
+    {
+      type: 'Feature',
+      properties: {
+        altRelative: 120,
+        altAbsolute: 0,
+        altGround: 0,
+        type: 3,
+        shootDistance: '117.00',
+        totalNumber: 2,
+      },
+      geometry: {
+        type: 'Point',
+        coordinates: [
+          -3.68914815572728,
+          40.415735970521,
+        ],
+      },
+    },
+    {
+      type: 'Feature',
+      properties: {
+        altRelative: 120,
+        altAbsolute: 0,
+        altGround: 0,
+        type: 4,
+        shootDistance: '117.00',
+        totalNumber: 3,
+      },
+      geometry: {
+        type: 'Point',
+        coordinates: [
+          -3.68267868815939,
+          40.4162667374733,
+        ],
+      },
+    },
+    {
+      type: 'Feature',
+      properties: {
+        altRelative: 120,
+        altAbsolute: 0,
+        altGround: 0,
+        type: 3,
+        totalNumber: 4,
+        webNumber: 2,
+      },
+      geometry: {
+        type: 'Point',
+        coordinates: [
+          -3.68232636510861,
+          40.4162956519721,
+        ],
+      },
+    },
+    {
+      type: 'Feature',
+      properties: {
+        altRelative: 0,
+        altAbsolute: 0,
+        altGround: 0,
+        type: 2,
+        totalNumber: 5,
+      },
+      geometry: {
+        type: 'Point',
+        coordinates: [
+          -3.68590772151947,
+          40.4200470935497,
+        ],
+      },
+    },
+  ],
+};
+
+const wayPointListwithNumbersChangedTypeUpdatedNumbers = {
+  type: 'FeatureCollection',
+  features: [
+    {
+      type: 'Feature',
+      properties: {
+        altRelative: 50,
+        altAbsolute: 0,
+        altGround: 0,
+        type: 1,
+        totalNumber: 0,
+      },
+      geometry: {
+        type: 'Point',
+        coordinates: [
+          -3.68893325328827,
+          40.419573348683,
+        ],
+      },
+    },
+    {
+      type: 'Feature',
+      properties: {
+        altRelative: 120,
+        altAbsolute: 0,
+        altGround: 0,
+        type: 5,
+        totalNumber: 1,
+        webNumber: 1,
+      },
+      geometry: {
+        type: 'Point',
+        coordinates: [
+          -3.6895004784754,
+          40.4157070745898,
+        ],
+      },
+    },
+    {
+      type: 'Feature',
+      properties: {
+        altRelative: 120,
+        altAbsolute: 0,
+        altGround: 0,
+        type: 3,
+        shootDistance: '117.00',
+        totalNumber: 2,
+      },
+      geometry: {
+        type: 'Point',
+        coordinates: [
+          -3.68914815572728,
+          40.415735970521,
+        ],
+      },
+    },
+    {
+      type: 'Feature',
+      properties: {
+        altRelative: 120,
+        altAbsolute: 0,
+        altGround: 0,
+        type: 4,
+        shootDistance: '117.00',
+        totalNumber: 3,
+      },
+      geometry: {
+        type: 'Point',
+        coordinates: [
+          -3.68267868815939,
+          40.4162667374733,
+        ],
+      },
+    },
+    {
+      type: 'Feature',
+      properties: {
+        altRelative: 120,
+        altAbsolute: 0,
+        altGround: 0,
+        type: 3,
+        totalNumber: 4,
+      },
+      geometry: {
+        type: 'Point',
+        coordinates: [
+          -3.68232636510861,
+          40.4162956519721,
+        ],
+      },
+    },
+    {
+      type: 'Feature',
+      properties: {
+        altRelative: 0,
+        altAbsolute: 0,
+        altGround: 0,
+        type: 2,
+        totalNumber: 5,
+      },
+      geometry: {
+        type: 'Point',
+        coordinates: [
+          -3.68590772151947,
+          40.4200470935497,
+        ],
+      },
+    },
+  ],
+};
 
 describe('testing the setWaypointNumbers function', () => {
   test('check that the numbers are set correctly 10 waypoints', () => {
     expect(setWaypointNumbers(wayPointList)).toEqual(wayPointListwithNumbers);
+  });
+  test('check that the numbers are set correctly after changing waypoint type', () => {
+    expect(setWaypointNumbers(wayPointListwithNumbersChangedType)).toEqual(wayPointListwithNumbersChangedTypeUpdatedNumbers);
   });
 });
 

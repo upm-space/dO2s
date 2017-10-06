@@ -27,6 +27,8 @@ export const setWaypointNumbers = (waypointFeatureCollection) => {
     if (feature.properties.type === 5) {
       feature.properties.webNumber = webNumber;
       webNumber += 1;
+    } else if (feature.properties.webNumber) {
+      delete feature.properties.webNumber;
     }
   });
   return waypointFeatureCollectionCopy;
