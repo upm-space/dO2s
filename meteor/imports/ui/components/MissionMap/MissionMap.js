@@ -276,6 +276,17 @@ class MissionMap extends Component {
           myWaypointListLayer.eachLayer(layer => (this.geoJSONWaypointListLayer.addLayer(layer)));
         }
       }
+
+      const myflightPlanKeys = Object.keys(this.props.mission.flightPlan);
+      const clearedKeys = ['takeOffPoint', 'landingPoint', 'missionArea', 'missionCalculation'];
+      const myflightPlanKeysFiltered = myflightPlanKeys.filter(word => clearedKeys.includes(word));
+      if (myflightPlanKeysFiltered.length === 0) {
+        this.geoJSONTakeOffPointLayer.clearLayers();
+        this.geoJSONLandingPointLayer.clearLayers();
+        this.drawnItems.clearLayers();
+        this.geoJSONRpaPathLayer.clearLayers();
+        this.geoJSONWaypointListLayer.clearLayers();
+      }
     }
 
     // making controls visible when clicking the area button
@@ -290,24 +301,14 @@ class MissionMap extends Component {
       this.drawControlEdit.remove();
     }
 
-    if (this.props.editWayPointsActive) {
+    if (this.props.editWayPointsActive &&
+      this.geoJSONRpaPathLayer.getLayers().length !== 0) {
       // this.missionmap.addControl(this.editControlWaypointPath);
       this.geoJSONRpaPathLayer.getLayers()[0].editing.enable();
     } else if (!this.props.editWayPointsActive &&
     this.geoJSONRpaPathLayer.getLayers().length !== 0) {
       // this.editControlWaypointPath.remove();
       this.geoJSONRpaPathLayer.getLayers()[0].editing.disable();
-    }
-
-    const myflightPlanKeys = Object.keys(this.props.mission.flightPlan);
-    const clearedKeys = ['takeOffPoint', 'landingPoint', 'missionArea', 'missionCalculation'];
-    const myflightPlanKeysFiltered = myflightPlanKeys.filter(word => clearedKeys.includes(word));
-    if (myflightPlanKeysFiltered.length === 0) {
-      this.geoJSONTakeOffPointLayer.clearLayers();
-      this.geoJSONLandingPointLayer.clearLayers();
-      this.drawnItems.clearLayers();
-      this.geoJSONRpaPathLayer.clearLayers();
-      this.geoJSONWaypointListLayer.clearLayers();
     }
   }
 

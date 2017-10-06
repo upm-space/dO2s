@@ -57,12 +57,8 @@ const WayPointList = props => (
   </div>
 );
 
-WayPointList.defaultProps = {
-  waypointList: 0,
-};
-
 WayPointList.propTypes = {
-  waypointList: PropTypes.arrayOf(PropTypes.object),
+  waypointList: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 

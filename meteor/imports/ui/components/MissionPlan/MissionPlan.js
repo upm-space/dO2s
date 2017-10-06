@@ -179,7 +179,14 @@ class MissionPlan extends Component {
 
   render() {
     const { project, mission, history, payload, loading } = this.props;
-    const waypointList = mission && mission.flightPlan && mission.flightPlan.missionCalculation && mission.flightPlan.missionCalculation.waypointList && mission.flightPlan.missionCalculation.waypointList.features;
+    let waypointList = [];
+    if (mission &&
+      mission.flightPlan &&
+      mission.flightPlan.missionCalculation &&
+      mission.flightPlan.missionCalculation.waypointList &&
+      mission.flightPlan.missionCalculation.waypointList.features) {
+      waypointList = mission.flightPlan.missionCalculation.waypointList.features;
+    }
     return (!loading ? (
       <div className="MissionPlan container-fluid">
         <Row>
