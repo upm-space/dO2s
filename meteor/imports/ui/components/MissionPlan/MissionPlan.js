@@ -393,7 +393,7 @@ class MissionPlan extends Component {
                     editWayPoints={this.editWayPointList}
                   />
                 ))}
-            {this.state.buttonStates.showWayPointsButtonActive ? <WayPointList waypointList={waypointList} /> : ''}
+            {this.state.buttonStates.showWayPointsButtonActive ? <WayPointList missionId={mission._id} waypointList={waypointList} /> : ''}
             {this.state.buttonStates.showMissionDataButtonActive ? <MissionData mission={mission} /> : ''}
           </Col>
         </Row>

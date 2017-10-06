@@ -1,36 +1,64 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Table, Alert } from 'react-bootstrap';
-
-import Loading from '../../components/Loading/Loading';
+import { Meteor } from 'meteor/meteor';
+import { Bert } from 'meteor/themeteorchef:bert';
 
 import './WayPointList.scss';
 
-const getWayPointType = (type) => {
-  switch (type) {
-  case 1:
-    return 'Take Off';
-  case 2:
-    return 'Landing';
-  case 3:
-    return 'Camera On';
-  case 4:
-    return 'Camera Off';
-  case 5:
-    return 'Waypoint';
-  default:
-    return 'Waypoint';
-  }
-};
+const changeWaypointType = (missionId, waypointIndex, newWayPointType) =>
+  (Meteor.call('missions.editWayPointType', missionId, waypointIndex, newWayPointType, (error) => {
+    if (error) {
+      Bert.alert(error.reason, 'danger');
+    } else {
+      Meteor.call('missions.recalculateWaypointNumbers', missionId, (error1) => {
+        if (error1) {
+          Bert.alert(error1.reason, 'danger');
+        } else {
+          Bert.alert('Waypoint Type Changed', 'success');
+        }
+      });
+    }
+  }));
 
-const renderWaypointListItems = ({ waypointList }) =>
+const changeWaypointAtlRelative = (missionId, waypointIndex, newWayPointAltRelative) =>
+  (Meteor.call('missions.editWayPointAltRelative', missionId, waypointIndex, newWayPointAltRelative, (error) => {
+    if (error) {
+      Bert.alert(error.reason, 'danger');
+    } else {
+      Bert.alert('Waypoint Altitude Realtive to Home Changed', 'success');
+    }
+  }));
+
+const renderWaypointListItems = ({ missionId, waypointList }) =>
   waypointList.map(waypoint => (
     <tr
       key={waypoint.properties.totalNumber}
     >
-      <td>{waypoint.properties.webNumber}</td>
-      <td>{getWayPointType(waypoint.properties.type)}</td>
-      <td>{waypoint.properties.altRelative}</td>
+      <td className="center-column">{waypoint.properties.webNumber}</td>
+      <td><select
+        type="text"
+        className="form-control"
+        name="rpa"
+        defaultValue={waypoint.properties.type}
+        onChange={event =>
+          changeWaypointType(missionId, waypoint.properties.totalNumber, Number(event.target.value))}
+      >
+        <option key="1" value="1">Take Off</option>
+        <option key="2" value="2">Landing</option>
+        <option key="3" value="3">Camera On</option>
+        <option key="4" value="4">Camera Off</option>
+        <option key="5" value="5">Waypoint</option>
+      </select></td>
+      <td><input
+        type="number"
+        className="form-control"
+        name="altRelative"
+        min="0"
+        defaultValue={waypoint.properties.altRelative}
+        onChange={event =>
+          changeWaypointAtlRelative(missionId, waypoint.properties.totalNumber, Number(event.target.value))}
+      /></td>
       <td>{waypoint.properties.altGround}</td>
     </tr>));
 
@@ -44,7 +72,7 @@ const WayPointList = props => (
     {props.waypointList.length ? <Table responsive hover>
       <thead>
         <tr>
-          <th>
+          <th className="center-column">
             Waypoints ({props.waypointList.length})
           </th>
           <th>Type</th>
@@ -58,6 +86,7 @@ const WayPointList = props => (
 );
 
 WayPointList.propTypes = {
+  missionId: PropTypes.string.isRequired,
   waypointList: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
