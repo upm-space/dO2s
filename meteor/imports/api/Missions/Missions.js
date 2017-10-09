@@ -34,6 +34,12 @@ const flightParametersSchema = new SimpleSchema({
     label: 'The entry margin for the fixed wing rpa in meters',
     min: 0,
   },
+  axisBuffer: {
+    type: Number,
+    label: 'The entry axis buffer for the linear mission in meters',
+    min: 0,
+    optional: true,
+  },
 });
 
 const pictureGridSchema = new SimpleSchema({

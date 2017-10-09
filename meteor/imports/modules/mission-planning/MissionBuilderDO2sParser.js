@@ -231,14 +231,14 @@ export default class MissionBuilderDO2sParser {
     // this.m2.mission = _mission;
 
     this.mission.altitude = this.m2.mission.flightPlan.flightParameters.altitude;
-    this.mission.buffer = 0; // TODO
+    this.mission.buffer = 0; // TODO - DONE
     this.mission.camera.Focal = this.m2.payload.sensorParameters.focalLength;
     this.mission.camera.MatrixHeight = this.m2.payload.sensorParameters.sensorHeight;
     this.mission.camera.MatrixWidth = this.m2.payload.sensorParameters.sensorWidth;
     this.mission.camera.PixelHeight = this.m2.payload.sensorParameters.imageHeight;
     this.mission.camera.PixelWidth = this.m2.payload.sensorParameters.imageWidth;
     if (this.m2.mission.missionType === 'Surface Area') { this.mission.type = 'superficial'; }
-    if (this.m2.mission.missionType === 'Linear Area') { this.mission.type = 'linear'; }
+    if (this.m2.mission.missionType === 'Linear Area') { this.mission.type = 'lineal'; }
 
     this.mission.boundaries = [];
     if (this.mission.type === 'superficial') {
@@ -247,10 +247,11 @@ export default class MissionBuilderDO2sParser {
       });
     }
 
-    if (this.mission.type === 'linear') {
+    if (this.mission.type === 'lineal') {
       this.m2.mission.flightPlan.missionAxis.geometry.coordinates.forEach((point) => {
         this.mission.boundaries.push({ lat: point[1], lng: point[0] });
       });
+      this.mission.buffer = this.m2.mission.flightPlan.flightParameters.axisBuffer;
     }
 
     this.mission.dataLanding.lat = this.m2.mission.flightPlan.landingPoint.geometry.coordinates[1];

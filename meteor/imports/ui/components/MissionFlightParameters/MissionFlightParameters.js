@@ -10,6 +10,7 @@ import validate from '../../../modules/validate';
 class MissionFlightParameters extends Component {
   componentDidMount() {
     const component = this;
+    const missionType = this.props.mission.missionType;
     validate(component.form, {
       rules: {
         altitude: {
@@ -20,6 +21,9 @@ class MissionFlightParameters extends Component {
         },
         entryMargin: {
           required: true,
+        },
+        axisBuffer: {
+          required: missionType === 'Linear Area',
         },
       },
       messages: {
@@ -32,17 +36,24 @@ class MissionFlightParameters extends Component {
         entryMargin: {
           required: 'The margin for the fixed wing to turn',
         },
+        axisBuffer: {
+          required: 'The buffer for the axis to map',
+        },
       },
       submitHandler() { component.handleSubmit(); },
     });
   }
 
   handleSubmit() {
+    const missionType = this.props.mission.missionType;
     const flightParams = {
       altitude: Number(this.altitude.value),
       speed: Number(this.speed.value),
       entryMargin: Number(this.entryMargin.value),
     };
+    if (missionType === 'Linear Area') {
+      flightParams.axisBuffer = Number(this.axisBuffer.value);
+    }
 
     Meteor.call('missions.setFlightParams', this.props.mission._id, flightParams, (error) => {
       if (error) {
@@ -91,6 +102,17 @@ class MissionFlightParameters extends Component {
               defaultValue={mission && mission.flightPlan && mission.flightPlan.flightParameters && mission.flightPlan.flightParameters.entryMargin}
             />
           </FormGroup>
+          {(mission && mission.missionType && mission.missionType === 'Linear Area') ?
+            <FormGroup>
+              <ControlLabel>Axis Buffer for Linear Mission (m)</ControlLabel>
+              <input
+                type="number"
+                className="form-control"
+                name="axisBuffer"
+                ref={axisBuffer => (this.axisBuffer = axisBuffer)}
+                defaultValue={mission && mission.flightPlan && mission.flightPlan.flightParameters && mission.flightPlan.flightParameters.axisBuffer}
+              />
+            </FormGroup> : ''}
         </Col>
         </Row>
         <Button type="submit" bsStyle="success">

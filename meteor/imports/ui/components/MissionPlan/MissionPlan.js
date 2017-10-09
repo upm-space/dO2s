@@ -253,6 +253,7 @@ class MissionPlan extends Component {
                 <Button
                   bsStyle="success"
                   onClick={() => this.toogleButtonSwtich()}
+                  disabled={mission.missionType !== 'Superficial Area'}
                   block
                 >
                   <div><i className="fa fa-rotate-right fa-lg" aria-hidden="true" /></div>

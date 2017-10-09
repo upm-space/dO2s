@@ -119,20 +119,6 @@ Meteor.methods({
       throw new Meteor.Error('500', exception);
     }
   },
-  'missions.setMissionAxisBuffer': function missionsSetMissionAxisBuffer(missionId, missionAxisBuffer) {
-    check(missionId, String);
-    check(missionAxisBuffer, Number);
-    try {
-      const mission = Missions.findOne(missionId);
-      if (mission.missionType === 'Surface Area') {
-        throw new Meteor.Error(500, 'How on earth did you get here!!');
-      } else if (mission.missionType === 'Linear Area') {
-        Missions.update(missionId, { $set: { 'flightPlan.missionAxis.properties.axisBuffer': missionAxisBuffer } });
-      }
-    } catch (exception) {
-      throw new Meteor.Error('500', exception);
-    }
-  },
   'missions.setFlightParams': function missionsSetFlightParams(missionId, flightParameters) {
     check(missionId, String);
     try {
@@ -215,6 +201,7 @@ Meteor.methods({
       Missions.update(missionId, { $unset: { 'flightPlan.takeOffPoint': '' } });
       Missions.update(missionId, { $unset: { 'flightPlan.landingPoint': '' } });
       Missions.update(missionId, { $unset: { 'flightPlan.missionArea': '' } });
+      Missions.update(missionId, { $unset: { 'flightPlan.missionAxis': '' } });
       Missions.update(missionId, { $unset: { 'flightPlan.missionCalculation': '' } });
     } catch (exception) {
       if (exception.error === 'validation-error') {
@@ -279,7 +266,6 @@ rateLimit({
     'missions.setLandingPoint',
     'missions.setTakeOffPoint',
     'missions.setMissionGeometry',
-    'missions.setMissionAxisBuffer',
     'missions.setFlightParams',
     'missions.setPictureGrid',
     'missions.setMissionCalculations',
