@@ -165,6 +165,9 @@ export default class MissionBuilderDO2sParser {
     this.mBuilder.buildWaypoints();
     this.enumerateWps();
   }
+  setInitialSegment(segment) {
+    this.mission.initialSegment = segment;
+  }
   enumerateWps() {
     this.mBuilder.enumerateWayPoints();
   }
@@ -261,7 +264,7 @@ export default class MissionBuilderDO2sParser {
 
     this.mission.entryMarging = this.m2.mission.flightPlan.flightParameters.entryMargin;
     this.mission.flightSpeed = this.m2.mission.flightPlan.flightParameters.speed;
-    this.mission.initialSegment = 0; // TODO: manage the projected segment;
+    this.mission.initialSegment = 0; // TODO: manage the projected segment; - DONE
     this.mission.overlap = this.m2.mission.flightPlan.pictureGrid.overlap;
     this.mission.sidelap = this.m2.mission.flightPlan.pictureGrid.sidelap;
 
