@@ -1,15 +1,15 @@
 # Rolling your own Authentication
 Source:
 
--   [Roll Your Own Authentication](https://themeteorchef.com/tutorials/roll-your-own-authentication)
+-   [Roll Your Own Authentication]
 
 
 Additional knowledge:
 
--   [What is ES2015](https://themeteorchef.com/blog/what-is-es2015/)
--   [Common Meteor patterns in ES2015](https://themeteorchef.com/snippets/common-meteor-patterns-in-es2015/)
--   [Using the Module Pattern](https://themeteorchef.com/tutorials/using-the-module-pattern)
--   [Using the Email Package](https://themeteorchef.com/tutorials/using-the-email-package)
+-   [What is ES2015]
+-   [Common Meteor patterns in ES2015]
+-   [Using the Module Pattern]
+-   [Using the Email Package]
 
 ## Prep
 
@@ -24,7 +24,7 @@ email
 
 ### OAuth Configuration
 
-You need to go into each of the services you want to add to your login to get your secret codes. This is very confusing to do, steps not added. [Link to Instructions](http://cleverbeagle.com/pup/v1/accounts/oauth-setup)
+You need to go into each of the services you want to add to your login to get your secret codes. This is very confusing to do, steps not added. [Link to Instructions]
 
 Something about not using your personal Facebook account but Facebook doesn't like someone having two accounts. You can set up a company when you create your developer account.
 
@@ -267,7 +267,7 @@ This component will only load the social login button if the secret keys are set
 
 ## User Collection Schema
 
-We defined a new schema for the users collection. Following the instructions in [`aldeed:collection2-core`](https://github.com/aldeed/meteor-collection2-core#aldeedcollection2-core) we install the following packages. Note that we use this version of the collection package because [`aldeed:collection2`](https://github.com/aldeed/meteor-collection2#important-note-the-version-in-this-repo-is-deprecated) is deprecated.
+We defined a new schema for the users collection. Following the instructions in [`aldeed:collection2-core`] we install the following packages. Note that we use this version of the collection package because [`aldeed:collection2`] is deprecated.
 
 ```
 meteor add aldeed:collection2-core
@@ -276,7 +276,7 @@ meteor npm install --save simpl-schema
 
 Using a schema ensures that only acceptable properties and values can be set within that document from the client. Thus, client side inserts and updates can be allowed without compromising security or data integrity.
 
-This Schema is a modified standard Schema from the `collection` package [documentation](https://github.com/aldeed/meteor-collection2-core#attach-a-schema-to-meteorusers). Comments removed for clarity.
+This Schema is a modified standard Schema from the `collection` package [documentation]. Comments removed for clarity.
 
 ```javascript
 const UserSchema = new SimpleSchema({
@@ -349,7 +349,7 @@ With this we make sure that every new user has a `free-user` role when created a
 
 ## Setting up the LogIn/SignUp with `accounts-password`
 
-For this part we will need to create the forms for signing in and logging in for the user in the respective pages. We'll also need the scripts to handle log in and signup plus we will use [jQuery validation](https://themeteorchef.com/tutorials/validating-forms-with-jquery-validation) to validate the forms. After that we also need a way to handle password recovery for the user.
+For this part we will need to create the forms for signing in and logging in for the user in the respective pages. We'll also need the scripts to handle log in and signup plus we will use [jQuery validation] to validate the forms. After that we also need a way to handle password recovery for the user.
 
 ### Setting up the forms
 
@@ -576,9 +576,9 @@ export default SignUp;
 ### Password Recovery
 
 #### Using the Email Package
-To do the password recovery we have to set up sending emails first. As explained in the guide from The Meteor Chef to [set up the email package](https://themeteorchef.com/tutorials/using-the-email-package).
+To do the password recovery we have to set up sending emails first. As explained in the guide from The Meteor Chef to [set up the email package].
 
-We need to install the `email` package from meteor, then we have to set up an email provider like [Mailgun](https://mailgun.com/), there are other providers, we'll use this.
+We need to install the `email` package from meteor, then we have to set up an email provider like [Mailgun], there are other providers, we'll use this.
 
 Get an account, by default we get a sandbox URL from Mailgun, but we can create a custom domain, too. For the sandbox URL you can only send emails to 5 authenticated emails, this is to prevent spam. I think that if you set up your domain you don't have this limitation.
 
@@ -786,6 +786,23 @@ const Authenticated = ({ loggingIn, authenticated, component, emailVerified, ema
 
 ## Useful links
 
--   [`aldeed:collection2-core` Documentation](https://github.com/aldeed/meteor-collection2-core#aldeedcollection2-core)
--   [`simple-schema` Documentation](https://github.com/aldeed/node-simple-schema#simple-schema)
--   [`meteor-roles` Documentation](https://github.com/alanning/meteor-roles#meteor-roles)
+-   [`aldeed:collection2-core` Documentation]
+-   [`simple-schema` Documentation]
+-   [`meteor-roles` Documentation]
+
+
+[`aldeed:collection2-core` Documentation]: https://github.com/aldeed/meteor-collection2-core#aldeedcollection2-core
+[`simple-schema` Documentation]: https://github.com/aldeed/node-simple-schema#simple-schema
+[`meteor-roles` Documentation]: https://github.com/alanning/meteor-roles#meteor-roles
+[Roll Your Own Authentication]: https://themeteorchef.com/tutorials/roll-your-own-authentication
+[What is ES2015]: https://themeteorchef.com/blog/what-is-es2015/
+[Common Meteor patterns in ES2015]: https://themeteorchef.com/snippets/common-meteor-patterns-in-es2015/
+[Using the Module Pattern]: https://themeteorchef.com/tutorials/using-the-module-pattern
+[Using the Email Package]: https://themeteorchef.com/tutorials/using-the-email-package
+[Link to Instructions]: http://cleverbeagle.com/pup/v1/accounts/oauth-setup
+[`aldeed:collection2-core`]: https://github.com/aldeed/meteor-collection2-core#aldeedcollection2-core
+[`aldeed:collection2`]: https://github.com/aldeed/meteor-collection2#important-note-the-version-in-this-repo-is-deprecated
+[Attaching a Schema Documentation]: https://github.com/aldeed/meteor-collection2-core#attach-a-schema-to-meteorusers
+[jQuery validation]: https://themeteorchef.com/tutorials/validating-forms-with-jquery-validation
+[set up the email package]: https://themeteorchef.com/tutorials/using-the-email-package
+[Mailgun]: https://mailgun.com/

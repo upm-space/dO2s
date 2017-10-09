@@ -1,14 +1,14 @@
 # Using React Router v4
 As of this writing `react-router` is in version `4.1.1`
 
--   [Meteor Chef - Getting Started with React Router 4](https://themeteorchef.com/tutorials/getting-started-with-react-router-v4)
--   [React Router Documentation](https://reacttraining.com/react-router/web/guides/quick-start)
--   [React Router 4 Basics](https://teamtreehouse.com/library/react-router-4-basics-2)
+-   [Meteor Chef - Getting Started with React Router 4]
+-   [React Router Documentation]
+-   [React Router 4 Basics]
 
 ###### Some Tips
 
--   [Nesting in ReactRouter v4](https://teamtreehouse.com/community/warning-you-should-not-use-route-component-and-route-children-in-the-same-route-route-children-will-be-ignored)
--   [Quick tut to ReactRouter 4](https://medium.com/@pshrmn/a-simple-react-router-v4-tutorial-7f23ff27adf)
+-   [Nesting in ReactRouter v4]
+-   [Quick tut to ReactRouter 4]
 
 ---
 
@@ -205,7 +205,7 @@ Now for the fun part. The `<Switch />` component has a special significance in R
 if we were to visit the `/documents/:_id` route with something like `http://localhost:3000/documents/1234` in the browser, we'd see both the `<Documents />` and `<ViewDocument />` rendered. Yikes! To circumvent this behavior, in v4, we can wrap our routes in the `<Switch />` component to default back to the more traditional behavior of previous versions of React Router.
 
 
-> If your application relies less on rendering complete pages and more on swapping parts in and out (think like in a [single page application](https://themeteorchef.com/tutorials/single-page-applications-with-react-router)), the default behavior of React Router v4 is your bag of chips.
+> If your application relies less on rendering complete pages and more on swapping parts in and out (think like in a [single page application][Single Page Application Tut - themeteorchef]), the default behavior of React Router v4 is your bag of chips.
 
 Inside of our `<Switch />` component, we get down to defining our routes. For the most part, this looks identical to what we're doing above in our original `/imports/startup/routes.js` file. First, calling attention to the `<Route />` components in the list, these behave exactly like we'd expect. When the URL matches, the specified `component` is rendered. So, for the `path="/terms"` component, we'd see the `<Terms />` component rendered on screen. Cool.
 
@@ -310,7 +310,7 @@ Getting the shock factor out of the way now. The biggest change in React Router 
 
 There is still some opinions as to how to do this. We will cover some ways that successfully do nesting.
 
-### [React Router Documentation](https://reacttraining.com/react-router/web/guides/quick-start)
+### [React Router Documentation][React Router Documentation Page]
 
 This is the example in React Router Documentation,
 
@@ -394,7 +394,7 @@ But there are other ways to do this. Thins you need to have in mind:
 
 ### First Level Nesting.
 
-This first level nesting we do is usually the Main Layout of our App, inside this layout we want to put all of our stuff. Check nesting as explained here [Leveling Up With React: React Router](https://css-tricks.com/learning-react-router/).
+This first level nesting we do is usually the Main Layout of our App, inside this layout we want to put all of our stuff. Check nesting as explained here [Leveling Up With React: React Router].
 
 Doing this is easy:
 
@@ -495,3 +495,13 @@ const NoMatchExample = () => (
 Last but not least! In respect to routing, one more feature we need to look at is managing redirects when an action is performed.
 
 <!-- TODO -->
+
+
+[Meteor Chef - Getting Started with React Router 4]: https://themeteorchef.com/tutorials/getting-started-with-react-router-v4
+[React Router Documentation]: https://reacttraining.com/react-router/web/guides/quick-start
+[React Router 4 Basics]: https://teamtreehouse.com/library/react-router-4-basics-2
+[Nesting in ReactRouter v4]: https://teamtreehouse.com/community/warning-you-should-not-use-route-component-and-route-children-in-the-same-route-route-children-will-be-ignored
+[Quick tut to ReactRouter 4]: https://medium.com/@pshrmn/a-simple-react-router-v4-tutorial-7f23ff27adf
+[Single Page Application Tut - themeteorchef]: https://themeteorchef.com/tutorials/single-page-applications-with-react-router
+[React Router Documentation Page]: https://reacttraining.com/react-router/web/guides/quick-start
+[Leveling Up With React: React Router]: https://css-tricks.com/learning-react-router/
