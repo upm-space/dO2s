@@ -166,50 +166,40 @@ class Projects extends Component {
             <Link className="btn btn-success" to={`${match.url}/new`}>Add Project</Link>
           </div>
         </div>
-        {projects.length ? <div className="ItemList">
-          <Row>
-            <Col xs={12} sm={6} md={6} lg={6} className="padding2 margin-bottom">
-              <Button
-                bsStyle="default"
-                onClick={() => this.handleExport('HCx9TS7itgXNSP4Pn')}
-                block
-              >
-                <span className="fa fa-download fa-lg" aria-hidden="true" /> Export Project
-              </Button>
-            </Col>
-            <Col xs={12} sm={6} md={6} lg={6} className="padding2 margin-bottom" />
-          </Row>
-          <Table responsive hover>
-            <thead>
-              <tr>
-                <th>
+        {projects.length ? <div className="ItemList"><Table responsive hover>
+          <thead>
+            <tr>
+              <th>
                 Projects (
-                  {this.state.hideCompleted ? this.props.incompleteCount : this.props.totalCount}
+                {this.state.hideCompleted ? this.props.incompleteCount : this.props.totalCount}
                 )
-                </th>
-                <th className="hidden-xs">Last Updated</th>
-                <th className="hidden-xs">Created</th>
-                <th className="center-column">
+              </th>
+              <th className="hidden-xs">Last Updated</th>
+              <th className="hidden-xs">Created</th>
+              <th className="center-column" />
+              <th className="center-column">
                 Completed
-                </th>
-                <th><Button
-                  bsStyle="default"
-                  onClick={() => this.setState({ trashShow: true })}
-                  block
-                ><Glyphicon glyph="trash" /></Button></th>
-              </tr>
-            </thead>
-            <List
-              loading={loading}
-              completedColumn
-              items={projects}
-              match={match}
-              hideCompleted={this.state.hideCompleted}
-              history={this.props.history}
-              softDeleteItem={this.handleSoftRemove}
-              completeItem={this.toggleDone}
-            />
-          </Table></div> : <Alert bsStyle="warning">No projects yet!</Alert>}
+              </th>
+              <th><Button
+                bsStyle="default"
+                onClick={() => this.setState({ trashShow: true })}
+                block
+              ><Glyphicon glyph="trash" /></Button></th>
+            </tr>
+          </thead>
+          <List
+            loading={loading}
+            completedColumn
+            items={projects}
+            match={match}
+            hideCompleted={this.state.hideCompleted}
+            history={this.props.history}
+            softDeleteItem={this.handleSoftRemove}
+            completeItem={this.toggleDone}
+            exportButton
+            exportItem={this.handleExport}
+          />
+        </Table></div> : <Alert bsStyle="warning">No projects yet!</Alert>}
       </div>
     ) : <Loading />);
   }

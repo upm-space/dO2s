@@ -8,7 +8,8 @@ import classnames from 'classnames';
 import Loading from '../../components/Loading/Loading';
 
 const renderListItems =
-({ history, match, items, hideCompleted, completedColumn, softDeleteItem, completeItem }) => {
+({ history, match, items, hideCompleted, completedColumn,
+  softDeleteItem, completeItem, exportButton, exportItem }) => {
   let filteredItems = items;
   if (completedColumn && hideCompleted) {
     filteredItems = filteredItems.filter(item => !item.done);
@@ -26,6 +27,15 @@ const renderListItems =
           {timeago(item.updatedAt)}</td>
         <td onClick={goToItem} className="hidden-xs">
           {monthDayYearAtTime(item.createdAt)}</td>
+        {exportButton ? (
+          <td className="button-column">
+            <Button
+              bsStyle="default"
+              onClick={() => exportItem(item._id)}
+            >
+              <span className="fa fa-download fa-lg" aria-hidden="true" />
+            </Button>
+          </td>) : null}
         {completedColumn ? (
           <td className="button-column">
             <Button
@@ -59,6 +69,8 @@ const List = props => (
 List.defaultProps = {
   hideCompleted: false,
   completeItem: (() => console.log('i dont have a function to complete anything')),
+  exportItem: (() => console.log('I am here for your safety')),
+  exportButton: false,
 };
 
 List.propTypes = {
@@ -70,6 +82,8 @@ List.propTypes = {
   hideCompleted: PropTypes.bool,
   softDeleteItem: PropTypes.func.isRequired,
   completeItem: PropTypes.func,
+  exportButton: PropTypes.bool,
+  exportItem: PropTypes.func,
 };
 
 export default List;
