@@ -7,8 +7,13 @@ import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Bert } from 'meteor/themeteorchef:bert';
 
+import { exportToLocalFile, importFromLocalFile } from '../../../modules/export-import-files';
+
 
 import ProjectsCollection from '../../../api/Projects/Projects';
+import MissionsCollection from '../../../api/Missions/Missions';
+import PayloadsCollection from '../../../api/Payloads/Payloads';
+import RPAsCollection from '../../../api/RPAs/RPAs';
 import Loading from '../../components/Loading/Loading';
 import TrashModal from '../../components/TrashModal/TrashModal';
 import List from '../../components/List/List';
@@ -23,6 +28,8 @@ class Projects extends Component {
     this.handleRestore = this.handleRestore.bind(this);
     this.toggleHideCompleted = this.toggleHideCompleted.bind(this);
     this.trashClose = this.trashClose.bind(this);
+    this.handleExport = this.handleExport.bind(this);
+    this.handleImport = this.handleImport.bind(this);
 
     this.state = {
       hideCompleted: false,
@@ -74,6 +81,38 @@ class Projects extends Component {
     }
   }
 
+  handleExport(projectId) {
+    let project = ProjectsCollection.find({ _id: projectId }).fetch();
+    project = project[0];
+    const projectName = project.name;
+    const missions = MissionsCollection.find({ project: projectId, deleted: { $eq: 'no' } }).fetch();
+    const payloadIDsArray = [];
+    const rpasIDsArray = [];
+    missions.forEach((mission) => {
+      const payloadID = mission.payload;
+      const rpaID = mission.rpa;
+      if (payloadIDsArray.indexOf(payloadID) === -1) {
+        payloadIDsArray.push(payloadID);
+      }
+      if (rpasIDsArray.indexOf(rpaID) === -1) {
+        rpasIDsArray.push(rpaID);
+      }
+    });
+    const payloads = PayloadsCollection.find({ _id: { $in: payloadIDsArray } }).fetch();
+    const rpas = RPAsCollection.find({ _id: { $in: rpasIDsArray } }).fetch();
+    const exportItem = {
+      project,
+      missions,
+      payloads,
+      rpas,
+    };
+    exportToLocalFile(`${projectName}.json`, JSON.stringify(exportItem, null, '  '));
+  }
+
+  handleImport(newProject) {
+    console.log('hey men, code me');
+  }
+
   toggleDone(projectId, done) {
     Meteor.call('projects.setDone', projectId, !done, (error) => {
       if (error) {
@@ -116,39 +155,61 @@ class Projects extends Component {
             bsStyle={!this.state.hideCompleted ? 'info' : 'default'}
             onClick={() => this.toggleHideCompleted()}
           >{!this.state.hideCompleted ? 'Hide Completed Projects' : 'Show Completed Projects'} ({this.props.completeCount})</Button>
-          <Link className="btn btn-success pull-right" to={`${match.url}/new`}>Add Project</Link>
+          <div className="pull-right">
+            <Button
+              bsStyle="default"
+              onClick={() => this.handleImport()}
+            >
+              <span className="fa fa-upload fa-lg" aria-hidden="true" /> Import Project
+            </Button>
+            {' '}
+            <Link className="btn btn-success" to={`${match.url}/new`}>Add Project</Link>
+          </div>
         </div>
-        {projects.length ? <div className="ItemList"><Table responsive hover>
-          <thead>
-            <tr>
-              <th>
-                Projects (
-                {this.state.hideCompleted ? this.props.incompleteCount : this.props.totalCount}
-                )
-              </th>
-              <th className="hidden-xs">Last Updated</th>
-              <th className="hidden-xs">Created</th>
-              <th className="center-column">
-                Completed
-              </th>
-              <th><Button
+        {projects.length ? <div className="ItemList">
+          <Row>
+            <Col xs={12} sm={6} md={6} lg={6} className="padding2 margin-bottom">
+              <Button
                 bsStyle="default"
-                onClick={() => this.setState({ trashShow: true })}
+                onClick={() => this.handleExport('HCx9TS7itgXNSP4Pn')}
                 block
-              ><Glyphicon glyph="trash" /></Button></th>
-            </tr>
-          </thead>
-          <List
-            loading={loading}
-            completedColumn
-            items={projects}
-            match={match}
-            hideCompleted={this.state.hideCompleted}
-            history={this.props.history}
-            softDeleteItem={this.handleSoftRemove}
-            completeItem={this.toggleDone}
-          />
-        </Table></div> : <Alert bsStyle="warning">No projects yet!</Alert>}
+              >
+                <span className="fa fa-download fa-lg" aria-hidden="true" /> Export Project
+              </Button>
+            </Col>
+            <Col xs={12} sm={6} md={6} lg={6} className="padding2 margin-bottom" />
+          </Row>
+          <Table responsive hover>
+            <thead>
+              <tr>
+                <th>
+                Projects (
+                  {this.state.hideCompleted ? this.props.incompleteCount : this.props.totalCount}
+                )
+                </th>
+                <th className="hidden-xs">Last Updated</th>
+                <th className="hidden-xs">Created</th>
+                <th className="center-column">
+                Completed
+                </th>
+                <th><Button
+                  bsStyle="default"
+                  onClick={() => this.setState({ trashShow: true })}
+                  block
+                ><Glyphicon glyph="trash" /></Button></th>
+              </tr>
+            </thead>
+            <List
+              loading={loading}
+              completedColumn
+              items={projects}
+              match={match}
+              hideCompleted={this.state.hideCompleted}
+              history={this.props.history}
+              softDeleteItem={this.handleSoftRemove}
+              completeItem={this.toggleDone}
+            />
+          </Table></div> : <Alert bsStyle="warning">No projects yet!</Alert>}
       </div>
     ) : <Loading />);
   }
@@ -167,9 +228,12 @@ Projects.propTypes = {
 };
 
 export default withTracker(() => {
-  const subscription = Meteor.subscribe('projects');
+  const projectsSub = Meteor.subscribe('projects');
+  const missionSub = Meteor.subscribe('missions.export');
+  const payloadsSub = Meteor.subscribe('payloads');
+  const rpasSub = Meteor.subscribe('rpas');
   return {
-    loading: !subscription.ready(),
+    loading: !projectsSub.ready(),
     projects: ProjectsCollection.find({ deleted: { $eq: 'no' } }).fetch(),
     deletedProjects: ProjectsCollection.find({ deleted: { $ne: 'no' } }).fetch(),
     deletedCount: ProjectsCollection.find({ deleted: { $ne: 'no' } }).count(),

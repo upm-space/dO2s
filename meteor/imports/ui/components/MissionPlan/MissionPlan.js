@@ -399,27 +399,6 @@ class MissionPlan extends Component {
                   onClick={() => this.toogleButtonSwtich()}
                   block
                 >
-                  <div><i className="fa fa-download fa-lg" aria-hidden="true" /></div>
-                  <div>Export<br /> Mission</div></Button>
-              </Col>
-              <Col xs={12} sm={6} md={6} lg={6} className="padding2 margin-bottom">
-                <Button
-                  bsStyle="default"
-                  onClick={() => this.toogleButtonSwtich()}
-                  block
-                >
-                  <div><i className="fa fa-upload fa-lg" aria-hidden="true" /></div>
-                  <div>Import<br /> Mission</div></Button>
-              </Col>
-            </Row>
-            <br />
-            <Row>
-              <Col xs={12} sm={6} md={6} lg={6} className="padding2 margin-bottom">
-                <Button
-                  bsStyle="default"
-                  onClick={() => this.toogleButtonSwtich()}
-                  block
-                >
                   <div><i className="fa fa-square-o fa-lg" aria-hidden="true" /></div>
                   <div>Perimeter<br /> KML</div></Button>
               </Col>
