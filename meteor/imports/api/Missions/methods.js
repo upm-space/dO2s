@@ -253,6 +253,18 @@ Meteor.methods({
       throw new Meteor.Error('500', exception);
     }
   },
+  'missions.insertWaypointAltitudes': function missionsInsertWaypointAltitudes(missionId, newWaypointList) {
+    check(missionId, String);
+    try {
+      FeatureCollectionPoints.validate(newWaypointList);
+      Missions.update(missionId, { $set: { 'flightPlan.missionCalculation.waypointList': newWaypointList } });
+    } catch (exception) {
+      if (exception.error === 'validation-error') {
+        throw new Meteor.Error(500, exception.message);
+      }
+      throw new Meteor.Error('500', exception);
+    }
+  },
 });
 
 rateLimit({
@@ -274,6 +286,7 @@ rateLimit({
     'missions.editWayPointType',
     'missions.editWayPointAltRelative',
     'missions.recalculateWaypointNumbers',
+    'missions.insertWaypointAltitudes',
   ],
   limit: 5,
   timeRange: 1000,

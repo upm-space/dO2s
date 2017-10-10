@@ -105,7 +105,7 @@ const missionSuperficial = {
       },
     },
     flightParameters: {
-      altitude: 120,
+      height: 120,
       speed: 60,
       entryMargin: 2,
     },
@@ -233,7 +233,7 @@ export default class MissionBuilderDO2sParser {
     // TODO: convert to dO2sMission and return dO2sMission insteadof this.mission
     // this.m2.mission = _mission;
 
-    this.mission.altitude = this.m2.mission.flightPlan.flightParameters.altitude;
+    this.mission.altitude = this.m2.mission.flightPlan.flightParameters.height;
     this.mission.buffer = 0; // TODO - DONE
     this.mission.camera.Focal = this.m2.payload.sensorParameters.focalLength;
     this.mission.camera.MatrixHeight = this.m2.payload.sensorParameters.sensorHeight;

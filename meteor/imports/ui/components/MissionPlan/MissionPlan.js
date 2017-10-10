@@ -16,6 +16,7 @@ import MissionPictureGrid from '../MissionPictureGrid/MissionPictureGrid';
 import MissionData from '../MissionData/MissionData';
 import MissionBuilderDO2sParser from '../../../modules/mission-planning/MissionBuilderDO2sParser';
 import { createRPAPath, setWaypointNumbers } from '../../../modules/waypoint-utilities';
+import getElevation from '../../../modules/mission-planning/get-elevation';
 
 import './MissionPlan.scss';
 
@@ -32,6 +33,7 @@ class MissionPlan extends Component {
     this.buttonGeometryName = this.buttonGeometryName.bind(this);
     this.getNumberOfSides = this.getNumberOfSides.bind(this);
     this.drawMission = this.drawMission.bind(this);
+    this.getElevation = this.getElevation.bind(this);
 
     this.state = {
       showWayPoints: false,
@@ -96,6 +98,11 @@ class MissionPlan extends Component {
       return this.props.mission.flightPlan.missionArea.geometry.coordinates[0].length - 1;
     }
     return 1;
+  }
+
+  getElevation(height, waypointList) {
+    this.toogleButtonSwtich();
+    getElevation(this.props.mission._id, height, waypointList);
   }
 
   editWayPointList(newWayPointList = {}, newRPAPath = {}) {
@@ -266,7 +273,7 @@ class MissionPlan extends Component {
               <Col xs={12} sm={6} md={6} lg={6} className="padding2 margin-bottom">
                 <Button
                   bsStyle="success"
-                  onClick={() => this.toogleButtonSwtich()}
+                  onClick={() => this.getElevation(mission.flightPlan.flightParameters.height, mission.flightPlan.missionCalculation.waypointList)}
                   block
                 >
                   <div><i className="fa fa-long-arrow-up fa-lg" aria-hidden="true" /></div>

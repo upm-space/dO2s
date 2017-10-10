@@ -19,7 +19,7 @@ Missions.deny({
 });
 
 const flightParametersSchema = new SimpleSchema({
-  altitude: {
+  height: {
     type: Number,
     label: 'The altitude of the flight in meters',
     min: 0,

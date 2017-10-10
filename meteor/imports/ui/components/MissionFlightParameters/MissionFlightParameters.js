@@ -13,7 +13,7 @@ class MissionFlightParameters extends Component {
     const missionType = this.props.mission.missionType;
     validate(component.form, {
       rules: {
-        altitude: {
+        height: {
           required: true,
         },
         speed: {
@@ -27,8 +27,8 @@ class MissionFlightParameters extends Component {
         },
       },
       messages: {
-        altitude: {
-          required: 'The altitude of the flight',
+        height: {
+          required: 'The altitude of the flight above ground',
         },
         speed: {
           required: 'The speed of the RPA',
@@ -47,7 +47,7 @@ class MissionFlightParameters extends Component {
   handleSubmit() {
     const missionType = this.props.mission.missionType;
     const flightParams = {
-      altitude: Number(this.altitude.value),
+      height: Number(this.height.value),
       speed: Number(this.speed.value),
       entryMargin: Number(this.entryMargin.value),
     };
@@ -73,13 +73,13 @@ class MissionFlightParameters extends Component {
       >
         <Row><Col xs={12} sm={6} md={6} lg={6}>
           <FormGroup>
-            <ControlLabel>Altitude (m)</ControlLabel>
+            <ControlLabel>Height of flight above ground (m)</ControlLabel>
             <input
               type="number"
               className="form-control"
-              name="altitude"
-              ref={altitude => (this.altitude = altitude)}
-              defaultValue={mission && mission.flightPlan && mission.flightPlan.flightParameters && mission.flightPlan.flightParameters.altitude}
+              name="height"
+              ref={height => (this.height = height)}
+              defaultValue={mission && mission.flightPlan && mission.flightPlan.flightParameters && mission.flightPlan.flightParameters.height}
             />
           </FormGroup>
           <FormGroup>
