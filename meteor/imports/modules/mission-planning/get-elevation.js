@@ -3,19 +3,19 @@ import { Meteor } from 'meteor/meteor';
 
 const calculateAltitudes = (flightHeight, featureCollection) => {
   const resultList = JSON.parse(JSON.stringify(featureCollection));
-  const takeoffElevation = Number(featureCollection.features[0].geometry.coordinates[2].toFixed(2));
+  const takeoffElevation = featureCollection.features[0].geometry.coordinates[2];
 
   resultList.features.forEach((feature) => {
-    const waypointElevation = Number(feature.geometry.coordinates[2].toFixed(2));
+    const waypointElevation = feature.geometry.coordinates[2];
     if (feature.properties.type === 1) {
       feature.properties.altGround = waypointElevation;
       feature.properties.altRelative = 0;
     } else if (feature.properties.type === 2) {
       feature.properties.altGround = waypointElevation;
-      feature.properties.altRelative = Number((waypointElevation - takeoffElevation).toFixed(2));
+      feature.properties.altRelative = waypointElevation - takeoffElevation;
     } else {
       feature.properties.altGround = waypointElevation;
-      feature.properties.altRelative = Number((flightHeight + (waypointElevation - takeoffElevation)).toFixed(2));
+      feature.properties.altRelative = flightHeight + (waypointElevation - takeoffElevation);
     }
   });
   return resultList;

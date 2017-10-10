@@ -26,7 +26,7 @@ const changeWaypointAtlRelative = (missionId, waypointIndex, newWayPointAltRelat
     if (error) {
       Bert.alert(error.reason, 'danger');
     } else {
-      Bert.alert('Waypoint Altitude Realtive to Home Changed', 'success');
+      Bert.alert('Waypoint Height Relative to Take Off Changed', 'success');
     }
   }));
 
@@ -55,11 +55,11 @@ const renderWaypointListItems = ({ missionId, waypointList }) =>
         className="form-control"
         name="altRelative"
         min="0"
-        defaultValue={waypoint.properties.altRelative}
+        defaultValue={waypoint.properties.altRelative.toFixed(2)}
         onChange={event =>
           changeWaypointAtlRelative(missionId, waypoint.properties.totalNumber, Number(event.target.value))}
       /></td>
-      <td>{waypoint.properties.altGround}</td>
+      <td>{waypoint.properties.altGround.toFixed(2)}</td>
     </tr>));
 
 const renderWaypointListBody = props => (
