@@ -9,13 +9,13 @@
   background-color: rgba(0, 0, 0, 0);
 }
 
-.take-off { color: #00FFFF };
-.landing { color: #FF5733 };
-.camera-on { color: #00FF66 };
-.camera-off { color: #00FF66 };
-.waypoint { color: #FFC300 };
+.take-off { color: #007bff!important };
+.landing { color: #dc3545!important };
+.camera { color: #28a745!important };
+.ban { color: #dc3545!important };
+.waypoint { color: #ffc107!important };
 .calendar-text {
   margin-top: -4px;
   margin-left: 4px;
-  color: #FFFFFF;
+  color: #f8f9fa!important;
 }

@@ -32,7 +32,6 @@ class MissionPlan extends Component {
     this.buttonGeometryName = this.buttonGeometryName.bind(this);
     this.getNumberOfSides = this.getNumberOfSides.bind(this);
     this.drawMission = this.drawMission.bind(this);
-    this.changeMissionDirection = this.changeMissionDirection.bind(this);
 
     this.state = {
       showWayPoints: false,
@@ -92,6 +91,13 @@ class MissionPlan extends Component {
     });
   }
 
+  getNumberOfSides() {
+    if (this.props.mission.flightPlan.missionArea) {
+      return this.props.mission.flightPlan.missionArea.geometry.coordinates[0].length - 1;
+    }
+    return 1;
+  }
+
   editWayPointList(newWayPointList = {}, newRPAPath = {}) {
     Meteor.call('missions.editWayPointList', this.props.mission._id, newWayPointList, newRPAPath, (error) => {
       if (error) {
@@ -131,7 +137,7 @@ class MissionPlan extends Component {
     });
   }
 
-  drawMission() {
+  drawMission(isChangeDirection) {
     if (!this.props.mission.flightPlan.flightParameters) {
       Bert.alert('You need to define the Flight Parameters', 'danger');
       return;
@@ -155,62 +161,18 @@ class MissionPlan extends Component {
     this.toogleButtonSwtich();
     const dO2sBuilder = new MissionBuilderDO2sParser(this.props.mission, this.props.payload);
     dO2sBuilder.setInitialSegment(1);
-    dO2sBuilder.calculateMission();
-    const mData = dO2sBuilder.getMission();
-    mData.waypointLine = createRPAPath(mData.waypoints);
-    const waypointListNoNumbers = {
-      type: 'FeatureCollection',
-      features: mData.waypoints,
-    };
-    mData.waypointList = setWaypointNumbers(waypointListNoNumbers);
-    Meteor.call('missions.setMissionCalculations', this.props.mission._id, mData, (error) => {
-      if (error) {
-        Bert.alert(error.reason, 'danger');
+    if (isChangeDirection) {
+      const sides = this.getNumberOfSides();
+      let missionDirection = this.state.missionDirection;
+      if (missionDirection === sides) {
+        missionDirection = 1;
+        this.setState({ missionDirection: 1 });
       } else {
-        Bert.alert('Calculation of Waypoints Saved', 'success');
+        missionDirection += 1;
+        this.setState(prevState => ({ missionDirection: prevState.missionDirection + 1 }));
       }
-    });
-  }
-
-  getNumberOfSides() {
-    if (this.props.mission.flightPlan.missionArea) {
-      return this.props.mission.flightPlan.missionArea.geometry.coordinates[0].length - 1;
+      dO2sBuilder.setInitialSegment(missionDirection);
     }
-  }
-
-  changeMissionDirection() {
-    if (!this.props.mission.flightPlan.flightParameters) {
-      Bert.alert('You need to define the Flight Parameters', 'danger');
-      return;
-    } else if (!this.props.mission.flightPlan.pictureGrid) {
-      Bert.alert('You need to define the Picture Grid', 'danger');
-      return;
-    } else if (!this.props.mission.flightPlan.takeOffPoint) {
-      Bert.alert('You need to define the Take Off Point', 'danger');
-      return;
-    } else if (!this.props.mission.flightPlan.landingPoint) {
-      Bert.alert('You need to define the Landing Point', 'danger');
-      return;
-    } else if (this.props.mission.missionType === 'Surface Area' && !this.props.mission.flightPlan.missionArea) {
-      Bert.alert('You need to define the Mission Area', 'danger');
-      return;
-    } else if (this.props.mission.missionType === 'Linear Area' && !this.props.mission.flightPlan.missionAxis) {
-      Bert.alert('You need to define the Mission Axis', 'danger');
-      return;
-    }
-
-    this.toogleButtonSwtich();
-    const sides = this.getNumberOfSides();
-    let missionDirection = this.state.missionDirection;
-    const dO2sBuilder = new MissionBuilderDO2sParser(this.props.mission, this.props.payload);
-    if (missionDirection === sides) {
-      missionDirection = 1;
-      this.setState({ missionDirection: 1 });
-    } else {
-      missionDirection += 1;
-      this.setState(prevState => ({ missionDirection: prevState.missionDirection + 1 }));
-    }
-    dO2sBuilder.setInitialSegment(missionDirection);
     dO2sBuilder.calculateMission();
     const mData = dO2sBuilder.getMission();
     mData.waypointLine = createRPAPath(mData.waypoints);
@@ -294,7 +256,7 @@ class MissionPlan extends Component {
               <Col xs={12} sm={6} md={6} lg={6} className="padding2 margin-bottom">
                 <Button
                   bsStyle="success"
-                  onClick={() => this.drawMission()}
+                  onClick={() => this.drawMission(false)}
                   block
                 >
                   <div><i className="fa fa-superpowers fa-lg" aria-hidden="true" /></div>
@@ -314,8 +276,8 @@ class MissionPlan extends Component {
               <Col xs={12} sm={12} md={12} lg={12} className="padding2 margin-bottom">
                 <Button
                   bsStyle="success"
-                  onClick={() => this.changeMissionDirection()}
-                  disabled={mission.missionType !== 'Superficial Area'}
+                  onClick={() => this.drawMission(true)}
+                  disabled={mission.missionType !== 'Surface Area'}
                   block
                 >
                   <div><i className="fa fa-rotate-right fa-lg" aria-hidden="true" /></div>
