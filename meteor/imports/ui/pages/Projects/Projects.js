@@ -2,13 +2,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { Table, Alert, Button, Glyphicon } from 'react-bootstrap';
+import { Table, Alert, Button, Glyphicon, Label } from 'react-bootstrap';
 import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Bert } from 'meteor/themeteorchef:bert';
 
 import { exportToLocalFile, importFromLocalFile } from '../../../modules/export-import-files';
-
 
 import ProjectsCollection from '../../../api/Projects/Projects';
 import MissionsCollection from '../../../api/Missions/Missions';
@@ -21,7 +20,6 @@ import List from '../../components/List/List';
 class Projects extends Component {
   constructor(props) {
     super(props);
-
     this.toggleDone = this.toggleDone.bind(this);
     this.handleHardRemove = this.handleHardRemove.bind(this);
     this.handleSoftRemove = this.handleSoftRemove.bind(this);
@@ -106,11 +104,96 @@ class Projects extends Component {
       payloads,
       rpas,
     };
+    // Remove ids
+    const exportItemKeys = Object.keys(exportItem);
+    exportItemKeys.forEach((item) => {
+      if (item === 'project') {
+        delete exportItem[item].createdAt;
+        delete exportItem[item].updatedAt;
+        delete exportItem[item].owner;
+        delete exportItem[item].deleted;
+        delete exportItem[item].done;
+      } else {
+        exportItem[item].forEach((arrayItem) => {
+          delete arrayItem.createdAt;
+          delete arrayItem.updatedAt;
+          delete arrayItem.owner;
+          delete arrayItem.deleted;
+          delete arrayItem.done;
+        });
+      }
+    });
     exportToLocalFile(`${projectName}.json`, JSON.stringify(exportItem, null, '  '));
   }
 
-  handleImport(newProject) {
-    console.log('hey men, code me');
+  handleImport(file) {
+    const importProject = (variableWithObjects) => {
+      console.log('dentro de la importacion');
+      // change and generate ids and owners
+      const { project, missions, rpas, payloads } = variableWithObjects;
+      // delete projectId
+      delete project._id;
+      try {
+        Meteor.call('projects.insert', project, (errorProject, newProjectId) => {
+          if (errorProject) {
+            Bert.alert(`Project import error: ${errorProject.reason}`, 'danger');
+          } else {
+            console.log('projecto insertado');
+            missions.forEach((mission) => {
+              mission.project = newProjectId;
+              console.log('cambio id de projecto en las misones');
+            });
+            payloads.forEach((payload) => {
+              const oldPayload = payload._id;
+              delete payload._id;
+              Meteor.call('payloads.insert', payload, (errorPayload, newPayloadID) => {
+                if (errorPayload) {
+                  Bert.alert(`Payload import error: ${errorPayload.reason}`, 'danger');
+                } else {
+                  console.log('payload insertado');
+                  missions.forEach((mission) => {
+                    if (mission.payload === oldPayload) {
+                      mission.payload = newPayloadID;
+                    }
+                  });
+                }
+              });
+            });
+            rpas.forEach((rpa) => {
+              const oldRpa = rpa._id;
+              delete rpa._id;
+              Meteor.call('rpas.insert', rpa, (errorRPA, newRPAID) => {
+                if (errorRPA) {
+                  Bert.alert(`RPA import error: ${errorRPA.reason}`, 'danger');
+                } else {
+                  console.log('rpa insertado');
+                  missions.forEach((mission) => {
+                    if (mission.rpa === oldRpa) {
+                      mission.rpa = newRPAID;
+                    }
+                  });
+                }
+              });
+            });
+            missions.forEach((mission) => {
+              delete mission._id;
+              Meteor.call('missions.import', mission, (errorMission) => {
+                if (errorMission) {
+                  Bert.alert(`Mission import error: ${errorMission.reason}`, 'danger');
+                } else {
+                  console.log('mission insertada');
+                }
+              });
+            });
+            Bert.alert('Project Imported', 'success');
+          }
+        });
+      } catch (error) {
+        Bert.alert(`Hey You have an error: ${error}`, 'danger');
+      }
+    };
+
+    importFromLocalFile(file, importProject);
   }
 
   toggleDone(projectId, done) {
@@ -156,12 +239,17 @@ class Projects extends Component {
             onClick={() => this.toggleHideCompleted()}
           >{!this.state.hideCompleted ? 'Hide Completed Projects' : 'Show Completed Projects'} ({this.props.completeCount})</Button>
           <div className="pull-right">
-            <Button
-              bsStyle="default"
-              onClick={() => this.handleImport()}
-            >
+            <Label bsClass="btn btn-default">
               <span className="fa fa-upload fa-lg" aria-hidden="true" /> Import Project
-            </Button>
+              <input
+                className="btn btn-default"
+                type="file"
+                style={{ display: 'none !important' }}
+
+                // hidden
+                onChange={event => this.handleImport(event.target.files[0])}
+              />
+            </Label>
             {' '}
             <Link className="btn btn-success" to={`${match.url}/new`}>Add Project</Link>
           </div>

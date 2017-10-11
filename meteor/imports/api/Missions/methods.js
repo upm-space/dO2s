@@ -8,6 +8,8 @@ import { setWaypointNumbers } from '../../modules/waypoint-utilities';
 
 const newMissionSchema = Missions.schema.pick('name', 'project', 'rpa', 'missionType', 'description', 'payload');
 
+const importMissionSchema = Missions.schema.pick('name', 'project', 'rpa', 'missionType', 'description', 'payload', 'flightPlan');
+
 const editMissionSchema = Missions.schema.pick('name', 'project', 'rpa', 'missionType', 'description', 'payload');
 editMissionSchema.extend({ _id: String });
 
@@ -15,6 +17,17 @@ Meteor.methods({
   'missions.insert': function missionsInsert(mission) {
     try {
       newMissionSchema.validate(mission);
+      return Missions.insert({ owner: this.userId, ...mission });
+    } catch (exception) {
+      if (exception.error === 'validation-error') {
+        throw new Meteor.Error(500, exception.message);
+      }
+      throw new Meteor.Error('500', exception);
+    }
+  },
+  'missions.import': function missionsImport(mission) {
+    try {
+      importMissionSchema.validate(mission);
       return Missions.insert({ owner: this.userId, ...mission });
     } catch (exception) {
       if (exception.error === 'validation-error') {
@@ -270,6 +283,7 @@ Meteor.methods({
 rateLimit({
   methods: [
     'missions.insert',
+    'missions.import',
     'missions.update',
     'missions.softDelete',
     'missions.restore',

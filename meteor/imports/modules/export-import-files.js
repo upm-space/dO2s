@@ -11,6 +11,16 @@ export const exportToLocalFile = (filename, text) => {
   }
 };
 
-export const importFromLocalFile = () => {
-  console.log('saluda');
+export const importFromLocalFile = (file, insertInDatabase) => {
+  const reader = new FileReader();
+  reader.readAsText(file);
+  reader.onload = (e) => {
+    const resultado = e.target.result;
+    try {
+      const archivoParseado = JSON.parse(resultado);
+      insertInDatabase(archivoParseado);
+    } catch (error) {
+      throw new TypeError("Oops, we haven't got JSON!");
+    }
+  };
 };
