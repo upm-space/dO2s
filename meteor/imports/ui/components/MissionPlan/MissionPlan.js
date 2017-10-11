@@ -260,6 +260,39 @@ class MissionPlan extends Component {
             </Row>
             <br />
             <Row>
+              <Col xs={12} sm={12} md={12} lg={4} className="padding2 margin-bottom">
+                <Button
+                  bsStyle="info"
+                  onClick={() => this.toogleButtonSwtich('flightParametersButtonActive')}
+                  active={this.state.buttonStates.flightParametersButtonActive}
+                  block
+                >
+                  <div><i className="fa fa-paper-plane fa-lg" aria-hidden="true" /></div>
+                  <div>Flight<br />Params</div></Button>
+              </Col>
+              <Col xs={12} sm={12} md={12} lg={4} className="padding2 margin-bottom">
+                <Button
+                  bsStyle="info"
+                  onClick={() => this.toogleButtonSwtich('payloadParamsButtonActive')}
+                  active={this.state.buttonStates.payloadParamsButtonActive}
+                  block
+                >
+                  <div><i className="fa fa-camera fa-lg" aria-hidden="true" /></div>
+                  <div>Payload<br />Params</div></Button>
+              </Col>
+              <Col xs={12} sm={12} md={12} lg={4} className="padding2 margin-bottom">
+                <Button
+                  bsStyle="info"
+                  onClick={() => this.toogleButtonSwtich('pictureGridButtonActive')}
+                  active={this.state.buttonStates.pictureGridButtonActive}
+                  block
+                >
+                  <div><i className="fa fa-picture-o fa-lg" aria-hidden="true" /></div>
+                  <div>Picture<br />Grid</div></Button>
+              </Col>
+            </Row>
+            <br />
+            <Row>
               <Col xs={12} sm={6} md={6} lg={6} className="padding2 margin-bottom">
                 <Button
                   bsStyle="success"
@@ -290,39 +323,6 @@ class MissionPlan extends Component {
                   <div><i className="fa fa-rotate-right fa-lg" aria-hidden="true" /></div>
                   <div>Change Mission Direction</div>
                 </Button>
-              </Col>
-            </Row>
-            <br />
-            <Row>
-              <Col xs={12} sm={12} md={12} lg={4} className="padding2 margin-bottom">
-                <Button
-                  bsStyle="info"
-                  onClick={() => this.toogleButtonSwtich('flightParametersButtonActive')}
-                  active={this.state.buttonStates.flightParametersButtonActive}
-                  block
-                >
-                  <div><i className="fa fa-paper-plane fa-lg" aria-hidden="true" /></div>
-                  <div>Flight<br />Params</div></Button>
-              </Col>
-              <Col xs={12} sm={12} md={12} lg={4} className="padding2 margin-bottom">
-                <Button
-                  bsStyle="info"
-                  onClick={() => this.toogleButtonSwtich('payloadParamsButtonActive')}
-                  active={this.state.buttonStates.payloadParamsButtonActive}
-                  block
-                >
-                  <div><i className="fa fa-camera fa-lg" aria-hidden="true" /></div>
-                  <div>Payload<br />Params</div></Button>
-              </Col>
-              <Col xs={12} sm={12} md={12} lg={4} className="padding2 margin-bottom">
-                <Button
-                  bsStyle="info"
-                  onClick={() => this.toogleButtonSwtich('pictureGridButtonActive')}
-                  active={this.state.buttonStates.pictureGridButtonActive}
-                  block
-                >
-                  <div><i className="fa fa-picture-o fa-lg" aria-hidden="true" /></div>
-                  <div>Picture<br />Grid</div></Button>
               </Col>
             </Row>
             <br />
