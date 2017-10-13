@@ -137,8 +137,9 @@ Meteor.methods({
     try {
       const flightParamsSchema = Missions.schema.getObjectSchema('flightPlan.flightParameters');
       flightParamsSchema.validate(flightParameters);
-      Missions.update(missionId, { $set: { 'flightPlan.flightParameters': flightParameters,
-      } });
+      Missions.update(missionId, {
+        $set: { 'flightPlan.flightParameters': flightParameters },
+      });
     } catch (exception) {
       if (exception.error === 'validation-error') {
         throw new Meteor.Error(500, exception.message);
@@ -151,8 +152,9 @@ Meteor.methods({
     try {
       const pictureGridSchema = Missions.schema.getObjectSchema('flightPlan.pictureGrid');
       pictureGridSchema.validate(pictureGrid);
-      Missions.update(missionId, { $set: { 'flightPlan.pictureGrid': pictureGrid,
-      } });
+      Missions.update(missionId, {
+        $set: { 'flightPlan.pictureGrid': pictureGrid },
+      });
     } catch (exception) {
       if (exception.error === 'validation-error') {
         throw new Meteor.Error(500, exception.message);
@@ -185,8 +187,9 @@ Meteor.methods({
       FeatureCollectionPoints.validate(parseMissionCalculationData.waypointList);
       FeatureLineString.validate(parseMissionCalculationData.rpaPath);
 
-      Missions.update(missionId, { $set: { 'flightPlan.missionCalculation': parseMissionCalculationData,
-      } });
+      Missions.update(missionId, {
+        $set: { 'flightPlan.missionCalculation': parseMissionCalculationData },
+      });
     } catch (exception) {
       if (exception.error === 'validation-error') {
         throw new Meteor.Error(500, exception.message);
@@ -198,10 +201,12 @@ Meteor.methods({
     try {
       FeatureCollectionPoints.validate(newWayPointList);
       FeatureLineString.validate(newRPAPath);
-      Missions.update(missionId, { $set: { 'flightPlan.missionCalculation.waypointList': newWayPointList,
-      } });
-      Missions.update(missionId, { $set: { 'flightPlan.missionCalculation.rpaPath': newRPAPath,
-      } });
+      Missions.update(missionId, {
+        $set: { 'flightPlan.missionCalculation.waypointList': newWayPointList },
+      });
+      Missions.update(missionId, {
+        $set: { 'flightPlan.missionCalculation.rpaPath': newRPAPath },
+      });
     } catch (exception) {
       if (exception.error === 'validation-error') {
         throw new Meteor.Error(500, exception.message);
@@ -228,8 +233,10 @@ Meteor.methods({
     check(waypointIndex, Number);
     check(newWayPointType, Number);
     try {
-      Missions.update({ _id: missionId, 'flightPlan.missionCalculation.waypointList.features.properties.totalNumber': waypointIndex },
-        { $set: { 'flightPlan.missionCalculation.waypointList.features.$.properties.type': newWayPointType } });
+      Missions.update(
+        { _id: missionId, 'flightPlan.missionCalculation.waypointList.features.properties.totalNumber': waypointIndex },
+        { $set: { 'flightPlan.missionCalculation.waypointList.features.$.properties.type': newWayPointType } },
+      );
     } catch (exception) {
       if (exception.error === 'validation-error') {
         throw new Meteor.Error(500, exception.message);
@@ -242,8 +249,10 @@ Meteor.methods({
     check(waypointIndex, Number);
     check(newWayPointAltRelative, Number);
     try {
-      Missions.update({ _id: missionId, 'flightPlan.missionCalculation.waypointList.features.properties.totalNumber': waypointIndex },
-        { $set: { 'flightPlan.missionCalculation.waypointList.features.$.properties.altRelative': newWayPointAltRelative } });
+      Missions.update(
+        { _id: missionId, 'flightPlan.missionCalculation.waypointList.features.properties.totalNumber': waypointIndex },
+        { $set: { 'flightPlan.missionCalculation.waypointList.features.$.properties.altRelative': newWayPointAltRelative } },
+      );
     } catch (exception) {
       if (exception.error === 'validation-error') {
         throw new Meteor.Error(500, exception.message);

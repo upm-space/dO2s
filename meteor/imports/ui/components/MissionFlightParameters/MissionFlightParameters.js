@@ -10,7 +10,7 @@ import validate from '../../../modules/validate';
 class MissionFlightParameters extends Component {
   componentDidMount() {
     const component = this;
-    const missionType = this.props.mission.missionType;
+    const { missionType } = this.props.mission;
     validate(component.form, {
       rules: {
         height: {
@@ -45,7 +45,7 @@ class MissionFlightParameters extends Component {
   }
 
   handleSubmit() {
-    const missionType = this.props.mission.missionType;
+    const { missionType } = this.props.mission;
     const flightParams = {
       height: Number(this.height.value),
       speed: Number(this.speed.value),
@@ -71,49 +71,50 @@ class MissionFlightParameters extends Component {
         ref={form => (this.form = form)}
         onSubmit={event => event.preventDefault()}
       >
-        <Row><Col xs={12} sm={6} md={6} lg={6}>
-          <FormGroup>
-            <ControlLabel>Height of flight above ground (m)</ControlLabel>
-            <input
-              type="number"
-              className="form-control"
-              name="height"
-              ref={height => (this.height = height)}
-              defaultValue={mission && mission.flightPlan && mission.flightPlan.flightParameters && mission.flightPlan.flightParameters.height}
-            />
-          </FormGroup>
-          <FormGroup>
-            <ControlLabel>Speed (m/s)</ControlLabel>
-            <input
-              type="number"
-              className="form-control"
-              name="speed"
-              ref={speed => (this.speed = speed)}
-              defaultValue={mission && mission.flightPlan && mission.flightPlan.flightParameters && mission.flightPlan.flightParameters.speed}
-            />
-          </FormGroup>
-          <FormGroup>
-            <ControlLabel>Entry Margin for Fixed Wing (m)</ControlLabel>
-            <input
-              type="number"
-              className="form-control"
-              name="entryMargin"
-              ref={entryMargin => (this.entryMargin = entryMargin)}
-              defaultValue={mission && mission.flightPlan && mission.flightPlan.flightParameters && mission.flightPlan.flightParameters.entryMargin}
-            />
-          </FormGroup>
-          {(mission && mission.missionType && mission.missionType === 'Linear Area') ?
+        <Row>
+          <Col xs={12} sm={6} md={6} lg={6}>
             <FormGroup>
-              <ControlLabel>Axis Buffer for Linear Mission (m)</ControlLabel>
+              <ControlLabel>Height of flight above ground (m)</ControlLabel>
               <input
                 type="number"
                 className="form-control"
-                name="axisBuffer"
-                ref={axisBuffer => (this.axisBuffer = axisBuffer)}
-                defaultValue={mission && mission.flightPlan && mission.flightPlan.flightParameters && mission.flightPlan.flightParameters.axisBuffer}
+                name="height"
+                ref={height => (this.height = height)}
+                defaultValue={mission && mission.flightPlan && mission.flightPlan.flightParameters && mission.flightPlan.flightParameters.height}
               />
-            </FormGroup> : ''}
-        </Col>
+            </FormGroup>
+            <FormGroup>
+              <ControlLabel>Speed (m/s)</ControlLabel>
+              <input
+                type="number"
+                className="form-control"
+                name="speed"
+                ref={speed => (this.speed = speed)}
+                defaultValue={mission && mission.flightPlan && mission.flightPlan.flightParameters && mission.flightPlan.flightParameters.speed}
+              />
+            </FormGroup>
+            <FormGroup>
+              <ControlLabel>Entry Margin for Fixed Wing (m)</ControlLabel>
+              <input
+                type="number"
+                className="form-control"
+                name="entryMargin"
+                ref={entryMargin => (this.entryMargin = entryMargin)}
+                defaultValue={mission && mission.flightPlan && mission.flightPlan.flightParameters && mission.flightPlan.flightParameters.entryMargin}
+              />
+            </FormGroup>
+            {(mission && mission.missionType && mission.missionType === 'Linear Area') ?
+              <FormGroup>
+                <ControlLabel>Axis Buffer for Linear Mission (m)</ControlLabel>
+                <input
+                  type="number"
+                  className="form-control"
+                  name="axisBuffer"
+                  ref={axisBuffer => (this.axisBuffer = axisBuffer)}
+                  defaultValue={mission && mission.flightPlan && mission.flightPlan.flightParameters && mission.flightPlan.flightParameters.axisBuffer}
+                />
+              </FormGroup> : ''}
+          </Col>
         </Row>
         <Button type="submit" bsStyle="success">
           Save Changes

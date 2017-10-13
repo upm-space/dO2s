@@ -2,7 +2,8 @@
 import MissionBuilder from './MissionBuilder';
 import Latlon from './GeoHelper';
 
-const blankMission = { _id: '',
+const blankMission = {
+  _id: '',
   deletedAt: null,
   deleted: false,
   name: '',
@@ -177,7 +178,8 @@ export default class MissionBuilderDO2sParser {
     // return this.mission;
     const waypoints = [];
     this.mission.waypoints.forEach((waypoint) => {
-      const wpjson = { type: 'Feature',
+      const wpjson = {
+        type: 'Feature',
         properties: {
           altRelative: waypoint.altRelative,
           altAbsolute: waypoint.altAbsolute,
@@ -188,7 +190,8 @@ export default class MissionBuilderDO2sParser {
         geometry: {
           type: 'Point',
           coordinates: [waypoint.lng, waypoint.lat],
-        } };
+        },
+      };
 
       if (wpjson.properties.type === 3 || wpjson.properties.type === 4) {
         wpjson.properties.shootDistance = waypoint.param2;
@@ -196,24 +199,28 @@ export default class MissionBuilderDO2sParser {
       waypoints.push(wpjson);
     });
 
-    const waypointLine = { type: 'Feature',
+    const waypointLine = {
+      type: 'Feature',
       properties: {},
       geometry: {
         type: 'LineString',
         coordinates: [],
-      } };
+      },
+    };
 
-    waypointLine.geometry.coordinates.push(
-      [this.m2.mission.flightPlan.takeOffPoint.geometry.coordinates[0],
-        this.m2.mission.flightPlan.takeOffPoint.geometry.coordinates[1]]);
+    waypointLine.geometry.coordinates.push([
+      this.m2.mission.flightPlan.takeOffPoint.geometry.coordinates[0],
+      this.m2.mission.flightPlan.takeOffPoint.geometry.coordinates[1],
+    ]);
 
     this.mission.points.forEach((point) => {
       waypointLine.geometry.coordinates.push([point.lon, point.lat]);
     });
 
-    waypointLine.geometry.coordinates.push(
-      [this.m2.mission.flightPlan.landingPoint.geometry.coordinates[0],
-        this.m2.mission.flightPlan.landingPoint.geometry.coordinates[1]]);
+    waypointLine.geometry.coordinates.push([
+      this.m2.mission.flightPlan.landingPoint.geometry.coordinates[0],
+      this.m2.mission.flightPlan.landingPoint.geometry.coordinates[1],
+    ]);
 
     const flightData = {
       flightTime: this.mission.flightTime,
@@ -257,10 +264,14 @@ export default class MissionBuilderDO2sParser {
       this.mission.buffer = this.m2.mission.flightPlan.flightParameters.axisBuffer;
     }
 
-    this.mission.dataLanding.lat = this.m2.mission.flightPlan.landingPoint.geometry.coordinates[1];
-    this.mission.dataLanding.lng = this.m2.mission.flightPlan.landingPoint.geometry.coordinates[0];
-    this.mission.dataTOff.lat = this.m2.mission.flightPlan.takeOffPoint.geometry.coordinates[1];
-    this.mission.dataTOff.lng = this.m2.mission.flightPlan.takeOffPoint.geometry.coordinates[0];
+    [
+      this.mission.dataLanding.lng,
+      this.mission.dataLanding.lat,
+    ] = this.m2.mission.flightPlan.landingPoint.geometry.coordinates;
+    [
+      this.mission.dataTOff.lng,
+      this.mission.dataTOff.lat,
+    ] = this.m2.mission.flightPlan.takeOffPoint.geometry.coordinates;
 
     this.mission.entryMarging = this.m2.mission.flightPlan.flightParameters.entryMargin;
     this.mission.flightSpeed = this.m2.mission.flightPlan.flightParameters.speed;

@@ -17,16 +17,14 @@ import MissionAnalysis from '../../components/MissionAnalysis/MissionAnalysis';
 import './ViewMission.scss';
 
 const handleRemove = (missionId, history, projectId) => {
-  if (confirm('Move to Trash?')) {
-    Meteor.call('missions.softDelete', missionId, (error) => {
-      if (error) {
-        Bert.alert(error.reason, 'danger');
-      } else {
-        Bert.alert('Mission deleted!', 'warning');
-        history.push(`/projects/${projectId}`);
-      }
-    });
-  }
+  Meteor.call('missions.softDelete', missionId, (error) => {
+    if (error) {
+      Bert.alert(error.reason, 'danger');
+    } else {
+      Bert.alert('Mission deleted!', 'warning');
+      history.push(`/projects/${projectId}`);
+    }
+  });
 };
 
 const renderMission = (mission, match, history, project) => (mission && mission.deleted === 'no' ? (
@@ -90,7 +88,9 @@ const renderMission = (mission, match, history, project) => (mission && mission.
   </div>
 ) : <NotFound />);
 
-const ViewMission = ({ loading, mission, match, history, project }) => (
+const ViewMission = ({
+  loading, mission, match, history, project,
+}) => (
   !loading ? renderMission(mission, match, history, project) : <Loading />
 );
 

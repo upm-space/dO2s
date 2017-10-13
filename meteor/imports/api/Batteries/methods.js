@@ -27,7 +27,7 @@ Meteor.methods({
       const batteryId = battery._id;
       Batteries.update(batteryId, { $set: battery });
       return batteryId;
-       // Return _id so we can redirect to battery after update.
+      // Return _id so we can redirect to battery after update.
     } catch (exception) {
       if (exception.error === 'validation-error') {
         throw new Meteor.Error(500, exception.message);

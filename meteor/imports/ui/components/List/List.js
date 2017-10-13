@@ -8,8 +8,10 @@ import classnames from 'classnames';
 import Loading from '../../components/Loading/Loading';
 
 const renderListItems =
-({ history, match, items, hideCompleted, completedColumn,
-  softDeleteItem, completeItem, exportButton, exportItem }) => {
+({
+  history, match, items, hideCompleted, completedColumn,
+  softDeleteItem, completeItem, exportButton, exportItem,
+}) => {
   let filteredItems = items;
   if (completedColumn && hideCompleted) {
     filteredItems = filteredItems.filter(item => !item.done);
@@ -24,9 +26,11 @@ const renderListItems =
       >
         <td onClick={goToItem}>{item.name}</td>
         <td onClick={goToItem} className="hidden-xs">
-          {timeago(item.updatedAt)}</td>
+          {timeago(item.updatedAt)}
+        </td>
         <td onClick={goToItem} className="hidden-xs">
-          {monthDayYearAtTime(item.createdAt)}</td>
+          {monthDayYearAtTime(item.createdAt)}
+        </td>
         {exportButton ? (
           <td className="button-column">
             <Button
@@ -51,7 +55,8 @@ const renderListItems =
           <Button
             bsStyle="danger"
             onClick={() => softDeleteItem(item._id)}
-          ><i className="fa fa-times" aria-hidden="true" /></Button>
+          ><i className="fa fa-times" aria-hidden="true" />
+          </Button>
         </td>
       </tr>);
   });

@@ -10,7 +10,7 @@ const isProject = (location) => {
     path: '/projects/:project_id',
   });
 
-  if (match && match.params && match.params.hasOwnProperty('project_id') && match.params.project_id !== 'new') {
+  if (match && match.params && match.params.project_id && match.params.project_id !== 'new') {
     return true;
   }
   return false;
@@ -26,24 +26,28 @@ const ProjectButton = (location) => {
     </LinkContainer> : null);
 };
 
-const UserMngButton = (<LinkContainer to="/users">
-  <NavItem eventKey={3} href="/users">
-    <i className="fa fa-users" aria-hidden="true" /> User Manager
-  </NavItem>
-</LinkContainer>);
+const UserMngButton = (
+  <LinkContainer to="/users">
+    <NavItem eventKey={3} href="/users">
+      <span className="fa fa-users" aria-hidden="true" /> User Manager
+    </NavItem>
+  </LinkContainer>);
 
 const hangarDropdownTitle = (
   <div className="pull-left">
-    <i className="fa fa-paper-plane" aria-hidden="true" /> Hangar
+    <span className="fa fa-paper-plane" aria-hidden="true" /> Hangar
   </div>
 );
 
-const AuthenticatedNavigation = ({ isAdmin, name, location, history }) => (
+const AuthenticatedNavigation = ({
+  isAdmin, name, location, history,
+}) => (
   <div>
     <Nav>
       <LinkContainer to="/projects">
         <NavItem eventKey={1} href="/projects">
-          <i className="fa fa-map" aria-hidden="true" /> Projects</NavItem>
+          <span className="fa fa-map" aria-hidden="true" /> Projects
+        </NavItem>
       </LinkContainer>
       {isProject(location) ? ProjectButton(location) : ''}
 

@@ -40,24 +40,25 @@ export default function LatLon(lat, lon, height, radius) {
  * Returns the distance from 'this' point to destination point (using haversine formula).
  *
  * @param   {LatLon} point - Latitude/longitude of destination point.
- * @returns {number} Distance between this point and destination point, in km (on sphere of 'this' radius).
+ * @returns {number}
+ Distance between this point and destination point, in km (on sphere of 'this' radius).
  *
  * @example
  *     var p1 = new LatLon(52.205, 0.119), p2 = new LatLon(48.857, 2.351);
  *     var d = p1.distanceTo(p2); // d.toPrecision(4): 404.3
  */
-LatLon.prototype.distanceTo = function (point) {
+LatLon.prototype.distanceTo = (point) => {
   const R = this.radius;
-  let phi1 = this.lat.toRadians(),
-    lambda1 = this.lon.toRadians();
-  let phi2 = point.lat.toRadians(),
-    lambda2 = point.lon.toRadians();
+  const phi1 = this.lat.toRadians();
+  const lambda1 = this.lon.toRadians();
+  const phi2 = point.lat.toRadians();
+  const lambda2 = point.lon.toRadians();
   const Deltaphi = phi2 - phi1;
   const Deltalambda = lambda2 - lambda1;
 
-  const a = Math.sin(Deltaphi / 2) * Math.sin(Deltaphi / 2) +
-        Math.cos(phi1) * Math.cos(phi2) *
-        Math.sin(Deltalambda / 2) * Math.sin(Deltalambda / 2);
+  const a = (Math.sin(Deltaphi / 2) * Math.sin(Deltaphi / 2)) +
+        (Math.cos(phi1) * Math.cos(phi2) *
+        Math.sin(Deltalambda / 2) * Math.sin(Deltalambda / 2));
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   const d = R * c;
 
@@ -68,7 +69,7 @@ LatLon.prototype.distanceTo = function (point) {
  * @param {[LatLon]} points - Array of polygon points
  * @returns {number} Polygon's area
  */
-LatLon.prototype.calculateSurface = function (points) {
+LatLon.prototype.calculateSurface = (points) => {
   const minmax = this.calculateBoundingBox(points);
   const minPoint = minmax[0];
   // var maxPoint = minmax[1];
@@ -82,7 +83,7 @@ LatLon.prototype.calculateSurface = function (points) {
 
   let area = this.getDeterminant(localPoints[localPoints.length - 1], localPoints[0]);
 
-  for (let i = 1; i < localPoints.length; i++) {
+  for (let i = 1; i < localPoints.length; i += 1) {
     area += this.getDeterminant(localPoints[i - 1], localPoints[i]);
   }
   return Math.abs(area / 2);
@@ -94,16 +95,15 @@ LatLon.prototype.calculateSurface = function (points) {
  * @param point2
  * @returns {number}
  */
-LatLon.prototype.getDeterminant = function (point1, point2) {
-  return point1.lon * point2.lat - point2.lon * point1.lat;
-};
+LatLon.prototype.getDeterminant = (point1, point2) =>
+  (point1.lon * point2.lat) - (point2.lon * point1.lat);
 
 /**
  * Return  the boundingBox of a array of points
  * @param {[LatLon]} points
  * @returns {*[LatLon]} - Two points, minimum and maximum
  */
-LatLon.prototype.calculateBoundingBox = function (points) {
+LatLon.prototype.calculateBoundingBox = (points) => {
   let latMin = Number.MAX_VALUE;
   let lonMin = Number.MAX_VALUE;
   let latMax = -Number.MAX_VALUE;
@@ -133,61 +133,71 @@ LatLon.prototype.calculateBoundingBox = function (points) {
  * @example
  *     var p1 = LatLon(51.8853, 0.2545), brng1 = 108.547;
  *     var p2 = LatLon(49.0034, 2.5735), brng2 =  32.435;
- *     var pInt = LatLon.intersection(p1, brng1, p2, brng2); // pInt.toString(): 50.9076�N, 004.5084�E
+ *     var pInt = LatLon.intersection(p1, brng1, p2, brng2);
+ // pInt.toString(): 50.9076�N, 004.5084�E
  */
-LatLon.intersection = function (p1, brng1, p2, brng2) {
+LatLon.intersection = (p1, brng1, p2, brng2) => {
   // see http://williams.best.vwh.net/avform.htm#Intersection
 
-  let phi1 = p1.lat.toRadians(),
-    lambda1 = p1.lon.toRadians();
-  let phi2 = p2.lat.toRadians(),
-    lambda2 = p2.lon.toRadians();
-  let theta13 = Number(brng1).toRadians(),
-    theta23 = Number(brng2).toRadians();
-  let Deltaphi = phi2 - phi1,
-    Deltalambda = lambda2 - lambda1;
+  const phi1 = p1.lat.toRadians();
+  const lambda1 = p1.lon.toRadians();
+  const phi2 = p2.lat.toRadians();
+  const lambda2 = p2.lon.toRadians();
+  const theta13 = Number(brng1).toRadians();
+  const theta23 = Number(brng2).toRadians();
+  const Deltaphi = phi2 - phi1;
+  const Deltalambda = lambda2 - lambda1;
 
-  const delta12 = 2 * Math.asin(Math.sqrt(Math.sin(Deltaphi / 2) * Math.sin(Deltaphi / 2) +
-            Math.cos(phi1) * Math.cos(phi2) * Math.sin(Deltalambda / 2) * Math.sin(Deltalambda / 2)));
-  if (delta12 == 0) { return null; }
+  const delta12 = 2 * Math.asin(Math.sqrt((Math.sin(Deltaphi / 2) * Math.sin(Deltaphi / 2)) +
+            (Math.cos(phi1) *
+              Math.cos(phi2) *
+              Math.sin(Deltalambda / 2) *
+              Math.sin(Deltalambda / 2))));
+  if (delta12 === 0) { return null; }
 
   // initial/final bearings between points
-  let theta1 = Math.acos((Math.sin(phi2) - Math.sin(phi1) * Math.cos(delta12)) /
+  let theta1 = Math.acos((Math.sin(phi2) - (Math.sin(phi1) * Math.cos(delta12))) /
         (Math.sin(delta12) * Math.cos(phi1)));
-  if (isNaN(theta1)) { theta1 = 0; } // protect against rounding
-  const theta2 = Math.acos((Math.sin(phi1) - Math.sin(phi2) * Math.cos(delta12)) /
+  if (Number.isNaN(theta1)) { theta1 = 0; } // protect against rounding
+  const theta2 = Math.acos((Math.sin(phi1) - (Math.sin(phi2) * Math.cos(delta12))) /
         (Math.sin(delta12) * Math.cos(phi2)));
 
-  let theta12,
-    theta21;
+  let theta12;
+  let theta21;
   if (Math.sin(lambda2 - lambda1) > 0) {
     theta12 = theta1;
-    theta21 = 2 * Math.PI - theta2;
+    theta21 = (2 * Math.PI) - theta2;
   } else {
-    theta12 = 2 * Math.PI - theta1;
+    theta12 = (2 * Math.PI) - theta1;
     theta21 = theta2;
   }
 
-  const alpha1 = (theta13 - theta12 + Math.PI) % (2 * Math.PI) - Math.PI; // angle 2-1-3
-  const alpha2 = (theta21 - theta23 + Math.PI) % (2 * Math.PI) - Math.PI; // angle 1-2-3
+  const alpha1 = (((theta13 - theta12) + Math.PI) % (2 * Math.PI)) - Math.PI; // angle 2-1-3
+  const alpha2 = (((theta21 - theta23) + Math.PI) % (2 * Math.PI)) - Math.PI; // angle 1-2-3
 
-  if (Math.sin(alpha1) == 0 && Math.sin(alpha2) == 0) { return null; } // infinite intersections
-  // if (Math.sin(alpha1)*Math.sin(alpha2) < 0) return null; // comentado por LIM      // ambiguous intersection
+  if (Math.sin(alpha1) === 0 && Math.sin(alpha2) === 0) { return null; } // infinite intersections
+  // if (Math.sin(alpha1)*Math.sin(alpha2) < 0) return null;
+  // comentado por LIM
+  // ambiguous intersection
 
   // alpha1 = Math.abs(alpha1);
   // alpha2 = Math.abs(alpha2);
   // ... Ed Williams takes abs of alpha1/alpha2, but seems to break calculation?
 
-  const alpha3 = Math.acos(-Math.cos(alpha1) * Math.cos(alpha2) +
-        Math.sin(alpha1) * Math.sin(alpha2) * Math.cos(delta12));
-  const delta13 = Math.atan2(Math.sin(delta12) * Math.sin(alpha1) * Math.sin(alpha2),
-    Math.cos(alpha2) + Math.cos(alpha1) * Math.cos(alpha3));
-  const phi3 = Math.asin(Math.sin(phi1) * Math.cos(delta13) +
-        Math.cos(phi1) * Math.sin(delta13) * Math.cos(theta13));
-  const Deltalambda13 = Math.atan2(Math.sin(theta13) * Math.sin(delta13) * Math.cos(phi1),
-    Math.cos(delta13) - Math.sin(phi1) * Math.sin(phi3));
+  const alpha3 = Math.acos((-Math.cos(alpha1) * Math.cos(alpha2)) +
+        (Math.sin(alpha1) * Math.sin(alpha2) * Math.cos(delta12)));
+  const delta13 = Math.atan2(
+    Math.sin(delta12) * Math.sin(alpha1) * Math.sin(alpha2),
+    Math.cos(alpha2) + (Math.cos(alpha1) * Math.cos(alpha3)),
+  );
+  const phi3 = Math.asin((Math.sin(phi1) * Math.cos(delta13)) +
+        (Math.cos(phi1) * Math.sin(delta13) * Math.cos(theta13)));
+  const Deltalambda13 = Math.atan2(
+    Math.sin(theta13) * Math.sin(delta13) * Math.cos(phi1),
+    Math.cos(delta13) - (Math.sin(phi1) * Math.sin(phi3)),
+  );
   let lambda3 = lambda1 + Deltalambda13;
-  lambda3 = (lambda3 + 3 * Math.PI) % (2 * Math.PI) - Math.PI; // normalise to -180..+180�
+  lambda3 = ((lambda3 + (3 * Math.PI)) % (2 * Math.PI)) - Math.PI; // normalise to -180..+180�
 
   return new LatLon(phi3.toDegrees(), lambda3.toDegrees());
 };
@@ -205,7 +215,7 @@ LatLon.intersection = function (p1, brng1, p2, brng2) {
  *     var p1 = new LatLon(51.4778, -0.0015);
  *     var p2 = p1.destinationPoint(300.7, 7.794); // p2.toString(): 51.5135�N, 000.0983�W
  */
-LatLon.prototype.destinationPoint = function (brng, dist) {
+LatLon.prototype.destinationPoint = (brng, dist) => {
   // see http://williams.best.vwh.net/avform.htm#LL
 
   const theta = Number(brng).toRadians();
@@ -214,11 +224,13 @@ LatLon.prototype.destinationPoint = function (brng, dist) {
   const phi1 = this.lat.toRadians();
   const lambda1 = this.lon.toRadians();
 
-  const phi2 = Math.asin(Math.sin(phi1) * Math.cos(delta) +
-        Math.cos(phi1) * Math.sin(delta) * Math.cos(theta));
-  let lambda2 = lambda1 + Math.atan2(Math.sin(theta) * Math.sin(delta) * Math.cos(phi1),
-    Math.cos(delta) - Math.sin(phi1) * Math.sin(phi2));
-  lambda2 = (lambda2 + 3 * Math.PI) % (2 * Math.PI) - Math.PI; // normalise to -180..+180�
+  const phi2 = Math.asin((Math.sin(phi1) * Math.cos(delta)) +
+      (Math.cos(phi1) * Math.sin(delta) * Math.cos(theta)));
+  let lambda2 = lambda1 + Math.atan2(
+    Math.sin(theta) * Math.sin(delta) * Math.cos(phi1),
+    Math.cos(delta) - (Math.sin(phi1) * Math.sin(phi2)),
+  );
+  lambda2 = ((lambda2 + (3 * Math.PI)) % (2 * Math.PI)) - Math.PI; // normalise to -180..+180�
 
   return new LatLon(phi2.toDegrees(), lambda2.toDegrees());
 };
@@ -231,7 +243,7 @@ LatLon.prototype.destinationPoint = function (brng, dist) {
  * @param {LatLon} point
  * @returns {Number} from 0 to 360
  */
-LatLon.prototype.calculateBearing = function (point) {
+LatLon.prototype.calculateBearing = (point) => {
   const x1 = this.lon;
   const y1 = this.lat;
   const x2 = point.lon;
@@ -241,7 +253,7 @@ LatLon.prototype.calculateBearing = function (point) {
 
   let bearing;
   if (deltay !== 0) {
-    bearing = Math.atan(deltax / deltay) * 180 / Math.PI;
+    bearing = (Math.atan(deltax / deltay) * 180) / Math.PI;
     // console.log(bearing);
     if (x2 > x1) {
       if (y2 > y1) { bearing = bearing; } else { bearing = 180 + bearing; }
@@ -260,15 +272,15 @@ LatLon.prototype.calculateBearing = function (point) {
  *     var p1 = new LatLon(52.205, 0.119), p2 = new LatLon(48.857, 2.351);
  *     var b1 = p1.bearingTo(p2); // b1.toFixed(1): 156.2
  */
-LatLon.prototype.bearingTo = function (point) {
-  let phi1 = this.lat.toRadians(),
-    phi2 = point.lat.toRadians();
+LatLon.prototype.bearingTo = (point) => {
+  const phi1 = this.lat.toRadians();
+  const phi2 = point.lat.toRadians();
   const Deltalambda = (point.lon - this.lon).toRadians();
 
   // see http://mathforum.org/library/drmath/view/55417.html
   const y = Math.sin(Deltalambda) * Math.cos(phi2);
-  const x = Math.cos(phi1) * Math.sin(phi2) -
-        Math.sin(phi1) * Math.cos(phi2) * Math.cos(Deltalambda);
+  const x = (Math.cos(phi1) * Math.sin(phi2)) -
+        (Math.sin(phi1) * Math.cos(phi2) * Math.cos(Deltalambda));
   const theta = Math.atan2(y, x);
 
   return (theta.toDegrees() + 360) % 360;
@@ -284,21 +296,23 @@ LatLon.prototype.bearingTo = function (point) {
  *     var p1 = new LatLon(52.205, 0.119), p2 = new LatLon(48.857, 2.351);
  *     var pMid = p1.midpointTo(p2); // pMid.toString(): 50.5363�N, 001.2746�E
  */
-LatLon.prototype.midpointTo = function (point) {
+LatLon.prototype.midpointTo = (point) => {
   // see http://mathforum.org/library/drmath/view/51822.html for derivation
 
-  let phi1 = this.lat.toRadians(),
-    lambda1 = this.lon.toRadians();
+  const phi1 = this.lat.toRadians();
+  const lambda1 = this.lon.toRadians();
   const phi2 = point.lat.toRadians();
   const Deltalambda = (point.lon - this.lon).toRadians();
 
   const Bx = Math.cos(phi2) * Math.cos(Deltalambda);
   const By = Math.cos(phi2) * Math.sin(Deltalambda);
 
-  const phi3 = Math.atan2(Math.sin(phi1) + Math.sin(phi2),
-    Math.sqrt((Math.cos(phi1) + Bx) * (Math.cos(phi1) + Bx) + By * By));
+  const phi3 = Math.atan2(
+    Math.sin(phi1) + Math.sin(phi2),
+    Math.sqrt(((Math.cos(phi1) + Bx) * (Math.cos(phi1) + Bx)) + (By * By)),
+  );
   let lambda3 = lambda1 + Math.atan2(By, Math.cos(phi1) + Bx);
-  lambda3 = (lambda3 + 3 * Math.PI) % (2 * Math.PI) - Math.PI; // normalise to -180..+180�
+  lambda3 = ((lambda3 + (3 * Math.PI)) % (2 * Math.PI)) - Math.PI; // normalise to -180..+180�
 
   return new LatLon(phi3.toDegrees(), lambda3.toDegrees());
 };
@@ -309,9 +323,9 @@ LatLon.prototype.midpointTo = function (point) {
  * @param {[LatLon]} points
  * @returns {boolean}
  */
-LatLon.prototype.clockwise = function (points) {
+LatLon.prototype.clockwise = (points) => {
   let accumulatedValue = 0;
-  for (let i = 0; i < points.length - 1; i++) {
+  for (let i = 0; i < points.length - 1; i += 1) {
     const diffLat = points[i + 1].lat + points[i].lat;
     const diffLon = points[i + 1].lon - points[i].lon;
     const result = diffLat * diffLon;
@@ -329,11 +343,11 @@ LatLon.prototype.clockwise = function (points) {
  * @param points
  * @returns {points}- Points in clockwise order
  */
-LatLon.prototype.returnedClockwise = function (points) {
-  if (this.clockwise(points) == false) {
+LatLon.prototype.returnedClockwise = (points) => {
+  if (this.clockwise(points) === false) {
     const tempPoints = [];
     const num = points.length - 1;
-    for (let i = 0; i < num + 1; i++) {
+    for (let i = 0; i < num + 1; i += 1) {
       const temp = points[num - i];
       tempPoints[i] = temp;
     }
@@ -347,7 +361,7 @@ LatLon.prototype.returnedClockwise = function (points) {
  * @param {[LatLon]} points - Array of points
  * @returns {LatLon} - The closest point
  */
-LatLon.prototype.closestPoint = function (points) {
+LatLon.prototype.closestPoint = (points) => {
   let minDistance = Number.MAX_VALUE;
   let selectedPoint = null;
   const parent = this;
@@ -361,7 +375,7 @@ LatLon.prototype.closestPoint = function (points) {
   return selectedPoint;
 };
 
-LatLon.prototype.furthestPoint = function (points) {
+LatLon.prototype.furthestPoint = (points) => {
   let maxDistance = Number.MIN_VALUE;
   let selectedPoint = null;
   const parent = this;
@@ -383,16 +397,25 @@ LatLon.prototype.furthestPoint = function (points) {
  * @param {LatLon} end2 - Point 2 line 2
  * @returns {LatLon} - intersection point
  */
-LatLon.prototype.findLineIntersection = function (start1, end1, start2, end2) {
-  const denom = ((end1.lon - start1.lon) * (end2.lat - start2.lat)) - ((end1.lat - start1.lat) * (end2.lon - start2.lon));
+LatLon.prototype.findLineIntersection = (start1, end1, start2, end2) => {
+  const denom = (
+    (end1.lon - start1.lon) * (end2.lat - start2.lat)) -
+    ((end1.lat - start1.lat) * (end2.lon - start2.lon)
+    );
   //  AB & CD are parallel
-  if (denom == 0) {
+  if (denom === 0) {
     return null;
   }
-  const numer = ((start1.lat - start2.lat) * (end2.lon - start2.lon)) - ((start1.lon - start2.lon) * (end2.lat - start2.lat));
+  const numer = (
+    (start1.lat - start2.lat) * (end2.lon - start2.lon)) -
+    ((start1.lon - start2.lon) * (end2.lat - start2.lat)
+    );
 
   const r = numer / denom;
-  const numer2 = ((start1.lat - start2.lat) * (end1.lon - start1.lon)) - ((start1.lon - start2.lon) * (end1.lat - start1.lat));
+  const numer2 = (
+    (start1.lat - start2.lat) * (end1.lon - start1.lon)) -
+    ((start1.lon - start2.lon) * (end1.lat - start1.lat)
+    );
 
   const s = numer2 / denom;
   if ((r < 0 || r > 1) || (s < 0 || s > 1)) {
@@ -413,9 +436,7 @@ LatLon.prototype.findLineIntersection = function (start1, end1, start2, end2) {
  * @param point {LatLon} as the second point
  * @returns {Number} slope (m)
  */
-LatLon.prototype.calculateSlope = function (point) {
-  return (point.lat - this.lat) / (point.lon - this.lon);
-};
+LatLon.prototype.calculateSlope = point => (point.lat - this.lat) / (point.lon - this.lon);
 
 /** calculate the intercept (intercepto o b) of a line
  * y = mx +b
@@ -423,7 +444,7 @@ LatLon.prototype.calculateSlope = function (point) {
  * b = y -mx
  * @param point
  */
-LatLon.prototype.calculateIntercept = function (point) {
+LatLon.prototype.calculateIntercept = (point) => {
   const m = this.calculateSlope(point);
   return point.lat - (m * point.lon);
 };
@@ -433,7 +454,7 @@ LatLon.prototype.calculateIntercept = function (point) {
  * @param {[LatLon]}points
  * @returns {[number,number]}
  */
-LatLon.prototype.latLonToCoorsArray = function (points) {
+LatLon.prototype.latLonToCoorsArray = (points) => {
   const arr = [];
   points.forEach((point) => {
     const element = [point.lat, point.lon];
@@ -447,7 +468,7 @@ LatLon.prototype.latLonToCoorsArray = function (points) {
  * @returns {[LatLon]}
  * @constructor
  */
-LatLon.prototype.coorsArrayToLatLon = function (coors) {
+LatLon.prototype.coorsArrayToLatLon = (coors) => {
   const arr = [];
   coors.forEach((coor) => {
     const latL = new LatLon(coor[0], coor[1]);
@@ -460,7 +481,7 @@ LatLon.prototype.coorsArrayToLatLon = function (coors) {
  * @param coors
  * @returns {Array}
  */
-LatLon.prototype.pointsToLatLon = function (coors) {
+LatLon.prototype.pointsToLatLon = (coors) => {
   const arr = [];
   coors.forEach((coor) => {
     const latL = new LatLon(coor.lat, coor.lng);
@@ -475,20 +496,20 @@ LatLon.prototype.pointsToLatLon = function (coors) {
  * @returns {[LatLon]}
  * @constructor
  */
-LatLon.prototype.convertOL3ToPoints = function (geometry) {
+LatLon.prototype.convertOL3ToPoints = (geometry) => {
   const points = [];
-  if (geometry.getType() == 'Point') {
+  if (geometry.getType() === 'Point') {
     const coors = geometry.getCoordinates();
     const point = new LatLon(coors[1], coors[0]);
     points.push(point);
   }
-  if (geometry.getType() == 'LineString') {
+  if (geometry.getType() === 'LineString') {
     geometry.getCoordinates().forEach((coors) => {
       const point = new LatLon(coors[1], coors[0]);
       points.push(point);
     });
   }
-  if (geometry.getType() == 'Polygon') {
+  if (geometry.getType() === 'Polygon') {
     geometry.getCoordinates().forEach((geo2) => {
       geo2.forEach((coors) => {
         const point = new LatLon(coors[1], coors[0]);
@@ -502,21 +523,21 @@ LatLon.prototype.convertOL3ToPoints = function (geometry) {
 
 /** Extend Number object with method to convert numeric degrees to radians */
 if (typeof Number.prototype.toRadians === 'undefined') {
-  Number.prototype.toRadians = function () { return this * Math.PI / 180; };
+  Number.prototype.toRadians = () => (this * Math.PI) / 180;
 }
 
 
 /** Extend Number object with method to convert radians to numeric (signed) degrees */
 if (typeof Number.prototype.toDegrees === 'undefined') {
-  Number.prototype.toDegrees = function () { return this * 180 / Math.PI; };
+  Number.prototype.toDegrees = () => (this * 180) / Math.PI;
 }
 
 // Removes an element from an array.
 // String value: the value to search and remove.
 // return: an array with the removed element; false otherwise.
-Array.prototype.remove = function (value) {
+Array.prototype.remove = (value) => {
   const idx = this.indexOf(value);
-  if (idx != -1) {
+  if (idx !== -1) {
     return this.splice(idx, 1); // The second parameter is the number of elements to remove.
   }
   return false;

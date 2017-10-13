@@ -24,3 +24,25 @@ export const importFromLocalFile = (file, insertInDatabase) => {
     }
   };
 };
+/* eslint-disable no-param-reassign */
+export const cleanObjectForExport = (itemToClean) => {
+  const exportItemKeys = Object.keys(itemToClean);
+  exportItemKeys.forEach((item) => {
+    if (item === 'project') {
+      delete itemToClean[item].createdAt;
+      delete itemToClean[item].updatedAt;
+      delete itemToClean[item].owner;
+      delete itemToClean[item].deleted;
+      delete itemToClean[item].done;
+    } else {
+      itemToClean[item].forEach((arrayItem) => {
+        delete arrayItem.createdAt;
+        delete arrayItem.updatedAt;
+        delete arrayItem.owner;
+        delete arrayItem.deleted;
+        delete arrayItem.done;
+      });
+    }
+  });
+};
+/* eslint-enable no-param-reassign */

@@ -16,24 +16,29 @@ const sendVerificationEmail = (emailAddress) => {
   });
 };
 
-const verifyEmailAlert = emailAddress => (<Alert bsStyle="warning">
-  <p>Hey friend! Can you <strong>verify your email address</strong> ({emailAddress}) for us?
-    <Button
-      bsStyle="link"
-      onClick={() => sendVerificationEmail(emailAddress)}
-      href="#"
-    >
+const verifyEmailAlert = emailAddress => (
+  <Alert bsStyle="warning">
+    <p>Hey friend! Can you <strong>verify your email address</strong> ({emailAddress}) for us?
+      <Button
+        bsStyle="link"
+        onClick={() => sendVerificationEmail(emailAddress)}
+        href="#"
+      >
     Re-send verification email
-    </Button>
-  </p>
-</Alert>);
+      </Button>
+    </p>
+  </Alert>);
 
-const AdminPage = ({ authenticated, isAdmin, component, emailVerified, emailAddress, path, exact, ...rest }) => (
+const AdminPage = ({
+  authenticated, isAdmin, component, emailVerified, emailAddress, path, exact, ...rest
+}) => (
   <Route
     path={path}
     exact={exact}
     render={(props) => {
-      const adminComponent = isAdmin ? React.createElement(component, { ...props, ...rest, authenticated, isAdmin, emailVerified, emailAddress }) : <Redirect to="/projects" />;
+      const adminComponent = isAdmin ? React.createElement(component, {
+        ...props, ...rest, authenticated, isAdmin, emailVerified, emailAddress,
+      }) : <Redirect to="/projects" />;
       const emailVerifiedComponent = emailVerified ? adminComponent : verifyEmailAlert(emailAddress);
       return authenticated ? emailVerifiedComponent : <Redirect to="/logout" />;
     }}
@@ -47,7 +52,7 @@ AdminPage.propTypes = {
   authenticated: PropTypes.bool.isRequired,
   isAdmin: PropTypes.bool.isRequired,
   component: PropTypes.func.isRequired,
-  emailAddress: PropTypes.string,
+  emailAddress: PropTypes.string.isRequired,
   emailVerified: PropTypes.bool.isRequired,
 };
 

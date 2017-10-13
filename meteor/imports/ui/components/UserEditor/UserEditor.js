@@ -66,8 +66,7 @@ class UserEditor extends Component {
       } else {
         Bert.alert('User password reset to (password)', 'success');
       }
-    },
-    );
+    });
   }
 
   handleSubmit() {
@@ -107,79 +106,83 @@ class UserEditor extends Component {
   }
 
   renderOAuthUser(user) {
-    return (<div className="OAuthProfile">
-      {Object.keys(user.services).map(service => (
-        <div key={service} className={`LoggedInWith ${service}`}>
-          <img src={`/${service}.svg`} alt={service} />
-          <p>{`This user is logged in with ${_.capitalize(service)} using the email address ${user.services[service].email}.`}</p>
-        </div>
-      ))}
-    </div>);
+    return (
+      <div className="OAuthProfile">
+        {Object.keys(user.services).map(service => (
+          <div key={service} className={`LoggedInWith ${service}`}>
+            <img src={`/${service}.svg`} alt={service} />
+            <p>{`This user is logged in with ${_.capitalize(service)} using the email address ${user.services[service].email}.`}</p>
+          </div>
+        ))}
+      </div>);
   }
 
   renderPasswordUser(user) {
     const existingUser = user && user._id;
-    return (<div>
-      <Row>
-        <Col sm={6}>
-          <FormGroup>
-            <ControlLabel>First Name</ControlLabel>
-            <input
-              type="text"
-              name="firstName"
-              defaultValue={user.profile.name.first}
-              ref={firstName => (this.firstName = firstName)}
-              className="form-control"
-            />
-          </FormGroup>
-        </Col>
-        <Col sm={6}>
-          <FormGroup>
-            <ControlLabel>Last Name</ControlLabel>
-            <input
-              type="text"
-              name="lastName"
-              defaultValue={user.profile.name.last}
-              ref={lastName => (this.lastName = lastName)}
-              className="form-control"
-            />
-          </FormGroup>
-        </Col>
-      </Row>
-      <Row>
-        <Col sm={6}>
-          <FormGroup>
-            <ControlLabel>Email Address</ControlLabel>
-            <input
-              type="email"
-              name="emailAddress"
-              defaultValue={user.emails[0].address}
-              ref={emailAddress => (this.emailAddress = emailAddress)}
-              className="form-control"
-            />
-          </FormGroup>
-        </Col>
-        <Col sm={6}>
-          <FormGroup>
-            <ControlLabel>Password</ControlLabel>
-            <Col sm={8}>
-              {<FormControl.Static>
+    return (
+      <div>
+        <Row>
+          <Col sm={6}>
+            <FormGroup>
+              <ControlLabel>First Name</ControlLabel>
+              <input
+                type="text"
+                name="firstName"
+                defaultValue={user.profile.name.first}
+                ref={firstName => (this.firstName = firstName)}
+                className="form-control"
+              />
+            </FormGroup>
+          </Col>
+          <Col sm={6}>
+            <FormGroup>
+              <ControlLabel>Last Name</ControlLabel>
+              <input
+                type="text"
+                name="lastName"
+                defaultValue={user.profile.name.last}
+                ref={lastName => (this.lastName = lastName)}
+                className="form-control"
+              />
+            </FormGroup>
+          </Col>
+        </Row>
+        <Row>
+          <Col sm={6}>
+            <FormGroup>
+              <ControlLabel>Email Address</ControlLabel>
+              <input
+                type="email"
+                name="emailAddress"
+                defaultValue={user.emails[0].address}
+                ref={emailAddress => (this.emailAddress = emailAddress)}
+                className="form-control"
+              />
+            </FormGroup>
+          </Col>
+          <Col sm={6}>
+            <FormGroup>
+              <ControlLabel>Password</ControlLabel>
+              <Col sm={8}>
+                {
+                  <FormControl.Static>
                 The new password will be <strong>password</strong>
-              </FormControl.Static>}
-            </Col>
-            <Col sm={4}>
-              {existingUser ? (<Button bsStyle="warning" onClick={() => this.handleResetPassword(existingUser)}>Reset Password</Button>) : ''}
-            </Col>
-          </FormGroup>
-        </Col>
-      </Row>
+                  </FormControl.Static>
+                }
+              </Col>
+              <Col sm={4}>
+                {existingUser ? (<Button bsStyle="warning" onClick={() => this.handleResetPassword(existingUser)}>Reset Password</Button>) : ''}
+              </Col>
+            </FormGroup>
+          </Col>
+        </Row>
 
 
-      <hr />
-      <Button type="submit" bsStyle="success">
-        {existingUser ? 'Save Changes' : 'Add User'}
-      </Button>
-    </div>);
+        <hr />
+        <Button type="submit" bsStyle="success">
+          {existingUser ? 'Save Changes' : 'Add User'}
+        </Button>
+      </div>);
   }
 
   renderProfileForm(user) {
@@ -201,13 +204,6 @@ class UserEditor extends Component {
       </form>);
   }
 }
-
-UserEditor.defaultProps = {
-  user: {
-    profile: { name: { first: '', last: '' } },
-    emails: [{ address: '' }],
-  },
-};
 
 UserEditor.propTypes = {
   history: PropTypes.object.isRequired,

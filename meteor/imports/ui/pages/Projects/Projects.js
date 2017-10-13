@@ -2,12 +2,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { Table, Alert, Button, Glyphicon, Label } from 'react-bootstrap';
+import { Table, Alert, Button, Label } from 'react-bootstrap';
 import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Bert } from 'meteor/themeteorchef:bert';
 
-import { exportToLocalFile, importFromLocalFile } from '../../../modules/export-import-files';
+import { exportToLocalFile, importFromLocalFile, cleanObjectForExport } from '../../../modules/export-import-files';
 
 import ProjectsCollection from '../../../api/Projects/Projects';
 import MissionsCollection from '../../../api/Missions/Missions';
@@ -44,31 +44,27 @@ class Projects extends Component {
   }
 
   handleSoftRemove(projectId) {
-    if (confirm('Move to Trash?')) {
-      Meteor.call('projects.softDelete', projectId, (error) => {
-        if (error) {
-          Bert.alert(error.reason, 'danger');
-        } else {
-          Bert.alert('Project moved to Trash!', 'warning');
-        }
-      });
-    }
+    Meteor.call('projects.softDelete', projectId, (error) => {
+      if (error) {
+        Bert.alert(error.reason, 'danger');
+      } else {
+        Bert.alert('Project moved to Trash!', 'warning');
+      }
+    });
   }
 
   handleRestore(projectId) {
-    if (confirm('Restore Project?')) {
-      Meteor.call('projects.restore', projectId, (error) => {
-        if (error) {
-          Bert.alert(error.reason, 'danger');
-        } else {
-          Bert.alert('Project Restored!', 'success');
-        }
-      });
-    }
+    Meteor.call('projects.restore', projectId, (error) => {
+      if (error) {
+        Bert.alert(error.reason, 'danger');
+      } else {
+        Bert.alert('Project Restored!', 'success');
+      }
+    });
   }
 
   handleHardRemove(projectId) {
-    if (confirm('Are you sure? This is permanent!')) {
+    if (window.confirm('Are you sure? This is permanent!')) {
       Meteor.call('projects.hardDelete', projectId, (error) => {
         if (error) {
           Bert.alert(error.reason, 'danger');
@@ -81,7 +77,7 @@ class Projects extends Component {
 
   handleExport(projectId) {
     let project = ProjectsCollection.find({ _id: projectId }).fetch();
-    project = project[0];
+    [project] = project;
     const projectName = project.name;
     const missions = MissionsCollection.find({ project: projectId, deleted: { $eq: 'no' } }).fetch();
     const payloadIDsArray = [];
@@ -104,25 +100,7 @@ class Projects extends Component {
       payloads,
       rpas,
     };
-    // Remove ids
-    const exportItemKeys = Object.keys(exportItem);
-    exportItemKeys.forEach((item) => {
-      if (item === 'project') {
-        delete exportItem[item].createdAt;
-        delete exportItem[item].updatedAt;
-        delete exportItem[item].owner;
-        delete exportItem[item].deleted;
-        delete exportItem[item].done;
-      } else {
-        exportItem[item].forEach((arrayItem) => {
-          delete arrayItem.createdAt;
-          delete arrayItem.updatedAt;
-          delete arrayItem.owner;
-          delete arrayItem.deleted;
-          delete arrayItem.done;
-        });
-      }
-    });
+    cleanObjectForExport(exportItem);
     exportToLocalFile(`${projectName}.json`, JSON.stringify(exportItem, null, '  '));
   }
 
@@ -130,7 +108,9 @@ class Projects extends Component {
     const importProject = (variableWithObjects) => {
       console.log('dentro de la importacion');
       // change and generate ids and owners
-      const { project, missions, rpas, payloads } = variableWithObjects;
+      const {
+        project, missions, rpas, payloads,
+      } = variableWithObjects;
       // delete projectId
       delete project._id;
       try {
@@ -140,12 +120,12 @@ class Projects extends Component {
           } else {
             console.log('projecto insertado');
             missions.forEach((mission) => {
-              mission.project = newProjectId;
+              mission.project = newProjectId; // eslint-disable-line
               console.log('cambio id de projecto en las misones');
             });
             payloads.forEach((payload) => {
               const oldPayload = payload._id;
-              delete payload._id;
+              delete payload._id; // eslint-disable-line
               Meteor.call('payloads.insert', payload, (errorPayload, newPayloadID) => {
                 if (errorPayload) {
                   Bert.alert(`Payload import error: ${errorPayload.reason}`, 'danger');
@@ -153,7 +133,7 @@ class Projects extends Component {
                   console.log('payload insertado');
                   missions.forEach((mission) => {
                     if (mission.payload === oldPayload) {
-                      mission.payload = newPayloadID;
+                      mission.payload = newPayloadID; // eslint-disable-line
                     }
                   });
                 }
@@ -161,7 +141,7 @@ class Projects extends Component {
             });
             rpas.forEach((rpa) => {
               const oldRpa = rpa._id;
-              delete rpa._id;
+              delete rpa._id; // eslint-disable-line
               Meteor.call('rpas.insert', rpa, (errorRPA, newRPAID) => {
                 if (errorRPA) {
                   Bert.alert(`RPA import error: ${errorRPA.reason}`, 'danger');
@@ -169,14 +149,14 @@ class Projects extends Component {
                   console.log('rpa insertado');
                   missions.forEach((mission) => {
                     if (mission.rpa === oldRpa) {
-                      mission.rpa = newRPAID;
+                      mission.rpa = newRPAID; // eslint-disable-line
                     }
                   });
                 }
               });
             });
             missions.forEach((mission) => {
-              delete mission._id;
+              delete mission._id; // eslint-disable-line
               Meteor.call('missions.import', mission, (errorMission) => {
                 if (errorMission) {
                   Bert.alert(`Mission import error: ${errorMission.reason}`, 'danger');
@@ -237,7 +217,8 @@ class Projects extends Component {
           <Button
             bsStyle={!this.state.hideCompleted ? 'info' : 'default'}
             onClick={() => this.toggleHideCompleted()}
-          >{!this.state.hideCompleted ? 'Hide Completed Projects' : 'Show Completed Projects'} ({this.props.completeCount})</Button>
+          >{!this.state.hideCompleted ? 'Hide Completed Projects' : 'Show Completed Projects'} ({this.props.completeCount})
+          </Button>
           <div className="pull-right">
             <Label bsClass="btn btn-default">
               <span className="fa fa-upload fa-lg" aria-hidden="true" /> Import Project
@@ -254,40 +235,46 @@ class Projects extends Component {
             <Link className="btn btn-success" to={`${match.url}/new`}>Add Project</Link>
           </div>
         </div>
-        {projects.length ? <div className="ItemList"><Table responsive hover>
-          <thead>
-            <tr>
-              <th>
+        {projects.length ?
+          <div className="ItemList">
+            <Table responsive hover>
+              <thead>
+                <tr>
+                  <th>
                 Projects (
-                {this.state.hideCompleted ? this.props.incompleteCount : this.props.totalCount}
+                    {this.state.hideCompleted ? this.props.incompleteCount : this.props.totalCount}
                 )
-              </th>
-              <th className="hidden-xs">Last Updated</th>
-              <th className="hidden-xs">Created</th>
-              <th className="center-column" />
-              <th className="center-column">
+                  </th>
+                  <th className="hidden-xs">Last Updated</th>
+                  <th className="hidden-xs">Created</th>
+                  <th className="center-column" />
+                  <th className="center-column">
                 Completed
-              </th>
-              <th><Button
-                bsStyle="default"
-                onClick={() => this.setState({ trashShow: true })}
-                block
-              ><Glyphicon glyph="trash" /></Button></th>
-            </tr>
-          </thead>
-          <List
-            loading={loading}
-            completedColumn
-            items={projects}
-            match={match}
-            hideCompleted={this.state.hideCompleted}
-            history={this.props.history}
-            softDeleteItem={this.handleSoftRemove}
-            completeItem={this.toggleDone}
-            exportButton
-            exportItem={this.handleExport}
-          />
-        </Table></div> : <Alert bsStyle="warning">No projects yet!</Alert>}
+                  </th>
+                  <th>
+                    <Button
+                      bsStyle="default"
+                      onClick={() => this.setState({ trashShow: true })}
+                      block
+                    ><span className="fa fa-trash" aria-hidden="true" />
+                    </Button>
+                  </th>
+                </tr>
+              </thead>
+              <List
+                loading={loading}
+                completedColumn
+                items={projects}
+                match={match}
+                hideCompleted={this.state.hideCompleted}
+                history={this.props.history}
+                softDeleteItem={this.handleSoftRemove}
+                completeItem={this.toggleDone}
+                exportButton
+                exportItem={this.handleExport}
+              />
+            </Table>
+          </div> : <Alert bsStyle="warning">No projects yet!</Alert>}
       </div>
     ) : <Loading />);
   }
@@ -307,9 +294,9 @@ Projects.propTypes = {
 
 export default withTracker(() => {
   const projectsSub = Meteor.subscribe('projects');
-  const missionSub = Meteor.subscribe('missions.export');
-  const payloadsSub = Meteor.subscribe('payloads');
-  const rpasSub = Meteor.subscribe('rpas');
+  Meteor.subscribe('missions.export');
+  Meteor.subscribe('payloads');
+  Meteor.subscribe('rpas');
   return {
     loading: !projectsSub.ready(),
     projects: ProjectsCollection.find({ deleted: { $eq: 'no' } }).fetch(),

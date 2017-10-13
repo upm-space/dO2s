@@ -13,7 +13,7 @@ Meteor.publish('payloads.view', function payloadsView(payloadId) {
 });
 
 Meteor.publish('payloads.mission', function payloadsMission() {
-  return Payloads.find({ owner: this.userId }, { fields: {
-    name: 1, model: 1 },
+  return Payloads.find({ owner: this.userId }, {
+    fields: { name: 1, model: 1 },
   });
 });

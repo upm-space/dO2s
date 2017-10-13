@@ -36,7 +36,6 @@ class MissionPlan extends Component {
     this.getElevation = this.getElevation.bind(this);
 
     this.state = {
-      showWayPoints: false,
       missionDirection: 1,
       buttonStates: {
         takeOffButtonActive: false,
@@ -170,7 +169,7 @@ class MissionPlan extends Component {
     dO2sBuilder.setInitialSegment(1);
     if (isChangeDirection) {
       const sides = this.getNumberOfSides();
-      let missionDirection = this.state.missionDirection;
+      let { missionDirection } = this.state;
       if (missionDirection === sides) {
         missionDirection = 1;
         this.setState({ missionDirection: 1 });
@@ -209,7 +208,9 @@ class MissionPlan extends Component {
   }
 
   render() {
-    const { project, mission, history, payload, loading } = this.props;
+    const {
+      project, mission, history, payload, loading,
+    } = this.props;
     let waypointList = [];
     if (mission &&
       mission.flightPlan &&
@@ -268,7 +269,8 @@ class MissionPlan extends Component {
                   block
                 >
                   <div><i className="fa fa-paper-plane fa-lg" aria-hidden="true" /></div>
-                  <div>Flight<br />Params</div></Button>
+                  <div>Flight<br />Params</div>
+                </Button>
               </Col>
               <Col xs={12} sm={12} md={12} lg={4} className="padding2 margin-bottom">
                 <Button
@@ -278,7 +280,8 @@ class MissionPlan extends Component {
                   block
                 >
                   <div><i className="fa fa-camera fa-lg" aria-hidden="true" /></div>
-                  <div>Payload<br />Params</div></Button>
+                  <div>Payload<br />Params</div>
+                </Button>
               </Col>
               <Col xs={12} sm={12} md={12} lg={4} className="padding2 margin-bottom">
                 <Button
@@ -288,7 +291,8 @@ class MissionPlan extends Component {
                   block
                 >
                   <div><i className="fa fa-picture-o fa-lg" aria-hidden="true" /></div>
-                  <div>Picture<br />Grid</div></Button>
+                  <div>Picture<br />Grid</div>
+                </Button>
               </Col>
             </Row>
             <br />
@@ -306,7 +310,11 @@ class MissionPlan extends Component {
               <Col xs={12} sm={6} md={6} lg={6} className="padding2 margin-bottom">
                 <Button
                   bsStyle="success"
-                  onClick={() => this.getElevation(mission.flightPlan.flightParameters.height, mission.flightPlan.missionCalculation.waypointList)}
+                  onClick={() =>
+                    this.getElevation(
+                      mission.flightPlan.flightParameters.height,
+                      mission.flightPlan.missionCalculation.waypointList,
+                    )}
                   block
                 >
                   <div><i className="fa fa-long-arrow-up fa-lg" aria-hidden="true" /></div>
@@ -335,7 +343,8 @@ class MissionPlan extends Component {
                   block
                 >
                   <div><i className="fa fa-map-marker fa-lg" aria-hidden="true" /></div>
-                  <div>Show<br />WayPoints</div></Button>
+                  <div>Show<br />WayPoints</div>
+                </Button>
               </Col>
               <Col xs={12} sm={6} md={6} lg={6} className="padding2 margin-bottom">
                 <Button
@@ -345,7 +354,8 @@ class MissionPlan extends Component {
                   block
                 >
                   <div><i className="fa fa-bullseye fa-lg" aria-hidden="true" /></div>
-                  <div>Show<br />Mission Data</div></Button>
+                  <div>Show<br />Mission Data</div>
+                </Button>
               </Col>
             </Row>
             <br />
@@ -357,7 +367,8 @@ class MissionPlan extends Component {
                   onClick={() => this.clearWayPoints()}
                 >
                   <div><i className="fa fa-trash fa-lg" aria-hidden="true" /></div>
-                  <div>Clear WayPoints</div></Button>
+                  <div>Clear WayPoints</div>
+                </Button>
               </Col>
             </Row>
             <br />
@@ -369,7 +380,8 @@ class MissionPlan extends Component {
                   block
                 >
                   <div><i className="fa fa-square-o fa-lg" aria-hidden="true" /></div>
-                  <div>Perimeter<br /> KML</div></Button>
+                  <div>Perimeter<br /> KML</div>
+                </Button>
               </Col>
               <Col xs={12} sm={6} md={6} lg={6} className="padding2 margin-bottom">
                 <Button
@@ -378,7 +390,8 @@ class MissionPlan extends Component {
                   block
                 >
                   <div><i className="fa fa-map fa-lg" aria-hidden="true" /></div>
-                  <div>Mission<br /> KML</div></Button>
+                  <div>Mission<br /> KML</div>
+                </Button>
               </Col>
             </Row>
           </Col>

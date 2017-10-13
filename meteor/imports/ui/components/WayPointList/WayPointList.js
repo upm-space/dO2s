@@ -30,26 +30,32 @@ const changeWaypointAtlRelative = (missionId, waypointIndex, newWayPointAltRelat
     }
   }));
 
-const renderWaypointListItems = ({ missionId, waypointList }) =>
+const renderWaypointListItems = (missionId, waypointList) =>
   waypointList.map(waypoint => (
     <tr
       key={waypoint.properties.totalNumber}
     >
       <td className="center-column">{waypoint.properties.webNumber}</td>
-      <td><select
-        type="text"
-        className="form-control"
-        name="rpa"
-        defaultValue={waypoint.properties.type}
-        onChange={event =>
-          changeWaypointType(missionId, waypoint.properties.totalNumber, Number(event.target.value))}
-      >
-        <option key="1" value="1">Take Off</option>
-        <option key="2" value="2">Landing</option>
-        <option key="3" value="3">Camera On</option>
-        <option key="4" value="4">Camera Off</option>
-        <option key="5" value="5">Waypoint</option>
-      </select></td>
+      <td>
+        <select
+          type="text"
+          className="form-control"
+          name="rpa"
+          defaultValue={waypoint.properties.type}
+          onChange={event =>
+            changeWaypointType(
+              missionId,
+              waypoint.properties.totalNumber,
+              Number(event.target.value),
+            )}
+        >
+          <option key="1" value="1">Take Off</option>
+          <option key="2" value="2">Landing</option>
+          <option key="3" value="3">Camera On</option>
+          <option key="4" value="4">Camera Off</option>
+          <option key="5" value="5">Waypoint</option>
+        </select>
+      </td>
       <td><input
         type="number"
         className="form-control"
@@ -57,31 +63,37 @@ const renderWaypointListItems = ({ missionId, waypointList }) =>
         min="0"
         defaultValue={waypoint.properties.altRelative.toFixed(2)}
         onChange={event =>
-          changeWaypointAtlRelative(missionId, waypoint.properties.totalNumber, Number(event.target.value))}
-      /></td>
+          changeWaypointAtlRelative(
+            missionId,
+            waypoint.properties.totalNumber,
+            Number(event.target.value),
+          )}
+      />
+      </td>
       <td>{waypoint.properties.altGround.toFixed(2)}</td>
     </tr>));
 
-const renderWaypointListBody = props => (
+const renderWaypointListBody = (missionId, waypointList) => (
   <tbody>
-    {renderWaypointListItems(props)}
+    {renderWaypointListItems(missionId, waypointList)}
   </tbody>);
 
 const WayPointList = props => (
   <div className="WayPointList">
-    {props.waypointList.length ? <Table responsive hover>
-      <thead>
-        <tr>
-          <th className="center-column">
+    {props.waypointList.length ?
+      <Table responsive hover>
+        <thead>
+          <tr>
+            <th className="center-column">
             Waypoints ({props.waypointList.length})
-          </th>
-          <th>Type</th>
-          <th>ALT Relative to TOff</th>
-          <th>Ground Elevation</th>
-        </tr>
-      </thead>
-      {renderWaypointListBody(props)}
-    </Table> : <Alert bsStyle="warning">No waypoints yet!</Alert>}
+            </th>
+            <th>Type</th>
+            <th>ALT Relative to TOff</th>
+            <th>Ground Elevation</th>
+          </tr>
+        </thead>
+        {renderWaypointListBody(props.missionId, props.waypointList)}
+      </Table> : <Alert bsStyle="warning">No waypoints yet!</Alert>}
   </div>
 );
 
