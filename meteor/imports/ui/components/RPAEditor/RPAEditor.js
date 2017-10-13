@@ -275,7 +275,8 @@ RPAEditor.defaultProps = {
       optimalLandingSlope: 0,
       optimalTakeOffSlope: 0,
       maxLandSpeed: 0,
-    } },
+    },
+  },
 };
 
 RPAEditor.propTypes = {

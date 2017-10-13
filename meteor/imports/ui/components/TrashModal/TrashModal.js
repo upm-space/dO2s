@@ -21,7 +21,8 @@ const renderDeletedItems = (deletedItems, handleRestore, handleHardRemove) => (
           bsStyle="info"
           onClick={() => handleRestore(_id)}
 
-        >Restore</Button>
+        >Restore
+        </Button>
       </td>
       <td className="button-column">
         <Button
@@ -29,10 +30,10 @@ const renderDeletedItems = (deletedItems, handleRestore, handleHardRemove) => (
           bsStyle="danger"
           onClick={() => handleHardRemove(_id)}
 
-        >Delete</Button>
+        >Delete
+        </Button>
       </td>
-    </tr>),
-));
+    </tr>)));
 
 const TrashModal = props => (
   <Modal show={props.show} onHide={props.onHide}>
@@ -42,14 +43,16 @@ const TrashModal = props => (
     <Modal.Body>
       {!props.loading ? (
         <div className="recycle-bin">
-          {props.deletedItems.length ? <Table responsive>
-            <tbody>
-              {renderDeletedItems(
-                props.deletedItems,
-                props.handleRestore,
-                props.handleHardRemove)}
-            </tbody>
-          </Table> : <Alert bsStyle="info">Your Recycle Bin is empty!</Alert>}
+          {props.deletedItems.length ?
+            <Table responsive>
+              <tbody>
+                {renderDeletedItems(
+                  props.deletedItems,
+                  props.handleRestore,
+                  props.handleHardRemove,
+                )}
+              </tbody>
+            </Table> : <Alert bsStyle="info">Your Recycle Bin is empty!</Alert>}
         </div>
       ) : <Loading />}
     </Modal.Body>

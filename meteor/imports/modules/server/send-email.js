@@ -6,14 +6,18 @@ import templateToHTML from './handlebars-email-to-html';
 
 const sendEmail = (options, { resolve, reject }) => {
   try {
-    Meteor.defer(() => Email.send(options));
-    if (callback) resolve();
+    Meteor.defer(() => {
+      Email.send(options);
+      resolve();
+    });
   } catch (exception) {
     reject(exception);
   }
 };
 
-export default ({ text, html, template, templateVars, ...rest }, callback) => {
+export default ({
+  text, html, template, templateVars, ...rest
+}) => {
   if (text || html || template) {
     return new Promise((resolve, reject) => {
       sendEmail({

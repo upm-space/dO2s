@@ -11,16 +11,14 @@ import NotFound from '../NotFound/NotFound';
 import Loading from '../../components/Loading/Loading';
 
 const handleRemove = (rpaId, history) => {
-  if (confirm('Move to Trash?')) {
-    Meteor.call('rpas.softDelete', rpaId, (error) => {
-      if (error) {
-        Bert.alert(error.reason, 'danger');
-      } else {
-        Bert.alert('RPA deleted!', 'warning');
-        history.push('/hangar/rpas');
-      }
-    });
-  }
+  Meteor.call('rpas.softDelete', rpaId, (error) => {
+    if (error) {
+      Bert.alert(error.reason, 'danger');
+    } else {
+      Bert.alert('RPA deleted!', 'warning');
+      history.push('/hangar/rpas');
+    }
+  });
 };
 
 const renderRPA = (rpa, match, history) => (rpa && rpa.deleted === 'no' ? (
@@ -160,7 +158,9 @@ const renderRPA = (rpa, match, history) => (rpa && rpa.deleted === 'no' ? (
   </div>
 ) : <NotFound />);
 
-const ViewRPA = ({ loading, rpa, match, history }) => (
+const ViewRPA = ({
+  loading, rpa, match, history,
+}) => (
   !loading ? renderRPA(rpa, match, history) : <Loading />
 );
 

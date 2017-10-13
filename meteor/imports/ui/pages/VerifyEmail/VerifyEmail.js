@@ -26,11 +26,12 @@ class VerifyEmail extends Component {
   }
 
   render() {
-    return (<div className="VerifyEmail">
-      <Alert bsStyle={!this.state.error ? 'info' : 'danger'}>
-        {!this.state.error ? 'Verifying...' : this.state.error}
-      </Alert>
-    </div>);
+    return (
+      <div className="VerifyEmail">
+        <Alert bsStyle={!this.state.error ? 'info' : 'danger'}>
+          {!this.state.error ? 'Verifying...' : this.state.error}
+        </Alert>
+      </div>);
   }
 }
 

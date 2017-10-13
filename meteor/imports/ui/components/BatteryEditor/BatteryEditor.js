@@ -89,80 +89,81 @@ class BatteryEditor extends Component {
         ref={form => (this.form = form)}
         onSubmit={event => event.preventDefault()}
       >
-        <Row><Col xs={12} sm={6} md={6} lg={6}>
-          <FormGroup>
-            <ControlLabel>Name</ControlLabel>
-            <input
-              type="text"
-              className="form-control"
-              name="name"
-              ref={name => (this.name = name)}
-              defaultValue={battery && battery.name}
-              placeholder="Name you battery"
-            />
-          </FormGroup>
-          <FormGroup>
-            <ControlLabel>Model</ControlLabel>
-            <input
-              type="text"
-              className="form-control"
-              name="model"
-              ref={model => (this.model = model)}
-              defaultValue={battery && battery.model}
-              placeholder="The model of your battery"
-            />
-          </FormGroup>
-          <FormGroup>
-            <ControlLabel>Registration Number</ControlLabel>
-            <input
-              type="text"
-              className="form-control"
-              name="registrationNumber"
-              ref={registrationNumber => (this.registrationNumber = registrationNumber)}
-              defaultValue={battery && battery.registrationNumber}
-              placeholder="A registration number for your battery"
-            />
-          </FormGroup>
-          <FormGroup>
-            <ControlLabel>Amperes (A)</ControlLabel>
-            <input
-              type="number"
-              className="form-control"
-              name="amperes"
-              ref={amperes => (this.amperes = amperes)}
-              defaultValue={battery && battery.amperes}
-              placeholder="Your battery's amperes"
-            />
-          </FormGroup>
-          <FormGroup>
-            <ControlLabel>Cell Number</ControlLabel>
-            <input
-              type="number"
-              className="form-control"
-              name="cellNumber"
-              ref={cellNumber => (this.cellNumber = cellNumber)}
-              defaultValue={battery && battery.cellNumber}
-              placeholder="The number of cells in your battery"
-            />
-          </FormGroup>
-          <FormGroup>
-            <ControlLabel>Weight (g)</ControlLabel>
-            <input
-              type="number"
-              className="form-control"
-              name="weight"
-              ref={weight => (this.weight = weight)}
-              defaultValue={battery && battery.weight}
-              placeholder="Please input the weight of your battery in grams"
-            />
-          </FormGroup>
-          <FormGroup>
-            <ControlLabel>Log Data</ControlLabel>
-            <FormControl.Static>
+        <Row>
+          <Col xs={12} sm={6} md={6} lg={6}>
+            <FormGroup>
+              <ControlLabel>Name</ControlLabel>
+              <input
+                type="text"
+                className="form-control"
+                name="name"
+                ref={name => (this.name = name)}
+                defaultValue={battery && battery.name}
+                placeholder="Name you battery"
+              />
+            </FormGroup>
+            <FormGroup>
+              <ControlLabel>Model</ControlLabel>
+              <input
+                type="text"
+                className="form-control"
+                name="model"
+                ref={model => (this.model = model)}
+                defaultValue={battery && battery.model}
+                placeholder="The model of your battery"
+              />
+            </FormGroup>
+            <FormGroup>
+              <ControlLabel>Registration Number</ControlLabel>
+              <input
+                type="text"
+                className="form-control"
+                name="registrationNumber"
+                ref={registrationNumber => (this.registrationNumber = registrationNumber)}
+                defaultValue={battery && battery.registrationNumber}
+                placeholder="A registration number for your battery"
+              />
+            </FormGroup>
+            <FormGroup>
+              <ControlLabel>Amperes (A)</ControlLabel>
+              <input
+                type="number"
+                className="form-control"
+                name="amperes"
+                ref={amperes => (this.amperes = amperes)}
+                defaultValue={battery && battery.amperes}
+                placeholder="Your battery's amperes"
+              />
+            </FormGroup>
+            <FormGroup>
+              <ControlLabel>Cell Number</ControlLabel>
+              <input
+                type="number"
+                className="form-control"
+                name="cellNumber"
+                ref={cellNumber => (this.cellNumber = cellNumber)}
+                defaultValue={battery && battery.cellNumber}
+                placeholder="The number of cells in your battery"
+              />
+            </FormGroup>
+            <FormGroup>
+              <ControlLabel>Weight (g)</ControlLabel>
+              <input
+                type="number"
+                className="form-control"
+                name="weight"
+                ref={weight => (this.weight = weight)}
+                defaultValue={battery && battery.weight}
+                placeholder="Please input the weight of your battery in grams"
+              />
+            </FormGroup>
+            <FormGroup>
+              <ControlLabel>Log Data</ControlLabel>
+              <FormControl.Static>
               Some Log data button
-            </FormControl.Static>
-          </FormGroup>
-        </Col>
+              </FormControl.Static>
+            </FormGroup>
+          </Col>
         </Row>
         <Button type="submit" bsStyle="success">
           {battery && battery._id ? 'Save Changes' : 'Add Battery'}

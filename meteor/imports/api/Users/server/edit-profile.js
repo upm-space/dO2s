@@ -8,10 +8,14 @@ let action;
 const updateUser = (userId, { emailAddress, profile }) => {
   console.log(userId, emailAddress, JSON.stringify(profile));
   try {
-    const currentEmail = Meteor.users.find({ _id: userId },
-      { fields: {
-        emails: 1,
-      } }).fetch()[0].emails[0].address;
+    const currentEmail = Meteor.users.find(
+      { _id: userId },
+      {
+        fields: {
+          emails: 1,
+        },
+      },
+    ).fetch()[0].emails[0].address;
     if (emailAddress === currentEmail) {
       Meteor.users.update(userId, {
         $set: { profile },
@@ -49,5 +53,5 @@ const editProfile = ({ userId, profile }, promise) => {
 };
 
 export default options =>
-new Promise((resolve, reject) =>
-editProfile(options, { resolve, reject }));
+  new Promise((resolve, reject) =>
+    editProfile(options, { resolve, reject }));

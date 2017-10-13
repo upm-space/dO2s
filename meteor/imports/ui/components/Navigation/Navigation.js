@@ -30,6 +30,7 @@ Navigation.defaultProps = {
 Navigation.propTypes = {
   authenticated: PropTypes.bool.isRequired,
   isAdmin: PropTypes.bool.isRequired,
+  name: PropTypes.string,
 };
 
 export default withRouter(Navigation);

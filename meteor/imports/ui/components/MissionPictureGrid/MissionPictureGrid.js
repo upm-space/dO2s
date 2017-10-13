@@ -53,28 +53,29 @@ class MissionPictureGrid extends Component {
         ref={form => (this.form = form)}
         onSubmit={event => event.preventDefault()}
       >
-        <Row><Col xs={12} sm={6} md={6} lg={6}>
-          <FormGroup>
-            <ControlLabel>Overlap (%)</ControlLabel>
-            <input
-              type="number"
-              className="form-control"
-              name="overlap"
-              ref={overlap => (this.overlap = overlap)}
-              defaultValue={mission && mission.flightPlan && mission.flightPlan.pictureGrid && mission.flightPlan.pictureGrid.overlap}
-            />
-          </FormGroup>
-          <FormGroup>
-            <ControlLabel>Sidelap (%)</ControlLabel>
-            <input
-              type="number"
-              className="form-control"
-              name="sidelap"
-              ref={sidelap => (this.sidelap = sidelap)}
-              defaultValue={mission && mission.flightPlan && mission.flightPlan.pictureGrid && mission.flightPlan.pictureGrid.sidelap}
-            />
-          </FormGroup>
-        </Col>
+        <Row>
+          <Col xs={12} sm={6} md={6} lg={6}>
+            <FormGroup>
+              <ControlLabel>Overlap (%)</ControlLabel>
+              <input
+                type="number"
+                className="form-control"
+                name="overlap"
+                ref={overlap => (this.overlap = overlap)}
+                defaultValue={mission && mission.flightPlan && mission.flightPlan.pictureGrid && mission.flightPlan.pictureGrid.overlap}
+              />
+            </FormGroup>
+            <FormGroup>
+              <ControlLabel>Sidelap (%)</ControlLabel>
+              <input
+                type="number"
+                className="form-control"
+                name="sidelap"
+                ref={sidelap => (this.sidelap = sidelap)}
+                defaultValue={mission && mission.flightPlan && mission.flightPlan.pictureGrid && mission.flightPlan.pictureGrid.sidelap}
+              />
+            </FormGroup>
+          </Col>
         </Row>
         <Button type="submit" bsStyle="success">
           Save Changes

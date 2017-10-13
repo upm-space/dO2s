@@ -9,16 +9,14 @@ import NotFound from '../NotFound/NotFound';
 import Loading from '../../components/Loading/Loading';
 
 const handleRemove = (batteryId, history) => {
-  if (confirm('Move to Trash?')) {
-    Meteor.call('batteries.softDelete', batteryId, (error) => {
-      if (error) {
-        Bert.alert(error.reason, 'danger');
-      } else {
-        Bert.alert('Battery deleted!', 'warning');
-        history.push('/batteries');
-      }
-    });
-  }
+  Meteor.call('batteries.softDelete', batteryId, (error) => {
+    if (error) {
+      Bert.alert(error.reason, 'danger');
+    } else {
+      Bert.alert('Battery deleted!', 'warning');
+      history.push('/batteries');
+    }
+  });
 };
 
 const renderBattery = (battery, match, history) => (battery && battery.deleted === 'no' ? (
@@ -105,7 +103,9 @@ const renderBattery = (battery, match, history) => (battery && battery.deleted =
   </div>
 ) : <NotFound />);
 
-const ViewBattery = ({ loading, battery, match, history }) => (
+const ViewBattery = ({
+  loading, battery, match, history,
+}) => (
   !loading ? renderBattery(battery, match, history) : <Loading />
 );
 

@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { Table, Alert, Button, Glyphicon } from 'react-bootstrap';
+import { Table, Alert, Button } from 'react-bootstrap';
 import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Bert } from 'meteor/themeteorchef:bert';
@@ -35,31 +35,27 @@ class Batteries extends Component {
   }
 
   handleSoftRemove(batteryId) {
-    if (confirm('Move to Trash?')) {
-      Meteor.call('batteries.softDelete', batteryId, (error) => {
-        if (error) {
-          Bert.alert(error.reason, 'danger');
-        } else {
-          Bert.alert('Battery moved to Trash!', 'warning');
-        }
-      });
-    }
+    Meteor.call('batteries.softDelete', batteryId, (error) => {
+      if (error) {
+        Bert.alert(error.reason, 'danger');
+      } else {
+        Bert.alert('Battery moved to Trash!', 'warning');
+      }
+    });
   }
 
   handleRestore(batteryId) {
-    if (confirm('Restore Battery?')) {
-      Meteor.call('batteries.restore', batteryId, (error) => {
-        if (error) {
-          Bert.alert(error.reason, 'danger');
-        } else {
-          Bert.alert('Battery Restored!', 'success');
-        }
-      });
-    }
+    Meteor.call('batteries.restore', batteryId, (error) => {
+      if (error) {
+        Bert.alert(error.reason, 'danger');
+      } else {
+        Bert.alert('Battery Restored!', 'success');
+      }
+    });
   }
 
   handleHardRemove(batteryId) {
-    if (confirm('Are you sure? This is permanent!')) {
+    if (window.confirm('Are you sure? This is permanent!')) {
       Meteor.call('batteries.hardDelete', batteryId, (error) => {
         if (error) {
           Bert.alert(error.reason, 'danger');
@@ -100,30 +96,36 @@ class Batteries extends Component {
         <div className="page-header clearfix">
           <Link className="btn btn-success pull-right" to={`${match.url}/new`}>Add Battery</Link>
         </div>
-        {batteries.length ? <div className="ItemList"><Table responsive hover>
-          <thead>
-            <tr>
-              <th>
+        {batteries.length ?
+          <div className="ItemList">
+            <Table responsive hover>
+              <thead>
+                <tr>
+                  <th>
                 Batteries ({this.props.totalCount})
-              </th>
-              <th className="hidden-xs">Last Updated</th>
-              <th className="hidden-xs">Created</th>
-              <th><Button
-                bsStyle="default"
-                onClick={() => this.setState({ trashShow: true })}
-                block
-              ><Glyphicon glyph="trash" /></Button></th>
-            </tr>
-          </thead>
-          <List
-            loading={loading}
-            completedColumn={false}
-            items={batteries}
-            match={match}
-            history={this.props.history}
-            softDeleteItem={this.handleSoftRemove}
-          />
-        </Table></div> : <Alert bsStyle="warning">No batteries yet!</Alert>}
+                  </th>
+                  <th className="hidden-xs">Last Updated</th>
+                  <th className="hidden-xs">Created</th>
+                  <th>
+                    <Button
+                      bsStyle="default"
+                      onClick={() => this.setState({ trashShow: true })}
+                      block
+                    ><span className="fa fa-trash" aria-hidden="true" />
+                    </Button>
+                  </th>
+                </tr>
+              </thead>
+              <List
+                loading={loading}
+                completedColumn={false}
+                items={batteries}
+                match={match}
+                history={this.props.history}
+                softDeleteItem={this.handleSoftRemove}
+              />
+            </Table>
+          </div> : <Alert bsStyle="warning">No batteries yet!</Alert>}
       </div>
     ) : <Loading />);
   }
