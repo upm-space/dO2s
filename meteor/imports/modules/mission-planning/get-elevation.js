@@ -9,7 +9,7 @@ const calculateAltitudes = (flightHeight, featureCollection) => {
     const waypointElevation = feature.geometry.coordinates[2];
     if (feature.properties.type === 1) {
       feature.properties.altGround = waypointElevation;
-      feature.properties.altRelative = 0;
+      feature.properties.altRelative = 50;
     } else if (feature.properties.type === 2) {
       feature.properties.altGround = waypointElevation;
       feature.properties.altRelative = waypointElevation - takeoffElevation;
