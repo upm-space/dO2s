@@ -52,6 +52,8 @@ import EmailNotVerified from '../../components/EmailNotVerified/EmailNotVerified
 import UserManagement from '../../pages/UserManagement/UserManagement';
 import NewUser from '../../pages/NewUser/NewUser';
 import EditUser from '../../pages/EditUser/EditUser';
+import Hector from '../../pages/Hector/Hector';
+// import MissionVideo from '../../components/MissionVideo/MissionVideo';
 
 const App = props => (
   <Router>
@@ -139,6 +141,12 @@ const App = props => (
             exact
             path="/hangar/batteries/:battery_id/edit"
             component={EditBattery}
+            {...props}
+          />
+          <Authenticated
+            exact
+            path="/hector"
+            component={Hector}
             {...props}
           />
           <EmailNotVerified exact path="/profile" component={Profile} {...props} />
