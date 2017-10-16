@@ -1,0 +1,64 @@
+div#wrapper{
+  border: 1px solid grey;
+}
+
+.track,
+.track-inset,
+.track-overlay {
+    stroke-linecap: round;
+}
+
+.track {
+    stroke: #000;
+    stroke-opacity: 0.3;
+    stroke-width: 10px;
+}
+
+.track-inset {
+    stroke: #ddd;
+    stroke-width: 8px;
+}
+
+.track-overlay {
+    pointer-events: stroke;
+    stroke-width: 50px;
+    cursor: crosshair;
+}
+
+.range {
+    stroke:#38c;
+    stroke-width: 8px;
+    z-index: 4;
+    cursor: crosshair;
+}
+
+.handle {
+    fill: #fff;
+    stroke: #000;
+    stroke-opacity: 0.5;
+    stroke-width: 1px;
+    cursor: crosshair;
+}
+
+.selector {
+    fill: #f00;
+    z-index: -10;
+    // marker-end:
+    cursor: crosshair;
+}
+
+h5#TimeRange{
+  margin-left: 10px;
+}
+
+svg#svg{
+}
+//
+// div#wrapper{
+//   margin: 15px;
+//   position: absolute;
+//   top: 250px;
+//   left: 0;
+//   background-color: #777777;
+//   z-index: 20;
+// }
