@@ -5,13 +5,15 @@ import { Roles } from 'meteor/alanning:roles';
 
 Meteor.publish('users.management', function usersManagement() {
   if (Roles.userIsInRole(this.userId, ['admin'])) {
-    return Meteor.users.find({}, { fields: {
-      emails: 1,
-      roles: 1,
-      profile: 1,
-      services: 1,
-      deleted: 1,
-      createdAt: 1 },
+    return Meteor.users.find({}, {
+      fields: {
+        emails: 1,
+        roles: 1,
+        profile: 1,
+        services: 1,
+        deleted: 1,
+        createdAt: 1,
+      },
     });
   }
 });

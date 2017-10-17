@@ -7,7 +7,7 @@ import templateToText from '../../../modules/server/handlebars-email-to-text';
 const name = 'dO2s';
 const email = '<do2s.app@gmail.com>';
 const from = `${name} ${email}`;
-const emailTemplates = Accounts.emailTemplates;
+const { emailTemplates } = Accounts;
 
 emailTemplates.siteName = name;
 emailTemplates.from = from;

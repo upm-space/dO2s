@@ -66,8 +66,15 @@ To use Font Awesome we'll use a CDN. We'll add it to the head of `main.html`, we
 ```
 
 ### References
--   [The way to use Bootstrap 4 from npm including js and tether](https://forums.meteor.com/t/the-way-to-use-bootstrap-4-from-npm-including-js-and-tether/23159/10)
--   [Meteor bootstrap package](https://atmospherejs.com/twbs/bootstrap), is still on 3.3.6
--   [SASS project structure](http://vanseodesign.com/css/sass-directory-structures/)
--   [Sass Language Documentation](http://sass-lang.com/documentation/)
--   [Using bootstrap 4 in meteor](https://github.com/juliancwirko/meteor-bootstrap-npm-test)
+-   [The way to use Bootstrap 4 from npm including js and tether]
+-   [Meteor bootstrap package], is still on 3.3.6
+-   [SASS project structure]
+-   [Sass Language Documentation]
+-   [Using bootstrap 4 in meteor]
+
+
+[The way to use Bootstrap 4 from npm including js and tether]: https://forums.meteor.com/t/the-way-to-use-bootstrap-4-from-npm-including-js-and-tether/23159/10
+[Meteor bootstrap package]: https://atmospherejs.com/twbs/bootstrap
+[SASS project structure]: http://vanseodesign.com/css/sass-directory-structures/
+[Sass Language Documentation]: http://sass-lang.com/documentation/
+[Using bootstrap 4 in meteor]: https://github.com/juliancwirko/meteor-bootstrap-npm-test

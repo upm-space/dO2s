@@ -19,7 +19,7 @@ Missions.deny({
 });
 
 const flightParametersSchema = new SimpleSchema({
-  altitude: {
+  height: {
     type: Number,
     label: 'The altitude of the flight in meters',
     min: 0,
@@ -33,6 +33,12 @@ const flightParametersSchema = new SimpleSchema({
     type: Number,
     label: 'The entry margin for the fixed wing rpa in meters',
     min: 0,
+  },
+  axisBuffer: {
+    type: Number,
+    label: 'The entry axis buffer for the linear mission in meters',
+    min: 0,
+    optional: true,
   },
 });
 

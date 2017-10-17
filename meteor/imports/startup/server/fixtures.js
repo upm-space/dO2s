@@ -48,11 +48,11 @@ const payloadsSeed = userId => ({
       weight: faker.random.number({ min: 0, max: 21 }),
       payloadType: faker.random.arrayElement(['Camera']),
       sensorParameters: {
-        focalLength: faker.random.number({ min: 0, max: 100 }),
-        sensorWidth: faker.random.number({ min: 0, max: 100 }),
-        sensorHeight: faker.random.number({ min: 0, max: 100 }),
-        imageWidth: faker.random.number({ min: 0, max: 6000 }),
-        imageHeight: faker.random.number({ min: 0, max: 6000 }),
+        focalLength: 16,
+        sensorWidth: 23.5,
+        sensorHeight: 15.6,
+        imageWidth: 6000,
+        imageHeight: 4000,
       },
     };
   },
@@ -137,18 +137,18 @@ seeder(Meteor.users, {
       },
     },
     roles: ['admin'],
-    data(userId) {
-      return projectsSeed(userId);
-    },
-    data2(userId) {
-      return rpasSeed(userId);
-    },
-    data3(userId) {
-      return payloadsSeed(userId);
-    },
-    data4(userId) {
-      return batteriesSeed(userId);
-    },
+    // data(userId) {
+    //   return projectsSeed(userId);
+    // },
+    // data2(userId) {
+    //   return rpasSeed(userId);
+    // },
+    // data3(userId) {
+    //   return payloadsSeed(userId);
+    // },
+    // data4(userId) {
+    //   return batteriesSeed(userId);
+    // },
   }],
   modelCount: 5,
   model(index, faker) {
@@ -163,18 +163,18 @@ seeder(Meteor.users, {
         },
       },
       roles: ['free-user'],
-      data(userId) {
-        return projectsSeed(userId);
-      },
-      data2(userId) {
-        return rpasSeed(userId);
-      },
-      data3(userId) {
-        return payloadsSeed(userId);
-      },
-      data4(userId) {
-        return batteriesSeed(userId);
-      },
+      // data(userId) {
+      //   return projectsSeed(userId);
+      // },
+      // data2(userId) {
+      //   return rpasSeed(userId);
+      // },
+      // data3(userId) {
+      //   return payloadsSeed(userId);
+      // },
+      // data4(userId) {
+      //   return batteriesSeed(userId);
+      // },
     };
   },
 });

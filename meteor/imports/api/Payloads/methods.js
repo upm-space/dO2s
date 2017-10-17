@@ -27,7 +27,7 @@ Meteor.methods({
       const payloadId = payload._id;
       Payloads.update(payloadId, { $set: payload });
       return payloadId;
-       // Return _id so we can redirect to payload after update.
+      // Return _id so we can redirect to payload after update.
     } catch (exception) {
       if (exception.error === 'validation-error') {
         throw new Meteor.Error(500, exception.message);

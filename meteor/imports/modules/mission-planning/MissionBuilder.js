@@ -23,7 +23,7 @@ export default class MissionBuilder {
   */
   getPictureWidth() {
     const mwm = (this.camera.MatrixWidth / 10000); /* Matrix Width in meters */
-    const altitude = this.mission.altitude;
+    const { altitude } = this.mission;
     const fm = (this.camera.Focal / 10000); /* focal in meters */
     return ((mwm * altitude) / fm).toFixed(2);
   }
@@ -33,7 +33,7 @@ export default class MissionBuilder {
    */
   getPictureHeight() {
     const mhm = (this.camera.MatrixHeight / 10000); /* matrix height in meters */
-    const altitude = this.mission.altitude;
+    const { altitude } = this.mission;
     const fm = (this.camera.Focal / 10000); /* focal in meters */
     return ((mhm * altitude) / fm).toFixed(2);
   }
@@ -132,7 +132,7 @@ export default class MissionBuilder {
     let bearingToPoint = null;
     if (this.mission.boundaries === LargestSegment - 1) {
       // if is the last point them bearing to initial point of the polygon
-      bearingToPoint = points[0];
+      [bearingToPoint] = points;
     } else {
       bearingToPoint = points[LargestSegment + 1];
     }
@@ -320,13 +320,15 @@ export default class MissionBuilder {
           const previousItem = segments[i - 1];
           const previousProjectedPoint = previousItem.projectedPoins[jj];
           const previousBearing = previousItem.bearing;
-          const cutPoint = LatLon.intersection(projectedPoint, bearing,
-            previousProjectedPoint, previousBearing);
+          const cutPoint = LatLon.intersection(
+            projectedPoint, bearing,
+            previousProjectedPoint, previousBearing,
+          );
           item.cutPoints.push(cutPoint);
         }
         if (i === points.length - 1) {
-          projectedPoint = points[points.length - 1].destinationPoint(
-            projectedBearing, projectedDistance);
+          projectedPoint =
+          points[points.length - 1].destinationPoint(projectedBearing, projectedDistance);
           item.projectedPoins.push(projectedPoint);
           item.cutPoints.push(projectedPoint);
         }
@@ -363,7 +365,8 @@ export default class MissionBuilder {
     let closestPoint = takeoff.closestPoint([lines[0][0],
       lines[0][lenLine], lines[arrL][0], lines[arrL][lenLine]]);
     // para la opción más lejana
-    // var closestPoint = takeoff.furthestPoint([lines[0][0],lines[0][lenLine],lines[arrL][0],lines[arrL][lenLine]]);
+    // var closestPoint =
+    // takeoff.furthestPoint([lines[0][0],lines[0][lenLine],lines[arrL][0],lines[arrL][lenLine]]);
     let up = true;
     const points = [];
 
@@ -403,7 +406,7 @@ export default class MissionBuilder {
             });
             closestPoint = lines[i][lenLine];
           } else {
-            closestPoint = lines[i][0];
+            [closestPoint] = lines[i];
             lines[i].reverse();
             lines[i].forEach((point) => {
               points.push(point);
@@ -419,7 +422,7 @@ export default class MissionBuilder {
             });
             closestPoint = lines[ii][lenLine];
           } else {
-            closestPoint = lines[ii][0];
+            [closestPoint] = lines[ii];
             lines[ii].reverse();
             lines[ii].forEach((point) => {
               points.push(point);
@@ -523,7 +526,7 @@ export default class MissionBuilder {
     const wpStopPic = 4;
     const wpNewPosition = 5;
     this.mission.waypoints = [];
-    const points = this.mission.points;
+    const { points } = this.mission;
     const toff = this.mission.dataTOff;
     const landing = this.mission.dataLanding;
 
@@ -533,13 +536,16 @@ export default class MissionBuilder {
     const positiveBearing = pt1.bearingTo(pt2);
     const negativeBearing = pt2.bearingTo(pt1);
 
-    // let wpTOFF = {key:this.generateUUID(),lng:toff.lng,lat:toff.lat,alt:0,type:wpToff,param1:0,param2:0,param3:0};
+    // let wpTOFF =
+    // {key:this.generateUUID(),
+    // lng:toff.lng,lat:toff.lat,alt:0,type:wpToff,param1:0,param2:0,param3:0};
     // let wpTOFF = this.generateWaypoint(toff.lng,toff.lat,0,wpToff);
     const wpTOFF = this.generateWaypoint({
       lng: toff.lng,
       lat: toff.lat,
       altRelative: 50,
-      type: wpToff });
+      type: wpToff,
+    });
 
     this.mission.waypoints.push(wpTOFF);
     let i = 0;
@@ -564,10 +570,14 @@ export default class MissionBuilder {
 
         /* Parche para entidades lineales */
         if (this.mission.type === 'lineal' && vertexCounter === numberOfVertex === 0) {
-          const pt1Line = new LatLon(points[numberOfVertex - 1].lat,
-            points[numberOfVertex - 1].lon);
-          const pt2Line = new LatLon(points[numberOfVertex - 2].lat,
-            points[numberOfVertex - 2].lon);
+          const pt1Line = new LatLon(
+            points[numberOfVertex - 1].lat,
+            points[numberOfVertex - 1].lon,
+          );
+          const pt2Line = new LatLon(
+            points[numberOfVertex - 2].lat,
+            points[numberOfVertex - 2].lon,
+          );
           // const positiveBearingLine = pt1Line.bearingTo(pt2Line);
           const negativeBearingLine = pt2Line.bearingTo(pt1Line);
           if (boolPositiveBearing) {
@@ -584,13 +594,15 @@ export default class MissionBuilder {
           lng: ptProjected.lon,
           lat: ptProjected.lat,
           altRelative: this.mission.altitude,
-          type: wpNewPosition });
+          type: wpNewPosition,
+        });
 
         const wpOrig = this.generateWaypoint({
           lng: ptOrig.lon,
           lat: ptOrig.lat,
           altRelative: this.mission.altitude,
-          type: wpStartPic });
+          type: wpStartPic,
+        });
 
         wpOrig.param2 = this.mission.distPics;
 
@@ -606,10 +618,14 @@ export default class MissionBuilder {
 
         this.mission.waypoints.push(wpOrig);
 
-        // with takePic = true allways wil project an overshoot (waypoint exit and entry), if takePic = false only will take the overshoot when exit
+        // with takePic =
+        // true allways wil project an overshoot (waypoint exit and entry),
+        // if takePic = false only will take the overshoot when exit
         // takePic = false;
       } else {
-        // let wpOrig = this.generateWaypoint({'lng':points[i].lon,'lat':points[i].lat,'altRelative':this.mission.altitude,'type':wpStopPic});
+        // let wpOrig =
+        // this.generateWaypoint({'lng':points[i].lon,'lat':points[i].lat,
+        // 'altRelative':this.mission.altitude,'type':wpStopPic});
         // this.mission.waypoints.push(wpOrig);
         // takePic = true
         const ptOrig = new LatLon(points[i].lat, points[i].lon);
@@ -625,10 +641,14 @@ export default class MissionBuilder {
 
         /* Parche para entidades lineales */
         if (this.mission.type === 'lineal' && vertexCounter === numberOfVertex - 1) {
-          const pt1Line = new LatLon(points[numberOfVertex - 2].lat,
-            points[numberOfVertex - 2].lon);
-          const pt2Line = new LatLon(points[numberOfVertex - 1].lat,
-            points[numberOfVertex - 1].lon);
+          const pt1Line = new LatLon(
+            points[numberOfVertex - 2].lat,
+            points[numberOfVertex - 2].lon,
+          );
+          const pt2Line = new LatLon(
+            points[numberOfVertex - 1].lat,
+            points[numberOfVertex - 1].lon,
+          );
           const positiveBearingLine = pt1Line.bearingTo(pt2Line);
           // const negativeBearingLine = pt2Line.bearingTo(pt1Line);
           if (boolPositiveBearing) {
@@ -680,7 +700,9 @@ export default class MissionBuilder {
         }
 
 
-        // with takePic = true allways wil project an overshoot (waypoint exit and entry), if takePic = false only will take the overshoot when exit
+        // with takePic =
+        // true allways wil project an overshoot (waypoint exit and entry),
+        // if takePic = false only will take the overshoot when exit
         // takePic = true;
       }
       vertexCounter += 1;
@@ -688,8 +710,11 @@ export default class MissionBuilder {
         vertexCounter = 0;
       }
     }
-    // let wpLANDING = {key:this.generateUUID(),lng:landing.lng,lat:landing.lat,alt:0,type:wpLanding,param1:0,param2:0,param3:0};
-    // let wpLANDING = this.generateWaypoint(landing.lng,landing.lat,this.mission.altitude,wpLanding);
+    // let wpLANDING =
+    // {key:this.generateUUID(),lng:landing.lng,lat:landing.lat,alt:0,
+    // type:wpLanding,param1:0,param2:0,param3:0};
+    // let wpLANDING =
+    // this.generateWaypoint(landing.lng,landing.lat,this.mission.altitude,wpLanding);
     const wpLANDING = this.generateWaypoint({
       lng: landing.lng,
       lat: landing.lat,
@@ -702,8 +727,26 @@ export default class MissionBuilder {
 
   /**
    * Function that returns a waypoint in json notation with a unique key
-   * @param {{lng: number, lat: number, altRelative: number, altGround: number, altAbsolute: number, type: number, param1: number, param2: number, param3: number}}
-   * @returns {{key, lng: number, lat: number, altRelative: number, altGround: number, altAbsolute: number, type: number, param1: number, param2: number, param3: number}}
+   * @param {{
+                lng: number,
+                lat: number,
+                altRelative: number,
+                altGround: number,
+                altAbsolute: number,
+                type: number,
+                param1: number,
+                param2: number,
+                param3: number}}
+   * @returns {{
+                 key, lng: number,
+                 lat: number,
+                 altRelative: number,
+                 altGround: number,
+                 altAbsolute: number,
+                 type: number,
+                 param1: number,
+                 param2: number,
+                 param3: number}}
    */
   generateWaypoint(jsonParams) {
     const params = jsonParams;
@@ -716,7 +759,8 @@ export default class MissionBuilder {
     if (!params.param1)params.param1 = 0;
     if (!params.param2)params.param2 = 0;
     if (!params.param3)params.param3 = 0;
-    return { key: this.generateUUID(),
+    return {
+      key: this.generateUUID(),
       lng: params.lng,
       lat: params.lat,
       altRelative: params.altRelative,
@@ -725,7 +769,8 @@ export default class MissionBuilder {
       type: params.type,
       param1: params.param1,
       param2: params.param2,
-      param3: params.param3 };
+      param3: params.param3,
+    };
   }
   enumerateWayPoints() {
     let counterReal = 0; // contador real para el imu
@@ -733,7 +778,8 @@ export default class MissionBuilder {
     this.mission.waypoints.forEach((wp) => {
       counterReal += 1;
       wp.param1 = counterReal;
-      if (wp.type === 3 || wp.type === 4) { // the server script generates two waypoints when start/stop taking pictures
+      if (wp.type === 3 || wp.type === 4) {
+        // the server script generates two waypoints when start/stop taking pictures
         counterReal += 1;
       }
       if (wp.type === 5) { // only enumerate on the map type 5 (new possition)
@@ -748,7 +794,7 @@ export default class MissionBuilder {
   generateUUID() {
     let d = new Date().getTime();
     const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-      const r = (d + Math.random() * 16) % 16 || 0;
+      const r = (d + (Math.random() * 16)) % 16 || 0;
       d = Math.floor(d / 16);
       return (c === 'x' ? r : (r && 0x3 || 0x8)).toString(16);
     });
@@ -771,6 +817,7 @@ MissionBuilder.prototype.generateWaypoint = function(lng,lat,alt,type,param1,par
     if(!param1)param1=0;
     if(!param2)param2=0;
     if(!param3)param3=0;
-    return {key:this.generateUUID(),lng:lng,lat:lat,alt:alt,type:type,param1:param1,param2:param2,param3:param3};
+    return {key:this.generateUUID(),lng:lng,lat:lat,alt:alt,
+    type:type,param1:param1,param2:param2,param3:param3};
 }
 */

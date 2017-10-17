@@ -11,16 +11,14 @@ import MapComponent from '../../components/MapComponent/MapComponent';
 import Missions from '../../components/Missions/Missions';
 
 const handleRemove = (projectId, history) => {
-  if (confirm('Move to Trash?')) {
-    Meteor.call('projects.softDelete', projectId, (error) => {
-      if (error) {
-        Bert.alert(error.reason, 'danger');
-      } else {
-        Bert.alert('Project deleted!', 'warning');
-        history.push('/projects');
-      }
-    });
-  }
+  Meteor.call('projects.softDelete', projectId, (error) => {
+    if (error) {
+      Bert.alert(error.reason, 'danger');
+    } else {
+      Bert.alert('Project deleted!', 'warning');
+      history.push('/projects');
+    }
+  });
 };
 
 const renderProject = (project, match, history) => (project && project.deleted === 'no' ? (
@@ -58,7 +56,9 @@ const renderProject = (project, match, history) => (project && project.deleted =
   </div>
 ) : <NotFound />);
 
-const ViewProject = ({ loading, project, match, history }) => (
+const ViewProject = ({
+  loading, project, match, history,
+}) => (
   !loading ? renderProject(project, match, history) : <Loading />
 );
 

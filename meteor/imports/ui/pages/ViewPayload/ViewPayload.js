@@ -9,16 +9,14 @@ import NotFound from '../NotFound/NotFound';
 import Loading from '../../components/Loading/Loading';
 
 const handleRemove = (payloadId, history) => {
-  if (confirm('Move to Trash?')) {
-    Meteor.call('payloads.softDelete', payloadId, (error) => {
-      if (error) {
-        Bert.alert(error.reason, 'danger');
-      } else {
-        Bert.alert('Payload deleted!', 'warning');
-        history.push('/payloads');
-      }
-    });
-  }
+  Meteor.call('payloads.softDelete', payloadId, (error) => {
+    if (error) {
+      Bert.alert(error.reason, 'danger');
+    } else {
+      Bert.alert('Payload deleted!', 'warning');
+      history.push('/payloads');
+    }
+  });
 };
 
 const renderPayload = (payload, match, history) => (payload && payload.deleted === 'no' ? (
@@ -137,7 +135,9 @@ const renderPayload = (payload, match, history) => (payload && payload.deleted =
   </div>
 ) : <NotFound />);
 
-const ViewPayload = ({ loading, payload, match, history }) => (
+const ViewPayload = ({
+  loading, payload, match, history,
+}) => (
   !loading ? renderPayload(payload, match, history) : <Loading />
 );
 

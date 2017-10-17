@@ -1,10 +1,9 @@
 
-import MissionBuilder from './MissionBuilder.js';
-import Latlon from './GeoHelper.js';
-import Payloads from '../../api/Payloads/Payloads';
+import MissionBuilder from './MissionBuilder';
+import Latlon from './GeoHelper';
 
-
-const blankMission = { _id: '',
+const blankMission = {
+  _id: '',
   deletedAt: null,
   deleted: false,
   name: '',
@@ -107,7 +106,7 @@ const missionSuperficial = {
       },
     },
     flightParameters: {
-      altitude: 120,
+      height: 120,
       speed: 60,
       entryMargin: 2,
     },
@@ -141,7 +140,7 @@ const payloadExample = {
 // const _m2 = { mission: missionSuperficial, payload: payloadExample };
 
 export default class MissionBuilderDO2sParser {
-  constructor(dO2sMission) {
+  constructor(dO2sMission, dO2sPayload) {
     // super();
     // TODO: make the conversion between dO2Mission to this.mission
 
@@ -149,7 +148,7 @@ export default class MissionBuilderDO2sParser {
     // Cuando pasemos a dO2s, cambiar esto
     // this.m2 = _m2;
     // por esto
-    this.m2 = { mission: dO2sMission, payload: null };
+    this.m2 = { mission: dO2sMission, payload: dO2sPayload };
     this.setMission();
     this.mBuilder = new MissionBuilder(this.mission);
     // this.calculateMission();
@@ -167,6 +166,9 @@ export default class MissionBuilderDO2sParser {
     this.mBuilder.buildWaypoints();
     this.enumerateWps();
   }
+  setInitialSegment(segment) {
+    this.mission.initialSegment = segment;
+  }
   enumerateWps() {
     this.mBuilder.enumerateWayPoints();
   }
@@ -176,9 +178,9 @@ export default class MissionBuilderDO2sParser {
     // return this.mission;
     const waypoints = [];
     this.mission.waypoints.forEach((waypoint) => {
-      const wpjson = { type: 'Feature',
+      const wpjson = {
+        type: 'Feature',
         properties: {
-          key: waypoint.key,
           altRelative: waypoint.altRelative,
           altAbsolute: waypoint.altAbsolute,
           altGround: waypoint.altGround,
@@ -188,7 +190,8 @@ export default class MissionBuilderDO2sParser {
         geometry: {
           type: 'Point',
           coordinates: [waypoint.lng, waypoint.lat],
-        } };
+        },
+      };
 
       if (wpjson.properties.type === 3 || wpjson.properties.type === 4) {
         wpjson.properties.shootDistance = waypoint.param2;
@@ -196,24 +199,28 @@ export default class MissionBuilderDO2sParser {
       waypoints.push(wpjson);
     });
 
-    const waypointLine = { type: 'Feature',
+    const waypointLine = {
+      type: 'Feature',
       properties: {},
       geometry: {
         type: 'LineString',
         coordinates: [],
-      } };
+      },
+    };
 
-    waypointLine.geometry.coordinates.push(
-      [this.m2.mission.flightPlan.takeOffPoint.geometry.coordinates[0],
-        this.m2.mission.flightPlan.takeOffPoint.geometry.coordinates[1]]);
+    waypointLine.geometry.coordinates.push([
+      this.m2.mission.flightPlan.takeOffPoint.geometry.coordinates[0],
+      this.m2.mission.flightPlan.takeOffPoint.geometry.coordinates[1],
+    ]);
 
     this.mission.points.forEach((point) => {
       waypointLine.geometry.coordinates.push([point.lon, point.lat]);
     });
 
-    waypointLine.geometry.coordinates.push(
-      [this.m2.mission.flightPlan.landingPoint.geometry.coordinates[0],
-        this.m2.mission.flightPlan.landingPoint.geometry.coordinates[1]]);
+    waypointLine.geometry.coordinates.push([
+      this.m2.mission.flightPlan.landingPoint.geometry.coordinates[0],
+      this.m2.mission.flightPlan.landingPoint.geometry.coordinates[1],
+    ]);
 
     const flightData = {
       flightTime: this.mission.flightTime,
@@ -224,26 +231,24 @@ export default class MissionBuilderDO2sParser {
       resolution: this.resolution,
     };
 
-    return { waypoints, waypointLine, flightData };
+    // return { waypoints, waypointLine, flightData };
+    return { waypoints, flightData };
   }
 
   setMission() {
     this.mission = blankMission;
     // TODO: convert to dO2sMission and return dO2sMission insteadof this.mission
     // this.m2.mission = _mission;
-    const payloadId = this.m2.mission.payload;
-    const subscription = Meteor.subscribe('payloads.view', payloadId);
-    this.m2.payload = Payloads.findOne(payloadId);
 
-    this.mission.altitude = this.m2.mission.flightPlan.flightParameters.altitude;
-    this.mission.buffer = 0; // TODO
+    this.mission.altitude = this.m2.mission.flightPlan.flightParameters.height;
+    this.mission.buffer = 0; // TODO - DONE
     this.mission.camera.Focal = this.m2.payload.sensorParameters.focalLength;
     this.mission.camera.MatrixHeight = this.m2.payload.sensorParameters.sensorHeight;
     this.mission.camera.MatrixWidth = this.m2.payload.sensorParameters.sensorWidth;
     this.mission.camera.PixelHeight = this.m2.payload.sensorParameters.imageHeight;
     this.mission.camera.PixelWidth = this.m2.payload.sensorParameters.imageWidth;
     if (this.m2.mission.missionType === 'Surface Area') { this.mission.type = 'superficial'; }
-    if (this.m2.mission.missionType === 'Linear Area') { this.mission.type = 'linear'; }
+    if (this.m2.mission.missionType === 'Linear Area') { this.mission.type = 'lineal'; }
 
     this.mission.boundaries = [];
     if (this.mission.type === 'superficial') {
@@ -252,20 +257,25 @@ export default class MissionBuilderDO2sParser {
       });
     }
 
-    if (this.mission.type === 'linear') {
+    if (this.mission.type === 'lineal') {
       this.m2.mission.flightPlan.missionAxis.geometry.coordinates.forEach((point) => {
         this.mission.boundaries.push({ lat: point[1], lng: point[0] });
       });
+      this.mission.buffer = this.m2.mission.flightPlan.flightParameters.axisBuffer;
     }
 
-    this.mission.dataLanding.lat = this.m2.mission.flightPlan.landingPoint.geometry.coordinates[1];
-    this.mission.dataLanding.lng = this.m2.mission.flightPlan.landingPoint.geometry.coordinates[0];
-    this.mission.dataTOff.lat = this.m2.mission.flightPlan.takeOffPoint.geometry.coordinates[1];
-    this.mission.dataTOff.lng = this.m2.mission.flightPlan.takeOffPoint.geometry.coordinates[0];
+    [
+      this.mission.dataLanding.lng,
+      this.mission.dataLanding.lat,
+    ] = this.m2.mission.flightPlan.landingPoint.geometry.coordinates;
+    [
+      this.mission.dataTOff.lng,
+      this.mission.dataTOff.lat,
+    ] = this.m2.mission.flightPlan.takeOffPoint.geometry.coordinates;
 
     this.mission.entryMarging = this.m2.mission.flightPlan.flightParameters.entryMargin;
     this.mission.flightSpeed = this.m2.mission.flightPlan.flightParameters.speed;
-    this.mission.initialSegment = 0; // TODO: manage the projected segment;
+    this.mission.initialSegment = 0; // TODO: manage the projected segment; - DONE
     this.mission.overlap = this.m2.mission.flightPlan.pictureGrid.overlap;
     this.mission.sidelap = this.m2.mission.flightPlan.pictureGrid.sidelap;
 

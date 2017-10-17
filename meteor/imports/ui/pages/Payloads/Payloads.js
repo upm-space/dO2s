@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { Table, Alert, Button, Glyphicon } from 'react-bootstrap';
+import { Table, Alert, Button } from 'react-bootstrap';
 import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Bert } from 'meteor/themeteorchef:bert';
@@ -35,31 +35,27 @@ class Payloads extends Component {
   }
 
   handleSoftRemove(payloadId) {
-    if (confirm('Move to Trash?')) {
-      Meteor.call('payloads.softDelete', payloadId, (error) => {
-        if (error) {
-          Bert.alert(error.reason, 'danger');
-        } else {
-          Bert.alert('Payload moved to Trash!', 'warning');
-        }
-      });
-    }
+    Meteor.call('payloads.softDelete', payloadId, (error) => {
+      if (error) {
+        Bert.alert(error.reason, 'danger');
+      } else {
+        Bert.alert('Payload moved to Trash!', 'warning');
+      }
+    });
   }
 
   handleRestore(payloadId) {
-    if (confirm('Restore Payload?')) {
-      Meteor.call('payloads.restore', payloadId, (error) => {
-        if (error) {
-          Bert.alert(error.reason, 'danger');
-        } else {
-          Bert.alert('Payload Restored!', 'success');
-        }
-      });
-    }
+    Meteor.call('payloads.restore', payloadId, (error) => {
+      if (error) {
+        Bert.alert(error.reason, 'danger');
+      } else {
+        Bert.alert('Payload Restored!', 'success');
+      }
+    });
   }
 
   handleHardRemove(payloadId) {
-    if (confirm('Are you sure? This is permanent!')) {
+    if (window.confirm('Are you sure? This is permanent!')) {
       Meteor.call('payloads.hardDelete', payloadId, (error) => {
         if (error) {
           Bert.alert(error.reason, 'danger');
@@ -100,30 +96,36 @@ class Payloads extends Component {
         <div className="page-header clearfix">
           <Link className="btn btn-success pull-right" to={`${match.url}/new`}>Add Payload</Link>
         </div>
-        {payloads.length ? <div className="ItemList"><Table responsive hover>
-          <thead>
-            <tr>
-              <th>
+        {payloads.length ?
+          <div className="ItemList">
+            <Table responsive hover>
+              <thead>
+                <tr>
+                  <th>
                 Payloads ({this.props.totalCount})
-              </th>
-              <th>Last Updated</th>
-              <th>Created</th>
-              <th><Button
-                bsStyle="default"
-                onClick={() => this.setState({ trashShow: true })}
-                block
-              ><Glyphicon glyph="trash" /></Button></th>
-            </tr>
-          </thead>
-          <List
-            loading={loading}
-            completedColumn={false}
-            items={payloads}
-            match={match}
-            history={this.props.history}
-            softDeleteItem={this.handleSoftRemove}
-          />
-        </Table></div> : <Alert bsStyle="warning">No payloads yet!</Alert>}
+                  </th>
+                  <th>Last Updated</th>
+                  <th>Created</th>
+                  <th>
+                    <Button
+                      bsStyle="default"
+                      onClick={() => this.setState({ trashShow: true })}
+                      block
+                    ><span className="fa fa-trash" aria-hidden="true" />
+                    </Button>
+                  </th>
+                </tr>
+              </thead>
+              <List
+                loading={loading}
+                completedColumn={false}
+                items={payloads}
+                match={match}
+                history={this.props.history}
+                softDeleteItem={this.handleSoftRemove}
+              />
+            </Table>
+          </div> : <Alert bsStyle="warning">No payloads yet!</Alert>}
       </div>
     ) : <Loading />);
   }

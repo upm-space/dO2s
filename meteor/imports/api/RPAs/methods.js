@@ -27,7 +27,7 @@ Meteor.methods({
       const rpaId = rpa._id;
       RPAs.update(rpaId, { $set: rpa });
       return rpaId;
-       // Return _id so we can redirect to document after update.
+      // Return _id so we can redirect to document after update.
     } catch (exception) {
       if (exception.error === 'validation-error') {
         throw new Meteor.Error(500, exception.message);

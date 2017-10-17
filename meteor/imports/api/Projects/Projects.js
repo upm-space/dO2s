@@ -17,27 +17,6 @@ Projects.deny({
   remove: () => true,
 });
 
-const mapLocationSchema = new SimpleSchema({
-  longitude: {
-    type: Number,
-    label: 'The longitude of the project.',
-    max: 180,
-    min: -180,
-  },
-  latitude: {
-    type: Number,
-    label: 'The latitude of the project.',
-    max: 90,
-    min: -90,
-  },
-  zoom: {
-    type: Number,
-    label: 'The zoom of the location.',
-    min: 0,
-    max: 21,
-  },
-});
-
 Projects.schema = new SimpleSchema({
   owner: {
     type: String,

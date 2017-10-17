@@ -2,7 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Route, Redirect } from 'react-router-dom';
 
-const EmailNotVerified = ({ authenticated, component, path, exact, ...rest }) => (
+const EmailNotVerified = ({
+  authenticated, component, path, exact, ...rest
+}) => (
   <Route
     path={path}
     exact={exact}
@@ -16,7 +18,7 @@ const EmailNotVerified = ({ authenticated, component, path, exact, ...rest }) =>
 
 EmailNotVerified.propTypes = {
   path: PropTypes.string.isRequired,
-  exact: PropTypes.bool,
+  exact: PropTypes.bool.isRequired,
   authenticated: PropTypes.bool.isRequired,
   component: PropTypes.func.isRequired,
 };

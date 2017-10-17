@@ -148,6 +148,7 @@ git merge master             # (resolve conflicts)
 
     *   :star: `:star:` when adding features
     *   :art: `:art:` when improving the format/structure of the code
+    *   :wrench: `:wrench:` when commiting work in progress (WIP)
     *   :racehorse: `:racehorse:` when improving performance
     *   :non-potable_water: `:non-potable_water:` when plugging memory leaks
     *   :memo: `:memo:` when writing docs
