@@ -83,10 +83,10 @@ class SvgMilestones extends Component {
 SvgMilestones.defaultProps = {
   cEnable: '#009900',
   cDisable: '#D9ffB3',
-  cBorder: '#F2FFE6',
-  lineWidthRatio: 0.03, // keep relation with radioRatio
-  radioRatio: 0.5, // if = 1 circles will touch between them
-  height: 500,
+  cBorder: '#00FFFF',
+  lineWidthRatio: 0.05, // keep relation with radioRatio
+  radioRatio: 0.7, // if = 1 circles will touch between them
+  height: 200,
   width: 200,
   rightSide: true,
 };
