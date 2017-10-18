@@ -1,0 +1,23 @@
+div#chartContainer{
+  width: 40%;
+  height: 85px;
+}
+
+.chart{
+  // border: 1px solid grey;
+  z-index: 15;
+}
+
+.label{
+    font-size: 13px;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+
+.line-separator{
+    stroke: #000;
+    stroke-width: 0.55px;
+}
+
+.plot-container{
+
+}

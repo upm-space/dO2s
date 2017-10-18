@@ -3,6 +3,12 @@ import * as d3 from 'd3';
 
 import './Slider.scss';
 
+const margin = { right: 25, left: 25 };
+const height = 50;
+let x;
+let axis;
+let slider;
+
 const usToHHMMSS = (time) => {
   const usSecNum = parseInt(time, 10) / 1e6;
   let hours = Math.floor(usSecNum / 3600);
@@ -14,37 +20,48 @@ const usToHHMMSS = (time) => {
   return `${hours}:${minutes}:${seconds}`;
 };
 
-// const styles = { width: (0.85 * window.innerWidth) - 45, height: 50 };
-
 class Slider extends Component {
   componentDidMount() {
     this.slider();
   }
 
+  componentDidUpdate() {
+    x.domain([0, this.props.domain]);
+    slider.selectAll('.axis').remove();
+    slider.append('g')
+      .attr('class', 'axis')
+      .call(axis)
+      .lower()
+    ;
+    slider.selectAll('text').style('text-anchor', 'end').attr('transform', 'rotate(-30) translate(10, 5)');
+  }
+
   slider() {
     const svg = d3.select('#svg');
-    const margin = { right: 50, left: 50 };
-    const width = this.props.width < 650 ? 550 : this.props.width - margin.left - margin.right;
-    const height = 50;
+    const width = this.wrapper.offsetWidth - margin.left - margin.right;
     let active = 1;
     let range;
     let handle1;
     let handle2;
     let handle3;
 
-    const x = d3.scaleLinear()
+    x = d3.scaleLinear()
       .domain([0, this.props.domain])
       .range([0, width])
       .clamp(true)
-      ;
+    ;
 
-    const axis = d3.axisBottom(x).ticks(10).tickFormat(d => usToHHMMSS(d));
+    axis = d3.axisBottom(x).ticks(10).tickFormat(d => usToHHMMSS(d));
 
-    const slider = svg.append('g')
+    slider = svg.append('g')
       .attr('class', 'slider')
       .attr('transform', `translate(${margin.left},${(height / 2) - 15})`)
+    ;
+
+    slider.append('g')
+      .attr('class', 'axis')
       .call(axis)
-      ;
+    ;
 
     function hue(h) {
       if (active === 1) {
@@ -65,7 +82,7 @@ class Slider extends Component {
       }
       range.attr('x1', parseFloat(handle1.attr('x')) + 5);
       range.attr('x2', handle2.attr('x'));
-      if (active === 3) { handle3.attr('x', x(h) - 2.5); }
+      if (active === 3) { handle3.attr('x', x(h) - 1.5); }
     }
 
     const drag = d3.drag()
@@ -118,19 +135,21 @@ class Slider extends Component {
     handle3 = slider.insert('rect')
       .attr('class', 'selector')
       .attr('x', -1.5)
-      .attr('y', -15)
+      .attr('y', -10)
       .attr('width', 3)
-      .attr('height', 60)
+      .attr('height', 45)
       .on('mousedown', () => { active = 3; })
       .call(drag)
     ;
+
+    slider.selectAll('text').style('text-anchor', 'end').attr('transform', 'rotate(-30) translate(10, 5)');
   }
 
   render() {
     return (
-      <div className="wrapper" id="wrapper" style={{ width: '650px', height: '80px' }}>
-        <h5 id="TimeRange">Time range: <span id="SliderTextMin">{usToHHMMSS(0)}</span> - <span id="SliderTextMax">{usToHHMMSS(608399957)}</span></h5>
-        <svg id="svg" style={{ width: '100%', height: '45px' }} />
+      <div className="wrapper" id="SliderWrapper" ref={(c) => { this.wrapper = c; }}>
+        <h5 id="TimeRange">Time range: <span id="SliderTextMin">{usToHHMMSS(0)}</span> - <span id="SliderTextMax">{usToHHMMSS(this.props.end)}</span></h5>
+        <svg id="svg" />
       </div>
     );
   }

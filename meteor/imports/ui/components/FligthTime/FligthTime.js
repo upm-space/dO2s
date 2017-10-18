@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
-import MissionVideo from '../../components/MissionVideo/MissionVideo';
-import Slider from '../../components/FligthTime/Slider';
-import Zoom from '../../components/FligthTime/Zoom';
+import Slider from './Slider';
+import Zoom from './Zoom';
 
-import './Hector.scss';
+import './FligthTime.scss';
 
 class Hector extends Component {
   constructor(props) {
@@ -11,7 +10,6 @@ class Hector extends Component {
 
     this.changeRange = this.changeRange.bind(this);
     this.changeTime = this.changeTime.bind(this);
-    this.getLength = this.getLength.bind(this);
 
     this.state = {
       time0: 0,
@@ -20,17 +18,8 @@ class Hector extends Component {
       domain: 608399957,
     };
   }
-  // componentDidMount() {
-  //   this.renderMissionVideo();
-  //   this.renderZoom();
-  //   this.renderSlider();
-  // }
-
-  getLength(d) {
-    this.setState({
-      time1: d,
-      domain: d,
-    });
+  componentDidMount() {
+    return 0;
   }
 
   changeRange(a, b) {
@@ -41,23 +30,15 @@ class Hector extends Component {
     this.forceUpdate();
   }
 
-  changeTime(c) {
+  changeTime(a) {
     this.setState({
-      time2: c,
+      time2: a,
     });
-  }
-
-  renderMissionVideo() {
-    return (
-      <MissionVideo
-        getLength={this.getLength}
-      />);
   }
 
   renderSlider() {
     return (
       <Slider
-        end={this.state.time1}
         domain={this.state.domain}
         changeRange={this.changeRange}
         changeTime={this.changeTime}
@@ -75,13 +56,9 @@ class Hector extends Component {
 
   render() {
     return (
-      <div className="Hector" id="Hector">
-        {this.renderMissionVideo()}
+      <div className="Hector" id="Hector" style={{ width: '100%', height: '100%' }}>
         {this.renderZoom()}
         {this.renderSlider()}
-        {/* {this.state.time0}<br />
-        {this.state.time1}<br />
-        {this.state.time2}<br /> */}
       </div>
     );
   }
