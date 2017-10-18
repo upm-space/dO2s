@@ -18,19 +18,16 @@ class Hector extends Component {
       time1: 608399957,
       time2: 0,
       domain: 608399957,
+      speed: 2,
     };
   }
-  // componentDidMount() {
-  //   this.renderMissionVideo();
-  //   this.renderZoom();
-  //   this.renderSlider();
-  // }
 
   getLength(d) {
     this.setState({
       time1: d,
       domain: d,
     });
+    this.forceUpdate();
   }
 
   changeRange(a, b) {
@@ -45,11 +42,14 @@ class Hector extends Component {
     this.setState({
       time2: c,
     });
+    this.forceUpdate();
   }
 
   renderMissionVideo() {
     return (
       <MissionVideo
+        time={this.state.time2}
+        speed={this.state.speed}
         getLength={this.getLength}
       />);
   }
@@ -59,6 +59,7 @@ class Hector extends Component {
       <Slider
         end={this.state.time1}
         domain={this.state.domain}
+        speed={this.state.speed}
         changeRange={this.changeRange}
         changeTime={this.changeTime}
       />);
@@ -70,6 +71,7 @@ class Hector extends Component {
         start={this.state.time0}
         end={this.state.time1}
         time={this.state.time2}
+        speed={this.state.speed}
       />);
   }
 

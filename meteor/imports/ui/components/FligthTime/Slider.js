@@ -3,11 +3,17 @@ import * as d3 from 'd3';
 
 import './Slider.scss';
 
-const margin = { right: 25, left: 25 };
+const margin = { right: 15, left: 20 };
 const height = 50;
 let x;
 let axis;
 let slider;
+let active = 1;
+let i = 0;
+let range;
+let handle1;
+let handle2;
+let handle3;
 
 const usToHHMMSS = (time) => {
   const usSecNum = parseInt(time, 10) / 1e6;
@@ -39,11 +45,6 @@ class Slider extends Component {
   slider() {
     const svg = d3.select('#svg');
     const width = this.wrapper.offsetWidth - margin.left - margin.right;
-    let active = 1;
-    let range;
-    let handle1;
-    let handle2;
-    let handle3;
 
     x = d3.scaleLinear()
       .domain([0, this.props.domain])
@@ -82,7 +83,10 @@ class Slider extends Component {
       }
       range.attr('x1', parseFloat(handle1.attr('x')) + 5);
       range.attr('x2', handle2.attr('x'));
-      if (active === 3) { handle3.attr('x', x(h) - 1.5); }
+      if (active === 3) {
+        handle3.attr('x', x(h) - 1.5);
+        i = x.invert(handle3.attr('x'));
+      }
     }
 
     const drag = d3.drag()
@@ -141,6 +145,11 @@ class Slider extends Component {
       .on('mousedown', () => { active = 3; })
       .call(drag)
     ;
+
+    setInterval(() => {
+      i += 10000 * this.props.speed;
+      handle3.attr('x', x(i) - 1.5);
+    }, 10);
 
     slider.selectAll('text').style('text-anchor', 'end').attr('transform', 'rotate(-30) translate(10, 5)');
   }

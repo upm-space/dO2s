@@ -8,6 +8,7 @@ let handle;
 let chart;
 let x;
 let axis;
+let i = 0;
 // let startText;
 // let endText;
 
@@ -31,6 +32,7 @@ class Zoom extends Component {
     // startText.text(usToHHMMSS(this.props.start));
     // endText.text(usToHHMMSS(this.props.end));
     handle.attr('x', x(this.props.time));
+    i = this.props.time;
     x.domain([this.props.start, this.props.end]);
     handle.opacity = this.props.time > x.domain()[0] && this.props.time < x.domain()[1] ? 1 : 0;
     chart.selectAll('.axis').remove();
@@ -46,7 +48,7 @@ class Zoom extends Component {
 
   zoom(startTime, endTime, chartWidth) {
     // const axisWidth = chartWidth < 550 ? 550 : chartWidth;
-    const axisWidth = chartWidth - 80;
+    const axisWidth = chartWidth - 70;
 
     chart = d3.select('#chartContainer').append('svg')
       .attr('class', 'chart')
@@ -138,6 +140,11 @@ class Zoom extends Component {
       .attr('width', 3)
       .attr('height', 40)
     ;
+
+    setInterval(() => {
+      i += 10000 * this.props.speed;
+      handle.attr('x', x(i) - 1.5);
+    }, 10);
   }
 
   render() {

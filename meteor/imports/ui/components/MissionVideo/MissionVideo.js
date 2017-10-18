@@ -6,19 +6,17 @@ import { ButtonToolbar, Button } from 'react-bootstrap';
 import './MissionVideo.scss';
 
 class MissionVideo extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      duration: 30000000,
-    };
-  }
-
   componentDidMount() {
-    this.props.getLength(this.state.duration);
+    this.myVideo.addEventListener('loadedmetadata', () => {
+      this.props.getLength(this.myVideo.duration * 1e6);
+    });
   }
 
-  onLoad(data) {
-    this.setState({ duration: data.duration });
+  componentDidUpdate() {
+    this.myVideo.currentTime = this.props.time * 1e-6;
+    this.myTxtVideo.currentTime = this.props.time * 1e-6;
+    this.myVideo.playbackRate = this.props.speed;
+    this.myTxtVideo.playbackRate = this.props.speed;
   }
 
   render() {
@@ -33,18 +31,16 @@ class MissionVideo extends Component {
         <div className="Map">Map</div>
         <video
           id="Video"
-          ref={(c) => { this.video = c; }}
-          // onLoad={this.onLoad()}
+          ref={(c) => { this.myVideo = c; }}
           autoPlay
-          loop
           muted
           src="http://stemkoski.github.io/Three.js/videos/sintel.ogv"
           type="video/mp4"
         ><track kind="captions" />Video not found</video>
         <video
           id="TxtVideo"
+          ref={(c) => { this.myTxtVideo = c; }}
           autoPlay
-          loop
           muted
           src="http://stemkoski.github.io/Three.js/videos/sintel.ogv"
           type="video/mp4"
