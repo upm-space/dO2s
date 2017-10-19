@@ -1,6 +1,6 @@
 # Authenticated Navigation with React Router 4
 
-Source - [Getting Started With React Router 4](https://themeteorchef.com/tutorials/getting-started-with-react-router-v4)
+Source - [Getting Started With React Router 4]
 
 With React Router 4 we are going to be handling authentication at component level. To do this we need two pieces of data from Meteor: the `Meteor.logginIn()` method and the `Meteor.userId()` method. Between this two functions we can determine whether or not a user is currently logged into the application. Because we need to know this on multiple pages, it makes sense to gather this information up once here in our `<App />` component and pass it down to the pages that need it via props.
 
@@ -123,7 +123,7 @@ We can see a few props defined on that component. In the code above, we're gaini
 Here we destructure or "pluck" off four props from our `<Authenticated />` component. The first three, `loggingIn`, `authenticated` and `isAdmin` are the props passed down to us from the data container that we set up earlier in `/imports/ui/layouts/App/App.js`. The third, `component`, is the `component` prop that we passed to our `<Authenticated />` component directly. The last prop is a bit funky. What's with the dots? This is known as a "rest" operator (new in ES2015/ES6). This is saying "gather up the rest of the arguments into one variable called `rest`."
 
 
-If we look back in our component's code, we can see on the first line of our function (this is a [stateless functional React component](https://themeteorchef.com/blog/understanding-react-component-types) which looks like a vanilla JavaScript function but returns a React component) that we're using the ES2015/ES6 spread operator `...` to "unpack" all of the other props scooped up by the `...rest` in our set of destructured arguments.
+If we look back in our component's code, we can see on the first line of our function (this is a [stateless functional React component][Stateless Functional React Component] which looks like a vanilla JavaScript function but returns a React component) that we're using the ES2015/ES6 spread operator `...` to "unpack" all of the other props scooped up by the `...rest` in our set of destructured arguments.
 
 In React, if we wrap a spread operator like `{...rest}` in brackets and pass it like a prop to a component—like we do here with the` <Route />` component imported from the `react-router-dom` package—React will simply "unpack" each prop and apply it to that component independently. For example, one of the props we haven't "plucked off" in our destructuring is the `path` prop specifying the URL path for our `<Authenticated />` route. That exists in the `...rest` argument we _did_ pluck off, meaning, when we add it to the `<Route />` component with `{...rest}` here, we're effectively setting a `path` prop on the `<Route />` component like `<Route path={path} />`. Wild, eh?
 
@@ -188,3 +188,6 @@ AdminPage.propTypes = {
 
 export default AdminPage;
 ```
+
+[Getting Started With React Router 4]: https://themeteorchef.com/tutorials/getting-started-with-react-router-v4
+[Stateless Functional React Component]: https://themeteorchef.com/blog/understanding-react-component-types

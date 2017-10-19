@@ -173,7 +173,8 @@ class PayloadEditor extends Component {
             ref={imageWidth => (this.imageWidth = imageWidth)}
             defaultValue={(payload && payload.sensorParameters.imageWidth)}
           />
-        </FormGroup></div>);
+        </FormGroup>
+      </div>);
   }
 
   render() {

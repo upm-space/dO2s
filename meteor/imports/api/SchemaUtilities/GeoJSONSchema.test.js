@@ -36,15 +36,16 @@ const PointExampleGood = {
   type: 'Point',
   coordinates: [180.0, 45.3, 6],
 };
+
 const PointExampleBad = {
   type: 'Point',
-  coordinates: [180.0, 12],
+  coordinates: [180.0],
 };
 
 const LineStringExampleGood = {
   type: 'LineString',
   coordinates: [
-    [100.0, 0.0, 100],
+    [100.0, 0.0],
     [101.0, 1.0, 100],
   ],
 };
@@ -61,7 +62,7 @@ const PolygonExampleGoodNoHoles = {
   coordinates: [
     [
       [100.0, 0.0, 20],
-      [101.0, 0.0, 20],
+      [101.0, 0.0],
       [101.0, 1.0, 20],
       [100.0, 1.0, 20],
       [100.0, 0.0, 20],
@@ -75,14 +76,14 @@ const PolygonExampleGoodWithHoles = {
     [
       [100.0, 0.0, 120],
       [101.0, 0.0, 120],
-      [101.0, 1.0, 120],
+      [101.0, 1.0],
       [100.0, 1.0, 120],
       [100.0, 0.0, 120],
     ],
     [
       [100.8, 0.8, 120],
       [100.8, 0.2, 120],
-      [100.2, 0.2, 120],
+      [100.2, 0.2],
       [100.2, 0.8, 120],
       [100.8, 0.8, 120],
     ],
@@ -142,7 +143,7 @@ const MultiPointExampleGood = {
 const MultiPointExampleBad = {
   type: 'MultiPoint',
   coordinates: [
-    [100.0, 0.0],
+    [100.0],
     [101.0, 1.0],
   ],
 };
@@ -189,7 +190,7 @@ const MultiPolygonExampleGood = {
       [
         [100.0, 0.0, 13],
         [101.0, 0.0, 13],
-        [101.0, 1.0, 13],
+        [101.0, 1.0],
         [100.0, 1.0, 13],
         [100.0, 0.0, 13],
       ],
@@ -240,7 +241,7 @@ const MultiPolygonExampleBad2 = {
       [
         [102.0, 2.0, 13],
         [103.0, 2.0, 13],
-        [103.0, 13],
+        [103.0],
         [102.0, 3.0, 13],
         [102.0, 2.0, 13],
       ],
@@ -264,7 +265,7 @@ const MultiPolygonExampleBad2 = {
   ],
 };
 
-// These do not work
+// These do not work, simpleschema error
 const GeometryCollectionExampleGood1 = {
   type: 'GeometryCollection',
   bbox: [100.0, 0.0, 105.0, 1.0],
@@ -310,11 +311,22 @@ const GeometryCollectionExampleGood3 = {
   }],
 };
 
-const FeatureExamplePointGood = {
+const FeatureExamplePointGood1 = {
   type: 'Feature',
   geometry: {
     type: 'Point',
     coordinates: [102.0, 0.5, 34],
+  },
+  properties: {
+    prop0: 'value0',
+  },
+};
+
+const FeatureExamplePointGood2 = {
+  type: 'Feature',
+  geometry: {
+    type: 'Point',
+    coordinates: [102.0, 0.5],
   },
   properties: {
     prop0: 'value0',
@@ -328,7 +340,7 @@ const FeatureExampleLineStringGood = {
     coordinates: [
       [102.0, 0.0, 34],
       [103.0, 1.0, 34],
-      [104.0, 0.0, 34],
+      [104.0, 0.0],
       [105.0, 1.0, 34],
     ],
   },
@@ -347,7 +359,7 @@ const FeatureExamplePolygonGood = {
       [
         [100.0, 0.0, 50],
         [101.0, 0.0, 50],
-        [101.0, 1.0, 50],
+        [101.0, 1.0],
         [100.0, 1.0, 50],
         [100.0, 0.0, 50],
       ],
@@ -427,7 +439,7 @@ const FeatureCollectionPointsExampleGood = {
     type: 'Feature',
     geometry: {
       type: 'Point',
-      coordinates: [102.0, 0.5, 34],
+      coordinates: [102.0, 0.5],
     },
     properties: {
       prop0: 'value0',
@@ -545,8 +557,8 @@ const FeatureCollectionPolygonsExampleGood = {
       coordinates: [
         [
           [100.0, 0.0, 24],
-          [101.0, 0.0, 24],
-          [101.0, 1.0, 24],
+          [101.0, 0.0],
+          [101.0, 1.0],
           [100.0, 1.0, 24],
           [100.0, 0.0, 24],
         ],
@@ -580,16 +592,17 @@ const featureCollectionLineStringsValidationContext = FeatureCollectionLineStrin
 const featurePolygonValidationContext = FeaturePolygon.newContext();
 const featureCollectionPolygonsValidationContext = FeatureCollectionPolygons.newContext();
 
+
 test('Point Example Good', () => {
   expect(pointValidationContext.validate(PointExampleGood)).toBeTruthy();
 });
 
 describe('point validation error', () => {
-  test('2 items in the array, validation context', () => {
+  test('1 item in the array, validation context', () => {
     expect(pointValidationContext.validate(PointExampleBad)).toBeFalsy();
   });
 
-  test('2 items in the array, validation error thrown', () => {
+  test('1 item in the array, validation error thrown', () => {
     expect(PointExampleBad).toGiveValidationErrorIn(Point);
   });
 });
@@ -647,11 +660,11 @@ test('MultiPoint Example Good', () => {
 });
 
 describe('MultiPoint validation error', () => {
-  test('2 items in the array, validation context', () => {
+  test('1 items in the position array, validation context', () => {
     expect(multiPointValidationContext.validate(MultiPointExampleBad)).toBeFalsy();
   });
 
-  test('2 items in the array, validation error thrown', () => {
+  test('1 items in the position array, validation error thrown', () => {
     expect(MultiPointExampleBad).toGiveValidationErrorIn(MultiPoint);
   });
 });
@@ -683,11 +696,11 @@ describe('MultiPolygon validation error', () => {
     expect(MultiPolygonExampleBad1).toGiveValidationErrorIn(MultiPolygon);
   });
 
-  test('2 items in position, validation context', () => {
+  test('1 item in position, validation context', () => {
     expect(multiPolygonValidationContext.validate(MultiPolygonExampleBad2)).toBeFalsy();
   });
 
-  test('2 items in position, validation error thrown', () => {
+  test('1 item in position, validation error thrown', () => {
     expect(MultiPolygonExampleBad2).toGiveValidationErrorIn(MultiPolygon);
   });
 });
@@ -732,12 +745,20 @@ test.skip('Feature Collection Example Good', () => {
   expect(featureCollectionValidationContext.validate(FeatureCollectionExampleGood)).toBeTruthy();
 });
 
-test('FeaturePoint Example Good', () => {
-  expect(featurePointValidationContext.validate(FeatureExamplePointGood)).toBeTruthy();
+test('FeaturePoint Example Good 3 items in position', () => {
+  expect(featurePointValidationContext.validate(FeatureExamplePointGood1)).toBeTruthy();
 });
 
-test('FeaturePoint Example Good no error thrown', () => {
-  expect(FeatureExamplePointGood).not.toGiveValidationErrorIn(FeaturePoint);
+test('FeaturePoint Example Good 2 items in position', () => {
+  expect(featurePointValidationContext.validate(FeatureExamplePointGood2)).toBeTruthy();
+});
+
+test('FeaturePoint Example Good 1 no error thrown', () => {
+  expect(FeatureExamplePointGood1).not.toGiveValidationErrorIn(FeaturePoint);
+});
+
+test('FeaturePoint Example Good 2 no error thrown', () => {
+  expect(FeatureExamplePointGood2).not.toGiveValidationErrorIn(FeaturePoint);
 });
 
 test('FeatureLineString Example Good', () => {

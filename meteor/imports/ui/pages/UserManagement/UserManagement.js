@@ -2,11 +2,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link, Redirect } from 'react-router-dom';
-import { Table, Alert, Button, Glyphicon } from 'react-bootstrap';
+import { Table, Alert, Button } from 'react-bootstrap';
 import { monthDayYearAtTime } from '@cleverbeagle/dates';
 import { Meteor } from 'meteor/meteor';
 import { Roles } from 'meteor/alanning:roles';
-import { createContainer } from 'meteor/react-meteor-data';
+import { withTracker } from 'meteor/react-meteor-data';
 import { Bert } from 'meteor/themeteorchef:bert';
 
 import Loading from '../../components/Loading/Loading';
@@ -29,10 +29,7 @@ class UserManagement extends Component {
     this.getUserName = this.getUserName.bind(this);
 
     this.state = {
-      hideCompleted: false,
       trashShow: false,
-      showGrid: false,
-      showList: true,
     };
   }
 
@@ -65,42 +62,38 @@ class UserManagement extends Component {
   }
 
   authorizeAccess() {
-    if (!Roles.userIsInRole(this.props.currentUserId, ['admin'])) {
+    if (!Roles.userIsInRole(this.props.userId, ['admin'])) {
       return <Redirect to="/" />;
     }
   }
 
 
   handleSoftRemove(userId) {
-    if (confirm('Move to Trash?')) {
-      if (userId === Meteor.userId()) {
-        Bert.alert("You can't delete your own account", 'danger');
-      } else {
-        Meteor.call('users.softDelete', userId, (error) => {
-          if (error) {
-            Bert.alert(error.reason, 'danger');
-          } else {
-            Bert.alert('User moved to Trash!', 'warning');
-          }
-        });
-      }
-    }
-  }
-
-  handleRestore(userId) {
-    if (confirm('Restore User?')) {
-      Meteor.call('users.restore', userId, (error) => {
+    if (userId === Meteor.userId()) {
+      Bert.alert("You can't delete your own account", 'danger');
+    } else {
+      Meteor.call('users.softDelete', userId, (error) => {
         if (error) {
           Bert.alert(error.reason, 'danger');
         } else {
-          Bert.alert('User Restored!', 'success');
+          Bert.alert('User moved to Trash!', 'warning');
         }
       });
     }
   }
 
+  handleRestore(userId) {
+    Meteor.call('users.restore', userId, (error) => {
+      if (error) {
+        Bert.alert(error.reason, 'danger');
+      } else {
+        Bert.alert('User Restored!', 'success');
+      }
+    });
+  }
+
   handleHardRemove(userId) {
-    if (confirm('Are you sure? This is permanent!')) {
+    if (window.confirm('Are you sure? This is permanent!')) {
       if (userId === Meteor.userId()) {
         Bert.alert("You can't delete your own account", 'danger');
       } else {
@@ -124,20 +117,21 @@ class UserManagement extends Component {
 
   renderOAuthUser(user, currentUserId) {
     const isThisCurrentUser = currentUserId === user._id;
-    const goToUser = () => { !isThisCurrentUser ? this.props.history.push(`${this.props.match.url}/${user._id}/edit`) : ''; };
-    return (<td onClick={goToUser} className="OAuthCell">
-      {Object.keys(user.services).map(service => (
-        <div key={service} className={`LoggedInWith ${service}`}>
-          <div className="ServiceIcon"><i className={`fa fa-${service === 'facebook' ? 'facebook-official' : service}`} /></div>
-          <p>{user.services[service].email}</p>
-        </div>
-      ))}
-    </td>);
+    const goToUser = () => (!isThisCurrentUser ? this.props.history.push(`${this.props.match.url}/${user._id}/edit`) : '');
+    return (
+      <td onClick={goToUser} className="OAuthCell">
+        {Object.keys(user.services).map(service => (
+          <div key={service} className={`LoggedInWith ${service}`}>
+            <div className="ServiceIcon"><i className={`fa fa-${service === 'facebook' ? 'facebook-official' : service}`} /></div>
+            <p>{user.services[service].email}</p>
+          </div>
+        ))}
+      </td>);
   }
 
   renderPasswordUser(user, currentUserId) {
     const isThisCurrentUser = currentUserId === user._id;
-    const goToUser = () => { !isThisCurrentUser ? this.props.history.push(`${this.props.match.url}/${user._id}/edit`) : ''; };
+    const goToUser = () => (!isThisCurrentUser ? this.props.history.push(`${this.props.match.url}/${user._id}/edit`) : '');
     return <td className={user.emails[0].verified ? '' : 'warning'} onClick={goToUser}>{user.emails[0].address}</td>;
   }
 
@@ -160,7 +154,7 @@ class UserManagement extends Component {
         }
       }
       const isThisCurrentUser = currentUserId === user._id;
-      const goToUser = () => { !isThisCurrentUser ? this.props.history.push(`${this.props.match.url}/${user._id}/edit`) : ''; };
+      const goToUser = () => (!isThisCurrentUser ? this.props.history.push(`${this.props.match.url}/${user._id}/edit`) : '');
       return (
         <tr
           key={user._id}
@@ -169,20 +163,24 @@ class UserManagement extends Component {
           {this.renderEmailCell(user, currentUserId)}
           <td onClick={goToUser}>{userRoles}</td>
           <td onClick={goToUser}>
-            {monthDayYearAtTime(user.createdAt)}</td>
+            {monthDayYearAtTime(user.createdAt)}
+          </td>
           <td className="button-column">
             <Button
               bsStyle="danger"
               onClick={() => this.handleSoftRemove(user._id)}
               disabled={isThisCurrentUser}
-            ><i className="fa fa-times" aria-hidden="true" /></Button>
+            ><i className="fa fa-times" aria-hidden="true" />
+            </Button>
           </td>
         </tr>);
     });
   }
 
   render() {
-    const { loading, users, match, userId: currentUserId } = this.props;
+    const {
+      loading, users, match, userId: currentUserId,
+    } = this.props;
     return (!loading ? (
       <div className="UserManagement">
         <TrashModal
@@ -200,26 +198,32 @@ class UserManagement extends Component {
           <h4 className="pull-left">User Manager</h4>
           <Link className="btn btn-success pull-right" to={`${match.url}/new`}>Add User</Link>
         </div>
-        {users.length ? <div className="ItemList"><Table responsive hover>
-          <thead>
-            <tr>
-              <th>
+        {users.length ?
+          <div className="ItemList">
+            <Table responsive hover>
+              <thead>
+                <tr>
+                  <th>
                 Users ({this.props.totalCount})
-              </th>
-              <th>Email</th>
-              <th>Roles</th>
-              <th>Created</th>
-              <th><Button
-                bsStyle="default"
-                onClick={() => this.setState({ trashShow: true })}
-                block
-              ><Glyphicon glyph="trash" /></Button></th>
-            </tr>
-          </thead>
-          <tbody>
-            {this.renderUsers(users, currentUserId)}
-          </tbody>
-        </Table></div> : <Alert bsStyle="warning">Something went wrong!</Alert>}
+                  </th>
+                  <th>Email</th>
+                  <th>Roles</th>
+                  <th>Created</th>
+                  <th>
+                    <Button
+                      bsStyle="default"
+                      onClick={() => this.setState({ trashShow: true })}
+                      block
+                    ><span className="fa fa-trash" aria-hidden="true" />
+                    </Button>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {this.renderUsers(users, currentUserId)}
+              </tbody>
+            </Table>
+          </div> : <Alert bsStyle="warning">Something went wrong!</Alert>}
       </div>
     ) : <Loading />);
   }
@@ -236,7 +240,7 @@ UserManagement.propTypes = {
   totalCount: PropTypes.number.isRequired,
 };
 
-export default createContainer(() => {
+export default withTracker(() => {
   const usersSub = Meteor.subscribe('users.management');
   return {
     loading: !usersSub.ready(),
@@ -245,4 +249,4 @@ export default createContainer(() => {
     deletedCount: Meteor.users.find({ deleted: { $ne: 'no' } }).count(),
     totalCount: Meteor.users.find({ deleted: { $eq: 'no' } }).count(),
   };
-}, UserManagement);
+})(UserManagement);

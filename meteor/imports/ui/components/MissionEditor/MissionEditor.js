@@ -2,9 +2,9 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { createContainer } from 'meteor/react-meteor-data';
+import { withTracker } from 'meteor/react-meteor-data';
 import { FormGroup, ControlLabel, Button, Row, Col, HelpBlock } from 'react-bootstrap';
-import { LinkContainer } from 'react-router-bootstrap';
+import { Link } from 'react-router-dom';
 import { Meteor } from 'meteor/meteor';
 import { Bert } from 'meteor/themeteorchef:bert';
 import validate from '../../../modules/validate';
@@ -132,12 +132,10 @@ class MissionEditor extends Component {
               >
                 {this.renderRPAsSelect(rpas)}
               </select>
-              {!rpas.length
-                ? <HelpBlock>
+              {!rpas.length ?
+                <HelpBlock>
                   <p>{'You don\u0027t have any RPAs saved.'}</p>
-                  <LinkContainer to="/hangar/rpas/new">
-                    <a>Add new RPA</a>
-                  </LinkContainer>
+                  <Link to="/hangar/rpas/new">Add new RPA</Link>
                 </HelpBlock>
                 : ''}
             </FormGroup>
@@ -152,12 +150,10 @@ class MissionEditor extends Component {
               >
                 {this.renderPayloadsSelect(payloads)}
               </select>
-              {!payloads.length
-                ? <HelpBlock>
+              {!payloads.length ?
+                <HelpBlock>
                   <p>{'You don\u0027t have any Payloads saved.'}</p>
-                  <LinkContainer to="/hangar/payloads/new">
-                    <a>Add new Payload</a>
-                  </LinkContainer>
+                  <Link to="/hangar/payloads/new">Add new Payload</Link>
                 </HelpBlock>
                 : ''}
             </FormGroup>
@@ -178,12 +174,15 @@ class MissionEditor extends Component {
               {mission && mission._id ? 'Save Changes' : 'Add Mission'}
             </Button>
           </Col>
-        </Row></form>);
+        </Row>
+      </form>);
   }
 }
 
 MissionEditor.defaultProps = {
-  mission: { name: '', description: '', rpa: '', payload: '', missionType: 'surface-area', project: '' },
+  mission: {
+    name: '', description: '', rpa: '', payload: '', missionType: 'surface-area', project: '',
+  },
 };
 
 MissionEditor.propTypes = {
@@ -194,7 +193,7 @@ MissionEditor.propTypes = {
   payloads: PropTypes.array.isRequired,
 };
 
-export default createContainer(() => {
+export default withTracker(() => {
   const rpasSub = Meteor.subscribe('rpas.mission');
   const payloadsSub = Meteor.subscribe('payloads.mission');
   return {
@@ -202,4 +201,4 @@ export default createContainer(() => {
     rpas: RPASCollection.find().fetch(),
     payloads: PayloadsCollection.find().fetch(),
   };
-}, MissionEditor);
+})(MissionEditor);

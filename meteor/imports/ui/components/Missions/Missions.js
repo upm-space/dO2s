@@ -2,10 +2,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { Table, Alert, Button, Glyphicon } from 'react-bootstrap';
+import { Table, Alert, Button } from 'react-bootstrap';
 import { timeago, monthDayYearAtTime } from '@cleverbeagle/dates';
 import { Meteor } from 'meteor/meteor';
-import { createContainer } from 'meteor/react-meteor-data';
+import { withTracker } from 'meteor/react-meteor-data';
 import { Bert } from 'meteor/themeteorchef:bert';
 import classnames from 'classnames';
 
@@ -38,31 +38,27 @@ class Missions extends Component {
   }
 
   handleSoftRemove(missionId) {
-    if (confirm('Move to Trash?')) {
-      Meteor.call('missions.softDelete', missionId, (error) => {
-        if (error) {
-          Bert.alert(error.reason, 'danger');
-        } else {
-          Bert.alert('Mission moved to Trash!', 'warning');
-        }
-      });
-    }
+    Meteor.call('missions.softDelete', missionId, (error) => {
+      if (error) {
+        Bert.alert(error.reason, 'danger');
+      } else {
+        Bert.alert('Mission moved to Trash!', 'warning');
+      }
+    });
   }
 
   handleRestore(missionId) {
-    if (confirm('Restore Mission?')) {
-      Meteor.call('missions.restore', missionId, (error) => {
-        if (error) {
-          Bert.alert(error.reason, 'danger');
-        } else {
-          Bert.alert('Mission Restored!', 'success');
-        }
-      });
-    }
+    Meteor.call('missions.restore', missionId, (error) => {
+      if (error) {
+        Bert.alert(error.reason, 'danger');
+      } else {
+        Bert.alert('Mission Restored!', 'success');
+      }
+    });
   }
 
   handleHardRemove(missionId) {
-    if (confirm('Are you sure? This is permanent!')) {
+    if (window.confirm('Are you sure? This is permanent!')) {
       Meteor.call('missions.hardDelete', missionId, (error) => {
         if (error) {
           Bert.alert(error.reason, 'danger');
@@ -100,7 +96,9 @@ class Missions extends Component {
     if (this.state.hideCompleted) {
       filteredMissions = filteredMissions.filter(mission => !mission.done);
     }
-    return filteredMissions.map(({ _id, name, createdAt, updatedAt, done }) => {
+    return filteredMissions.map(({
+      _id, name, createdAt, updatedAt, done,
+    }) => {
       const goToMission = () => this.props.history.push(`${this.props.match.url}/${_id}`);
       const missionClassName = classnames({ info: done });
       return (
@@ -110,9 +108,11 @@ class Missions extends Component {
         >
           <td onClick={goToMission}>{name}</td>
           <td onClick={goToMission} className="hidden-xs">
-            {timeago(updatedAt)}</td>
+            {timeago(updatedAt)}
+          </td>
           <td onClick={goToMission} className="hidden-xs">
-            {monthDayYearAtTime(createdAt)}</td>
+            {monthDayYearAtTime(createdAt)}
+          </td>
           <td className="button-column">
             <Button
               bsStyle={done ? 'success' : 'default'}
@@ -127,7 +127,8 @@ class Missions extends Component {
             <Button
               bsStyle="danger"
               onClick={() => this.handleSoftRemove(_id)}
-            ><i className="fa fa-times" aria-hidden="true" /></Button>
+            ><i className="fa fa-times" aria-hidden="true" />
+            </Button>
           </td>
         </tr>);
     });
@@ -152,33 +153,40 @@ class Missions extends Component {
           <Button
             bsStyle={!this.state.hideCompleted ? 'info' : 'default'}
             onClick={() => this.toggleHideCompleted()}
-          >{!this.state.hideCompleted ? 'Hide Completed Missions' : 'Show Completed Missions'} ({this.props.completeCount})</Button>
+          >{!this.state.hideCompleted ? 'Hide Completed Missions' : 'Show Completed Missions'} ({this.props.completeCount})
+          </Button>
           <Link className="btn btn-success pull-right" to={`${match.url}/newMission`}>Add Mission</Link>
         </div>
-        {missions.length ? <div className="ItemList"><Table responsive hover>
-          <thead>
-            <tr>
-              <th>
+        {missions.length ?
+          <div className="ItemList">
+            <Table responsive hover>
+              <thead>
+                <tr>
+                  <th>
                 Missions (
-                  {this.state.hideCompleted ? this.props.incompleteCount : this.props.totalCount}
+                    {this.state.hideCompleted ? this.props.incompleteCount : this.props.totalCount}
                 )
-              </th>
-              <th className="hidden-xs">Last Updated</th>
-              <th className="hidden-xs">Created</th>
-              <th className="center-column">
+                  </th>
+                  <th className="hidden-xs">Last Updated</th>
+                  <th className="hidden-xs">Created</th>
+                  <th className="center-column">
                 Completed
-              </th>
-              <th><Button
-                bsStyle="default"
-                onClick={() => this.setState({ trashShow: true })}
-                block
-              ><Glyphicon glyph="trash" /></Button></th>
-            </tr>
-          </thead>
-          <tbody>
-            {this.renderMissions(missions)}
-          </tbody>
-        </Table></div> : <Alert bsStyle="warning">No missions yet!</Alert>}
+                  </th>
+                  <th>
+                    <Button
+                      bsStyle="default"
+                      onClick={() => this.setState({ trashShow: true })}
+                      block
+                    ><span className="fa fa-trash" aria-hidden="true" />
+                    </Button>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {this.renderMissions(missions)}
+              </tbody>
+            </Table>
+          </div> : <Alert bsStyle="warning">No missions yet!</Alert>}
       </div>
     ) : <Loading />);
   }
@@ -196,7 +204,7 @@ Missions.propTypes = {
   totalCount: PropTypes.number.isRequired,
 };
 
-export default createContainer(({ projectId }) => {
+export default withTracker(({ projectId }) => {
   const subscription = Meteor.subscribe('missions', projectId);
   return {
     loading: !subscription.ready(),
@@ -207,4 +215,4 @@ export default createContainer(({ projectId }) => {
     completeCount: MissionsCollection.find({ deleted: { $eq: 'no' }, done: { $eq: true } }).count(),
     totalCount: MissionsCollection.find({ deleted: { $eq: 'no' } }).count(),
   };
-}, Missions);
+})(Missions);

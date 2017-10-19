@@ -1,5 +1,5 @@
 # Managing Users with React
--   [Managing Users With React - The Meteor Chef](https://themeteorchef.com/tutorials/managing-users-with-react)
+-   [Managing Users With React - The Meteor Chef]
 
 ## 1. User Creation
 
@@ -15,7 +15,7 @@ We manage creating our user with the following packages:
 ##2. Accessing the `Meteor.users` collection
 -   [Users and Accounts - Meteor](https://guide.meteor.com/accounts.html)
 
-The Meteor [`accounts-base`](http://docs.meteor.com/api/accounts.html) package crates a collection with a Simple Schema to manage this users. See rolling your own authentication to see how to add a Schema to this collection.
+The Meteor [`accounts-base`][`accounts-base` Package] package crates a collection with a Simple Schema to manage this users. See rolling your own authentication to see how to add a Schema to this collection.
 
 First we are going to change how the code loads on the server. To start we are going to create an entry point, an `index.js` file on `/imports/startup/server` and we are going to import this on our `/server/main.js` to have only this line of code.
 
@@ -200,7 +200,7 @@ This check if the current user you are parsing from the array is the current use
 #### handleChangeRole
 This function calls the method `users.changeRole` to change the user's roles. It's called on a triggered even from the form. Also throws alerts when an error occurred of if the method call went smoothly.
 
-[Alert Handling in Meteor with Bert](https://github.com/themeteorchef/bert)
+[Alert Handling in Meteor with Bert]
 
 #### authorizeAccess
 This function is called when the component mounts and updates to redirect the user to a page if he doesn't have authorization to access the user admin.
@@ -245,7 +245,7 @@ Our List of going to be a Bootstrap Panel populated with a List Group. The items
 
 Here we will also load the modals to handle the Recycle bin and deleting and adding a new item. We will also use a generic modal defined in our `<BasicModal/>` component.
 
-```
+```javascript
 export default class SearchLayout extends Component{
     constructor() {
         super();
@@ -425,3 +425,8 @@ BasicModal.PropTypes = {
 
 export default BasicModal;
 ```
+
+[Managing Users With React - The Meteor Chef]: https://themeteorchef.com/tutorials/managing-users-with-react
+[Users and Accounts - Meteor]: https://guide.meteor.com/accounts.html
+[`accounts-base` Package]: http://docs.meteor.com/api/accounts.html
+[Alert Handling in Meteor with Bert]: https://github.com/themeteorchef/bert

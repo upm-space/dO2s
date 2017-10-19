@@ -2,9 +2,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { Table, Alert, Button, Glyphicon } from 'react-bootstrap';
+import { Table, Alert, Button } from 'react-bootstrap';
 import { Meteor } from 'meteor/meteor';
-import { createContainer } from 'meteor/react-meteor-data';
+import { withTracker } from 'meteor/react-meteor-data';
 import { Bert } from 'meteor/themeteorchef:bert';
 
 
@@ -35,31 +35,27 @@ class RPAs extends Component {
   }
 
   handleSoftRemove(rpaId) {
-    if (confirm('Move to Trash?')) {
-      Meteor.call('rpas.softDelete', rpaId, (error) => {
-        if (error) {
-          Bert.alert(error.reason, 'danger');
-        } else {
-          Bert.alert('RPA moved to Trash!', 'warning');
-        }
-      });
-    }
+    Meteor.call('rpas.softDelete', rpaId, (error) => {
+      if (error) {
+        Bert.alert(error.reason, 'danger');
+      } else {
+        Bert.alert('RPA moved to Trash!', 'warning');
+      }
+    });
   }
 
   handleRestore(rpaId) {
-    if (confirm('Restore RPA?')) {
-      Meteor.call('rpas.restore', rpaId, (error) => {
-        if (error) {
-          Bert.alert(error.reason, 'danger');
-        } else {
-          Bert.alert('RPA Restored!', 'success');
-        }
-      });
-    }
+    Meteor.call('rpas.restore', rpaId, (error) => {
+      if (error) {
+        Bert.alert(error.reason, 'danger');
+      } else {
+        Bert.alert('RPA Restored!', 'success');
+      }
+    });
   }
 
   handleHardRemove(rpaId) {
-    if (confirm('Are you sure? This is permanent!')) {
+    if (window.confirm('Are you sure? This is permanent!')) {
       Meteor.call('rpas.hardDelete', rpaId, (error) => {
         if (error) {
           Bert.alert(error.reason, 'danger');
@@ -100,30 +96,36 @@ class RPAs extends Component {
         <div className="page-header clearfix">
           <Link className="btn btn-success pull-right" to={`${match.url}/new`}>Add RPA</Link>
         </div>
-        {rpas.length ? <div className="ItemList"><Table responsive hover>
-          <thead>
-            <tr>
-              <th>
+        {rpas.length ?
+          <div className="ItemList">
+            <Table responsive hover>
+              <thead>
+                <tr>
+                  <th>
                 RPAs ({this.props.totalCount})
-              </th>
-              <th className="hidden-xs">Last Updated</th>
-              <th className="hidden-xs">Created</th>
-              <th><Button
-                bsStyle="default"
-                onClick={() => this.setState({ trashShow: true })}
-                block
-              ><Glyphicon glyph="trash" /></Button></th>
-            </tr>
-          </thead>
-          <List
-            loading={loading}
-            completedColumn={false}
-            items={rpas}
-            match={match}
-            history={this.props.history}
-            softDeleteItem={this.handleSoftRemove}
-          />
-        </Table></div> : <Alert bsStyle="warning">No RPAs yet!</Alert>}
+                  </th>
+                  <th className="hidden-xs">Last Updated</th>
+                  <th className="hidden-xs">Created</th>
+                  <th>
+                    <Button
+                      bsStyle="default"
+                      onClick={() => this.setState({ trashShow: true })}
+                      block
+                    ><span className="fa fa-trash" aria-hidden="true" />
+                    </Button>
+                  </th>
+                </tr>
+              </thead>
+              <List
+                loading={loading}
+                completedColumn={false}
+                items={rpas}
+                match={match}
+                history={this.props.history}
+                softDeleteItem={this.handleSoftRemove}
+              />
+            </Table>
+          </div> : <Alert bsStyle="warning">No RPAs yet!</Alert>}
       </div>
     ) : <Loading />);
   }
@@ -139,7 +141,7 @@ RPAs.propTypes = {
   totalCount: PropTypes.number.isRequired,
 };
 
-export default createContainer(() => {
+export default withTracker(() => {
   const rpasSub = Meteor.subscribe('rpas');
   return {
     loading: !rpasSub.ready(),
@@ -148,4 +150,4 @@ export default createContainer(() => {
     deletedCount: RPAsCollection.find({ deleted: { $ne: 'no' } }).count(),
     totalCount: RPAsCollection.find({ deleted: { $eq: 'no' } }).count(),
   };
-}, RPAs);
+})(RPAs);

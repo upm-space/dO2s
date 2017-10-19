@@ -8,9 +8,9 @@ import {
   featurePointSetZoom,
   featurePointSetLongitude,
   featurePointSetLatitude,
-} from './geojson-utilities.js';
+} from './geojson-utilities';
 
 
 test('Test1', () => {
-  expect().toBeTruthy();
+  expect(true).toBeTruthy();
 });

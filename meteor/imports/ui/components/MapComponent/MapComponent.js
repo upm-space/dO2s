@@ -66,20 +66,21 @@ class MapComponent extends Component {
     return (
       <div className="MapComponent" style={{ height: this.props.height }}>
         <div id="mymap" style={{ height: (!this.props.searchItem ? '100%' : '90%') }} />
-        {this.props.searchItem ? (<FormGroup>
-          <InputGroup>
-            <input
-              type="text"
-              className="form-control"
-              name="searchLoc"
-              value={this.state.searchLoc}
-              onChange={this.handleChange}
-            />
-            <InputGroup.Button>
-              <Button onClick={this.searchLocation}>Search</Button>
-            </InputGroup.Button>
-          </InputGroup>
-        </FormGroup>) : ''}
+        {this.props.searchItem ? (
+          <FormGroup>
+            <InputGroup>
+              <input
+                type="text"
+                className="form-control"
+                name="searchLoc"
+                value={this.state.searchLoc}
+                onChange={this.handleChange}
+              />
+              <InputGroup.Button>
+                <Button onClick={this.searchLocation}>Search</Button>
+              </InputGroup.Button>
+            </InputGroup>
+          </FormGroup>) : ''}
       </div>);
   }
 }
@@ -89,7 +90,7 @@ MapComponent.defaultProps = {
     type: 'Feature',
     geometry: {
       type: 'Point',
-      coordinates: [-3.7038, 40.4168, 0],
+      coordinates: [-3.7038, 40.4168],
     },
     properties: {
       zoom: 12,

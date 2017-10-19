@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { ButtonToolbar, ButtonGroup, Button, Row, Col } from 'react-bootstrap';
-import { createContainer } from 'meteor/react-meteor-data';
+import { withTracker } from 'meteor/react-meteor-data';
 import { Meteor } from 'meteor/meteor';
 import { Bert } from 'meteor/themeteorchef:bert';
 import Projects from '../../../api/Projects/Projects';
@@ -11,16 +11,14 @@ import MapComponent from '../../components/MapComponent/MapComponent';
 import Missions from '../../components/Missions/Missions';
 
 const handleRemove = (projectId, history) => {
-  if (confirm('Move to Trash?')) {
-    Meteor.call('projects.softDelete', projectId, (error) => {
-      if (error) {
-        Bert.alert(error.reason, 'danger');
-      } else {
-        Bert.alert('Project deleted!', 'warning');
-        history.push('/projects');
-      }
-    });
-  }
+  Meteor.call('projects.softDelete', projectId, (error) => {
+    if (error) {
+      Bert.alert(error.reason, 'danger');
+    } else {
+      Bert.alert('Project deleted!', 'warning');
+      history.push('/projects');
+    }
+  });
 };
 
 const renderProject = (project, match, history) => (project && project.deleted === 'no' ? (
@@ -58,7 +56,9 @@ const renderProject = (project, match, history) => (project && project.deleted =
   </div>
 ) : <NotFound />);
 
-const ViewProject = ({ loading, project, match, history }) => (
+const ViewProject = ({
+  loading, project, match, history,
+}) => (
   !loading ? renderProject(project, match, history) : <Loading />
 );
 
@@ -69,7 +69,7 @@ ViewProject.propTypes = {
   history: PropTypes.object.isRequired,
 };
 
-export default createContainer(({ match }) => {
+export default withTracker(({ match }) => {
   const projectId = match.params.project_id;
   const subscription = Meteor.subscribe('projects.view', projectId);
 
@@ -77,4 +77,4 @@ export default createContainer(({ match }) => {
     loading: !subscription.ready(),
     project: Projects.findOne(projectId),
   };
-}, ViewProject);
+})(ViewProject);

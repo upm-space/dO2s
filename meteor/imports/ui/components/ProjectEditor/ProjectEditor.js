@@ -16,6 +16,9 @@ class ProjectEditor extends React.Component {
   constructor(props) {
     super(props);
     this.changeProjectLocation = this.changeProjectLocation.bind(this);
+    this.changeLatitude = this.changeLatitude.bind(this);
+    this.changeLongitude = this.changeLongitude.bind(this);
+    this.changeZoom = this.changeZoom.bind(this);
     this.state = {
       location: props.project && props.project.mapLocation,
     };
@@ -76,7 +79,67 @@ class ProjectEditor extends React.Component {
         properties: {
           zoom: featurePointGetZoom(location),
         },
-      } });
+      },
+    });
+  }
+
+  changeLatitude(newLat) {
+    this.setState((prevState) => {
+      const prevCoords = prevState.location.geometry.coordinates;
+      const prevZoom = prevState.location.properties.zoom;
+      const newLoc = {
+        location: {
+          type: 'Feature',
+          geometry: {
+            type: 'Point',
+            coordinates: [prevCoords[0], newLat, 0],
+          },
+          properties: {
+            zoom: prevZoom,
+          },
+        },
+      };
+      return newLoc;
+    });
+  }
+
+  changeLongitude(newLon) {
+    this.setState((prevState) => {
+      const prevCoords = prevState.location.geometry.coordinates;
+      const prevZoom = prevState.location.properties.zoom;
+      const newLoc = {
+        location: {
+          type: 'Feature',
+          geometry: {
+            type: 'Point',
+            coordinates: [newLon, prevCoords[1], 0],
+          },
+          properties: {
+            zoom: prevZoom,
+          },
+        },
+      };
+      return newLoc;
+    });
+  }
+
+  changeZoom(newZoom) {
+    this.setState((prevState) => {
+      const prevCoords = prevState.location.geometry.coordinates;
+      const newLoc = {
+        location: {
+          type: 'Feature',
+          geometry: {
+            type: 'Point',
+            coordinates: [prevCoords[0], prevCoords[1], 0],
+          },
+          properties: {
+            zoom: newZoom,
+          },
+        },
+      };
+      return newLoc;
+    });
   }
 
   handleSubmit() {
@@ -90,7 +153,7 @@ class ProjectEditor extends React.Component {
         type: 'Feature',
         geometry: {
           type: 'Point',
-          coordinates: [Number(this.longitude.value), Number(this.latitude.value), 0],
+          coordinates: [Number(this.longitude.value), Number(this.latitude.value)],
         },
         properties: {
           zoom: Number(this.zoom.value),
@@ -102,12 +165,13 @@ class ProjectEditor extends React.Component {
         type: 'Feature',
         geometry: {
           type: 'Point',
-          coordinates: [Number(this.longitude.value), Number(this.latitude.value), 0],
+          coordinates: [Number(this.longitude.value), Number(this.latitude.value)],
         },
         properties: {
           zoom: Number(this.zoom.value),
         },
-      } });
+      },
+    });
 
     if (existingProject) project._id = existingProject;
 
@@ -158,7 +222,7 @@ class ProjectEditor extends React.Component {
                 name="longitude"
                 ref={longitude => (this.longitude = longitude)}
                 value={featurePointGetLongitude(this.state.location)}
-                onChange={() => this.setState({ 'location.geometry.coordinates[0]': Number(this.longitude.value) })}
+                onChange={() => this.changeLongitude(Number(this.longitude.value))}
               />
             </FormGroup>
             <FormGroup>
@@ -169,7 +233,7 @@ class ProjectEditor extends React.Component {
                 name="latitude"
                 ref={latitude => (this.latitude = latitude)}
                 value={featurePointGetLatitude(this.state.location)}
-                onChange={() => this.setState({ 'location.geometry.coordinates[1]': Number(this.latitude.value) })}
+                onChange={() => this.changeLatitude(Number(this.latitude.value))}
               />
             </FormGroup>
             <FormGroup>
@@ -180,7 +244,7 @@ class ProjectEditor extends React.Component {
                 name="zoom"
                 ref={zoom => (this.zoom = zoom)}
                 value={featurePointGetZoom(this.state.location)}
-                onChange={() => this.setState({ 'location.properties.zoom': Number(this.zoom.value) })}
+                onChange={() => this.changeZoom(Number(this.zoom.value))}
               />
             </FormGroup>
           </Col>
@@ -189,11 +253,14 @@ class ProjectEditor extends React.Component {
           </Col>
 
         </Row>
-        <Row><Col xs={12} sm={4} md={4} lg={4}>
-          <Button className="btn-xs-block" type="submit" bsStyle="success">
-            {project && project._id ? 'Save Changes' : 'Add Project'}
-          </Button>
-        </Col></Row></form>);
+        <Row>
+          <Col xs={12} sm={4} md={4} lg={4}>
+            <Button className="btn-xs-block" type="submit" bsStyle="success">
+              {project && project._id ? 'Save Changes' : 'Add Project'}
+            </Button>
+          </Col>
+        </Row>
+      </form>);
   }
 }
 
@@ -205,12 +272,13 @@ ProjectEditor.defaultProps = {
       type: 'Feature',
       geometry: {
         type: 'Point',
-        coordinates: [-3.7038, 40.4168, 0],
+        coordinates: [-3.7038, 40.4168],
       },
       properties: {
         zoom: 12,
       },
-    } },
+    },
+  },
 };
 
 ProjectEditor.propTypes = {

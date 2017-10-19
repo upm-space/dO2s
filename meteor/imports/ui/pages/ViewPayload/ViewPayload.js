@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { ButtonToolbar, ButtonGroup, Button, Row, Col, Form, FormGroup, FormControl, ControlLabel } from 'react-bootstrap';
-import { createContainer } from 'meteor/react-meteor-data';
+import { withTracker } from 'meteor/react-meteor-data';
 import { Meteor } from 'meteor/meteor';
 import { Bert } from 'meteor/themeteorchef:bert';
 import Payloads from '../../../api/Payloads/Payloads';
@@ -9,16 +9,14 @@ import NotFound from '../NotFound/NotFound';
 import Loading from '../../components/Loading/Loading';
 
 const handleRemove = (payloadId, history) => {
-  if (confirm('Move to Trash?')) {
-    Meteor.call('payloads.softDelete', payloadId, (error) => {
-      if (error) {
-        Bert.alert(error.reason, 'danger');
-      } else {
-        Bert.alert('Payload deleted!', 'warning');
-        history.push('/payloads');
-      }
-    });
-  }
+  Meteor.call('payloads.softDelete', payloadId, (error) => {
+    if (error) {
+      Bert.alert(error.reason, 'danger');
+    } else {
+      Bert.alert('Payload deleted!', 'warning');
+      history.push('/payloads');
+    }
+  });
 };
 
 const renderPayload = (payload, match, history) => (payload && payload.deleted === 'no' ? (
@@ -137,7 +135,9 @@ const renderPayload = (payload, match, history) => (payload && payload.deleted =
   </div>
 ) : <NotFound />);
 
-const ViewPayload = ({ loading, payload, match, history }) => (
+const ViewPayload = ({
+  loading, payload, match, history,
+}) => (
   !loading ? renderPayload(payload, match, history) : <Loading />
 );
 
@@ -148,7 +148,7 @@ ViewPayload.propTypes = {
   history: PropTypes.object.isRequired,
 };
 
-export default createContainer(({ match }) => {
+export default withTracker(({ match }) => {
   const payloadId = match.params.payload_id;
   const subscription = Meteor.subscribe('payloads.view', payloadId);
 
@@ -156,4 +156,4 @@ export default createContainer(({ match }) => {
     loading: !subscription.ready(),
     payload: Payloads.findOne(payloadId),
   };
-}, ViewPayload);
+})(ViewPayload);

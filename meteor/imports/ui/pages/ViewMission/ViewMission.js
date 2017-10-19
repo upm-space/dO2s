@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { ButtonToolbar, ButtonGroup, Button, NavItem, Nav } from 'react-bootstrap';
-import { createContainer } from 'meteor/react-meteor-data';
+import { withTracker } from 'meteor/react-meteor-data';
 import { Meteor } from 'meteor/meteor';
 import { Bert } from 'meteor/themeteorchef:bert';
 import { LinkContainer } from 'react-router-bootstrap';
@@ -17,16 +17,14 @@ import MissionAnalysis from '../../components/MissionAnalysis/MissionAnalysis';
 import './ViewMission.scss';
 
 const handleRemove = (missionId, history, projectId) => {
-  if (confirm('Move to Trash?')) {
-    Meteor.call('missions.softDelete', missionId, (error) => {
-      if (error) {
-        Bert.alert(error.reason, 'danger');
-      } else {
-        Bert.alert('Mission deleted!', 'warning');
-        history.push(`/projects/${projectId}`);
-      }
-    });
-  }
+  Meteor.call('missions.softDelete', missionId, (error) => {
+    if (error) {
+      Bert.alert(error.reason, 'danger');
+    } else {
+      Bert.alert('Mission deleted!', 'warning');
+      history.push(`/projects/${projectId}`);
+    }
+  });
 };
 
 const renderMission = (mission, match, history, project) => (mission && mission.deleted === 'no' ? (
@@ -66,12 +64,14 @@ const renderMission = (mission, match, history, project) => (mission && mission.
       <Route
         exact
         path="/projects/:project_id/:mission_id/"
-        render={props => (React.createElement(MissionPlan, { mission, project, ...props }))}
+        render={props =>
+          (React.createElement(MissionPlan, { mission, project, ...props }))}
       />
       <Route
         exact
         path="/projects/:project_id/:mission_id/plan"
-        render={props => (React.createElement(MissionPlan, { mission, project, ...props }))}
+        render={props =>
+          (React.createElement(MissionPlan, { mission, project, ...props }))}
       />
       <Route
         exact
@@ -88,7 +88,9 @@ const renderMission = (mission, match, history, project) => (mission && mission.
   </div>
 ) : <NotFound />);
 
-const ViewMission = ({ loading, mission, match, history, project }) => (
+const ViewMission = ({
+  loading, mission, match, history, project,
+}) => (
   !loading ? renderMission(mission, match, history, project) : <Loading />
 );
 
@@ -100,7 +102,7 @@ ViewMission.propTypes = {
   history: PropTypes.object.isRequired,
 };
 
-export default createContainer(({ match }) => {
+export default withTracker(({ match }) => {
   const projectId = match.params.project_id;
   const missionId = match.params.mission_id;
   const missionSub = Meteor.subscribe('missions.view', projectId, missionId);
@@ -110,4 +112,4 @@ export default createContainer(({ match }) => {
     mission: Missions.findOne(missionId),
     project: Projects.findOne(projectId),
   };
-}, ViewMission);
+})(ViewMission);
