@@ -3,17 +3,11 @@ import PropTypes from 'prop-types';
 import $ from 'jquery';
 import './FlightWidgets.scss';
 
-const setAltitude1 = (altitude1) => {
-  console.log(90 + (((altitude1 % 500) * 360) / 500));
-  return (90 + (((altitude1 % 500) * 360) / 500));
-};
+const setAltitude1 = altitude1 => (90 + (((altitude1 % 500) * 360) / 500));
 
-const setAltitude2 = (altitude1) => {
-  console.log((altitude1 / 500) * 360);
-  return ((altitude1 / 500) * 360);
-};
+const setAltitude2 = altitude1 => ((altitude1 / 500) * 360);
 
-const WidjetAltimeter = ({ instSize, altitudeProp }) => (
+const WidgetAltimeter = ({ instSize, altitudeProp }) => (
   <div
     className="instrument"
     style={{
@@ -35,9 +29,9 @@ const WidjetAltimeter = ({ instSize, altitudeProp }) => (
   </div>
 );
 
-WidjetAltimeter.propTypes = {
+WidgetAltimeter.propTypes = {
   instSize: PropTypes.string.isRequired,
   altitudeProp: PropTypes.number.isRequired,
 };
 
-export default WidjetAltimeter;
+export default WidgetAltimeter;

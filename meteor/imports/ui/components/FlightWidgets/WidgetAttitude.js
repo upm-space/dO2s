@@ -15,7 +15,7 @@ const drawPtich = (pitch) => {
   return newPitch;
 };
 
-const WidjetAttitude = ({ instSize, pitchProp, rollProp }) => (
+const WidgetAttitude = ({ instSize, pitchProp, rollProp }) => (
   <div
     className="instrument"
     style={{
@@ -43,10 +43,10 @@ const WidjetAttitude = ({ instSize, pitchProp, rollProp }) => (
 );
 
 
-WidjetAttitude.propTypes = {
+WidgetAttitude.propTypes = {
   instSize: PropTypes.string.isRequired,
   pitchProp: PropTypes.number.isRequired,
   rollProp: PropTypes.number.isRequired,
 };
 
-export default WidjetAttitude;
+export default WidgetAttitude;

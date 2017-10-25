@@ -17,11 +17,11 @@ const draw = (speed) => {
   return `${newSpeed.toString()}deg`;
 };
 
-const WidjetAirSpeed = ({ instSize, speedProp }) => (
+const WidgetAirSpeed = ({ instSize, speedProp }) => (
   <div
     className="instrument"
     style={{
-      height: `${instSize}vh`, width: `${instSize}vh`, maxHeight: ($(window).innerWidth() * 5) / 10, maxWidth: ($(window).innerWidth() * 5) / 10,
+      height: `${instSize}vh`, width: `${instSize}vh`, maxHeight: ($(window).innerWidth() * 5) / 37, maxWidth: ($(window).innerWidth() * 5) / 37,
     }}
   >
     <div>
@@ -37,10 +37,10 @@ const WidjetAirSpeed = ({ instSize, speedProp }) => (
 );
 
 
-WidjetAirSpeed.propTypes = {
+WidgetAirSpeed.propTypes = {
   instSize: PropTypes.string.isRequired,
   speedProp: PropTypes.number.isRequired,
 };
 
 
-export default WidjetAirSpeed;
+export default WidgetAirSpeed;
