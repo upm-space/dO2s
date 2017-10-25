@@ -332,20 +332,29 @@ MissionMap.defaultProps = {
       zoom: 12,
     },
   },
+  height: '80vh',
+  takeOffPointActive: false,
+  landingPointActive: false,
+  defineAreaActive: false,
+  setTakeOffPoint: () => {},
+  setLandingPoint: () => {},
+  setMissionGeometry: () => {},
+  editWayPointsActive: false,
+  editWayPoints: () => {},
 };
 
 MissionMap.propTypes = {
   location: PropTypes.object,
   mission: PropTypes.object.isRequired,
-  height: PropTypes.string.isRequired,
-  takeOffPointActive: PropTypes.bool.isRequired,
-  landingPointActive: PropTypes.bool.isRequired,
-  defineAreaActive: PropTypes.bool.isRequired,
-  setTakeOffPoint: PropTypes.func.isRequired,
-  setLandingPoint: PropTypes.func.isRequired,
-  setMissionGeometry: PropTypes.func.isRequired,
-  editWayPointsActive: PropTypes.bool.isRequired,
-  editWayPoints: PropTypes.func.isRequired,
+  height: PropTypes.string,
+  takeOffPointActive: PropTypes.bool,
+  landingPointActive: PropTypes.bool,
+  defineAreaActive: PropTypes.bool,
+  setTakeOffPoint: PropTypes.func,
+  setLandingPoint: PropTypes.func,
+  setMissionGeometry: PropTypes.func,
+  editWayPointsActive: PropTypes.bool,
+  editWayPoints: PropTypes.func,
 };
 
 export default MissionMap;
