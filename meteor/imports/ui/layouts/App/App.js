@@ -155,7 +155,7 @@ const App = props => (
             <Route component={NotFound} />
           </Switch>
         </Grid>
-        <Footer />
+        {/* <Footer /> */}
       </div> : ''}
   </Router>
 );
