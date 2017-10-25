@@ -1,39 +1,37 @@
 import React, { Component } from 'react';
-import { Meteor } from 'meteor/meteor';
 import PropTypes from 'prop-types';
 
 
 class SvgMilestones extends Component {
-  constructor(props) {
-    super(props);
-  }
-
-  paintCircle(id, x, y, r, fill) {
+  paintCircle(id, x, y, r, fill, callback) {
     const circleStyle = {
       fill,
     };
-    const circle = <circle key={id} cx={x} cy={y} r={r} style={circleStyle} />;
+    const circle = <circle key={id} cx={x} cy={y} r={r} style={circleStyle} onClick={x => callback()} />;
     return circle;
   }
 
   paintText(id, fontSize, x, y, text, leftSide) {
+    let axisV = 0;
     let textAnchor = 'middle';
     let alignmentBaseline = 'middle';
     if (this.props.rightSide) {
-      x = leftSide + 10;
+      axisV = leftSide + 10;
       textAnchor = 'left';
       alignmentBaseline = 'left';
     }
-    const svgText = (<text
-      key={id}
-      x={x}
-      y={y}
-      fontSize={fontSize}
-      fontFamily="Arial"
-      textAnchor={textAnchor}
-      alignmentBaseline={alignmentBaseline}
-    >
-      {text}</text>);
+    const svgText = (
+      <text
+        key={id}
+        x={axisV}
+        y={y}
+        fontSize={fontSize}
+        fontFamily="Arial"
+        textAnchor={textAnchor}
+        alignmentBaseline={alignmentBaseline}
+      >
+        {text}
+      </text>);
     return svgText;
   }
 
@@ -44,6 +42,7 @@ class SvgMilestones extends Component {
     };
     return <line x1={p1[0]} y1={p1[1]} x2={p2[0]} y2={p2[1]} style={lineStyle} />;
   }
+
   paint() {
     const numberOfCircles = this.props.elements.length;
     const centroidsDis = Math.round(this.props.height / numberOfCircles);
@@ -56,14 +55,14 @@ class SvgMilestones extends Component {
     let counter = 0;
     const svgCricle = [];
     this.props.elements.forEach((item) => {
-      let backColor = '';
-      counter === this.props.index ? backColor = this.props.cEnable : backColor = this.props.cDisable;
+      const backColor = item.checked ? this.props.cChecked : this.props.cUnchecked;
+      const borderColor = item.selected ? this.props.cSelected : this.props.cBorder;
       const x = centroidsDis / 2;
       const y = (centroidsDis / 2) + (centroidsDis * counter);
       const innerRadius = Math.round((centroidsDis / 2) * this.props.radioRatio);
-      svgCricle.push(this.paintCircle(`idICircA${counter.toString()}`, x, y, (innerRadius + lineWidth), this.props.cBorder));
-      svgCricle.push(this.paintCircle(`idICircB${counter.toString()}`, x, y, innerRadius, backColor));
-      svgCricle.push(this.paintText(`idIText${counter.toString()}`, 15, x, y, item, (x + innerRadius + lineWidth)));
+      svgCricle.push(this.paintCircle(`idICircA${counter.toString()}`, x, y, (innerRadius + lineWidth), borderColor, item.callback));
+      svgCricle.push(this.paintCircle(`idICircB${counter.toString()}`, x, y, innerRadius, backColor, item.callback));
+      svgCricle.push(this.paintText(`idIText${counter.toString()}`, 15, x, y, item.text, (x + innerRadius + lineWidth)));
       counter += 1;
     });
 
@@ -71,9 +70,10 @@ class SvgMilestones extends Component {
       height: this.props.height,
       width: this.props.width,
     };
-    return (<svg className="SvgContainer" style={svgStyle}>
-      {lineSvg} + {svgCricle}
-    </svg>);
+    return (
+      <svg className="SvgContainer" style={svgStyle}>
+        {lineSvg} + {svgCricle}
+      </svg>);
   }
   render() {
     return this.paint();
@@ -81,21 +81,30 @@ class SvgMilestones extends Component {
 }
 
 SvgMilestones.defaultProps = {
-  cEnable: '#009900',
-  cDisable: '#D9ffB3',
-  cBorder: '#00FFFF',
-  lineWidthRatio: 0.05, // keep relation with radioRatio
-  radioRatio: 0.7, // if = 1 circles will touch between them
-  height: 200,
+  cChecked: '#5cb85c',
+  cWarning: '#f0ad4e',
+  cUnchecked: '#d9534f',
+  cBorder: '#eee',
+  cSelected: '#337ab7',
+  lineWidthRatio: 0.02, // keep relation with radioRatio
+  radioRatio: 0.2, // if = 1 circles will touch between them
+  height: 600,
   width: 200,
   rightSide: true,
 };
-SvgMilestones.PropTypes = {
-  divIdContainer: PropTypes.number,
+SvgMilestones.propTypes = {
+  cChecked: PropTypes.string,
+  cWarning: PropTypes.string,
+  cUnchecked: PropTypes.string,
+  cBorder: PropTypes.string,
+  cSelected: PropTypes.string,
+  lineWidthRatio: PropTypes.number,
+  // divIdContainer: PropTypes.number,
+  radioRatio: PropTypes.number,
   height: PropTypes.number,
-  width: PropTypes.string,
+  width: PropTypes.number,
   elements: PropTypes.array.isRequired,
-  index: PropTypes.number.isRquired,
+  rightSide: PropTypes.bool,
 };
 
 export default SvgMilestones;
