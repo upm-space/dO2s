@@ -406,7 +406,6 @@ class MissionPlan extends Component {
                     location={project && project.mapLocation}
                     mission={mission}
                     height="80vh"
-                    onLocationChange={() => {}}
                     takeOffPointActive={this.state.buttonStates.takeOffButtonActive}
                     landingPointActive={this.state.buttonStates.landingButtonActive}
                     defineAreaActive={this.state.buttonStates.defineAreaButtonActive}
@@ -427,8 +426,8 @@ class MissionPlan extends Component {
 
 MissionPlan.propTypes = {
   loading: PropTypes.bool.isRequired,
-  mission: PropTypes.object,
-  project: PropTypes.object,
+  mission: PropTypes.object.isRequired,
+  project: PropTypes.object.isRequired,
   payload: PropTypes.object,
   history: PropTypes.object.isRequired,
 };
