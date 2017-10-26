@@ -21,7 +21,7 @@
     "leaflet": "^1.2.0",
     "leaflet-draw": "^0.4.12",
     "lodash": "^4.17.4",
-    "meteor-node-stubs": "^0.2.11",
+    "meteor-node-stubs": "^0.3.2",
     "prop-types": "^15.5.10",
     "react": "^16.0.0",
     "react-bootstrap": "^0.31.5",
