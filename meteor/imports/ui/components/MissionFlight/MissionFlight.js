@@ -6,6 +6,8 @@ import WidgetAltimeter from '../FlightWidgets/WidgetAltimeter.js';
 import WidgetAttitude from '../FlightWidgets/WidgetAttitude.js';
 import MissionMap from '../MissionMap/MissionMap';
 
+import './MissionFlight.scss';
+
 class MissionFlight extends React.Component {
   constructor(props) {
     super(props);
@@ -38,14 +40,14 @@ class MissionFlight extends React.Component {
             </Row>
 
             <Row>
-              <Col xs={4} sm={4} md={4} lg={4}>
-                <WidgetAttitude instSize="200" id="wAltimeter" pitchProp={10} rollProp={45} />
+              <Col xs={4} sm={4} md={4} lg={4} className="padding2">
+                <WidgetAttitude id="wAltimeter" pitchProp={10} rollProp={45} />
               </Col>
-              <Col xs={4} sm={4} md={4} lg={4}>
-                <WidgetAirSpeed instSize="200" id="wAirSpeed" speedProp={10} />
+              <Col xs={4} sm={4} md={4} lg={4} className="padding2">
+                <WidgetAirSpeed id="wAirSpeed" speedProp={10} />
               </Col>
-              <Col xs={4} sm={4} md={4} lg={4}>
-                <WidgetAltimeter instSize="200" id="wAltimeter" altitudeProp={50} />
+              <Col xs={4} sm={4} md={4} lg={4} className="padding2">
+                <WidgetAltimeter id="wAltimeter" altitudeProp={50} />
               </Col>
             </Row>
             <Row>

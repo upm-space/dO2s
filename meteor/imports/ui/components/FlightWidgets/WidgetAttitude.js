@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import $ from 'jquery';
 import './FlightWidgets.scss';
 
 const drawPtich = (pitch) => {
@@ -15,13 +14,8 @@ const drawPtich = (pitch) => {
   return newPitch;
 };
 
-const WidgetAttitude = ({ instSize, pitchProp, rollProp }) => (
-  <div
-    className="instrument"
-    style={{
-      height: `${instSize}vh`, width: `${instSize}vh`, maxHeight: ($(window).innerWidth() * 5) / 37, maxWidth: ($(window).innerWidth() * 5) / 37,
-    }}
-  >
+const WidgetAttitude = ({ pitchProp, rollProp }) => (
+  <div className="instrument">
     <div>
       <img alt="horizon_back" src="/img/svg/horizon_back.svg" />
     </div>
@@ -44,7 +38,6 @@ const WidgetAttitude = ({ instSize, pitchProp, rollProp }) => (
 
 
 WidgetAttitude.propTypes = {
-  instSize: PropTypes.string.isRequired,
   pitchProp: PropTypes.number.isRequired,
   rollProp: PropTypes.number.isRequired,
 };

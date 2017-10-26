@@ -1,5 +1,4 @@
 import React from 'react';
-import $ from 'jquery';
 import PropTypes from 'prop-types';
 import './FlightWidgets.scss';
 
@@ -17,13 +16,8 @@ const draw = (speed) => {
   return `${newSpeed.toString()}deg`;
 };
 
-const WidgetAirSpeed = ({ instSize, speedProp }) => (
-  <div
-    className="instrument"
-    style={{
-      height: `${instSize}vh`, width: `${instSize}vh`, maxHeight: ($(window).innerWidth() * 5) / 37, maxWidth: ($(window).innerWidth() * 5) / 37,
-    }}
-  >
+const WidgetAirSpeed = ({ speedProp }) => (
+  <div className="instrument">
     <div>
       <img src="/img/svg/speed_mechanics.svg" alt="speed_mechanics" />
     </div>
@@ -38,7 +32,6 @@ const WidgetAirSpeed = ({ instSize, speedProp }) => (
 
 
 WidgetAirSpeed.propTypes = {
-  instSize: PropTypes.string.isRequired,
   speedProp: PropTypes.number.isRequired,
 };
 

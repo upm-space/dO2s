@@ -15,7 +15,7 @@ class PreFlightConnection extends Component {
       mission, project, match, history,
     } = this.props;
     return (
-      <div className="Connection">
+      <div className="PreFlightConnection">
         <h4>Establish the Connection with the RPA</h4>
         <Row>
           <Col xs={12} sm={12} md={12} lg={12}>
@@ -26,13 +26,13 @@ class PreFlightConnection extends Component {
         </Row>
         <Row>
           <Col xs={4} sm={4} md={4} lg={4}>
-            <WidgetAttitude instSize="200" id="wAltimeter" pitchProp={10} rollProp={45} />
+            <WidgetAttitude id="wAltimeter" pitchProp={10} rollProp={45} />
           </Col>
           <Col xs={4} sm={4} md={4} lg={4}>
-            <WidgetAirSpeed instSize="200" id="wAirSpeed" speedProp={10} />
+            <WidgetAirSpeed id="wAirSpeed" speedProp={10} />
           </Col>
           <Col xs={4} sm={4} md={4} lg={4}>
-            <WidgetAltimeter instSize="200" id="wAltimeter" altitudeProp={50} />
+            <WidgetAltimeter id="wAltimeter" altitudeProp={50} />
           </Col>
         </Row>
         <Row>

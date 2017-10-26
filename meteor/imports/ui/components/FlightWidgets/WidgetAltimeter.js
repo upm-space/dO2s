@@ -1,19 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import $ from 'jquery';
 import './FlightWidgets.scss';
 
 const setAltitude1 = altitude1 => (90 + (((altitude1 % 500) * 360) / 500));
 
 const setAltitude2 = altitude1 => ((altitude1 / 500) * 360);
 
-const WidgetAltimeter = ({ instSize, altitudeProp }) => (
-  <div
-    className="instrument"
-    style={{
-      height: `${instSize}vh`, width: `${instSize}vh`, maxHeight: ($(window).innerWidth() * 5) / 37, maxWidth: ($(window).innerWidth() * 5) / 37,
-    }}
-  >
+const WidgetAltimeter = ({ altitudeProp }) => (
+  <div className="instrument">
     <div>
       <img src="/img/svg/altitude_ticks.svg" alt="altitude_ticks" />
     </div>
@@ -30,7 +24,6 @@ const WidgetAltimeter = ({ instSize, altitudeProp }) => (
 );
 
 WidgetAltimeter.propTypes = {
-  instSize: PropTypes.string.isRequired,
   altitudeProp: PropTypes.number.isRequired,
 };
 
