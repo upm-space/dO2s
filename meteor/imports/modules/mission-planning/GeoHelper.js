@@ -47,7 +47,7 @@ export default function LatLon(lat, lon, height, radius) {
  *     var p1 = new LatLon(52.205, 0.119), p2 = new LatLon(48.857, 2.351);
  *     var d = p1.distanceTo(p2); // d.toPrecision(4): 404.3
  */
-LatLon.prototype.distanceTo = function (point) {
+LatLon.prototype.distanceTo = function distanceTo(point) {
   const R = this.radius;
   const phi1 = this.lat.toRadians();
   const lambda1 = this.lon.toRadians();
@@ -69,7 +69,7 @@ LatLon.prototype.distanceTo = function (point) {
  * @param {[LatLon]} points - Array of polygon points
  * @returns {number} Polygon's area
  */
-LatLon.prototype.calculateSurface = function (points) {
+LatLon.prototype.calculateSurface = function calculateSurface(points) {
   const minmax = this.calculateBoundingBox(points);
   const minPoint = minmax[0];
   // var maxPoint = minmax[1];
@@ -215,7 +215,7 @@ LatLon.intersection = (p1, brng1, p2, brng2) => {
  *     var p1 = new LatLon(51.4778, -0.0015);
  *     var p2 = p1.destinationPoint(300.7, 7.794); // p2.toString(): 51.5135�N, 000.0983�W
  */
-LatLon.prototype.destinationPoint = function (brng, dist) {
+LatLon.prototype.destinationPoint = function destinationPoint(brng, dist) {
   // see http://williams.best.vwh.net/avform.htm#LL
 
   const theta = Number(brng).toRadians();
@@ -243,7 +243,7 @@ LatLon.prototype.destinationPoint = function (brng, dist) {
  * @param {LatLon} point
  * @returns {Number} from 0 to 360
  */
-LatLon.prototype.calculateBearing = function (point) {
+LatLon.prototype.calculateBearing = function calculateBearing(point) {
   const x1 = this.lon;
   const y1 = this.lat;
   const x2 = point.lon;
@@ -256,9 +256,21 @@ LatLon.prototype.calculateBearing = function (point) {
     bearing = (Math.atan(deltax / deltay) * 180) / Math.PI;
     // console.log(bearing);
     if (x2 > x1) {
-      if (y2 > y1) { bearing = bearing; } else { bearing = 180 + bearing; }
-    } else if (y2 > y1) { bearing = 360 + bearing; } else { bearing = 180 + bearing; }
-  } else if (x1 > x2) { bearing = 270; } else { bearing = 90; }
+      if (y2 > y1) {
+        bearing = bearing;
+      } else {
+        bearing = 180 + bearing;
+      }
+    } else if (y2 > y1) {
+      bearing = 360 + bearing;
+    } else {
+      bearing = 180 + bearing;
+    }
+  } else if (x1 > x2) {
+    bearing = 270;
+  } else {
+    bearing = 90;
+  }
   return bearing;
 };
 
@@ -272,7 +284,7 @@ LatLon.prototype.calculateBearing = function (point) {
  *     var p1 = new LatLon(52.205, 0.119), p2 = new LatLon(48.857, 2.351);
  *     var b1 = p1.bearingTo(p2); // b1.toFixed(1): 156.2
  */
-LatLon.prototype.bearingTo = function (point) {
+LatLon.prototype.bearingTo = function bearingTo(point) {
   const phi1 = this.lat.toRadians();
   const phi2 = point.lat.toRadians();
   const Deltalambda = (point.lon - this.lon).toRadians();
@@ -296,7 +308,7 @@ LatLon.prototype.bearingTo = function (point) {
  *     var p1 = new LatLon(52.205, 0.119), p2 = new LatLon(48.857, 2.351);
  *     var pMid = p1.midpointTo(p2); // pMid.toString(): 50.5363�N, 001.2746�E
  */
-LatLon.prototype.midpointTo = function (point) {
+LatLon.prototype.midpointTo = function midpointTo(point) {
   // see http://mathforum.org/library/drmath/view/51822.html for derivation
 
   const phi1 = this.lat.toRadians();
@@ -343,7 +355,7 @@ LatLon.prototype.clockwise = (points) => {
  * @param points
  * @returns {points}- Points in clockwise order
  */
-LatLon.prototype.returnedClockwise = function (points) {
+LatLon.prototype.returnedClockwise = function returnedClockwise(points) {
   if (this.clockwise(points) === false) {
     const tempPoints = [];
     const num = points.length - 1;
@@ -361,7 +373,7 @@ LatLon.prototype.returnedClockwise = function (points) {
  * @param {[LatLon]} points - Array of points
  * @returns {LatLon} - The closest point
  */
-LatLon.prototype.closestPoint = function (points) {
+LatLon.prototype.closestPoint = function closestPoint(points) {
   let minDistance = Number.MAX_VALUE;
   let selectedPoint = null;
   const parent = this;
@@ -375,7 +387,7 @@ LatLon.prototype.closestPoint = function (points) {
   return selectedPoint;
 };
 
-LatLon.prototype.furthestPoint = function (points) {
+LatLon.prototype.furthestPoint = function furthestPoint(points) {
   let maxDistance = Number.MIN_VALUE;
   let selectedPoint = null;
   const parent = this;
@@ -436,7 +448,9 @@ LatLon.prototype.findLineIntersection = (start1, end1, start2, end2) => {
  * @param point {LatLon} as the second point
  * @returns {Number} slope (m)
  */
-LatLon.prototype.calculateSlope = function (point) { return (point.lat - this.lat) / (point.lon - this.lon); };
+LatLon.prototype.calculateSlope = function calculateSlope(point) {
+  return (point.lat - this.lat) / (point.lon - this.lon);
+};
 
 /** calculate the intercept (intercepto o b) of a line
  * y = mx +b
@@ -444,7 +458,7 @@ LatLon.prototype.calculateSlope = function (point) { return (point.lat - this.la
  * b = y -mx
  * @param point
  */
-LatLon.prototype.calculateIntercept = function (point) {
+LatLon.prototype.calculateIntercept = function calculateIntercept(point) {
   const m = this.calculateSlope(point);
   return point.lat - (m * point.lon);
 };
@@ -523,19 +537,19 @@ LatLon.prototype.convertOL3ToPoints = (geometry) => {
 
 /** Extend Number object with method to convert numeric degrees to radians */
 if (typeof Number.prototype.toRadians === 'undefined') {
-  Number.prototype.toRadians = function () { return (this * Math.PI) / 180; };
+  Number.prototype.toRadians = function toRadians() { return (this * Math.PI) / 180; };
 }
 
 
 /** Extend Number object with method to convert radians to numeric (signed) degrees */
 if (typeof Number.prototype.toDegrees === 'undefined') {
-  Number.prototype.toDegrees = function () { return (this * 180) / Math.PI; };
+  Number.prototype.toDegrees = function toDegrees() { return (this * 180) / Math.PI; };
 }
 
 // Removes an element from an array.
 // String value: the value to search and remove.
 // return: an array with the removed element; false otherwise.
-Array.prototype.remove = function (value) {
+Array.prototype.remove = function remove(value) {
   const idx = this.indexOf(value);
   if (idx !== -1) {
     return this.splice(idx, 1); // The second parameter is the number of elements to remove.
