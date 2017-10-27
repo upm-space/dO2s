@@ -47,11 +47,9 @@ class PreFlightCheckList extends Component {
       <div className="PreFlightCheckList"><h1>PreFlightCheckList</h1>
         <Row>
           <Col xs={12} sm={3} md={3} lg={3}>
-            <SvgMilestones
-              index={1}
-              elements={itemsPreFlight}
-              whatIndex
-            />
+            <div className="PreFlightStages">
+              <SvgMilestones elements={itemsPreFlight} />
+            </div>
           </Col>
           <Col xs={12} sm={9} md={9} lg={9}>
             <Switch>

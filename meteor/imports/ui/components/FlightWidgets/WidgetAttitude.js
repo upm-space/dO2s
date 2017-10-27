@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import './FlightWidgets.scss';
 
-const drawPtich = (pitch) => {
+const drawPitch = (pitch) => {
   let newPitch = pitch;
   const pitchBound = 25;
   if (newPitch > pitchBound) {
@@ -23,7 +23,7 @@ const WidgetAttitude = ({ pitchProp, rollProp }) => (
       <img
         alt="horizon_ball"
         src="/img/svg/horizon_ball.svg"
-        style={{ top: `${drawPtich(pitchProp)}%`, transform: `rotate(${rollProp}deg)` }}
+        style={{ top: `${drawPitch(pitchProp)}%`, transform: `rotate(${rollProp}deg)` }}
       />
     </div>
     <div>

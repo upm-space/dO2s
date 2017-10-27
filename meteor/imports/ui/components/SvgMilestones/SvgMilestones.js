@@ -45,7 +45,7 @@ class SvgMilestones extends Component {
 
   paint() {
     const numberOfCircles = this.props.elements.length;
-    const centroidsDis = Math.round(this.props.height / numberOfCircles);
+    const centroidsDis = Math.round(600 / numberOfCircles);
     const lineP1XY = [centroidsDis / 2, centroidsDis / 2];
     const lineP2XY = [centroidsDis / 2, ((centroidsDis * numberOfCircles) -
       (centroidsDis * this.props.radioRatio))];
@@ -67,8 +67,8 @@ class SvgMilestones extends Component {
     });
 
     const svgStyle = {
-      height: this.props.height,
-      width: this.props.width,
+      height: 600,
+      width: 200,
     };
     return (
       <svg className="SvgContainer" style={svgStyle}>

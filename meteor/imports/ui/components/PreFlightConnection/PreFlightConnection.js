@@ -7,6 +7,8 @@ import WidgetAirSpeed from '../FlightWidgets/WidgetAirSpeed';
 
 class PreFlightConnection extends Component {
   componentDidMount() {
+    const myMatch = this.props.match.path;
+    console.log(myMatch.split('/').pop());
     this.props.getPath(this.props.match.path.split('/').pop());
   }
 
@@ -26,7 +28,7 @@ class PreFlightConnection extends Component {
         </Row>
         <Row>
           <Col xs={4} sm={4} md={4} lg={4}>
-            <WidgetAttitude id="wAltimeter" pitchProp={10} rollProp={45} />
+            <WidgetAttitude id="wAltimeter" pitchProp={30} rollProp={45} />
           </Col>
           <Col xs={4} sm={4} md={4} lg={4}>
             <WidgetAirSpeed id="wAirSpeed" speedProp={10} />
