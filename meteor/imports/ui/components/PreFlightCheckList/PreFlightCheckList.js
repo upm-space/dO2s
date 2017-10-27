@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Row, Col } from 'react-bootstrap';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, Redirect } from 'react-router-dom';
 
 import NotFound from '../../pages/NotFound/NotFound';
 import SvgMilestones from '../SvgMilestones/SvgMilestones';
@@ -56,13 +56,8 @@ class PreFlightCheckList extends Component {
               <Route
                 exact
                 path="/projects/:project_id/:mission_id/preflight"
-                render={props => (
-                  <PreFlightConnection
-                    mission={mission}
-                    project={project}
-                    getPath={this.changeSelected}
-                    {...props}
-                  />)}
+                render={() => (
+                  <Redirect to={`${match.url}/connect`} />)}
               />
               <Route
                 exact
