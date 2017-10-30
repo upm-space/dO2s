@@ -1,89 +1,142 @@
 import React, { Component } from 'react';
+import { Bert } from 'meteor/themeteorchef:bert';
 import MissionVideo from '../../components/MissionVideo/MissionVideo';
 import Slider from '../../components/FligthTime/Slider';
 import Zoom from '../../components/FligthTime/Zoom';
+import TimeControlComponent from '../../components/TimelineWidget/TimeControlComponent';
 
 import './Hector.scss';
+
+const coordinateUrl = 'http://localhost:3000/images/logJson2.json';
+const frequency = 200;
+let featureArray;
+let last;
 
 class Hector extends Component {
   constructor(props) {
     super(props);
 
     this.changeRange = this.changeRange.bind(this);
-    this.changeTime = this.changeTime.bind(this);
-    this.getLength = this.getLength.bind(this);
+    this.changeSpeed = this.changeSpeed.bind(this);
+    this.changeLogTime = this.changeLogTime.bind(this);
+    this.changeVideoTime = this.changeVideoTime.bind(this);
 
     this.state = {
-      time0: 0,
-      time1: 608399957,
-      time2: 0,
-      domain: 608399957,
-      speed: 2,
+      timeRangeStart: 0,
+      timeRangeEnd: 0,
+      logTime: 0,
+      videoTime: 0,
+      speed: 1,
+      domain: 60000000,
     };
   }
 
-  getLength(d) {
+  componentWillMount() {
+    const a = this;
+    fetch(coordinateUrl)
+      .then((response) => {
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          return response.json();
+        }
+        throw new TypeError("Oops, we haven't got JSON!");
+      }).then((data) => {
+        featureArray = data.features;
+        last = data.features.length - 1;
+        a.setState({
+          timeRangeEnd: featureArray[last].TimeUS,
+          domain: featureArray[last].TimeUS,
+        });
+        a.forceUpdate();
+      })
+      .catch(error => Bert.alert(`Coordinates Request Error: ${error}`, 'warning'))
+    ;
+  }
+
+  changeVideoTime(f) {
     this.setState({
-      time1: d,
-      domain: d,
+      videoTime: f,
     });
     this.forceUpdate();
   }
 
   changeRange(a, b) {
     this.setState({
-      time0: a,
-      time1: b,
+      timeRangeStart: a,
+      timeRangeEnd: b,
     });
     this.forceUpdate();
   }
 
-  changeTime(c) {
+  changeLogTime(c) {
     this.setState({
-      time2: c,
+      logTime: c,
     });
     this.forceUpdate();
   }
 
-  renderMissionVideo() {
+  changeSpeed(e) {
+    this.setState({
+      speed: e,
+    });
+    this.forceUpdate();
+  }
+
+  renderMissionVideo(freq) {
     return (
       <MissionVideo
-        time={this.state.time2}
+        videoTime={this.state.videoTime}
+        logTime={this.state.logTime}
         speed={this.state.speed}
-        getLength={this.getLength}
+        frequency={freq}
+        features={featureArray}
       />);
   }
 
-  renderSlider() {
+  renderSlider(freq) {
     return (
       <Slider
-        end={this.state.time1}
+        end={this.state.timeRangeEnd}
         domain={this.state.domain}
         speed={this.state.speed}
+        frequency={freq}
+        features={featureArray}
         changeRange={this.changeRange}
-        changeTime={this.changeTime}
+        changeLogTime={this.changeLogTime}
       />);
   }
 
-  renderZoom() {
+  renderZoom(freq) {
     return (
       <Zoom
-        start={this.state.time0}
-        end={this.state.time1}
-        time={this.state.time2}
+        start={this.state.timeRangeStart}
+        end={this.state.timeRangeEnd}
+        time={this.state.logTime}
         speed={this.state.speed}
+        frequency={freq}
+        features={featureArray}
+        changeVideoTime={this.changeVideoTime}
       />);
+  }
+
+  renderTimeControl() {
+    return (
+      <div className="Dial" id="Dial">
+        <TimeControlComponent
+          features={featureArray}
+          changeSpeed={this.changeSpeed}
+        />
+      </div>
+    );
   }
 
   render() {
     return (
       <div className="Hector" id="Hector">
-        {this.renderMissionVideo()}
-        {this.renderZoom()}
-        {this.renderSlider()}
-        {/* {this.state.time0}<br />
-        {this.state.time1}<br />
-        {this.state.time2}<br /> */}
+        {this.renderMissionVideo(frequency)}
+        {this.renderZoom(frequency)}
+        {this.renderSlider(frequency)}
+        {this.renderTimeControl()}
       </div>
     );
   }

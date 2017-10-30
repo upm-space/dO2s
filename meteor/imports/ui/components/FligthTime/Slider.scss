@@ -1,57 +1,57 @@
-.track,
-.track-inset,
-.track-overlay {
-    stroke-linecap: round;
-}
-
-.track {
-    stroke: #000;
-    stroke-opacity: 0.3;
-    stroke-width: 10px;
-}
-
-.track-inset {
-    stroke: #ddd;
-    stroke-width: 8px;
-}
-
-.track-overlay {
-    pointer-events: stroke;
-    stroke-width: 50px;
-    cursor: crosshair;
-}
-
-.range {
-    stroke:#38c;
-    stroke-width: 8px;
-    z-index: 4;
-    cursor: crosshair;
-}
-
-.handle {
-    fill: #fff;
-    stroke: #000;
-    stroke-opacity: 0.5;
-    stroke-width: 1px;
-    cursor: crosshair;
-}
-
-.selector {
-    fill: #f00;
-    z-index: -10;
-    cursor: crosshair;
-}
-
-div#SliderWrapper{
+div.SliderWrapper{
   height: 85px;
   // border: 1px solid grey;
-}
 
-h5#TimeRange{
-  margin: 10px;
-}
+  .track,
+  .track-inset,
+  .track-overlay {
+      stroke-linecap: round;
+  }
 
-svg#svg{
-  width: 100%;
-  height: 50px;
+  .track {
+      stroke: #000;
+      stroke-opacity: 0.3;
+      stroke-width: 10px;
+  }
+
+  .track-inset {
+      stroke: #ddd;
+      stroke-width: 8px;
+  }
+
+  .track-overlay {
+      pointer-events: stroke;
+      stroke-width: 50px;
+      cursor: crosshair;
+  }
+
+  .track-range {
+      stroke:#38c;
+      stroke-width: 8px;
+      z-index: 4;
+      cursor: crosshair;
+  }
+
+  .SliderHandle {
+      fill: #fff;
+      stroke: #000;
+      stroke-opacity: 0.5;
+      stroke-width: 1px;
+      cursor: crosshair;
+  }
+
+  .SliderSelector {
+      fill: #f00;
+      z-index: -10;
+      cursor: crosshair;
+  }
+
+  h5.TimeRange{
+    margin: 10px;
+  }
+
+  svg.SliderSvg{
+    width: 100%;
+    height: 50px;
+  }
 }

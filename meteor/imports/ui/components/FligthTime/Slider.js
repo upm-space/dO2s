@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import * as d3 from 'd3';
 
 import './Slider.scss';
@@ -13,7 +14,7 @@ let i = 0;
 let range;
 let handle1;
 let handle2;
-let handle3;
+let selector;
 
 const usToHHMMSS = (time) => {
   const usSecNum = parseInt(time, 10) / 1e6;
@@ -43,8 +44,9 @@ class Slider extends Component {
   }
 
   slider() {
-    const svg = d3.select('#svg');
+    const svg = d3.select('#SliderSvg');
     const width = this.wrapper.offsetWidth - margin.left - margin.right;
+    const f = this.props.frequency;
 
     x = d3.scaleLinear()
       .domain([0, this.props.domain])
@@ -84,8 +86,8 @@ class Slider extends Component {
       range.attr('x1', parseFloat(handle1.attr('x')) + 5);
       range.attr('x2', handle2.attr('x'));
       if (active === 3) {
-        handle3.attr('x', x(h) - 1.5);
-        i = x.invert(handle3.attr('x'));
+        selector.attr('x', x(h) - 1.5);
+        i = x.invert(selector.attr('x'));
       }
     }
 
@@ -94,7 +96,7 @@ class Slider extends Component {
       .on('start drag', () => {
         hue(x.invert(d3.event.x));
         this.props.changeRange(x.invert(range.attr('x1')), x.invert(range.attr('x2')));
-        this.props.changeTime(x.invert(handle3.attr('x')));
+        this.props.changeLogTime(x.invert(selector.attr('x')));
       })
     ;
 
@@ -102,22 +104,22 @@ class Slider extends Component {
       .attr('class', 'track')
       .attr('x1', x.range()[0])
       .attr('x2', x.range()[1])
-      .select(function () { return this.parentNode.appendChild(this.cloneNode(true)); })
+      .select(function a() { return this.parentNode.appendChild(this.cloneNode(true)); })
       .attr('class', 'track-inset')
-      .select(function () { return this.parentNode.appendChild(this.cloneNode(true)); })
+      .select(function a() { return this.parentNode.appendChild(this.cloneNode(true)); })
       .attr('class', 'track-overlay')
       .call(drag)
     ;
 
     range = slider.append('line')
-      .attr('class', 'range')
+      .attr('class', 'track-range')
       .attr('x1', x.range()[0])
       .attr('x2', x.range()[1])
       .call(drag)
     ;
 
     handle1 = slider.insert('rect')
-      .attr('class', 'handle')
+      .attr('class', 'SliderHandle')
       .attr('x', -5)
       .attr('y', -10)
       .attr('width', 5)
@@ -127,7 +129,7 @@ class Slider extends Component {
     ;
 
     handle2 = slider.insert('rect')
-      .attr('class', 'handle')
+      .attr('class', 'SliderHandle')
       .attr('x', width)
       .attr('y', -10)
       .attr('width', 5)
@@ -136,8 +138,8 @@ class Slider extends Component {
       .call(drag)
     ;
 
-    handle3 = slider.insert('rect')
-      .attr('class', 'selector')
+    selector = slider.insert('rect')
+      .attr('class', 'SliderSelector')
       .attr('x', -1.5)
       .attr('y', -10)
       .attr('width', 3)
@@ -147,21 +149,45 @@ class Slider extends Component {
     ;
 
     setInterval(() => {
-      i += 10000 * this.props.speed;
-      handle3.attr('x', x(i) - 1.5);
-    }, 10);
+      i += f * 1000 * this.props.speed;
+      selector.attr('x', x(i) - 1.5);
+      this.props.changeLogTime(i);
+    }, f);
 
     slider.selectAll('text').style('text-anchor', 'end').attr('transform', 'rotate(-30) translate(10, 5)');
   }
 
   render() {
     return (
-      <div className="wrapper" id="SliderWrapper" ref={(c) => { this.wrapper = c; }}>
-        <h5 id="TimeRange">Time range: <span id="SliderTextMin">{usToHHMMSS(0)}</span> - <span id="SliderTextMax">{usToHHMMSS(this.props.end)}</span></h5>
-        <svg id="svg" />
+      <div className="SliderWrapper" id="SliderWrapper" ref={(c) => { this.wrapper = c; }}>
+        <h5
+          className="TimeRange"
+          id="TimeRange"
+        >Time range:
+          <span
+            id="SliderTextMin"
+          >
+            {usToHHMMSS(0)}
+          </span> - <span
+            id="SliderTextMax"
+          >
+            {usToHHMMSS(this.props.end)}
+          </span>
+        </h5>
+        <svg className="SliderSvg" id="SliderSvg" />
       </div>
     );
   }
 }
+
+Slider.propTypes = {
+  end: PropTypes.number.isRequired,
+  domain: PropTypes.number.isRequired,
+  speed: PropTypes.number.isRequired,
+  frequency: PropTypes.number.isRequired,
+  // features: PropTypes.array.isRequired,
+  changeLogTime: PropTypes.func.isRequired,
+  changeRange: PropTypes.func.isRequired,
+};
 
 export default Slider;

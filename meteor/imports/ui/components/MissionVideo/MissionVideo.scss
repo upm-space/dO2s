@@ -4,7 +4,7 @@ div.Buttons{
   width: 10%;
   height: 100%;
   background-color: #bbbbbb;
-  z-index: 15;
+  z-index: 0;
 }
 
 div.Map{
@@ -29,6 +29,6 @@ video#TxtVideo{
   position: absolute;
   top: 0;
   left: 20%;
-  z-index: 10;
-  opacity: 0.0;
+  // z-index: -10;
+  // opacity: 0.0;
 }

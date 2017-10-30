@@ -1,16 +1,17 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import * as d3 from 'd3';
 
 import './Zoom.scss';
 
 const width = 50;
-let handle;
+let handleRed;
+let handleGreen;
 let chart;
 let x;
-let axis;
 let i = 0;
-// let startText;
-// let endText;
+let axis;
+let chartAxis;
 
 const usToHHMMSS = (time) => {
   const usSecNum = parseInt(time, 10) / 1e6;
@@ -29,16 +30,12 @@ class Zoom extends Component {
   }
 
   componentDidUpdate() {
-    // startText.text(usToHHMMSS(this.props.start));
-    // endText.text(usToHHMMSS(this.props.end));
-    handle.attr('x', x(this.props.time));
-    i = this.props.time;
+    handleRed.attr('x', x(this.props.time) - 1.5);
     x.domain([this.props.start, this.props.end]);
-    handle.opacity = this.props.time > x.domain()[0] && this.props.time < x.domain()[1] ? 1 : 0;
     chart.selectAll('.axis').remove();
-    chart.append('g')
+    chartAxis.append('g')
       .attr('class', 'axis')
-      .attr('transform', `translate(${width}, 40)`)
+      .attr('transform', 'translate(0, 40)')
       .call(axis)
       .selectAll('text')
       .style('text-anchor', 'start')
@@ -47,17 +44,17 @@ class Zoom extends Component {
   }
 
   zoom(startTime, endTime, chartWidth) {
-    // const axisWidth = chartWidth < 550 ? 550 : chartWidth;
     const axisWidth = chartWidth - 70;
+    const f = this.props.frequency;
 
     chart = d3.select('#chartContainer').append('svg')
-      .attr('class', 'chart')
+      .attr('class', 'ZoomChart')
       .attr('width', chartWidth)
       .attr('height', '100%')
     ;
 
     chart.append('text')
-      .attr('class', 'label')
+      .attr('class', 'chart-label')
       .attr('x', width - 10)
       .attr('text-anchor', 'end')
       .attr('transform', 'translate(0, 55)')
@@ -65,25 +62,12 @@ class Zoom extends Component {
     ;
 
     chart.append('text')
-      .attr('class', 'label')
+      .attr('class', 'chart-label')
       .attr('x', width - 10)
       .attr('text-anchor', 'end')
       .attr('transform', 'translate(0, 75)')
       .text('Log')
     ;
-
-    // startText = chart.append('text')
-    //   .attr('class', 'label')
-    //   .attr('transform', `translate(${width}, 20)`)
-    //   .text(usToHHMMSS(startTime))
-    // ;
-    //
-    // endText = chart.append('text')
-    //   .attr('class', 'label')
-    //   .attr('text-anchor', 'end')
-    //   .attr('transform', `translate(${width + axisWidth}, 20)`)
-    //   .text(usToHHMMSS(endTime))
-    // ;
 
     x = d3.scaleLinear()
       .domain([startTime, endTime])
@@ -96,62 +80,105 @@ class Zoom extends Component {
       .tickFormat(d => usToHHMMSS(d))
     ;
 
-    chart.append('g')
+    const drag = d3.drag()
+      .on('start.interrupt', () => { chartAxis.interrupt(); })
+      .on('start drag', () => {
+        handleGreen.attr('x', x(x.invert(d3.event.x)) - 1.5);
+        i = x.invert(handleGreen.attr('x'));
+        this.props.changeVideoTime(i);
+      })
+    ;
+
+    chartAxis = chart.append('g')
+      .attr('class', 'plot-container')
+      .attr('width', x.range()[1])
+      .attr('height', 85)
+      .attr('transform', `translate(${width}, 0)`)
+    ;
+
+    chartAxis.append('g')
       .attr('class', 'axis')
-      .attr('transform', `translate(${width}, 40)`)
+      .attr('transform', 'translate(0, 40)')
       .call(axis)
       .selectAll('text')
       .style('text-anchor', 'start')
       .attr('transform', 'rotate(-30) translate(-10, -5)')
     ;
 
-    const videoContainer = chart.append('g')
-      .attr('class', 'plot-container')
-      .attr('width', x.range()[1])
-      .attr('height', 50)
-      .attr('transform', `translate(${width}, 40)`)
-      ;
-
-    const logContainer = chart.append('g')
-      .attr('class', 'plot-container')
-      .attr('width', x.range()[1])
-      .attr('height', 50)
-      .attr('transform', `translate(${width}, 20)`)
-      ;
-
-    chart.append('line')
+    chartAxis.append('line')
       .attr('class', 'line-separator')
-      .attr('transform', `translate(${width}, 60)`)
+      .attr('transform', 'translate(0, 60)')
       .attr('x1', x.range()[0])
       .attr('x2', x.range()[1])
     ;
 
-    chart.append('line')
+    chartAxis.append('line')
       .attr('class', 'line-separator')
-      .attr('transform', `translate(${width}, 80)`)
+      .attr('transform', 'translate(0, 80)')
       .attr('x1', x.range()[0])
       .attr('x2', x.range()[1])
     ;
 
-    handle = chart.insert('rect')
-      .attr('class', 'selector')
-      .attr('transform', `translate(${width}, 40)`)
-      .attr('x', x(this.props.time))
+    handleRed = chartAxis.insert('rect')
+      .attr('class', 'ZoomRedSelector')
+      .attr('transform', 'translate(0, 40)')
+      .attr('x', x(this.props.time) - 1.5)
       .attr('width', 3)
       .attr('height', 40)
     ;
 
+    chartAxis.append('circle')
+      .attr('class', 'circle-red')
+      .attr('cx', x(this.props.time))
+      .attr('cy', 30)
+      .attr('r', 3)
+      .attr('transform', 'translate(0, 40)')
+    ;
+
+    handleGreen = chartAxis.insert('rect')
+      .attr('class', 'ZoomGreenSelector')
+      .attr('transform', 'translate(0, 40)')
+      .attr('x', x(this.props.time) - 1.5)
+      .attr('width', 3)
+      .attr('height', 40)
+      .call(drag)
+    ;
+
+    chartAxis.append('circle')
+      .attr('class', 'circle-green')
+      .attr('cx', x(this.props.time))
+      .attr('cy', 10)
+      .attr('r', 3)
+      .attr('transform', 'translate(0, 40)')
+    ;
+
+
     setInterval(() => {
-      i += 10000 * this.props.speed;
-      handle.attr('x', x(i) - 1.5);
-    }, 10);
+      i += f * 1000 * this.props.speed;
+      handleGreen.attr('x', x(i) - 1.5);
+      this.props.changeVideoTime(i);
+    }, f);
   }
 
   render() {
     return (
-      <div className="chartContainer" id="chartContainer" ref={(c) => { this.chartContainer = c; }} />
+      <div
+        className="chartContainer"
+        id="chartContainer"
+        ref={(c) => { this.chartContainer = c; }}
+      />
     );
   }
 }
+
+Zoom.propTypes = {
+  start: PropTypes.number.isRequired,
+  end: PropTypes.number.isRequired,
+  time: PropTypes.number.isRequired,
+  speed: PropTypes.number.isRequired,
+  frequency: PropTypes.number.isRequired,
+  // features: PropTypes.array.isRequired,
+  changeVideoTime: PropTypes.func.isRequired,
+};
 
 export default Zoom;

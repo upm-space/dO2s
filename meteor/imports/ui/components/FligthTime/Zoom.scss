@@ -1,23 +1,36 @@
 div#chartContainer{
   width: 40%;
   height: 85px;
-}
 
-.chart{
-  // border: 1px solid grey;
-  z-index: 15;
-}
+  .ZoomChart{
+    // border: 1px solid grey;
+    z-index: 15;
+  }
 
-.label{
-    font-size: 13px;
-    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-}
+  .chart-label{
+      font-size: 13px;
+      font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  }
 
-.line-separator{
-    stroke: #000;
-    stroke-width: 0.55px;
-}
+  .line-separator{
+      stroke: #000;
+      stroke-width: 0.55px;
+  }
 
-.plot-container{
+  .ZoomGreenSelector {
+      fill: #080;
+      cursor: crosshair;
+  }
 
+  .ZoomRedSelector {
+      fill: #f00;
+  }
+
+  .circle-red {
+      fill: #f00;
+  }
+
+  .circle-green {
+      fill: #080;
+  }
 }
