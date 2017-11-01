@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Row, Col } from 'react-bootstrap';
+import { Row, Col } from 'react-bootstrap';
 import { Route, Switch, Redirect } from 'react-router-dom';
 
 import NotFound from '../../pages/NotFound/NotFound';
@@ -29,12 +29,12 @@ class PreFlightCheckList extends Component {
     const itemsPreFlight = [{
       text: 'Connection',
       selected: this.state.selectedItem === 'connect',
-      checked: true,
+      checked: false,
       callback: () => history.push(`/projects/${match.params.project_id}/${match.params.mission_id}/preflight/connect`),
     }, {
       text: 'Path Fixes',
       selected: this.state.selectedItem === 'tol',
-      checked: true,
+      checked: false,
       callback: () => history.push(`/projects/${match.params.project_id}/${match.params.mission_id}/preflight/tol`),
     }, {
       text: 'System Check',

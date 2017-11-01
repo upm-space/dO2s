@@ -20,12 +20,17 @@ class PreFlightConnection extends Component {
       <div className="PreFlightConnection">
         <h4>Establish the Connection with the RPA</h4>
         <Row>
-          <Col xs={12} sm={12} md={12} lg={12}>
-            <Button bsStyle="primary">
+          <Col xsOffset={0} xs={12} smOffset={3} sm={6} mdOffset={3} md={6} lgOffset={3} lg={6}>
+            <Button
+              bsStyle="primary"
+              block
+              bsSize="large"
+              >
           Connect
             </Button>
           </Col>
         </Row>
+        <br/>
         <Row>
           <Col xs={4} sm={4} md={4} lg={4}>
             <WidgetAttitude id="wAltimeter" pitchProp={30} rollProp={45} />
@@ -38,8 +43,8 @@ class PreFlightConnection extends Component {
           </Col>
         </Row>
         <Row>
-          <h5>Battery</h5>
           <Col xs={12} sm={12} md={12} lg={12}>
+            <h5>Battery</h5>
             <ProgressBar bsStyle="success" now={10} />
           </Col>
         </Row>
