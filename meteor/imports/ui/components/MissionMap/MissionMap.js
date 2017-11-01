@@ -7,13 +7,10 @@ import 'leaflet-draw';
 
 import { featurePoint2latlong, latlong2featurePoint, featurePointGetZoom } from '../../../modules/geojson-utilities';
 import { getWaypointType, waypointSize, waypointAnchor, waypointHtml } from '../../../modules/waypoint-style-chooser.js';
-import { getOperationType, insertNewWaypoint, removeWaypoint, moveWaypoint, setWaypointNumbers } from '../../../modules/waypoint-utilities.js';
+import { getOperationType, insertNewWaypoint, removeWaypoint, moveWaypoint, setWaypointNumbers, createRPAPath } from '../../../modules/waypoint-utilities.js';
 
 import './MissionMap.scss';
 
-if (Meteor.isClient) {
-  L.Icon.Default.imagePath = '/images/';
-}
 
 const rpaPathStyle = {
   style: { color: '#d9534f' },
@@ -156,8 +153,7 @@ class MissionMap extends Component {
     missionmap.on(L.Draw.Event.CREATED, (event) => {
       if (this.props.defineAreaActive) {
         // TODO add alert to redraw misison
-        const newGeometryLayer = event.layer;
-        const featureFromLayer = newGeometryLayer.toGeoJSON(15);
+        const featureFromLayer = event.layer.toGeoJSON(15);
         this.props.setMissionGeometry(featureFromLayer);
         missionmap.removeControl(drawControlFull);
         missionmap.addControl(drawControlEditOnly);
@@ -178,32 +174,57 @@ class MissionMap extends Component {
 
     missionmap.on(L.Draw.Event.EDITVERTEX, (event) => {
       if (this.props.editWayPointsActive) {
-        this.geoJSONRpaPathLayer.clearLayers();
-        this.geoJSONWaypointListLayer.clearLayers();
         const currentRPAPath =
-        this.props.mission.flightPlan.missionCalculation.rpaPath;
+        flightPlan.missionCalculation.rpaPath;
         const currentWaypointList =
-        this.props.mission.flightPlan.missionCalculation.waypointList;
-        const newRPAPathFeature = event.poly.toGeoJSON(15);
+        flightPlan.missionCalculation.waypointList;
+        const newRPAPathLayerGroup = event.layers;
+        //const myPolylineLayer = event.target.getLayers();
+        newRPAPathLayerGroup.eachLayer((layer) => {
+          if (typeof layer._index === 'undefined') {
+            newRPAPathLayerGroup.removeLayer(layer);
+          }
+        });
+        const eventPoly = event.poly.getLatLngs();
+        const newRPAPathFeatureCollection = newRPAPathLayerGroup.toGeoJSON(15);
+        const newRPAPathFeature = createRPAPath(newRPAPathFeatureCollection.features);
         // TODO habria que hacer una comprobacion de que las listas
         // waypoints y trayectoria no estan desfasadas y borrarlas si lo estan
+        // console.log(`currentRPAPath ${JSON.stringify(currentRPAPath, null, '  ')}`);
+        // console.log(`newRPAPathFeature ${JSON.stringify(newRPAPathFeature, null, '  ')}`);
+        const eventOldPath = event.poly.feature;
+        const eventNewPathCoords =
+        L.GeoJSON.latLngsToCoords(event.poly.editing.latlngs[0], 0, false, 15);
+        const eventNewPathLineString = {
+          type: 'Feature',
+          geometry: {
+            type: 'LineString',
+            coordinates: eventNewPathCoords,
+          },
+          properties: {},
+        };
         let newWaypointList = {};
-        switch (getOperationType(currentRPAPath, newRPAPathFeature)) {
+        // console.log(`operation type ${getOperationType(currentRPAPath, newRPAPathFeature)}`);
+        this.geoJSONRpaPathLayer.clearLayers();
+        this.geoJSONWaypointListLayer.clearLayers();
+        // switch (getOperationType(currentRPAPath, newRPAPathFeature)) {
+        switch (getOperationType(eventOldPath, eventNewPathLineString)) {
         case 'add':
-          newWaypointList = insertNewWaypoint(currentWaypointList, newRPAPathFeature);
+          newWaypointList = insertNewWaypoint(currentWaypointList, eventNewPathLineString);
           break;
         case 'delete':
-          newWaypointList = removeWaypoint(currentWaypointList, newRPAPathFeature);
+          newWaypointList = removeWaypoint(currentWaypointList, eventNewPathLineString);
           break;
         case 'move':
-          newWaypointList = moveWaypoint(currentWaypointList, newRPAPathFeature);
+          newWaypointList = moveWaypoint(currentWaypointList, eventNewPathLineString);
           break;
         default:
           newWaypointList = currentWaypointList;
           Bert.alert('You should not get themeteorchef', 'danger');
         }
         const newWaypointListWithNumbers = setWaypointNumbers(newWaypointList);
-        this.props.editWayPoints(newWaypointListWithNumbers, newRPAPathFeature);
+        // this.props.editWayPoints(newWaypointListWithNumbers, newRPAPathFeature);
+        this.props.editWayPoints(newWaypointListWithNumbers, eventNewPathLineString);
       }
     });
 
