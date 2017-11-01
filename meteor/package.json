@@ -5,6 +5,7 @@
     "db": "mongod --dbpath ~/myGitprojects/data/db",
     "start": "meteor --settings settings-development.json",
     "demo": "env MONGO_URL=mongodb://localhost:27017/do2sdb meteor --settings settings-demo.json",
+    "debug": "env MONGO_URL=mongodb://localhost:27017/do2sdb meteor debug --settings settings-demo.json",
     "test": "jest"
   },
   "dependencies": {
@@ -14,6 +15,7 @@
     "bcrypt": "^1.0.3",
     "bootstrap": "^3.3.7",
     "commonmark": "^0.28.1",
+    "core-js": "^2.5.1",
     "handlebars": "^4.0.11",
     "jquery": "^3.2.1",
     "jquery-validation": "^1.17.0",
