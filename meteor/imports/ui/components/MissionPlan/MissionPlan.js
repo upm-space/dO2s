@@ -15,7 +15,7 @@ import MissionPayloadParameters from '../MissionPayloadParameters/MissionPayload
 import MissionPictureGrid from '../MissionPictureGrid/MissionPictureGrid';
 import MissionData from '../MissionData/MissionData';
 import MissionBuilderDO2sParser from '../../../modules/mission-planning/MissionBuilderDO2sParser';
-import { createRPAPath, setWaypointNumbers } from '../../../modules/waypoint-utilities';
+import { setWaypointNumbers } from '../../../modules/waypoint-utilities';
 import getElevation from '../../../modules/mission-planning/get-elevation';
 
 import './MissionPlan.scss';
@@ -33,7 +33,7 @@ class MissionPlan extends Component {
     this.buttonGeometryName = this.buttonGeometryName.bind(this);
     this.getNumberOfSides = this.getNumberOfSides.bind(this);
     this.drawMission = this.drawMission.bind(this);
-    this.getElevation = this.getElevation.bind(this);
+    this.calculateElevation = this.calculateElevation.bind(this);
 
     this.state = {
       missionDirection: 1,
@@ -99,9 +99,22 @@ class MissionPlan extends Component {
     return 1;
   }
 
-  getElevation(height, waypointList) {
+  calculateElevation() {
+    const doWaypointsExist = this.props.mission.flightPlan &&
+     this.props.mission.flightPlan.missionCalculation &&
+     this.props.mission.flightPlan.missionCalculation.waypointList;
+    const isHeightDefined = this.props.mission.flightPlan &&
+      this.props.mission.flightPlan.flightParameters &&
+      this.props.mission.flightPlan.flightParameters.height;
+    if (!doWaypointsExist) {
+      Bert.alert('You need to draw the mission', 'danger');
+      return;
+    } else if (!isHeightDefined) {
+      Bert.alert('You need to define the Flight Height', 'danger');
+      return;
+    }
     this.toogleButtonSwtich();
-    getElevation(this.props.mission._id, height, waypointList);
+    getElevation(this.props.mission._id, isHeightDefined, doWaypointsExist);
   }
 
   editWayPointList(newWayPointList = {}) {
@@ -325,11 +338,7 @@ class MissionPlan extends Component {
               <Col xs={12} sm={6} md={6} lg={6} className="padding2 margin-bottom">
                 <Button
                   bsStyle="success"
-                  onClick={() =>
-                    this.getElevation(
-                      mission.flightPlan.flightParameters.height,
-                      mission.flightPlan.missionCalculation.waypointList,
-                    )}
+                  onClick={this.calculateElevation}
                   block
                 >
                   <div><i className="fa fa-long-arrow-up fa-lg" aria-hidden="true" /></div>
