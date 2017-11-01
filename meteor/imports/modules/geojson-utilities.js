@@ -1,4 +1,7 @@
-/* eslint-disable no-param-reassign */
+export const formatNum = (num, digits) => {
+  const pow = 10 ** (digits || 6);
+  return Math.round(num * pow) / pow;
+};
 
 export const newEmptyFeaturePoint = () => ({
   type: 'Feature',
