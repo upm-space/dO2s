@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Row, Col } from 'react-bootstrap';
-import MissionMap from '../MissionMap/MissionMap';
+import PreFlightMap from '../PreFlightMap/PreFlightMap';
 
 class PreFlightTOL extends Component {
   componentDidMount() {
@@ -60,7 +60,7 @@ class PreFlightTOL extends Component {
             </Row>
           </Col>
           <Col xs={12} sm={9} md={9} lg={9}>
-            <MissionMap
+            <PreFlightMap
               location={project && project.mapLocation}
               mission={mission}
               height="70vh"
