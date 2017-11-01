@@ -202,10 +202,11 @@ export default class MissionBuilderDO2sParser {
     const flightData = {
       flightTime: this.mission.flightTime,
       flightTimeMinutes: this.mission.flightTimeMinutes,
-      pathLength: this.pathLength,
-      shootTime: this.shootTime,
-      totalArea: this.totalArea,
-      resolution: this.resolution,
+      pathLength: this.mission.pathLength,
+      shootTime: this.mission.shootTime,
+      distPics: this.mission.distPics,
+      totalArea: this.mission.totalArea,
+      resolution: this.mission.resolution,
     };
 
     return { waypoints, flightData };

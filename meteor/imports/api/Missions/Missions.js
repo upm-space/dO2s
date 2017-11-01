@@ -94,6 +94,12 @@ const missionCalculatedDataSchema = new SimpleSchema({
     min: 0,
     optional: true,
   },
+  distPics: {
+    type: Number,
+    label: 'Distance betweeen photos in meters',
+    min: 0,
+    optional: true,
+  },
 });
 
 const missionCalculationSchema = new SimpleSchema({
