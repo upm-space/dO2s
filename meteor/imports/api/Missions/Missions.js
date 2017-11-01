@@ -97,11 +97,6 @@ const missionCalculatedDataSchema = new SimpleSchema({
 });
 
 const missionCalculationSchema = new SimpleSchema({
-  rpaPath: {
-    type: FeatureLineString,
-    label: 'This is a geoJSON feature representing the path the rpa is going to follow',
-    optional: true,
-  },
   waypointList: {
     type: FeatureCollectionPoints,
     label: 'Feature Collection representing the waypoints for the mission',

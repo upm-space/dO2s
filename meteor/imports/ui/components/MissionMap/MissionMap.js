@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Meteor } from 'meteor/meteor';
 import { Bert } from 'meteor/themeteorchef:bert';
 import PropTypes from 'prop-types';
 import L from 'leaflet';
@@ -80,12 +79,10 @@ class MissionMap extends Component {
       }
 
       if (flightPlan.missionCalculation) {
-        if (flightPlan.missionCalculation.rpaPath) {
-          const myRpaPath = flightPlan.missionCalculation.rpaPath;
-          const myRpaPathLayer = L.geoJSON(myRpaPath, rpaPathStyle);
-          geoJSONRpaPathLayer.addLayer(myRpaPathLayer.getLayers()[0]);
-        }
         if (flightPlan.missionCalculation.waypointList) {
+          const rpaPath = createRPAPath(flightPlan.missionCalculation.waypointList.features);
+          const myRpaPathLayer = L.geoJSON(rpaPath, rpaPathStyle);
+          geoJSONRpaPathLayer.addLayer(myRpaPathLayer.getLayers()[0]);
           const myWaypointList = flightPlan.missionCalculation.waypointList;
           const myWaypointListLayer = L.geoJSON(myWaypointList, waypointListOptions);
           myWaypointListLayer.eachLayer(layer =>
@@ -174,57 +171,38 @@ class MissionMap extends Component {
 
     missionmap.on(L.Draw.Event.EDITVERTEX, (event) => {
       if (this.props.editWayPointsActive) {
-        const currentRPAPath =
-        flightPlan.missionCalculation.rpaPath;
         const currentWaypointList =
         flightPlan.missionCalculation.waypointList;
-        const newRPAPathLayerGroup = event.layers;
-        //const myPolylineLayer = event.target.getLayers();
-        newRPAPathLayerGroup.eachLayer((layer) => {
-          if (typeof layer._index === 'undefined') {
-            newRPAPathLayerGroup.removeLayer(layer);
-          }
-        });
-        const eventPoly = event.poly.getLatLngs();
-        const newRPAPathFeatureCollection = newRPAPathLayerGroup.toGeoJSON(15);
-        const newRPAPathFeature = createRPAPath(newRPAPathFeatureCollection.features);
-        // TODO habria que hacer una comprobacion de que las listas
-        // waypoints y trayectoria no estan desfasadas y borrarlas si lo estan
-        // console.log(`currentRPAPath ${JSON.stringify(currentRPAPath, null, '  ')}`);
-        // console.log(`newRPAPathFeature ${JSON.stringify(newRPAPathFeature, null, '  ')}`);
+        const newRPAPathLatLngs = event.poly.getLatLngs();
         const eventOldPath = event.poly.feature;
-        const eventNewPathCoords =
-        L.GeoJSON.latLngsToCoords(event.poly.editing.latlngs[0], 0, false, 15);
-        const eventNewPathLineString = {
+        const newRPAPathLineString = {
           type: 'Feature',
           geometry: {
             type: 'LineString',
-            coordinates: eventNewPathCoords,
+            coordinates: L.GeoJSON.latLngsToCoords(newRPAPathLatLngs, 0, false, 15),
           },
           properties: {},
         };
         let newWaypointList = {};
-        // console.log(`operation type ${getOperationType(currentRPAPath, newRPAPathFeature)}`);
-        this.geoJSONRpaPathLayer.clearLayers();
-        this.geoJSONWaypointListLayer.clearLayers();
-        // switch (getOperationType(currentRPAPath, newRPAPathFeature)) {
-        switch (getOperationType(eventOldPath, eventNewPathLineString)) {
+
+        switch (getOperationType(eventOldPath, newRPAPathLineString)) {
         case 'add':
-          newWaypointList = insertNewWaypoint(currentWaypointList, eventNewPathLineString);
+          newWaypointList = insertNewWaypoint(currentWaypointList, newRPAPathLineString);
           break;
         case 'delete':
-          newWaypointList = removeWaypoint(currentWaypointList, eventNewPathLineString);
+          newWaypointList = removeWaypoint(currentWaypointList, newRPAPathLineString);
           break;
         case 'move':
-          newWaypointList = moveWaypoint(currentWaypointList, eventNewPathLineString);
+          newWaypointList = moveWaypoint(currentWaypointList, newRPAPathLineString);
           break;
         default:
           newWaypointList = currentWaypointList;
           Bert.alert('You should not get themeteorchef', 'danger');
         }
         const newWaypointListWithNumbers = setWaypointNumbers(newWaypointList);
-        // this.props.editWayPoints(newWaypointListWithNumbers, newRPAPathFeature);
-        this.props.editWayPoints(newWaypointListWithNumbers, eventNewPathLineString);
+        this.geoJSONRpaPathLayer.clearLayers();
+        this.geoJSONWaypointListLayer.clearLayers();
+        this.props.editWayPoints(newWaypointListWithNumbers);
       }
     });
 
@@ -270,14 +248,12 @@ class MissionMap extends Component {
       }
 
       if (flightPlan.missionCalculation) {
-        if (flightPlan.missionCalculation.rpaPath) {
-          this.geoJSONRpaPathLayer.clearLayers();
-          const myRpaPath = flightPlan.missionCalculation.rpaPath;
-          const myRpaPathLayer = L.geoJSON(myRpaPath, rpaPathStyle);
-          this.geoJSONRpaPathLayer.addLayer(myRpaPathLayer.getLayers()[0]);
-        }
         if (flightPlan.missionCalculation.waypointList) {
+          this.geoJSONRpaPathLayer.clearLayers();
           this.geoJSONWaypointListLayer.clearLayers();
+          const rpaPath = createRPAPath(flightPlan.missionCalculation.waypointList.features);
+          const myRpaPathLayer = L.geoJSON(rpaPath, rpaPathStyle);
+          this.geoJSONRpaPathLayer.addLayer(myRpaPathLayer.getLayers()[0]);
           const myWaypointList = flightPlan.missionCalculation.waypointList;
           const myWaypointListLayer = L.geoJSON(myWaypointList, waypointListOptions);
           myWaypointListLayer.eachLayer(layer => (this.geoJSONWaypointListLayer.addLayer(layer)));

@@ -104,11 +104,11 @@ class MissionPlan extends Component {
     getElevation(this.props.mission._id, height, waypointList);
   }
 
-  editWayPointList(newWayPointList = {}, newRPAPath = {}) {
-    Meteor.call('missions.editWayPointList', this.props.mission._id, newWayPointList, newRPAPath, (error) => {
+  editWayPointList(newWayPointList = {}) {
+    Meteor.call('missions.editWayPointList', this.props.mission._id, newWayPointList, (error) => {
       if (error) {
         Bert.alert(error.reason, 'danger');
-      } else if (newWayPointList && newRPAPath) {
+      } else if (newWayPointList) {
         Bert.alert('Mission Waypoints Updated', 'success');
       } else {
         Bert.alert('You should not get here ever', 'danger');
@@ -181,13 +181,28 @@ class MissionPlan extends Component {
     }
     dO2sBuilder.calculateMission();
     const mData = dO2sBuilder.getMission();
-    mData.waypointLine = createRPAPath(mData.waypoints);
     const waypointListNoNumbers = {
       type: 'FeatureCollection',
       features: mData.waypoints,
     };
     mData.waypointList = setWaypointNumbers(waypointListNoNumbers);
-    Meteor.call('missions.setMissionCalculations', this.props.mission._id, mData, (error) => {
+    const parseMissionCalculationData = {
+      waypointList: mData.waypointList,
+      missionCalculatedData: {},
+    };
+    const missionCalculatedDataKeys = Object.keys(mData.flightData);
+    missionCalculatedDataKeys.forEach((key) => {
+      if (mData.flightData[key]) {
+        if (key === 'flightTime') {
+          parseMissionCalculationData.missionCalculatedData[key] =
+          mData.flightData[key];
+        } else {
+          parseMissionCalculationData.missionCalculatedData[key] =
+          Number(mData.flightData[key]);
+        }
+      }
+    });
+    Meteor.call('missions.setMissionCalculations', this.props.mission._id, parseMissionCalculationData, (error) => {
       if (error) {
         Bert.alert(error.reason, 'danger');
       } else {

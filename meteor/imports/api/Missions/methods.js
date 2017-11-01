@@ -164,31 +164,13 @@ Meteor.methods({
   },
 
   'missions.setMissionCalculations': function missionsSetMissionCalculations(missionId, missionCalculationsData) {
-    const parseMissionCalculationData = {
-      rpaPath: missionCalculationsData.waypointLine,
-      waypointList: missionCalculationsData.waypointList,
-      missionCalculatedData: {},
-    };
-    const missionCalculatedDataKeys = Object.keys(missionCalculationsData.flightData);
-    missionCalculatedDataKeys.forEach((key) => {
-      if (missionCalculationsData.flightData[key]) {
-        if (key === 'flightTime') {
-          parseMissionCalculationData.missionCalculatedData[key] =
-          missionCalculationsData.flightData[key];
-        } else {
-          parseMissionCalculationData.missionCalculatedData[key] =
-          Number(missionCalculationsData.flightData[key]);
-        }
-      }
-    });
     try {
       const missionCalculatedDataSchema = Missions.schema.getObjectSchema('flightPlan.missionCalculation.missionCalculatedData');
-      missionCalculatedDataSchema.validate(parseMissionCalculationData.missionCalculatedData);
-      FeatureCollectionPoints.validate(parseMissionCalculationData.waypointList);
-      FeatureLineString.validate(parseMissionCalculationData.rpaPath);
+      missionCalculatedDataSchema.validate(missionCalculationsData.missionCalculatedData);
+      FeatureCollectionPoints.validate(missionCalculationsData.waypointList);
 
       Missions.update(missionId, {
-        $set: { 'flightPlan.missionCalculation': parseMissionCalculationData },
+        $set: { 'flightPlan.missionCalculation': missionCalculationsData },
       });
     } catch (exception) {
       if (exception.error === 'validation-error') {
@@ -197,15 +179,12 @@ Meteor.methods({
       throw new Meteor.Error('500', exception);
     }
   },
-  'missions.editWayPointList': function missionsEditWaypointList(missionId, newWayPointList, newRPAPath) {
+  'missions.editWayPointList': function missionsEditWaypointList(missionId, newWayPointList) {
+    check(missionId, String);
     try {
       FeatureCollectionPoints.validate(newWayPointList);
-      FeatureLineString.validate(newRPAPath);
       Missions.update(missionId, {
         $set: { 'flightPlan.missionCalculation.waypointList': newWayPointList },
-      });
-      Missions.update(missionId, {
-        $set: { 'flightPlan.missionCalculation.rpaPath': newRPAPath },
       });
     } catch (exception) {
       if (exception.error === 'validation-error') {
@@ -260,33 +239,6 @@ Meteor.methods({
       throw new Meteor.Error('500', exception);
     }
   },
-  'missions.recalculateWaypointNumbers': function missionsEditWaypointList(missionId) {
-    check(missionId, String);
-    try {
-      const oldMission = Missions.findOne(missionId);
-      const oldWaypointList = oldMission.flightPlan.missionCalculation.waypointList;
-      const newWaypointList = setWaypointNumbers(oldWaypointList);
-      FeatureCollectionPoints.validate(newWaypointList);
-      Missions.update(missionId, { $set: { 'flightPlan.missionCalculation.waypointList': newWaypointList } });
-    } catch (exception) {
-      if (exception.error === 'validation-error') {
-        throw new Meteor.Error(500, exception.message);
-      }
-      throw new Meteor.Error('500', exception);
-    }
-  },
-  'missions.insertWaypointAltitudes': function missionsInsertWaypointAltitudes(missionId, newWaypointList) {
-    check(missionId, String);
-    try {
-      FeatureCollectionPoints.validate(newWaypointList);
-      Missions.update(missionId, { $set: { 'flightPlan.missionCalculation.waypointList': newWaypointList } });
-    } catch (exception) {
-      if (exception.error === 'validation-error') {
-        throw new Meteor.Error(500, exception.message);
-      }
-      throw new Meteor.Error('500', exception);
-    }
-  },
 });
 
 rateLimit({
@@ -308,8 +260,6 @@ rateLimit({
     'missions.clearWayPoints',
     'missions.editWayPointType',
     'missions.editWayPointAltRelative',
-    'missions.recalculateWaypointNumbers',
-    'missions.insertWaypointAltitudes',
   ],
   limit: 5,
   timeRange: 1000,

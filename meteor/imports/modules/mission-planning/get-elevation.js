@@ -42,7 +42,7 @@ const getElevation = (missionID, flightHeight, waypointFeatureCollection) => {
       throw new TypeError("Oops, we haven't got JSON!");
     }).then((myWaypointsWithAlts) => {
       const myNewWaypointList = calculateAltitudes(flightHeight, myWaypointsWithAlts);
-      Meteor.call('missions.insertWaypointAltitudes', missionID, myNewWaypointList, (error) => {
+      Meteor.call('missions.editWayPointList', missionID, myNewWaypointList, (error) => {
         if (error) {
           Bert.alert(error.reason, 'danger');
         } else {
