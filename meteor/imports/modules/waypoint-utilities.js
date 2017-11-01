@@ -37,11 +37,12 @@ export const setWaypointNumbers = (waypointFeatureCollection) => {
 export const getOperationType = (currentRPAPath, newRPAPath) => {
   const oldWaypointCount = currentRPAPath.geometry.coordinates.length;
   const newWaypointCount = newRPAPath.geometry.coordinates.length;
-  if (oldWaypointCount === newWaypointCount) {
+  const operation = oldWaypointCount - newWaypointCount;
+  if (operation === 0) {
     return 'move';
-  } else if (oldWaypointCount < newWaypointCount) {
+  } else if (operation === -1) {
     return 'add';
-  } else if (oldWaypointCount > newWaypointCount) {
+  } else if (operation === 1) {
     return 'delete';
   }
   return 'nothing';
