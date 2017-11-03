@@ -10,6 +10,7 @@ let handleGreen;
 let chart;
 let x;
 let i = 0;
+let n = 0;
 let axis;
 let chartAxis;
 
@@ -30,7 +31,11 @@ class Zoom extends Component {
   }
 
   componentDidUpdate() {
-    handleRed.attr('x', x(this.props.time) - 1.5);
+    if (this.props.synchrony) {
+      i = this.props.videoTime;
+    }
+    handleRed.attr('x', x(this.props.logTime) - 1.5);
+    n = parseFloat(this.props.logTime);
     x.domain([this.props.start, this.props.end]);
     chart.selectAll('.axis').remove();
     chartAxis.append('g')
@@ -86,6 +91,10 @@ class Zoom extends Component {
         handleGreen.attr('x', x(x.invert(d3.event.x)) - 1.5);
         i = x.invert(handleGreen.attr('x'));
         this.props.changeVideoTime(i);
+        if (this.props.synchrony) {
+          handleRed.attr('x', x(x.invert(d3.event.x) + this.props.timeGap) - 1.5);
+          this.props.changeLogTime(i + this.props.timeGap);
+        }
       })
     ;
 
@@ -122,14 +131,14 @@ class Zoom extends Component {
     handleRed = chartAxis.insert('rect')
       .attr('class', 'ZoomRedSelector')
       .attr('transform', 'translate(0, 40)')
-      .attr('x', x(this.props.time) - 1.5)
+      .attr('x', x(this.props.logTime) - 1.5)
       .attr('width', 3)
       .attr('height', 40)
     ;
 
     chartAxis.append('circle')
       .attr('class', 'circle-red')
-      .attr('cx', x(this.props.time))
+      .attr('cx', x(this.props.logTime))
       .attr('cy', 30)
       .attr('r', 3)
       .attr('transform', 'translate(0, 40)')
@@ -138,7 +147,7 @@ class Zoom extends Component {
     handleGreen = chartAxis.insert('rect')
       .attr('class', 'ZoomGreenSelector')
       .attr('transform', 'translate(0, 40)')
-      .attr('x', x(this.props.time) - 1.5)
+      .attr('x', x(this.props.logTime) - 1.5)
       .attr('width', 3)
       .attr('height', 40)
       .call(drag)
@@ -146,7 +155,7 @@ class Zoom extends Component {
 
     chartAxis.append('circle')
       .attr('class', 'circle-green')
-      .attr('cx', x(this.props.time))
+      .attr('cx', x(this.props.logTime))
       .attr('cy', 10)
       .attr('r', 3)
       .attr('transform', 'translate(0, 40)')
@@ -155,7 +164,9 @@ class Zoom extends Component {
 
     setInterval(() => {
       i += f * 1000 * this.props.speed;
+      n += f * 1000 * this.props.speed;
       handleGreen.attr('x', x(i) - 1.5);
+      handleRed.attr('x', x(n) - 1.5);
       this.props.changeVideoTime(i);
     }, f);
   }
@@ -174,10 +185,14 @@ class Zoom extends Component {
 Zoom.propTypes = {
   start: PropTypes.number.isRequired,
   end: PropTypes.number.isRequired,
-  time: PropTypes.number.isRequired,
+  logTime: PropTypes.number.isRequired,
+  videoTime: PropTypes.number.isRequired,
   speed: PropTypes.number.isRequired,
+  synchrony: PropTypes.number.isRequired,
+  timeGap: PropTypes.number.isRequired,
   frequency: PropTypes.number.isRequired,
   // features: PropTypes.array.isRequired,
+  changeLogTime: PropTypes.func.isRequired,
   changeVideoTime: PropTypes.func.isRequired,
 };
 

@@ -33,6 +33,9 @@ class Slider extends Component {
   }
 
   componentDidUpdate() {
+    if (this.props.synchrony) {
+      i = this.props.logTime;
+    }
     x.domain([0, this.props.domain]);
     slider.selectAll('.axis').remove();
     slider.append('g')
@@ -97,6 +100,9 @@ class Slider extends Component {
         hue(x.invert(d3.event.x));
         this.props.changeRange(x.invert(range.attr('x1')), x.invert(range.attr('x2')));
         this.props.changeLogTime(x.invert(selector.attr('x')));
+        if (this.props.synchrony) {
+          this.props.changeVideoTime(x.invert(selector.attr('x')) - this.props.timeGap);
+        }
       })
     ;
 
@@ -183,10 +189,14 @@ class Slider extends Component {
 Slider.propTypes = {
   end: PropTypes.number.isRequired,
   domain: PropTypes.number.isRequired,
+  logTime: PropTypes.number.isRequired,
   speed: PropTypes.number.isRequired,
+  synchrony: PropTypes.number.isRequired,
+  timeGap: PropTypes.number.isRequired,
   frequency: PropTypes.number.isRequired,
   // features: PropTypes.array.isRequired,
   changeLogTime: PropTypes.func.isRequired,
+  changeVideoTime: PropTypes.func.isRequired,
   changeRange: PropTypes.func.isRequired,
 };
 

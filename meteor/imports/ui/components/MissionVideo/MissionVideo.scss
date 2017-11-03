@@ -1,17 +1,35 @@
-div.Buttons{
+div.ButtonDiv{
   position: absolute;
   left: 0;
-  width: 10%;
+  width: 15%;
   height: 100%;
   background-color: #bbbbbb;
   z-index: 0;
+
+  button{
+    padding: 10px;
+    div{
+      display: inline-block;
+      vertical-align: middle;
+      clear:both;
+      i{
+        margin-right: 0px;
+      }
+    }
+  }
+  .padding2{
+    padding: 0px 15px;
+  }
+  .margin-bottom{
+    margin: 0px 0px;
+  }
 }
 
 div.Map{
   margin-left: 15px;
   margin-right: 15px;
   position: absolute;
-  left: 10%;
+  left: 15%;
   right: 40%;
   height: 100%;
   background-color: #999999;
@@ -26,9 +44,11 @@ video#Video{
 }
 
 video#TxtVideo{
+  margin-left: 15px;
   position: absolute;
+  left: 15%;
   top: 0;
-  left: 20%;
-  // z-index: -10;
+  width: 40%;
+  z-index: 1;
   // opacity: 0.0;
 }

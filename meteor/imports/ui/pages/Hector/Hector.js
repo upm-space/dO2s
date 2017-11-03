@@ -20,6 +20,8 @@ class Hector extends Component {
     this.changeSpeed = this.changeSpeed.bind(this);
     this.changeLogTime = this.changeLogTime.bind(this);
     this.changeVideoTime = this.changeVideoTime.bind(this);
+    this.syncTrue = this.syncTrue.bind(this);
+    this.syncFalse = this.syncFalse.bind(this);
 
     this.state = {
       timeRangeStart: 0,
@@ -28,6 +30,8 @@ class Hector extends Component {
       videoTime: 0,
       speed: 1,
       domain: 60000000,
+      synchrony: false,
+      timeGap: 0,
     };
   }
 
@@ -82,6 +86,21 @@ class Hector extends Component {
     this.forceUpdate();
   }
 
+  syncTrue() {
+    this.setState({
+      timeGap: this.state.logTime - this.state.videoTime,
+      synchrony: true,
+    });
+    this.forceUpdate();
+  }
+
+  syncFalse() {
+    this.setState({
+      synchrony: false,
+    });
+    this.forceUpdate();
+  }
+
   renderMissionVideo(freq) {
     return (
       <MissionVideo
@@ -90,6 +109,8 @@ class Hector extends Component {
         speed={this.state.speed}
         frequency={freq}
         features={featureArray}
+        syncTrue={this.syncTrue}
+        syncFalse={this.syncFalse}
       />);
   }
 
@@ -98,11 +119,15 @@ class Hector extends Component {
       <Slider
         end={this.state.timeRangeEnd}
         domain={this.state.domain}
+        logTime={this.state.logTime}
         speed={this.state.speed}
+        synchrony={this.state.synchrony}
+        timeGap={this.state.timeGap}
         frequency={freq}
         features={featureArray}
         changeRange={this.changeRange}
         changeLogTime={this.changeLogTime}
+        changeVideoTime={this.changeVideoTime}
       />);
   }
 
@@ -111,10 +136,14 @@ class Hector extends Component {
       <Zoom
         start={this.state.timeRangeStart}
         end={this.state.timeRangeEnd}
-        time={this.state.logTime}
+        logTime={this.state.logTime}
+        videoTime={this.state.videoTime}
         speed={this.state.speed}
+        synchrony={this.state.synchrony}
+        timeGap={this.state.timeGap}
         frequency={freq}
         features={featureArray}
+        changeLogTime={this.changeLogTime}
         changeVideoTime={this.changeVideoTime}
       />);
   }
