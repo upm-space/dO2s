@@ -1,4 +1,3 @@
-/* eslint-disable object-shorthand */
 import seeder from '@cleverbeagle/seeder';
 import { Meteor } from 'meteor/meteor';
 import Projects from '../../api/Projects/Projects';
@@ -8,40 +7,26 @@ import RPAs from '../../api/RPAs/RPAs';
 import Payloads from '../../api/Payloads/Payloads';
 import Batteries from '../../api/Batteries/Batteries';
 
+
 const rpasSeed = userId => ({
   collection: RPAs,
   environments: ['development', 'staging'],
-  data: [{
-    owner: userId,
-    name: 'GeoDrone Conyca',
-    rpaType: 'Plane',
-    model: faker.commerce.productAdjective(),
-    registrationNumber: faker.random.number(),
-    constructionDate: faker.date.past(),
-    serialNumber: faker.random.number(),
-    weight: faker.random.number({ min: 0, max: 21 }),
-    flightParameters: {
-      maxDescendSlope: faker.random.number({ min: 0, max: 100 }),
-      maxAscendSlope: faker.random.number({ min: 0, max: 100 }),
-      optimalLandingSlope: faker.random.number({ min: 0, max: 100 }),
-      optimalTakeOffSlope: faker.random.number({ min: 0, max: 100 }),
-      maxLandSpeed: faker.random.number({ min: 0, max: 100 }),
-    },
-  }],
-  model(dataIndex, faker) {
+  noLimit: true,
+  modelCount: 1,
+  model(faker) {
     return {
       owner: userId,
-      name: faker.commerce.productName(),
-      rpaType: faker.random.arrayElement(['Plane', 'MultiCopter']),
+      name: 'GeoDrone Conyca',
+      rpaType: 'Plane',
       model: faker.commerce.productAdjective(),
       registrationNumber: faker.random.number(),
       constructionDate: faker.date.past(),
       serialNumber: faker.random.number(),
-      weight: faker.random.number({ min: 0, max: 21 }),
+      weight: 5,
       flightParameters: {
         maxDescendSlope: faker.random.number({ min: 0, max: 100 }),
         maxAscendSlope: faker.random.number({ min: 0, max: 100 }),
-        optimalLandingSlope: faker.random.number({ min: 0, max: 100 }),
+        optimalLandingSlope: 7,
         optimalTakeOffSlope: faker.random.number({ min: 0, max: 100 }),
         maxLandSpeed: faker.random.number({ min: 0, max: 100 }),
       },
@@ -53,15 +38,15 @@ const payloadsSeed = userId => ({
   collection: Payloads,
   environments: ['development', 'staging'],
   noLimit: true,
-  modelCount: 5,
+  modelCount: 1,
   model(dataIndex, faker) {
     return {
       owner: userId,
-      name: faker.commerce.productName(),
+      name: 'Sony',
       registrationNumber: faker.random.number(),
-      model: faker.commerce.productAdjective(),
+      model: 'Next 7',
       weight: faker.random.number({ min: 0, max: 21 }),
-      payloadType: faker.random.arrayElement(['Camera']),
+      payloadType: 'Camera',
       sensorParameters: {
         focalLength: 16,
         sensorWidth: 23.5,
@@ -77,8 +62,8 @@ const batteriesSeed = userId => ({
   collection: Batteries,
   environments: ['development', 'staging'],
   noLimit: true,
-  modelCount: 5,
-  model(dataIndex, faker) {
+  modelCount: 1,
+  model(faker) {
     return {
       owner: userId,
       name: faker.commerce.productName(),
@@ -125,15 +110,7 @@ const projectsSeed = userId => ({
           type: 'Point',
           coordinates: [faker.address.longitude(), faker.address.latitude(), 0],
         },
-        properties: {
-          zoom: faker.random.number({
-            min: 0,
-            max: 21,
-          }),
-        },
-      },
-      data(projectId) {
-        return missionsSeed(userId, projectId);
+        properties: { zoom: faker.random.number({ min: 0, max: 15 }) },
       },
     };
   },
@@ -147,23 +124,26 @@ seeder(Meteor.users, {
     password: 'password',
     profile: {
       name: {
-        first: 'Pili',
-        last: 'Arr',
+        first: 'Admin',
+        last: 'User',
       },
     },
     roles: ['admin'],
-    // data(userId) {
-    //   return projectsSeed(userId);
-    // },
-    // data2(userId) {
-    //   return rpasSeed(userId);
-    // },
-    // data3(userId) {
-    //   return payloadsSeed(userId);
-    // },
-    // data4(userId) {
-    //   return batteriesSeed(userId);
-    // },
+    data(userId) {
+      // return [
+      //   projectsSeed(userId),
+      //   rpasSeed(userId),
+      //   payloadsSeed(userId),
+      //   batteriesSeed(userId),
+      // ];
+      // ////
+      // projectsSeed(userId);
+      // rpasSeed(userId);
+      // payloadsSeed(userId);
+      // batteriesSeed(userId);
+      // ////
+      return projectsSeed(userId);
+    },
   }],
   modelCount: 5,
   model(index, faker) {
@@ -178,18 +158,21 @@ seeder(Meteor.users, {
         },
       },
       roles: ['free-user'],
-      // data(userId) {
-      //   return projectsSeed(userId);
-      // },
-      // data2(userId) {
-      //   return rpasSeed(userId);
-      // },
-      // data3(userId) {
-      //   return payloadsSeed(userId);
-      // },
-      // data4(userId) {
-      //   return batteriesSeed(userId);
-      // },
+      data(userId) {
+        // return [
+        //   projectsSeed(userId),
+        //   rpasSeed(userId),
+        //   payloadsSeed(userId),
+        //   batteriesSeed(userId),
+        // ];
+        // ////
+        // projectsSeed(userId);
+        // rpasSeed(userId);
+        // payloadsSeed(userId);
+        // batteriesSeed(userId);
+        // ////
+        return projectsSeed(userId);
+      },
     };
   },
 });
