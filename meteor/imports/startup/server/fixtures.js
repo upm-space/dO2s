@@ -11,8 +11,23 @@ import Batteries from '../../api/Batteries/Batteries';
 const rpasSeed = userId => ({
   collection: RPAs,
   environments: ['development', 'staging'],
-  noLimit: true,
-  modelCount: 5,
+  data: [{
+    owner: userId,
+    name: 'GeoDrone Conyca',
+    rpaType: 'Plane',
+    model: faker.commerce.productAdjective(),
+    registrationNumber: faker.random.number(),
+    constructionDate: faker.date.past(),
+    serialNumber: faker.random.number(),
+    weight: faker.random.number({ min: 0, max: 21 }),
+    flightParameters: {
+      maxDescendSlope: faker.random.number({ min: 0, max: 100 }),
+      maxAscendSlope: faker.random.number({ min: 0, max: 100 }),
+      optimalLandingSlope: faker.random.number({ min: 0, max: 100 }),
+      optimalTakeOffSlope: faker.random.number({ min: 0, max: 100 }),
+      maxLandSpeed: faker.random.number({ min: 0, max: 100 }),
+    },
+  }],
   model(dataIndex, faker) {
     return {
       owner: userId,
