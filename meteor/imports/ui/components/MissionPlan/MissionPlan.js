@@ -15,7 +15,7 @@ import MissionPayloadParameters from '../MissionPayloadParameters/MissionPayload
 import MissionPictureGrid from '../MissionPictureGrid/MissionPictureGrid';
 import MissionData from '../MissionData/MissionData';
 import MissionBuilderDO2sParser from '../../../modules/mission-planning/MissionBuilderDO2sParser';
-import { setWaypointNumbers } from '../../../modules/waypoint-utilities';
+import { setWaypointNumbers } from '../../../modules/mission-planning/waypoint-utilities';
 import getElevation from '../../../modules/mission-planning/get-elevation';
 
 import './MissionPlan.scss';
@@ -239,13 +239,13 @@ class MissionPlan extends Component {
     const {
       project, mission, history, payload, loading,
     } = this.props;
-    let waypointList = [];
+    let waypointList = {};
     if (mission &&
       mission.flightPlan &&
       mission.flightPlan.missionCalculation &&
       mission.flightPlan.missionCalculation.waypointList &&
-      mission.flightPlan.missionCalculation.waypointList.features) {
-      waypointList = mission.flightPlan.missionCalculation.waypointList.features;
+      mission.flightPlan.missionCalculation.waypointList) {
+      waypointList = mission.flightPlan.missionCalculation.waypointList;
     }
     return (!loading ? (
       <div className="MissionPlan container-fluid">

@@ -4,7 +4,6 @@ import { check } from 'meteor/check';
 import Missions from './Missions';
 import rateLimit from '../../modules/rate-limit';
 import { FeaturePoint, FeaturePolygon, FeatureLineString, FeatureCollectionPoints } from '../SchemaUtilities/GeoJSONSchema.js';
-import { setWaypointNumbers } from '../../modules/waypoint-utilities';
 
 const newMissionSchema = Missions.schema.pick('name', 'project', 'rpa', 'missionType', 'description', 'payload');
 
@@ -207,22 +206,6 @@ Meteor.methods({
       throw new Meteor.Error('500', exception);
     }
   },
-  'missions.editWayPointType': function missionsEditWaypointList(missionId, waypointIndex, newWayPointType) {
-    check(missionId, String);
-    check(waypointIndex, Number);
-    check(newWayPointType, Number);
-    try {
-      Missions.update(
-        { _id: missionId, 'flightPlan.missionCalculation.waypointList.features.properties.totalNumber': waypointIndex },
-        { $set: { 'flightPlan.missionCalculation.waypointList.features.$.properties.type': newWayPointType } },
-      );
-    } catch (exception) {
-      if (exception.error === 'validation-error') {
-        throw new Meteor.Error(500, exception.message);
-      }
-      throw new Meteor.Error('500', exception);
-    }
-  },
   'missions.editWayPointAltRelative': function missionsEditWaypointList(missionId, waypointIndex, newWayPointAltRelative) {
     check(missionId, String);
     check(waypointIndex, Number);
@@ -258,7 +241,6 @@ rateLimit({
     'missions.setMissionCalculations',
     'missions.editWayPointList',
     'missions.clearWayPoints',
-    'missions.editWayPointType',
     'missions.editWayPointAltRelative',
   ],
   limit: 5,
