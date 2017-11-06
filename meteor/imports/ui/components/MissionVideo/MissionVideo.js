@@ -329,6 +329,16 @@ class MissionVideo extends Component {
           </Row>
         </div>
         <div className="Map" id="Map" />
+        <div className="TxtVideo" id="TxtVideo" ref={(c) => { this.myTxtVideo = c; }}>
+          <video
+            id="TxtVideo"
+            autoPlay
+            muted
+            src="http://stemkoski.github.io/Three.js/videos/sintel.ogv"
+            type="video/mp4"
+            style={{ opacity: 0.5 }}
+          ><track kind="captions" />Video not found</video>
+        </div>
         <video
           id="Video"
           ref={(c) => { this.myVideo = c; }}
@@ -337,15 +347,6 @@ class MissionVideo extends Component {
           src="http://stemkoski.github.io/Three.js/videos/sintel.ogv"
           type="video/mp4"
           onClick={this.getCoords}
-        ><track kind="captions" />Video not found</video>
-        <video
-          id="TxtVideo"
-          ref={(c) => { this.myTxtVideo = c; }}
-          autoPlay
-          muted
-          src="http://stemkoski.github.io/Three.js/videos/sintel.ogv"
-          type="video/mp4"
-          style={{ opacity: 0.5 }}
         ><track kind="captions" />Video not found</video>
       </div>
     );
