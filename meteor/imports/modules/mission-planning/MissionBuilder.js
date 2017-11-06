@@ -765,7 +765,7 @@ export default class MissionBuilder {
       lat: params.lat,
       altRelative: params.altRelative,
       altGround: params.altGround,
-      altAbsolute: params.altAbsolute,
+      altAbsolute: params.altRelative,
       type: params.type,
       param1: params.param1,
       param2: params.param2,
