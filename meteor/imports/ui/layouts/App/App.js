@@ -88,26 +88,8 @@ const App = props => (
               {...props}
             />
             <Authenticated
-              exact
+              exact={false}
               path="/projects/:project_id/:mission_id"
-              component={ViewMission}
-              {...props}
-            />
-            <Authenticated
-              exact
-              path="/projects/:project_id/:mission_id/plan"
-              component={ViewMission}
-              {...props}
-            />
-            <Authenticated
-              exact
-              path="/projects/:project_id/:mission_id/flight"
-              component={ViewMission}
-              {...props}
-            />
-            <Authenticated
-              exact
-              path="/projects/:project_id/:mission_id/analysis"
               component={ViewMission}
               {...props}
             />
@@ -163,7 +145,7 @@ const App = props => (
             <Route component={NotFound} />
           </Switch>
         </Grid>
-        <Footer />
+        {/* <Footer /> */}
       </div> : ''}
   </Router>
 );

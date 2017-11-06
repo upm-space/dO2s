@@ -15,7 +15,7 @@ import MissionPayloadParameters from '../MissionPayloadParameters/MissionPayload
 import MissionPictureGrid from '../MissionPictureGrid/MissionPictureGrid';
 import MissionData from '../MissionData/MissionData';
 import MissionBuilderDO2sParser from '../../../modules/mission-planning/MissionBuilderDO2sParser';
-import { createRPAPath, setWaypointNumbers } from '../../../modules/waypoint-utilities';
+import { setWaypointNumbers } from '../../../modules/mission-planning/waypoint-utilities';
 import getElevation from '../../../modules/mission-planning/get-elevation';
 
 import './MissionPlan.scss';
@@ -33,7 +33,7 @@ class MissionPlan extends Component {
     this.buttonGeometryName = this.buttonGeometryName.bind(this);
     this.getNumberOfSides = this.getNumberOfSides.bind(this);
     this.drawMission = this.drawMission.bind(this);
-    this.getElevation = this.getElevation.bind(this);
+    this.calculateElevation = this.calculateElevation.bind(this);
 
     this.state = {
       missionDirection: 1,
@@ -99,16 +99,29 @@ class MissionPlan extends Component {
     return 1;
   }
 
-  getElevation(height, waypointList) {
+  calculateElevation() {
+    const doWaypointsExist = this.props.mission.flightPlan &&
+     this.props.mission.flightPlan.missionCalculation &&
+     this.props.mission.flightPlan.missionCalculation.waypointList;
+    const isHeightDefined = this.props.mission.flightPlan &&
+      this.props.mission.flightPlan.flightParameters &&
+      this.props.mission.flightPlan.flightParameters.height;
+    if (!doWaypointsExist) {
+      Bert.alert('You need to draw the mission', 'danger');
+      return;
+    } else if (!isHeightDefined) {
+      Bert.alert('You need to define the Flight Height', 'danger');
+      return;
+    }
     this.toogleButtonSwtich();
-    getElevation(this.props.mission._id, height, waypointList);
+    getElevation(this.props.mission._id, isHeightDefined, doWaypointsExist);
   }
 
-  editWayPointList(newWayPointList = {}, newRPAPath = {}) {
-    Meteor.call('missions.editWayPointList', this.props.mission._id, newWayPointList, newRPAPath, (error) => {
+  editWayPointList(newWayPointList = {}) {
+    Meteor.call('missions.editWayPointList', this.props.mission._id, newWayPointList, (error) => {
       if (error) {
         Bert.alert(error.reason, 'danger');
-      } else if (newWayPointList && newRPAPath) {
+      } else if (newWayPointList) {
         Bert.alert('Mission Waypoints Updated', 'success');
       } else {
         Bert.alert('You should not get here ever', 'danger');
@@ -181,13 +194,28 @@ class MissionPlan extends Component {
     }
     dO2sBuilder.calculateMission();
     const mData = dO2sBuilder.getMission();
-    mData.waypointLine = createRPAPath(mData.waypoints);
     const waypointListNoNumbers = {
       type: 'FeatureCollection',
       features: mData.waypoints,
     };
     mData.waypointList = setWaypointNumbers(waypointListNoNumbers);
-    Meteor.call('missions.setMissionCalculations', this.props.mission._id, mData, (error) => {
+    const parseMissionCalculationData = {
+      waypointList: mData.waypointList,
+      missionCalculatedData: {},
+    };
+    const missionCalculatedDataKeys = Object.keys(mData.flightData);
+    missionCalculatedDataKeys.forEach((key) => {
+      if (mData.flightData[key]) {
+        if (key === 'flightTime') {
+          parseMissionCalculationData.missionCalculatedData[key] =
+          mData.flightData[key];
+        } else {
+          parseMissionCalculationData.missionCalculatedData[key] =
+          Number(mData.flightData[key]);
+        }
+      }
+    });
+    Meteor.call('missions.setMissionCalculations', this.props.mission._id, parseMissionCalculationData, (error) => {
       if (error) {
         Bert.alert(error.reason, 'danger');
       } else {
@@ -211,13 +239,13 @@ class MissionPlan extends Component {
     const {
       project, mission, history, payload, loading,
     } = this.props;
-    let waypointList = [];
+    let waypointList = {};
     if (mission &&
       mission.flightPlan &&
       mission.flightPlan.missionCalculation &&
       mission.flightPlan.missionCalculation.waypointList &&
-      mission.flightPlan.missionCalculation.waypointList.features) {
-      waypointList = mission.flightPlan.missionCalculation.waypointList.features;
+      mission.flightPlan.missionCalculation.waypointList) {
+      waypointList = mission.flightPlan.missionCalculation.waypointList;
     }
     return (!loading ? (
       <div className="MissionPlan container-fluid">
@@ -310,11 +338,7 @@ class MissionPlan extends Component {
               <Col xs={12} sm={6} md={6} lg={6} className="padding2 margin-bottom">
                 <Button
                   bsStyle="success"
-                  onClick={() =>
-                    this.getElevation(
-                      mission.flightPlan.flightParameters.height,
-                      mission.flightPlan.missionCalculation.waypointList,
-                    )}
+                  onClick={this.calculateElevation}
                   block
                 >
                   <div><i className="fa fa-long-arrow-up fa-lg" aria-hidden="true" /></div>
@@ -406,7 +430,6 @@ class MissionPlan extends Component {
                     location={project && project.mapLocation}
                     mission={mission}
                     height="80vh"
-                    onLocationChange={() => {}}
                     takeOffPointActive={this.state.buttonStates.takeOffButtonActive}
                     landingPointActive={this.state.buttonStates.landingButtonActive}
                     defineAreaActive={this.state.buttonStates.defineAreaButtonActive}
@@ -427,8 +450,8 @@ class MissionPlan extends Component {
 
 MissionPlan.propTypes = {
   loading: PropTypes.bool.isRequired,
-  mission: PropTypes.object,
-  project: PropTypes.object,
+  mission: PropTypes.object.isRequired,
+  project: PropTypes.object.isRequired,
   payload: PropTypes.object,
   history: PropTypes.object.isRequired,
 };

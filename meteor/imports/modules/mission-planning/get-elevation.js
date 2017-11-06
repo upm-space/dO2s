@@ -1,21 +1,23 @@
 import { Bert } from 'meteor/themeteorchef:bert';
 import { Meteor } from 'meteor/meteor';
 
-const calculateAltitudes = (flightHeight, featureCollection) => {
-  const resultList = JSON.parse(JSON.stringify(featureCollection));
-  const takeoffElevation = featureCollection.features[0].geometry.coordinates[2];
+const calculateAltitudes = (waypointFeatureCollection) => {
+  const resultList = JSON.parse(JSON.stringify(waypointFeatureCollection));
+  const takeoffElevation = waypointFeatureCollection.features[0].geometry.coordinates[2];
 
   resultList.features.forEach((feature) => {
+    const waypointProps = feature.properties;
     const waypointElevation = feature.geometry.coordinates[2];
-    if (feature.properties.type === 1) {
-      feature.properties.altGround = waypointElevation;
-      feature.properties.altRelative = 50;
-    } else if (feature.properties.type === 2) {
-      feature.properties.altGround = waypointElevation;
-      feature.properties.altRelative = waypointElevation - takeoffElevation;
+    const waypointHeight = waypointProps.altAbsolute;
+    if (waypointProps.type === 1) {
+      waypointProps.altGround = waypointElevation;
+      waypointProps.altRelative = 50;
+    } else if (waypointProps.type === 2) {
+      waypointProps.altGround = waypointElevation;
+      waypointProps.altRelative = waypointElevation - takeoffElevation;
     } else {
-      feature.properties.altGround = waypointElevation;
-      feature.properties.altRelative = flightHeight + (waypointElevation - takeoffElevation);
+      waypointProps.altGround = waypointElevation;
+      waypointProps.altRelative = waypointHeight + (waypointElevation - takeoffElevation);
     }
   });
   return resultList;
@@ -41,8 +43,8 @@ const getElevation = (missionID, flightHeight, waypointFeatureCollection) => {
       }
       throw new TypeError("Oops, we haven't got JSON!");
     }).then((myWaypointsWithAlts) => {
-      const myNewWaypointList = calculateAltitudes(flightHeight, myWaypointsWithAlts);
-      Meteor.call('missions.insertWaypointAltitudes', missionID, myNewWaypointList, (error) => {
+      const myNewWaypointList = calculateAltitudes(myWaypointsWithAlts);
+      Meteor.call('missions.editWayPointList', missionID, myNewWaypointList, (error) => {
         if (error) {
           Bert.alert(error.reason, 'danger');
         } else {

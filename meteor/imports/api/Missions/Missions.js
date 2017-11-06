@@ -94,14 +94,15 @@ const missionCalculatedDataSchema = new SimpleSchema({
     min: 0,
     optional: true,
   },
+  distPics: {
+    type: Number,
+    label: 'Distance betweeen photos in meters',
+    min: 0,
+    optional: true,
+  },
 });
 
 const missionCalculationSchema = new SimpleSchema({
-  rpaPath: {
-    type: FeatureLineString,
-    label: 'This is a geoJSON feature representing the path the rpa is going to follow',
-    optional: true,
-  },
   waypointList: {
     type: FeatureCollectionPoints,
     label: 'Feature Collection representing the waypoints for the mission',
@@ -110,6 +111,14 @@ const missionCalculationSchema = new SimpleSchema({
   missionCalculatedData: {
     type: missionCalculatedDataSchema,
     label: 'This is the data obtained from calculating the mission',
+    optional: true,
+  },
+});
+
+const landingPathSchema = new SimpleSchema({
+  landingPathDirection: {
+    type: FeatureLineString,
+    label: 'This is a geoJSON feature representing the angle from the landing point',
     optional: true,
   },
 });
@@ -206,6 +215,16 @@ Missions.schema = new SimpleSchema({
   'flightPlan.missionCalculation': {
     type: missionCalculationSchema,
     label: 'This is where we store the data from the waypoint calculation',
+    optional: true,
+  },
+  preFlight: {
+    type: Object,
+    label: 'All the data related to the pre flight checklist',
+    optional: true,
+  },
+  'preFlight.landingPath': {
+    type: landingPathSchema,
+    label: 'All the data related to the landing path',
     optional: true,
   },
   deleted: {

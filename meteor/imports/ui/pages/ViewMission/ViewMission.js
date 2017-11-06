@@ -11,7 +11,7 @@ import Projects from '../../../api/Projects/Projects';
 import NotFound from '../NotFound/NotFound';
 import Loading from '../../components/Loading/Loading';
 import MissionPlan from '../../components/MissionPlan/MissionPlan';
-import MissionFlight from '../../components/MissionFlight/MissionFlight';
+import MissionFlight from '../MissionFlight/MissionFlight';
 import MissionAnalysis from '../../components/MissionAnalysis/MissionAnalysis';
 
 import './ViewMission.scss';
@@ -37,8 +37,8 @@ const renderMission = (mission, match, history, project) => (mission && mission.
             <LinkContainer to={`/projects/${match.params.project_id}/${match.params.mission_id}/plan`}>
               <NavItem eventKey={1} href={`/projects/${match.params.project_id}/${match.params.mission_id}/plan`}>Plan</NavItem>
             </LinkContainer>
-            <LinkContainer to={`/projects/${match.params.project_id}/${match.params.mission_id}/flight`}>
-              <NavItem eventKey={2} title={`/projects/${match.params.project_id}/${match.params.mission_id}/flight`}>Flight</NavItem>
+            <LinkContainer to={`/projects/${match.params.project_id}/${match.params.mission_id}/preflight`}>
+              <NavItem eventKey={2} title={`/projects/${match.params.project_id}/${match.params.mission_id}/preflight`}>Flight</NavItem>
             </LinkContainer>
             <LinkContainer to={`/projects/${match.params.project_id}/${match.params.mission_id}/analysis`}>
               <NavItem eventKey={3} href={`/projects/${match.params.project_id}/${match.params.mission_id}/analysis`}>Analysis</NavItem>
@@ -74,8 +74,11 @@ const renderMission = (mission, match, history, project) => (mission && mission.
           (React.createElement(MissionPlan, { mission, project, ...props }))}
       />
       <Route
-        exact
         path="/projects/:project_id/:mission_id/flight"
+        render={props => (React.createElement(MissionFlight, { mission, project, ...props }))}
+      />
+      <Route
+        path="/projects/:project_id/:mission_id/preflight"
         render={props => (React.createElement(MissionFlight, { mission, project, ...props }))}
       />
       <Route

@@ -55,19 +55,19 @@ const MissionData = ({ mission }) => (
               <FormControl.Static>
                 {(mission && mission.flightPlan &&
                  mission.flightPlan.flightParameters &&
-                 mission.flightPlan.flightParameters.speed) ? mission.flightPlan.flightParameters.speed : '-'} (m/s)
+                 mission.flightPlan.flightParameters.speed) ? mission.flightPlan.flightParameters.speed : '-'} m/s
               </FormControl.Static>
             </Col>
           </FormGroup>
           <FormGroup>
             <Col componentClass={ControlLabel} xs={12} sm={8} md={8} lg={8}>
-            Altitude
+            Flight Height
             </Col>
             <Col xs={12} sm={4} md={4} lg={4}>
               <FormControl.Static>
                 {(mission && mission.flightPlan &&
                  mission.flightPlan.flightParameters &&
-                 mission.flightPlan.flightParameters.altitude) ? mission.flightPlan.flightParameters.altitude : '-'} (m)
+                 mission.flightPlan.flightParameters.height) ? mission.flightPlan.flightParameters.height : '-'} m
               </FormControl.Static>
             </Col>
           </FormGroup>
@@ -77,7 +77,7 @@ const MissionData = ({ mission }) => (
             </Col>
             <Col xs={12} sm={4} md={4} lg={4}>
               <FormControl.Static>
-                {renderMissionData(mission, 'flightTime')} (min)
+                {renderMissionData(mission, 'flightTime')} min
               </FormControl.Static>
             </Col>
           </FormGroup>
@@ -89,7 +89,7 @@ const MissionData = ({ mission }) => (
             </Col>
             <Col xs={12} sm={4} md={4} lg={4}>
               <FormControl.Static>
-                ?? (m)
+                {renderMissionData(mission, 'distPics')} m
               </FormControl.Static>
             </Col>
           </FormGroup>
@@ -99,7 +99,7 @@ const MissionData = ({ mission }) => (
             </Col>
             <Col xs={12} sm={4} md={4} lg={4}>
               <FormControl.Static>
-                {renderMissionData(mission, 'shootTime')} (s)
+                {renderMissionData(mission, 'shootTime')} s
               </FormControl.Static>
             </Col>
           </FormGroup>

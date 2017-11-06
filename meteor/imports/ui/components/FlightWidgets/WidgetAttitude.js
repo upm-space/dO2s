@@ -1,9 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import $ from 'jquery';
 import './FlightWidgets.scss';
 
-const drawPtich = (pitch) => {
+const drawPitch = (pitch) => {
   let newPitch = pitch;
   const pitchBound = 25;
   if (newPitch > pitchBound) {
@@ -15,13 +14,8 @@ const drawPtich = (pitch) => {
   return newPitch;
 };
 
-const WidjetAttitude = ({ instSize, pitchProp, rollProp }) => (
-  <div
-    className="instrument"
-    style={{
-      height: `${instSize}vh`, width: `${instSize}vh`, maxHeight: ($(window).innerWidth() * 5) / 37, maxWidth: ($(window).innerWidth() * 5) / 37,
-    }}
-  >
+const WidgetAttitude = ({ pitchProp, rollProp }) => (
+  <div className="instrument">
     <div>
       <img alt="horizon_back" src="/img/svg/horizon_back.svg" />
     </div>
@@ -29,7 +23,7 @@ const WidjetAttitude = ({ instSize, pitchProp, rollProp }) => (
       <img
         alt="horizon_ball"
         src="/img/svg/horizon_ball.svg"
-        style={{ top: `${drawPtich(pitchProp)}%`, transform: `rotate(${rollProp}deg)` }}
+        style={{ top: `${drawPitch(pitchProp)}%`, transform: `rotate(${rollProp}deg)` }}
       />
     </div>
     <div>
@@ -43,10 +37,9 @@ const WidjetAttitude = ({ instSize, pitchProp, rollProp }) => (
 );
 
 
-WidjetAttitude.propTypes = {
-  instSize: PropTypes.string.isRequired,
+WidgetAttitude.propTypes = {
   pitchProp: PropTypes.number.isRequired,
   rollProp: PropTypes.number.isRequired,
 };
 
-export default WidjetAttitude;
+export default WidgetAttitude;

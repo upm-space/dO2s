@@ -1,6 +1,6 @@
+import L from 'leaflet';
 
-
-export const getWaypointType = (waypointType = 0) => {
+const getWaypointType = (waypointType = 0) => {
   switch (waypointType) {
   case 1: return 'take-off';
   case 2: return 'landing';
@@ -11,7 +11,7 @@ export const getWaypointType = (waypointType = 0) => {
   }
 };
 
-export const waypointHtml = (waypointType, waypointNumber = 0) => {
+const waypointHtml = (waypointType, waypointNumber = 0) => {
   switch (waypointType) {
   case 1: return '<span class="fa fa-arrow-circle-up fa-4x" aria-hidden="true"></span>';
   case 2: return '<span class="fa fa-arrow-circle-down fa-4x" aria-hidden="true"></span>';
@@ -22,7 +22,7 @@ export const waypointHtml = (waypointType, waypointNumber = 0) => {
   }
 };
 
-export const waypointSize = (waypointType) => {
+const waypointSize = (waypointType) => {
   switch (waypointType) {
   case 1: return [41.16, 48];
   case 2: return [41.16, 48];
@@ -33,7 +33,7 @@ export const waypointSize = (waypointType) => {
   }
 };
 
-export const waypointAnchor = (waypointType) => {
+const waypointAnchor = (waypointType) => {
   switch (waypointType) {
   case 1: return [20.3, 38];
   case 2: return [20.3, 38];
@@ -42,4 +42,21 @@ export const waypointAnchor = (waypointType) => {
   case 5: return [5, 45];
   default: return [13, 46];
   }
+};
+
+export const waypointListOptions = {
+  pointToLayer(feature, latlng) {
+    return L.marker(latlng, {
+      icon: L.divIcon({
+        html: waypointHtml(feature.properties.type, feature.properties.webNumber),
+        iconSize: waypointSize(feature.properties.type),
+        iconAnchor: waypointAnchor(feature.properties.type),
+        className: `wayPointIcon ${getWaypointType(feature.properties.type)}`,
+      }),
+    });
+  },
+};
+
+export const rpaPathStyle = {
+  style: { color: '#d9534f' },
 };

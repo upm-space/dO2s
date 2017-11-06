@@ -1,42 +1,16 @@
 import React, { Component } from 'react';
-import { Meteor } from 'meteor/meteor';
 import { Bert } from 'meteor/themeteorchef:bert';
 import PropTypes from 'prop-types';
 import L from 'leaflet';
 import 'leaflet-draw';
 
 import { featurePoint2latlong, latlong2featurePoint, featurePointGetZoom } from '../../../modules/geojson-utilities';
-import { getWaypointType, waypointSize, waypointAnchor, waypointHtml } from '../../../modules/waypoint-style-chooser.js';
-import { getOperationType, insertNewWaypoint, removeWaypoint, moveWaypoint, setWaypointNumbers } from '../../../modules/waypoint-utilities.js';
+import { waypointListOptions, rpaPathStyle } from '../../../modules/mission-planning/waypoint-style-chooser.js';
+import { getOperationType, insertNewWaypointsAtIndex, removeWaypoint, moveWaypoint, setWaypointNumbers, pointsCollectionFeatureToLineString } from '../../../modules/mission-planning/waypoint-utilities.js';
 
 import './MissionMap.scss';
 
-if (Meteor.isClient) {
-  L.Icon.Default.imagePath = '/images/';
-}
-
 class MissionMap extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      rpaPathStyle: {
-        style: { color: '#d9534f' },
-      },
-      waypointListOptions: {
-        pointToLayer(feature, latlng) {
-          return L.marker(latlng, {
-            icon: L.divIcon({
-              html: waypointHtml(feature.properties.type, feature.properties.webNumber),
-              iconSize: waypointSize(feature.properties.type),
-              iconAnchor: waypointAnchor(feature.properties.type),
-              className: `wayPointIcon ${getWaypointType(feature.properties.type)}`,
-            }),
-          });
-        },
-      },
-    };
-  }
-
   componentDidMount() {
     const currentLocation = this.props.location;
     const missionmap = L.map('missionmap').setView(featurePoint2latlong(currentLocation), featurePointGetZoom(currentLocation));
@@ -52,7 +26,7 @@ class MissionMap extends Component {
     const geoJSONRpaPathLayer = L.geoJSON().addTo(missionmap);
     const geoJSONWaypointListLayer = L.geoJSON().addTo(missionmap);
 
-    // with this we load these variables in the component to access them
+    // we load these variables in the component to access them
     // in other functions.
     this.drawnItems = drawnItems;
     this.geoJSONTakeOffPointLayer = geoJSONTakeOffPointLayer;
@@ -60,39 +34,40 @@ class MissionMap extends Component {
     this.geoJSONRpaPathLayer = geoJSONRpaPathLayer;
     this.geoJSONWaypointListLayer = geoJSONWaypointListLayer;
 
-    // Here we load the current mission data on the map if it exists
-    if (this.props.mission.flightPlan) {
-      if (this.props.mission.flightPlan.takeOffPoint) {
-        const myTakeOffPoint = this.props.mission.flightPlan.takeOffPoint;
-        const myTakeOffPointLayer = L.geoJSON(myTakeOffPoint, this.state.waypointListOptions);
+    // Here we load the first mission data on the map if it exists
+    const { flightPlan } = this.props.mission;
+    if (flightPlan) {
+      if (flightPlan.takeOffPoint) {
+        const myTakeOffPoint = flightPlan.takeOffPoint;
+        const myTakeOffPointLayer = L.geoJSON(myTakeOffPoint, waypointListOptions);
         geoJSONTakeOffPointLayer.addLayer(myTakeOffPointLayer.getLayers()[0]);
       }
-      if (this.props.mission.flightPlan.landingPoint) {
-        const myLandingPoint = this.props.mission.flightPlan.landingPoint;
-        const myLandingPointLayer = L.geoJSON(myLandingPoint, this.state.waypointListOptions);
+      if (flightPlan.landingPoint) {
+        const myLandingPoint = flightPlan.landingPoint;
+        const myLandingPointLayer = L.geoJSON(myLandingPoint, waypointListOptions);
         geoJSONLandingPointLayer.addLayer(myLandingPointLayer.getLayers()[0]);
       }
 
       let missionGeometry = '';
 
-      if (this.props.mission.flightPlan.missionArea) {
-        missionGeometry = this.props.mission.flightPlan.missionArea;
-      } else if (this.props.mission.flightPlan.missionAxis) {
-        missionGeometry = this.props.mission.flightPlan.missionAxis;
+      if (flightPlan.missionArea) {
+        missionGeometry = flightPlan.missionArea;
+      } else if (flightPlan.missionAxis) {
+        missionGeometry = flightPlan.missionAxis;
       }
       if (missionGeometry) {
         const myMissionGeomtryLayer = L.geoJSON(missionGeometry);
         drawnItems.addLayer(myMissionGeomtryLayer.getLayers()[0]);
       }
-      if (this.props.mission.flightPlan.missionCalculation) {
-        if (this.props.mission.flightPlan.missionCalculation.rpaPath) {
-          const myRpaPath = this.props.mission.flightPlan.missionCalculation.rpaPath;
-          const myRpaPathLayer = L.geoJSON(myRpaPath, this.state.rpaPathStyle);
+
+      if (flightPlan.missionCalculation) {
+        if (flightPlan.missionCalculation.waypointList) {
+          const rpaPath =
+           pointsCollectionFeatureToLineString(flightPlan.missionCalculation.waypointList);
+          const myRpaPathLayer = L.geoJSON(rpaPath, rpaPathStyle);
           geoJSONRpaPathLayer.addLayer(myRpaPathLayer.getLayers()[0]);
-        }
-        if (this.props.mission.flightPlan.missionCalculation.waypointList) {
-          const myWaypointList = this.props.mission.flightPlan.missionCalculation.waypointList;
-          const myWaypointListLayer = L.geoJSON(myWaypointList, this.state.waypointListOptions);
+          const myWaypointList = flightPlan.missionCalculation.waypointList;
+          const myWaypointListLayer = L.geoJSON(myWaypointList, waypointListOptions);
           myWaypointListLayer.eachLayer(layer =>
             geoJSONWaypointListLayer.addLayer(layer));
         }
@@ -131,22 +106,8 @@ class MissionMap extends Component {
       draw: false,
     });
 
-    // This is the waypoints edit control
-    // TODO find a way to disable edit of takeoff and landing
-    const editControlWaypointPath = new L.Control.Draw({
-      edit: {
-        featureGroup: geoJSONRpaPathLayer,
-        remove: false,
-        polyline: {
-          allowIntersection: false,
-        },
-      },
-      draw: false,
-    });
-
     this.drawControlFull = drawControlFull;
     this.drawControlEdit = drawControlEditOnly;
-    this.editControlWaypointPath = editControlWaypointPath;
 
     // moving take off and landing on click
     missionmap.on('click', (e) => {
@@ -172,8 +133,7 @@ class MissionMap extends Component {
     missionmap.on(L.Draw.Event.CREATED, (event) => {
       if (this.props.defineAreaActive) {
         // TODO add alert to redraw misison
-        const newGeometryLayer = event.layer;
-        const featureFromLayer = newGeometryLayer.toGeoJSON(15);
+        const featureFromLayer = event.layer.toGeoJSON(15);
         this.props.setMissionGeometry(featureFromLayer);
         missionmap.removeControl(drawControlFull);
         missionmap.addControl(drawControlEditOnly);
@@ -194,32 +154,8 @@ class MissionMap extends Component {
 
     missionmap.on(L.Draw.Event.EDITVERTEX, (event) => {
       if (this.props.editWayPointsActive) {
-        this.geoJSONRpaPathLayer.clearLayers();
-        this.geoJSONWaypointListLayer.clearLayers();
-        const currentRPAPath =
-        this.props.mission.flightPlan.missionCalculation.rpaPath;
-        const currentWaypointList =
-        this.props.mission.flightPlan.missionCalculation.waypointList;
-        const newRPAPathFeature = event.poly.toGeoJSON(15);
-        // TODO habria que hacer una comprobacion de que las listas
-        // waypoints y trayectoria no estan desfasadas y borrarlas si lo estan
-        let newWaypointList = {};
-        switch (getOperationType(currentRPAPath, newRPAPathFeature)) {
-        case 'add':
-          newWaypointList = insertNewWaypoint(currentWaypointList, newRPAPathFeature);
-          break;
-        case 'delete':
-          newWaypointList = removeWaypoint(currentWaypointList, newRPAPathFeature);
-          break;
-        case 'move':
-          newWaypointList = moveWaypoint(currentWaypointList, newRPAPathFeature);
-          break;
-        default:
-          newWaypointList = currentWaypointList;
-          Bert.alert('You should not get themeteorchef', 'danger');
-        }
-        const newWaypointListWithNumbers = setWaypointNumbers(newWaypointList);
-        this.props.editWayPoints(newWaypointListWithNumbers, newRPAPathFeature);
+        // this.editWaypointsLuis(event);
+        this.editWaypointsPilar(event);
       }
     });
 
@@ -235,27 +171,29 @@ class MissionMap extends Component {
     });
   }
 
+
   componentDidUpdate() {
     // re lodaing the mission if anything changes
-    if (this.props.mission.flightPlan) {
-      if (this.props.mission.flightPlan.takeOffPoint) {
+    const { flightPlan } = this.props.mission;
+    if (flightPlan) {
+      if (flightPlan.takeOffPoint) {
         this.geoJSONTakeOffPointLayer.clearLayers();
-        const myTakeOffPoint = this.props.mission.flightPlan.takeOffPoint;
-        const myTakeOffPointLayer = L.geoJSON(myTakeOffPoint, this.state.waypointListOptions);
+        const myTakeOffPoint = flightPlan.takeOffPoint;
+        const myTakeOffPointLayer = L.geoJSON(myTakeOffPoint, waypointListOptions);
         this.geoJSONTakeOffPointLayer.addLayer(myTakeOffPointLayer.getLayers()[0]);
       }
-      if (this.props.mission.flightPlan.landingPoint) {
+      if (flightPlan.landingPoint) {
         this.geoJSONLandingPointLayer.clearLayers();
-        const myLandingPoint = this.props.mission.flightPlan.landingPoint;
-        const myLandingPointLayer = L.geoJSON(myLandingPoint, this.state.waypointListOptions);
+        const myLandingPoint = flightPlan.landingPoint;
+        const myLandingPointLayer = L.geoJSON(myLandingPoint, waypointListOptions);
         this.geoJSONLandingPointLayer.addLayer(myLandingPointLayer.getLayers()[0]);
       }
 
       let missionGeometry = '';
-      if (this.props.mission.flightPlan.missionArea) {
-        missionGeometry = this.props.mission.flightPlan.missionArea;
-      } else if (this.props.mission.flightPlan.missionAxis) {
-        missionGeometry = this.props.mission.flightPlan.missionAxis;
+      if (flightPlan.missionArea) {
+        missionGeometry = flightPlan.missionArea;
+      } else if (flightPlan.missionAxis) {
+        missionGeometry = flightPlan.missionAxis;
       }
       if (missionGeometry) {
         this.drawnItems.clearLayers();
@@ -263,22 +201,21 @@ class MissionMap extends Component {
         this.drawnItems.addLayer(myMissionGeomtryLayer.getLayers()[0]);
       }
 
-      if (this.props.mission.flightPlan.missionCalculation) {
-        if (this.props.mission.flightPlan.missionCalculation.rpaPath) {
+      if (flightPlan.missionCalculation) {
+        if (flightPlan.missionCalculation.waypointList) {
           this.geoJSONRpaPathLayer.clearLayers();
-          const myRpaPath = this.props.mission.flightPlan.missionCalculation.rpaPath;
-          const myRpaPathLayer = L.geoJSON(myRpaPath, this.state.rpaPathStyle);
-          this.geoJSONRpaPathLayer.addLayer(myRpaPathLayer.getLayers()[0]);
-        }
-        if (this.props.mission.flightPlan.missionCalculation.waypointList) {
           this.geoJSONWaypointListLayer.clearLayers();
-          const myWaypointList = this.props.mission.flightPlan.missionCalculation.waypointList;
-          const myWaypointListLayer = L.geoJSON(myWaypointList, this.state.waypointListOptions);
+          const rpaPath =
+           pointsCollectionFeatureToLineString(flightPlan.missionCalculation.waypointList);
+          const myRpaPathLayer = L.geoJSON(rpaPath, rpaPathStyle);
+          this.geoJSONRpaPathLayer.addLayer(myRpaPathLayer.getLayers()[0]);
+          const myWaypointList = flightPlan.missionCalculation.waypointList;
+          const myWaypointListLayer = L.geoJSON(myWaypointList, waypointListOptions);
           myWaypointListLayer.eachLayer(layer => (this.geoJSONWaypointListLayer.addLayer(layer)));
         }
       }
 
-      const myflightPlanKeys = Object.keys(this.props.mission.flightPlan);
+      const myflightPlanKeys = Object.keys(flightPlan);
       const clearedKeys = ['takeOffPoint', 'landingPoint', 'missionArea', 'missionCalculation'];
       const myflightPlanKeysFiltered = myflightPlanKeys.filter(word => clearedKeys.includes(word));
       if (myflightPlanKeysFiltered.length === 0) {
@@ -304,13 +241,154 @@ class MissionMap extends Component {
 
     if (this.props.editWayPointsActive &&
       this.geoJSONRpaPathLayer.getLayers().length !== 0) {
-      // this.missionmap.addControl(this.editControlWaypointPath);
       this.geoJSONRpaPathLayer.getLayers()[0].editing.enable();
     } else if (!this.props.editWayPointsActive &&
     this.geoJSONRpaPathLayer.getLayers().length !== 0) {
-      // this.editControlWaypointPath.remove();
       this.geoJSONRpaPathLayer.getLayers()[0].editing.disable();
     }
+  }
+
+  editWaypointsPilar(event) {
+    const { flightPlan } = this.props.mission;
+    const currentWaypointList =
+    flightPlan.missionCalculation.waypointList;
+    const newRPAPathLatLngs = event.poly.getLatLngs();
+    const rpaOldPath = event.poly.feature;
+    // const newRPAPathLineString = {
+    //   type: 'Feature',
+    //   geometry: {
+    //     type: 'LineString',
+    //     coordinates: L.GeoJSON.latLngsToCoords(newRPAPathLatLngs, 0, false, 15),
+    //   },
+    //   properties: {},
+    // };
+    let newWaypointList = {};
+    const operationType = getOperationType(rpaOldPath, newRPAPathLatLngs);
+    let wptype = 5;
+    if (operationType.operation === 'move') {
+      wptype = currentWaypointList.features[operationType.index].properties.type;
+    }
+    const nextWPFeature = {
+      type: 'Feature',
+      geometry: {
+        type: 'Point',
+        coordinates: [operationType.lon, operationType.lat],
+      },
+      properties: {
+        type: wptype,
+        altRelative: flightPlan.flightParameters.height,
+        altAbsolute: flightPlan.flightParameters.height,
+        altGround: 0,
+      },
+    };
+    switch (operationType.operation) {
+    case 'add':
+      newWaypointList = insertNewWaypointsAtIndex(currentWaypointList, operationType.index, nextWPFeature);
+      break;
+    case 'delete':
+      newWaypointList = removeWaypoint(currentWaypointList, operationType.index);
+      break;
+    case 'move':
+      newWaypointList = moveWaypoint(currentWaypointList, operationType.index, nextWPFeature);
+      break;
+    default:
+      newWaypointList = currentWaypointList;
+      Bert.alert('You should not get themeteorchef', 'danger');
+    }
+    const newWaypointListWithNumbers = setWaypointNumbers(newWaypointList);
+    this.geoJSONRpaPathLayer.clearLayers();
+    this.geoJSONWaypointListLayer.clearLayers();
+    this.props.editWayPoints(newWaypointListWithNumbers);
+  }
+
+  editWaypointsLuis(event) {
+    const oldList = event.poly.feature.geometry.coordinates;
+    // oldList[0][lon, lat]
+    const newList = event.poly.getLatLngs(); // newList[0].{lat, lng}
+    const olminusnl = oldList.length - newList.length;
+    const result = {
+      operation: 'none', index: -1, lat: -1, lon: -1,
+    };
+    let wpIndex = 0;
+    switch (olminusnl) {
+    case 1: // borrado
+      for (wpIndex = 0; wpIndex < newList.length; wpIndex += 1) {
+        if ((newList[wpIndex].lng !== oldList[wpIndex][0]) ||
+             (newList[wpIndex].lat !== oldList[wpIndex][1])) {
+          result.index = wpIndex;
+          result.operation = 'delete';
+          break;
+        }
+      }
+      break;
+    case 0: // move
+      for (wpIndex = 0; wpIndex < newList.length; wpIndex += 1) {
+        if ((newList[wpIndex].lng !== oldList[wpIndex][0]) ||
+           (newList[wpIndex].lat !== oldList[wpIndex][1])) {
+          result.index = wpIndex;
+          result.operation = 'move';
+          result.lat = newList[wpIndex].lat;
+          result.lon = newList[wpIndex].lng;
+          break;
+        }
+      }
+      break;
+    case -1: // add
+      for (wpIndex = 0; wpIndex < newList.length; wpIndex += 1) {
+        if ((newList[wpIndex].lng !== oldList[wpIndex][0]) ||
+           (newList[wpIndex].lat !== oldList[wpIndex][1])) {
+          result.index = wpIndex;
+          result.operation = 'add';
+          result.lat = newList[wpIndex].lat;
+          result.lon = newList[wpIndex].lng;
+          break;
+        }
+      }
+      break;
+    default:
+      break;
+    }
+
+    const nextWPFeature = {
+      type: 'Feature',
+      geometry: {
+        type: 'Point',
+        coordinates: [],
+      },
+      properties: {
+        type: 5,
+        altRelative: flightPlan.flightParameters.height,
+        altAbsolute: flightPlan.flightParameters.height,
+        altGround: 0,
+      },
+    };
+    const currentWaypointList =
+      flightPlan.missionCalculation.waypointList;
+    const newWaypointList =
+      JSON.parse(JSON.stringify(currentWaypointList));
+      // currentWaypointList.features[0].geometry.coordinates[0]
+    switch (result.operation) {
+    case 'delete':
+      newWaypointList.features.splice(result.index, 1);
+      break;
+    case 'move':
+      newWaypointList.features[result.index].geometry.coordinates[0] = result.lon;
+      newWaypointList.features[result.index].geometry.coordinates[1] = result.lat;
+      break;
+    case 'add':
+      newWaypointList.features.splice(result.index, 1);
+      nextWPFeature.geometry.coordinates[0] = result.lon;
+      nextWPFeature.geometry.coordinates[1] = result.lat;
+      newWaypointList.features.splice(result.index, 0, nextWPFeature);
+      break;
+    default:
+      console.log('algo anda mal');
+      break;
+    }
+    const newWaypointListWithNumbers = setWaypointNumbers(newWaypointList);
+    this.geoJSONRpaPathLayer.clearLayers();
+    this.geoJSONWaypointListLayer.clearLayers();
+    this.props.editWayPoints(newWaypointListWithNumbers);
   }
 
   render() {
@@ -332,20 +410,29 @@ MissionMap.defaultProps = {
       zoom: 12,
     },
   },
+  height: '80vh',
+  takeOffPointActive: false,
+  landingPointActive: false,
+  defineAreaActive: false,
+  setTakeOffPoint: () => {},
+  setLandingPoint: () => {},
+  setMissionGeometry: () => {},
+  editWayPointsActive: false,
+  editWayPoints: () => {},
 };
 
 MissionMap.propTypes = {
   location: PropTypes.object,
   mission: PropTypes.object.isRequired,
-  height: PropTypes.string.isRequired,
-  takeOffPointActive: PropTypes.bool.isRequired,
-  landingPointActive: PropTypes.bool.isRequired,
-  defineAreaActive: PropTypes.bool.isRequired,
-  setTakeOffPoint: PropTypes.func.isRequired,
-  setLandingPoint: PropTypes.func.isRequired,
-  setMissionGeometry: PropTypes.func.isRequired,
-  editWayPointsActive: PropTypes.bool.isRequired,
-  editWayPoints: PropTypes.func.isRequired,
+  height: PropTypes.string,
+  takeOffPointActive: PropTypes.bool,
+  landingPointActive: PropTypes.bool,
+  defineAreaActive: PropTypes.bool,
+  setTakeOffPoint: PropTypes.func,
+  setLandingPoint: PropTypes.func,
+  setMissionGeometry: PropTypes.func,
+  editWayPointsActive: PropTypes.bool,
+  editWayPoints: PropTypes.func,
 };
 
 export default MissionMap;
