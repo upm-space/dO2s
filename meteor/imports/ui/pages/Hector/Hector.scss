@@ -1,0 +1,38 @@
+div#Hector{
+  margin: 15px;
+  position: absolute;
+  top: 50px;
+  bottom: 60px;
+  left: 0;
+  right: 0;
+
+  div#SliderWrapper{
+    // margin-left: 15px;
+    margin-right: 15px;
+    position: absolute;
+    left: 200px;
+    right: 40%;
+    bottom: 0;
+  }
+
+  div#chartContainer{
+    position: absolute;
+    right: 0;
+    bottom: 0;
+  }
+
+  div#MissionVideo{
+    margin-bottom: 5px;
+    position: absolute;
+    top: 0;
+    bottom: 85px;
+    left: 0;
+    right: 0;
+  }
+
+  div#Dial{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+  }
+}
