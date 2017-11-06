@@ -236,45 +236,6 @@ LatLon.prototype.destinationPoint = function destinationPoint(brng, dist) {
 };
 
 /**
- * Calculate the angle from this to the second pint in grades from 0 to
- * 360. 0 is the north
- * Funci�n duplicada con la siguiente 'bearingto', que es bastante m�s elegante
- * COmparar resultados y quedarnos con una
- * @param {LatLon} point
- * @returns {Number} from 0 to 360
- */
-LatLon.prototype.calculateBearing = function calculateBearing(point) {
-  const x1 = this.lon;
-  const y1 = this.lat;
-  const x2 = point.lon;
-  const y2 = point.lat;
-  const deltax = x2 - x1;
-  const deltay = y2 - y1;
-
-  let bearing;
-  if (deltay !== 0) {
-    bearing = (Math.atan(deltax / deltay) * 180) / Math.PI;
-    // console.log(bearing);
-    if (x2 > x1) {
-      if (y2 > y1) {
-        bearing = bearing;
-      } else {
-        bearing = 180 + bearing;
-      }
-    } else if (y2 > y1) {
-      bearing = 360 + bearing;
-    } else {
-      bearing = 180 + bearing;
-    }
-  } else if (x1 > x2) {
-    bearing = 270;
-  } else {
-    bearing = 90;
-  }
-  return bearing;
-};
-
-/**
  * Returns the (initial) bearing from 'this' point to destination point.
  *
  * @param   {LatLon} point - Latitude/longitude of destination point.
@@ -534,6 +495,13 @@ LatLon.prototype.convertOL3ToPoints = (geometry) => {
   return points;
 };
 
+/**
+ * convert LatLon to GeoJSON Position array
+ * @returns {Array} - [longitude, latitude]
+ */
+LatLon.prototype.latLonToPositionArray = function latLonToPositionArray() {
+  return [this.lon, this.lat];
+};
 
 /** Extend Number object with method to convert numeric degrees to radians */
 if (typeof Number.prototype.toRadians === 'undefined') {
