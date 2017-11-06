@@ -3,6 +3,10 @@ import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
 import Missions from './Missions';
 import rateLimit from '../../modules/rate-limit';
+import fs from 'fs';
+import path from 'path';
+import { deleteFolderRecursiveSync } from '../../modules/server/file-system';
+
 import { FeaturePoint, FeaturePolygon, FeatureLineString, FeatureCollectionPoints } from '../SchemaUtilities/GeoJSONSchema.js';
 
 const newMissionSchema = Missions.schema.pick('name', 'project', 'rpa', 'missionType', 'description', 'payload');
@@ -16,7 +20,10 @@ Meteor.methods({
   'missions.insert': function missionsInsert(mission) {
     try {
       newMissionSchema.validate(mission);
-      return Missions.insert({ owner: this.userId, ...mission });
+      const newMissionID = Missions.insert({ owner: this.userId, ...mission });
+      const missionDir = path.join(Meteor.settings.private.config.missionsPath, newMissionID);
+      fs.mkdirSync(missionDir);
+      return newMissionID;
     } catch (exception) {
       if (exception.error === 'validation-error') {
         throw new Meteor.Error(500, exception.message);
@@ -67,6 +74,8 @@ Meteor.methods({
   'missions.hardDelete': function missionsHardDelete(missionId) {
     check(missionId, String);
     try {
+      const missionDir = path.join(Meteor.settings.private.config.missionsPath, missionId);
+      deleteFolderRecursiveSync(missionDir, true);
       return Missions.remove(missionId);
     } catch (exception) {
       throw new Meteor.Error('500', exception);
