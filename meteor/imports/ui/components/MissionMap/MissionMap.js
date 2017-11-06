@@ -5,28 +5,10 @@ import L from 'leaflet';
 import 'leaflet-draw';
 
 import { featurePoint2latlong, latlong2featurePoint, featurePointGetZoom } from '../../../modules/geojson-utilities';
-import { getWaypointType, waypointSize, waypointAnchor, waypointHtml } from '../../../modules/waypoint-style-chooser.js';
-import { getOperationType, insertNewWaypoint, removeWaypoint, moveWaypoint, setWaypointNumbers, createRPAPath } from '../../../modules/waypoint-utilities.js';
+import { waypointListOptions, rpaPathStyle } from '../../../modules/mission-planning/waypoint-style-chooser.js';
+import { getOperationType, insertNewWaypointsAtIndex, removeWaypoint, moveWaypoint, setWaypointNumbers, pointsCollectionFeatureToLineString } from '../../../modules/mission-planning/waypoint-utilities.js';
 
 import './MissionMap.scss';
-
-
-const rpaPathStyle = {
-  style: { color: '#d9534f' },
-};
-
-const waypointListOptions = {
-  pointToLayer(feature, latlng) {
-    return L.marker(latlng, {
-      icon: L.divIcon({
-        html: waypointHtml(feature.properties.type, feature.properties.webNumber),
-        iconSize: waypointSize(feature.properties.type),
-        iconAnchor: waypointAnchor(feature.properties.type),
-        className: `wayPointIcon ${getWaypointType(feature.properties.type)}`,
-      }),
-    });
-  },
-};
 
 class MissionMap extends Component {
   componentDidMount() {
@@ -52,7 +34,7 @@ class MissionMap extends Component {
     this.geoJSONRpaPathLayer = geoJSONRpaPathLayer;
     this.geoJSONWaypointListLayer = geoJSONWaypointListLayer;
 
-    // Here we load the current mission data on the map if it exists
+    // Here we load the first mission data on the map if it exists
     const { flightPlan } = this.props.mission;
     if (flightPlan) {
       if (flightPlan.takeOffPoint) {
@@ -80,7 +62,8 @@ class MissionMap extends Component {
 
       if (flightPlan.missionCalculation) {
         if (flightPlan.missionCalculation.waypointList) {
-          const rpaPath = createRPAPath(flightPlan.missionCalculation.waypointList.features);
+          const rpaPath =
+           pointsCollectionFeatureToLineString(flightPlan.missionCalculation.waypointList);
           const myRpaPathLayer = L.geoJSON(rpaPath, rpaPathStyle);
           geoJSONRpaPathLayer.addLayer(myRpaPathLayer.getLayers()[0]);
           const myWaypointList = flightPlan.missionCalculation.waypointList;
@@ -171,38 +154,8 @@ class MissionMap extends Component {
 
     missionmap.on(L.Draw.Event.EDITVERTEX, (event) => {
       if (this.props.editWayPointsActive) {
-        const currentWaypointList =
-        flightPlan.missionCalculation.waypointList;
-        const newRPAPathLatLngs = event.poly.getLatLngs();
-        const eventOldPath = event.poly.feature;
-        const newRPAPathLineString = {
-          type: 'Feature',
-          geometry: {
-            type: 'LineString',
-            coordinates: L.GeoJSON.latLngsToCoords(newRPAPathLatLngs, 0, false, 15),
-          },
-          properties: {},
-        };
-        let newWaypointList = {};
-
-        switch (getOperationType(eventOldPath, newRPAPathLineString)) {
-        case 'add':
-          newWaypointList = insertNewWaypoint(currentWaypointList, newRPAPathLineString);
-          break;
-        case 'delete':
-          newWaypointList = removeWaypoint(currentWaypointList, newRPAPathLineString);
-          break;
-        case 'move':
-          newWaypointList = moveWaypoint(currentWaypointList, newRPAPathLineString);
-          break;
-        default:
-          newWaypointList = currentWaypointList;
-          Bert.alert('You should not get themeteorchef', 'danger');
-        }
-        const newWaypointListWithNumbers = setWaypointNumbers(newWaypointList);
-        this.geoJSONRpaPathLayer.clearLayers();
-        this.geoJSONWaypointListLayer.clearLayers();
-        this.props.editWayPoints(newWaypointListWithNumbers);
+        // this.editWaypointsLuis(event);
+        this.editWaypointsPilar(event);
       }
     });
 
@@ -217,6 +170,7 @@ class MissionMap extends Component {
       }
     });
   }
+
 
   componentDidUpdate() {
     // re lodaing the mission if anything changes
@@ -251,7 +205,8 @@ class MissionMap extends Component {
         if (flightPlan.missionCalculation.waypointList) {
           this.geoJSONRpaPathLayer.clearLayers();
           this.geoJSONWaypointListLayer.clearLayers();
-          const rpaPath = createRPAPath(flightPlan.missionCalculation.waypointList.features);
+          const rpaPath =
+           pointsCollectionFeatureToLineString(flightPlan.missionCalculation.waypointList);
           const myRpaPathLayer = L.geoJSON(rpaPath, rpaPathStyle);
           this.geoJSONRpaPathLayer.addLayer(myRpaPathLayer.getLayers()[0]);
           const myWaypointList = flightPlan.missionCalculation.waypointList;
@@ -291,6 +246,149 @@ class MissionMap extends Component {
     this.geoJSONRpaPathLayer.getLayers().length !== 0) {
       this.geoJSONRpaPathLayer.getLayers()[0].editing.disable();
     }
+  }
+
+  editWaypointsPilar(event) {
+    const { flightPlan } = this.props.mission;
+    const currentWaypointList =
+    flightPlan.missionCalculation.waypointList;
+    const newRPAPathLatLngs = event.poly.getLatLngs();
+    const rpaOldPath = event.poly.feature;
+    // const newRPAPathLineString = {
+    //   type: 'Feature',
+    //   geometry: {
+    //     type: 'LineString',
+    //     coordinates: L.GeoJSON.latLngsToCoords(newRPAPathLatLngs, 0, false, 15),
+    //   },
+    //   properties: {},
+    // };
+    let newWaypointList = {};
+    const operationType = getOperationType(rpaOldPath, newRPAPathLatLngs);
+    let wptype = 5;
+    if (operationType.operation === 'move') {
+      wptype = currentWaypointList.features[operationType.index].properties.type;
+    }
+    const nextWPFeature = {
+      type: 'Feature',
+      geometry: {
+        type: 'Point',
+        coordinates: [operationType.lon, operationType.lat],
+      },
+      properties: {
+        type: wptype,
+        altRelative: flightPlan.flightParameters.height,
+        altAbsolute: flightPlan.flightParameters.height,
+        altGround: 0,
+      },
+    };
+    switch (operationType.operation) {
+    case 'add':
+      newWaypointList = insertNewWaypointsAtIndex(currentWaypointList, operationType.index, nextWPFeature);
+      break;
+    case 'delete':
+      newWaypointList = removeWaypoint(currentWaypointList, operationType.index);
+      break;
+    case 'move':
+      newWaypointList = moveWaypoint(currentWaypointList, operationType.index, nextWPFeature);
+      break;
+    default:
+      newWaypointList = currentWaypointList;
+      Bert.alert('You should not get themeteorchef', 'danger');
+    }
+    const newWaypointListWithNumbers = setWaypointNumbers(newWaypointList);
+    this.geoJSONRpaPathLayer.clearLayers();
+    this.geoJSONWaypointListLayer.clearLayers();
+    this.props.editWayPoints(newWaypointListWithNumbers);
+  }
+
+  editWaypointsLuis(event) {
+    const oldList = event.poly.feature.geometry.coordinates;
+    // oldList[0][lon, lat]
+    const newList = event.poly.getLatLngs(); // newList[0].{lat, lng}
+    const olminusnl = oldList.length - newList.length;
+    const result = {
+      operation: 'none', index: -1, lat: -1, lon: -1,
+    };
+    let wpIndex = 0;
+    switch (olminusnl) {
+    case 1: // borrado
+      for (wpIndex = 0; wpIndex < newList.length; wpIndex += 1) {
+        if ((newList[wpIndex].lng !== oldList[wpIndex][0]) ||
+             (newList[wpIndex].lat !== oldList[wpIndex][1])) {
+          result.index = wpIndex;
+          result.operation = 'delete';
+          break;
+        }
+      }
+      break;
+    case 0: // move
+      for (wpIndex = 0; wpIndex < newList.length; wpIndex += 1) {
+        if ((newList[wpIndex].lng !== oldList[wpIndex][0]) ||
+           (newList[wpIndex].lat !== oldList[wpIndex][1])) {
+          result.index = wpIndex;
+          result.operation = 'move';
+          result.lat = newList[wpIndex].lat;
+          result.lon = newList[wpIndex].lng;
+          break;
+        }
+      }
+      break;
+    case -1: // add
+      for (wpIndex = 0; wpIndex < newList.length; wpIndex += 1) {
+        if ((newList[wpIndex].lng !== oldList[wpIndex][0]) ||
+           (newList[wpIndex].lat !== oldList[wpIndex][1])) {
+          result.index = wpIndex;
+          result.operation = 'add';
+          result.lat = newList[wpIndex].lat;
+          result.lon = newList[wpIndex].lng;
+          break;
+        }
+      }
+      break;
+    default:
+      break;
+    }
+
+    const nextWPFeature = {
+      type: 'Feature',
+      geometry: {
+        type: 'Point',
+        coordinates: [],
+      },
+      properties: {
+        type: 5,
+        altRelative: flightPlan.flightParameters.height,
+        altAbsolute: flightPlan.flightParameters.height,
+        altGround: 0,
+      },
+    };
+    const currentWaypointList =
+      flightPlan.missionCalculation.waypointList;
+    const newWaypointList =
+      JSON.parse(JSON.stringify(currentWaypointList));
+      // currentWaypointList.features[0].geometry.coordinates[0]
+    switch (result.operation) {
+    case 'delete':
+      newWaypointList.features.splice(result.index, 1);
+      break;
+    case 'move':
+      newWaypointList.features[result.index].geometry.coordinates[0] = result.lon;
+      newWaypointList.features[result.index].geometry.coordinates[1] = result.lat;
+      break;
+    case 'add':
+      newWaypointList.features.splice(result.index, 1);
+      nextWPFeature.geometry.coordinates[0] = result.lon;
+      nextWPFeature.geometry.coordinates[1] = result.lat;
+      newWaypointList.features.splice(result.index, 0, nextWPFeature);
+      break;
+    default:
+      console.log('algo anda mal');
+      break;
+    }
+    const newWaypointListWithNumbers = setWaypointNumbers(newWaypointList);
+    this.geoJSONRpaPathLayer.clearLayers();
+    this.geoJSONWaypointListLayer.clearLayers();
+    this.props.editWayPoints(newWaypointListWithNumbers);
   }
 
   render() {
