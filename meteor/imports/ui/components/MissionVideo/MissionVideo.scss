@@ -42,8 +42,7 @@ video#Video{
   right: 0;
   width: 40%;
 }
-
-video#TxtVideo{
+div.TxtVideo{
   margin-left: 15px;
   position: absolute;
   left: 15%;
@@ -51,4 +50,8 @@ video#TxtVideo{
   width: 40%;
   z-index: 1;
   // opacity: 0.0;
+
+  video#TxtVideo{
+    width: 100%;
+  }
 }
