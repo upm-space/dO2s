@@ -19,3 +19,5 @@ import '../../api/Users/server/publications';
 import '../../api/OAuth/server/methods';
 
 import '../../api/Utility/server/methods';
+
+import '../../api/FlieTransferUtilities/server/methods';
