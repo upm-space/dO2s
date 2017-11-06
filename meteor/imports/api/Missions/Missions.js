@@ -115,6 +115,14 @@ const missionCalculationSchema = new SimpleSchema({
   },
 });
 
+const landingPathSchema = new SimpleSchema({
+  landingPathDirection: {
+    type: FeatureLineString,
+    label: 'This is a geoJSON feature representing the angle from the landing point',
+    optional: true,
+  },
+});
+
 Missions.schema = new SimpleSchema({
   owner: {
     type: String,
@@ -207,6 +215,16 @@ Missions.schema = new SimpleSchema({
   'flightPlan.missionCalculation': {
     type: missionCalculationSchema,
     label: 'This is where we store the data from the waypoint calculation',
+    optional: true,
+  },
+  preFlight: {
+    type: Object,
+    label: 'All the data related to the pre flight checklist',
+    optional: true,
+  },
+  'preFlight.landingPath': {
+    type: landingPathSchema,
+    label: 'All the data related to the landing path',
     optional: true,
   },
   deleted: {
