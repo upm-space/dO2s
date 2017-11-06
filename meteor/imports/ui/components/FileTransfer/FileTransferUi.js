@@ -36,6 +36,7 @@ class FileTransferUi extends Component {
   }
 
   loadLocalFiles(path, files, callback) {
+    /*
     Meteor.apply('saveLocalFiles', [path, files], { wait: true,
       onResultReceived: (error, result) => {
         if (result) {
@@ -45,7 +46,15 @@ class FileTransferUi extends Component {
             callback(`Ooops. Something strange has happened copying the file: ${result}`);
           }
         }
-      },
+      }
+    }); */
+
+    Meteor.call('prueba', (error, result) => {
+      if (result) {
+        console.log('Removed  folders');
+      } else {
+        console.log(error);
+      }
     });
   }
   uploadFiles() {
