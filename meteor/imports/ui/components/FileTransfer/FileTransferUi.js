@@ -53,7 +53,7 @@ class FileTransferUi extends Component {
       if (result) {
         console.log('Removed  folders');
       } else {
-        console.log(error);
+        console.log('error');
       }
     });
   }
