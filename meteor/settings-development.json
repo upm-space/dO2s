@@ -15,6 +15,9 @@
         },
         "env": {
             "MAIL_URL": ""
+        },
+        "config": {
+          "missionsPath": "/Users/pilibastidas/myGitProjects/pruebas-servidor-do2s"
         }
     }
 }
