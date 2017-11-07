@@ -11,11 +11,12 @@ class FileTransferUi extends Component {
 
     this.state = {
       localFiles: [],
-      // serverFiles: [],
+      serverFiles: [],
       // uploadedSoFar: '',
     };
-    // const rootDirectory = 'C:/Oficina/Universidad/TFM';
+    this.rootDirectory = 'C:/Oficina/Universidad/TFM/';
     this.selectedLocalFiles = new Set();
+    this.selectedServerFiles = new Set();
   }
   componentDidMount() {
   }
@@ -36,33 +37,62 @@ class FileTransferUi extends Component {
     parent.renderLocalFiles(parent.selectedLocalFiles);
   }
 
-  loadLocalFiles(path, files, callback) {
-    // Meteor.apply('saveLocalFiles', [path, files], {
-    //   wait: true,
-    //   onResultReceived: (error, result) => {
-    //     if (result) {
-    //       if (result.result === 'ok') {
-    //         callback(`file copied${result}`);
-    //       } else {
-    //         callback(`Ooops. Something strange has happened copying the file: ${result}`);
-    //       }
-    //     }
-    //   },
-    // });
+  removeServerFile(parent, file) {
+    if (parent.selectedServerFiles.has(file.props.objFile)) {
+      parent.selectedServerFiles.delete(file.props.objFile);
+    }
+    parent.renderServerFiles(parent.selectedServerFiles);
+  }
 
-    Meteor.call('prueba', (error, result) => {
-      if (result) {
-        console.log('Removed  folders');
-      } else {
-        console.log('error');
-      }
+  oldLoadLocalFiles(path, files, callback) {
+    Meteor.apply('saveLocalFiles', [path, files], {
+      wait: true,
+      onResultReceived: (error, result) => {
+        if (result) {
+          if (result.result === 'ok') {
+            callback(`file copied${result}`);
+          } else {
+            callback(`Ooops. Something strange has happened copying the file: ${result}`);
+          }
+        }
+      },
     });
   }
+
   uploadFiles() {
-    this.loadLocalFiles('', this.state.localFiles, (data) => {
-      console.log(data);
+    this.state.localFiles.forEach((file) => {
+      this.uploadFile(file, (data) => {
+        console.log(data);
+      });
     });
   }
+
+  uploadFile(file, callback) {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const buffer = new Uint8Array(reader.result); // convert to binary
+      Meteor.apply('saveFile', [buffer, this.rootDirectory, file.props.objFile.name], {
+        wait: true,
+        onResultReceived: (error, result) => {
+          if (result) {
+            if (result.result === 'ok') {
+              this.removeLocalFile(this, file.props.objFile);
+              this.selectedServerFiles.add(file);
+              this.renderServerFiles(this.selectedServerFiles);
+              console.log(`file copied${result}`);
+              // callback(result);
+            } else {
+              console.log(`Ooops. Something strange has happened copying the file: ${result}`);
+              // callback(result);
+            }
+          }
+        },
+      });
+    };
+
+    reader.readAsArrayBuffer(file.props.objFile);
+  }
+
   renderLocalFiles(files) {
     const fileList = [];
     // for(let i = 0; i < files.length; i++){
@@ -88,6 +118,28 @@ class FileTransferUi extends Component {
     });
   }
 
+  renderServerFiles(files) {
+    const fileList = [];
+    // for(let i = 0; i < files.length; i++){
+    files.forEach((file) => {
+      const fileObj = (
+        <FtpClientItems
+          objFile={file.props.objFile}
+          key={file.props.objFile.name}
+          onchangeCheck={this.onChangeCheck}
+          onDelete={this.removeServerFile}
+          parent={this}
+          drawCheck={false}
+          drawTrash
+        />);
+      fileList.push(fileObj);
+    });
+
+    this.setState({
+      serverFiles: fileList,
+    });
+  }
+
   render() {
     return (
       <div className="row">
@@ -108,7 +160,7 @@ class FileTransferUi extends Component {
 
         <div className="col-md-5">
           <h3 className="redColored big-glyph text-center">Server side</h3>
-          <div className="ftpFileContainer" id="ftpServerSide" />
+          <div className="ftpFileContainer" id="ftpServerSide">{this.state.serverFiles}</div>
         </div>
       </div>
     );
