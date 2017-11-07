@@ -4,7 +4,7 @@ import './FlightWidgets.scss';
 
 const drawPitch = (pitch) => {
   let newPitch = pitch;
-  const pitchBound = 25;
+  const pitchBound = 30;
   if (newPitch > pitchBound) {
     newPitch = pitchBound;
   } else if (newPitch < -pitchBound) {
@@ -19,11 +19,11 @@ const WidgetAttitude = ({ pitchProp, rollProp }) => (
     <div>
       <img alt="horizon_back" src="/img/svg/horizon_back.svg" />
     </div>
-    <div>
+    <div style={{ transform: `rotate(${rollProp}deg)` }}>
       <img
         alt="horizon_ball"
         src="/img/svg/horizon_ball.svg"
-        style={{ top: `${drawPitch(pitchProp)}%`, transform: `rotate(${rollProp}deg)` }}
+        style={{ top: `${drawPitch(pitchProp)}%` }}
       />
     </div>
     <div>
