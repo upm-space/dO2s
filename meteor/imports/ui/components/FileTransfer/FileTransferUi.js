@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+// import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
 import { Meteor } from 'meteor/meteor';
 import FtpClientItems from './ftp-client-items';
 
@@ -10,10 +11,10 @@ class FileTransferUi extends Component {
 
     this.state = {
       localFiles: [],
-      serverFiles: [],
-      uploadedSoFar: '',
+      // serverFiles: [],
+      // uploadedSoFar: '',
     };
-    const rootDirectory = 'C:/Oficina/Universidad/TFM';
+    // const rootDirectory = 'C:/Oficina/Universidad/TFM';
     this.selectedLocalFiles = new Set();
   }
   componentDidMount() {
@@ -21,9 +22,9 @@ class FileTransferUi extends Component {
 
   selectFiles() {
     this.selectedLocalFiles = new Set();
-    const btnFiles = this.refs.btnSelectedFiles;
-    for (let i = 0; i < this.refs.btnSelectedFiles.files.length; i++) {
-      this.selectedLocalFiles.add(this.refs.btnSelectedFiles.files[i]);
+    // const btnFiles = this.btnSelectedFiles;
+    for (let i = 0; i < this.btnSelectedFiles.files.length; i += 1) {
+      this.selectedLocalFiles.add(this.btnSelectedFiles.files[i]);
     }
     this.renderLocalFiles(this.selectedLocalFiles);
   }
@@ -36,18 +37,18 @@ class FileTransferUi extends Component {
   }
 
   loadLocalFiles(path, files, callback) {
-    /*
-    Meteor.apply('saveLocalFiles', [path, files], { wait: true,
-      onResultReceived: (error, result) => {
-        if (result) {
-          if (result.result === 'ok') {
-            callback(`file copied${result}`);
-          } else {
-            callback(`Ooops. Something strange has happened copying the file: ${result}`);
-          }
-        }
-      }
-    }); */
+    // Meteor.apply('saveLocalFiles', [path, files], {
+    //   wait: true,
+    //   onResultReceived: (error, result) => {
+    //     if (result) {
+    //       if (result.result === 'ok') {
+    //         callback(`file copied${result}`);
+    //       } else {
+    //         callback(`Ooops. Something strange has happened copying the file: ${result}`);
+    //       }
+    //     }
+    //   },
+    // });
 
     Meteor.call('prueba', (error, result) => {
       if (result) {
@@ -96,7 +97,7 @@ class FileTransferUi extends Component {
           <div className="row btn-group centerBlock data-input">
             <label className="btn btn-lg btn-danger centerBlock">
               <i className="fa fa-folder-open" aria-hidden="true" /> Browse
-              <input ref="btnSelectedFiles" id="uploadFile" className="file" type="file" multiple onChange={this.selectFiles.bind(this)} />
+              <input ref={(c) => { this.btnSelectedFiles = c; }} id="uploadFile" className="file" type="file" multiple onChange={this.selectFiles.bind(this)} />
             </label>
             <label className="btn btn-lg btn-danger" onClick={() => { this.uploadFiles(); }}>
               <i className="fa fa-upload" aria-hidden="true" /> Upload {() => { }}
