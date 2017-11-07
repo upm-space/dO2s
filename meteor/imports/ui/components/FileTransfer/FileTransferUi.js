@@ -38,8 +38,8 @@ class FileTransferUi extends Component {
   }
 
   removeServerFile(parent, file) {
-    if (parent.selectedServerFiles.has(file.props.objFile)) {
-      parent.selectedServerFiles.delete(file.props.objFile);
+    if (parent.selectedServerFiles.has(file)) {
+      parent.selectedServerFiles.delete(file);
     }
     parent.renderServerFiles(parent.selectedServerFiles);
   }
@@ -61,13 +61,13 @@ class FileTransferUi extends Component {
 
   uploadFiles() {
     this.state.localFiles.forEach((file) => {
-      this.uploadFile(file, (data) => {
+      this.uploadLocalFile(file, (data) => {
         console.log(data);
       });
     });
   }
 
-  uploadFile(file, callback) {
+  uploadLocalFile(file, callback) {
     const reader = new FileReader();
     reader.onload = (event) => {
       const buffer = new Uint8Array(reader.result); // convert to binary
