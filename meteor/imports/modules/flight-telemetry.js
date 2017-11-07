@@ -9,8 +9,12 @@ let type;
 class WebSocketTelemetry extends EventEmiter {
   constructor() {
     super();
-    this.client = new WebSocket('ws://192.168.1.47:8080/ws');
+    this.webService = new WebSocket('ws://192.168.1.47:8080/ws');
     this.init();
+  }
+
+  closeWebService() {
+    this.webService.close();
   }
 
   connectToServer(toPort, bauds) {
@@ -21,39 +25,39 @@ class WebSocketTelemetry extends EventEmiter {
       message = { type: 'connect' };
     }
 
-    this.client.send(JSON.stringify(message));
+    this.webService.send(JSON.stringify(message));
   }
 
   connectToRPA(toPort, bauds) {
     const message = { type: 'connect', bauds, toPort };
-    this.client.send(JSON.stringify(message));
+    this.webService.send(JSON.stringify(message));
   }
 
   arm() {
     const message = { type: 'arm', result: true };
-    this.client.send(JSON.stringify(message));
+    this.webService.send(JSON.stringify(message));
   }
 
   disArm() {
     const message = { type: 'arm', result: false };
-    this.client.send(JSON.stringify(message));
+    this.webService.send(JSON.stringify(message));
   }
 
   setFlighMode(newFlightMode) {
     const message = { type: 'setFlighMode', flightMode: newFlightMode };
-    this.client.send(JSON.stringify(message));
+    this.webService.send(JSON.stringify(message));
   }
 
   requestLogList() {
     const message = { type: 'requestLogList' };
-    this.client.send(JSON.stringify(message));
+    this.webService.send(JSON.stringify(message));
   }
 
   requestLog(log) {
     // const log = document.getElementById('logs').value;
     const id = log.split(' ')[1];
     const message = { type: 'requestLog', id };
-    this.client.send(JSON.stringify(message));
+    this.webService.send(JSON.stringify(message));
   }
 
   processAttitude(data) {
@@ -129,44 +133,45 @@ class WebSocketTelemetry extends EventEmiter {
       this.processAttitude(data);
       break;
     case 'GPS_RAW_INT':
-      // this.processGPS(data);
+      this.processGPS(data);
       break;
     case 'VFR_HUD':
-      // this.processVFR(data);
+      this.processVFR(data);
       break;
     case 'HEARTBEAT':
-      // this.processHeartbeat(data);
+      this.processHeartbeat(data);
       break;
     case 'SYS_STATUS':
-      // this.processSysStatus(data);
+      this.processSysStatus(data);
       break;
     case 'MISSION_CURRENT':
-      // this.processCurrentWP(data);
+      this.processCurrentWP(data);
       break;
     case 'NAV_CONTROLLER_OUTPUT':
-      // this.processNavController(data);
+      this.processNavController(data);
       break;
     default:
+      this.emit('noData', true);
       throw new TypeError('The messeage is empty');
     }
   }
 
   init() {
-    this.client.onerror = () => {
+    this.webService.onerror = () => {
       console.log('Connection Error');
     };
 
-    this.client.onopen = () => {
+    this.webService.onopen = () => {
       console.log('WebSocket Client Connected');
       const message = { type: 'connect' };
-      this.client.send(JSON.stringify(message));
+      this.webService.send(JSON.stringify(message));
     };
 
-    this.client.onclose = () => {
-      console.log('Client Closed');
+    this.webService.onclose = () => {
+      console.log('webService Closed');
     };
 
-    this.client.onmessage = (e) => {
+    this.webService.onmessage = (e) => {
       try {
         const msg = JSON.parse(e.data);
         if (msg.type) {
@@ -200,6 +205,7 @@ class WebSocketTelemetry extends EventEmiter {
             this.manageMavlink(msg.data);
             break;
           default:
+            this.emit('noData', true);
             throw new TypeError('This message is not defined');
           }
 
