@@ -24,7 +24,8 @@ class MissionAnalysis extends Component {
       this.setState({ connStatus: msg.status });
     });
 
-    client.on('logList', (msg) => {
+    client.on('itemLogList', (msg) => {
+      console.log(msg);
       this.setState(prevState => ({
         logList: [...prevState.logList, msg],
       }));
@@ -69,8 +70,16 @@ class MissionAnalysis extends Component {
             </Button>
           </Col>
         </Row>
+        <br />
         <Row>
           <Col xs={12} sm={8} md={6} lg={4}>
+            <Button
+              bsStyle="primary"
+              block
+              onClick={() => this.client.requestLogList()}
+            >
+              Request Log List
+            </Button>
             <Panel defaultExpanded header="Log List">
               <ListGroup fill>
                 <ListGroupItem>Test log 1</ListGroupItem>
@@ -81,7 +90,7 @@ class MissionAnalysis extends Component {
           </Col>
         </Row>
 
-        <FileTransferUi />
+        {/* <FileTransferUi /> */}
       </div>
     );
   }
