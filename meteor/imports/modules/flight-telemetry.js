@@ -204,24 +204,19 @@ class WebSocketTelemetry extends EventEmiter {
           case 'mavlink':
             this.manageMavlink(msg.data);
             break;
+          case 'message':
+            this.emit('logText', msg.msg);
+            break;
+          case 'itemLogList':
+            this.emit('itemLogList', msg);
+            break;
+          case 'logData':
+            this.emit('logData', msg);
+            break;
           default:
             this.emit('noData', true);
             throw new TypeError('This message is not defined');
           }
-
-          // if (msg.type == 'message') {
-          //  document.getElementById('logtext').innerHTML = msg.msg;
-          // }
-          // if (msg.type == 'itemLogList') {
-          //   document.getElementById('logtext').innerHTML = `Recibidos: ${msg.id} de ${msg.numLogs}`;
-          //   const x = document.getElementById('logs');
-          //   const option = document.createElement('option');
-          //   option.text = `Nº ${msg.id} : ${msg.MbSize}Mb`;
-          //   x.add(option);
-          // }
-          // if (msg.type == 'logData') {
-          //   document.getElementById('logtext').innerHTML = `Cargados: ${msg.ofset} Mb del log Nº ${msg.id}`;
-          // }
         }
       } catch (error) {
         console.log(error);
