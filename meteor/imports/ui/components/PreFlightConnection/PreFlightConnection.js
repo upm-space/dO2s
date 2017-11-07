@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
+import { Session } from 'meteor/session';
 import PropTypes from 'prop-types';
 import { Button, Row, Col, ProgressBar } from 'react-bootstrap';
+
+import WebSocketTelemetry from '../../../modules/flight-telemetry';
 import WidgetAltimeter from '../FlightWidgets/WidgetAltimeter';
 import WidgetAttitude from '../FlightWidgets/WidgetAttitude';
 import WidgetAirSpeed from '../FlightWidgets/WidgetAirSpeed';
@@ -10,6 +13,16 @@ class PreFlightConnection extends Component {
     const myMatch = this.props.match.path;
     console.log(myMatch.split('/').pop());
     this.props.getPath(this.props.match.path.split('/').pop());
+    if (!Session.get('client')) {
+      const client = new WebSocketTelemetry();
+      Session.set('client', client);
+
+      client.on('ports', (ports) => {
+        ports.forEach((port) => {
+          console.log(port.portName);
+        });
+      });
+    }
   }
 
   render() {
@@ -25,12 +38,12 @@ class PreFlightConnection extends Component {
               bsStyle="primary"
               block
               bsSize="large"
-              >
+            >
           Connect
             </Button>
           </Col>
         </Row>
-        <br/>
+        <br />
         <Row>
           <Col xs={4} sm={4} md={4} lg={4}>
             <WidgetAttitude id="wAltimeter" pitchProp={30} rollProp={45} />
