@@ -19,7 +19,7 @@ class MissionAnalysis extends Component {
       mission, project, match,
     } = this.props;
     return (
-      <div className="PreFlightCheckList"><h1>PreFlightCheckList</h1>
+      <div className="PreFlightCheckList">
         <Row>
           <Col xs={12} sm={3} md={3} lg={3}>
             <Nav bsStyle="pills" activeKey={1} stacked>

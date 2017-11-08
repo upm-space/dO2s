@@ -35,7 +35,7 @@ class MissionFileManagement extends Component {
       const logId = msg.id;
       const updatedLogArray = this.state.logList.slice();
       const totalSize = updatedLogArray[logId - 1].MbSize;
-      const transferPercentage = (msg.ofset / totalSize).toFixed(2) * 100;
+      const transferPercentage = ((msg.ofset / totalSize) * 100).toFixed(0);
       updatedLogArray[logId - 1].transferPercentage = transferPercentage;
       this.setState({ logList: updatedLogArray });
     });
@@ -81,7 +81,7 @@ class MissionFileManagement extends Component {
     return logList.map(logItem => (
       <ListGroupItem key={logItem.id} onClick={() => this.requestLog(logItem.id)}>
         {`Nº ${logItem.id} : ${logItem.MbSize} Mb`}
-        {logItem.loading ? <span className="pull-right"><span className="fa fa-spinner fa-spin fa-lg fa-fw text-primary" aria-hidden="true" />{logItem.transferPercentage}%</span> : ''}
+        {logItem.loading ? <span className="pull-right"><span className="fa fa-spinner fa-spin fa-lg fa-fw text-primary" aria-hidden="true" /> {logItem.transferPercentage}%</span> : ''}
         {logItem.ready ? <span className="fa fa-check-square-o fa-lg pull-right text-success" aria-hidden="true" /> : ''}
       </ListGroupItem>
     ));
@@ -122,10 +122,9 @@ class MissionFileManagement extends Component {
             <Panel
               defaultExpanded
               header={LogListTitle}
-              style={{ maxHeight: '25vh', overflow: 'auto' }}
               bsStyle={this.state.logList.length === 0 ? 'primary' : 'default'}
             >
-              <ListGroup fill>
+              <ListGroup fill style={{ maxHeight: '25vh', overflow: 'auto' }}>
                 {this.renderLogList(this.state.logList)}
               </ListGroup>
             </Panel>
