@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Row, Col, ProgressBar, Panel, ListGroup, ListGroupItem } from 'react-bootstrap';
+import { Button, Row, Col, Panel, ListGroup, ListGroupItem } from 'react-bootstrap';
 
 import WebSocketTelemetry from '../../../modules/flight-telemetry';
 import FileTransferUi from '../FileTransfer/FileTransferUi';
@@ -14,6 +14,8 @@ class MissionAnalysis extends Component {
       logList: [],
     };
     this.renderLogList = this.renderLogList.bind(this);
+    this.requestLogList = this.requestLogList.bind(this);
+    this.requestLog = this.requestLog.bind(this);
   }
 
   componentDidMount() {
@@ -25,15 +27,37 @@ class MissionAnalysis extends Component {
     });
 
     client.on('itemLogList', (msg) => {
-      console.log(msg);
       this.setState(prevState => ({
         logList: [...prevState.logList, msg],
       }));
     });
 
+    client.on('logData', (msg) => {
+      const logId = msg.id;
+      const updatedLogArray = this.state.logList.slice();
+      const totalSize = updatedLogArray[logId - 1].MbSize;
+      const transferPercentage = (msg.ofset / totalSize).toFixed(2) * 100;
+      updatedLogArray[logId - 1].transferPercentage = transferPercentage;
+      this.setState({ logList: updatedLogArray });
+    });
+
+    client.on('logConverted', (msg) => {
+      console.log(msg);
+      const logId = msg.id;
+      const updatedLogArray = this.state.logList.slice();
+      updatedLogArray[logId - 1].ready = true;
+      updatedLogArray[logId - 1].loading = false;
+      updatedLogArray[logId - 1].transferPercentage = 100;
+      this.setState({ logList: updatedLogArray });
+    });
+
 
     client.on('noData', (value) => {
       this.setState({ noData: value });
+    });
+
+    client.on('webServiceClosed', (value) => {
+      this.setState({ connStatus: value, noData: true });
     });
   }
 
@@ -41,13 +65,36 @@ class MissionAnalysis extends Component {
     this.client.closeWebService();
   }
 
+  requestLogList() {
+    this.setState({ logList: [] });
+    this.client.requestLogList();
+  }
+
+  requestLog(logId) {
+    const updatedLogArray = this.state.logList.slice();
+    updatedLogArray[logId - 1].loading = true;
+    updatedLogArray[logId - 1].transferPercentage = 0;
+    this.setState({ logList: updatedLogArray });
+    this.client.requestLog(logId);
+  }
+
   renderLogList(logList) {
-    logList.map(logItem => (
-      <ListGroupItem key={logItem._id}>{`Nº ${logItem._id} : ${logItem.MbSize} + Mb`}</ListGroupItem>
+    return logList.map(logItem => (
+      <ListGroupItem key={logItem.id} onClick={() => this.requestLog(logItem.id)}>
+        {`Nº ${logItem.id} : ${logItem.MbSize} Mb`}
+        {logItem.loading ? <span className="pull-right"><span className="fa fa-spinner fa-spin fa-lg fa-fw text-primary" aria-hidden="true" />{logItem.transferPercentage}%</span> : ''}
+        {logItem.ready ? <span className="fa fa-check-square-o fa-lg pull-right text-success" aria-hidden="true" /> : ''}
+      </ListGroupItem>
     ));
   }
 
+
   render() {
+    const LogListTitle = (
+      <h3 onClick={this.requestLogList} style={{ cursor: 'pointer' }}>
+        {this.state.logList.length === 0 ? 'Request Log List' : 'Log List'}
+      </h3>
+    );
     return (
       <div>
         <h5>Request Log Files</h5>
@@ -62,28 +109,23 @@ class MissionAnalysis extends Component {
             </Button>
           </Col>
           <Col xs={12} sm={4} md={4} lg={4}>
-            <Button
-              bsStyle={this.state.noData ? 'warning' : 'info'}
-              block
-            >
-              {this.state.noData ? 'No Data' : 'Data ON'}
-            </Button>
+            <span className={this.state.noData ? 'text-warning' : 'text-info'} >
+              <span style={{ verticalAlign: 'middle' }} className="fa fa-circle fa-lg" aria-hidden="true" />
+              {'  '}
+              <span style={{ verticalAlign: 'middle' }}>{this.state.noData ? 'No Data' : 'Data ON'}</span>
+            </span>
           </Col>
         </Row>
         <br />
         <Row>
           <Col xs={12} sm={8} md={6} lg={4}>
-            <Button
-              bsStyle="primary"
-              block
-              onClick={() => this.client.requestLogList()}
+            <Panel
+              defaultExpanded
+              header={LogListTitle}
+              style={{ maxHeight: '25vh', overflow: 'auto' }}
+              bsStyle={this.state.logList.length === 0 ? 'primary' : 'default'}
             >
-              Request Log List
-            </Button>
-            <Panel defaultExpanded header="Log List">
               <ListGroup fill>
-                <ListGroupItem>Test log 1</ListGroupItem>
-                <ListGroupItem>Test log 2</ListGroupItem>
                 {this.renderLogList(this.state.logList)}
               </ListGroup>
             </Panel>
