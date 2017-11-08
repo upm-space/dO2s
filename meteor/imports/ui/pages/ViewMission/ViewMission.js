@@ -83,7 +83,6 @@ const renderMission = (mission, match, history, project) => (mission && mission.
         render={props => (React.createElement(MissionFlight, { mission, project, ...props }))}
       />
       <Route
-        exact
         path="/projects/:project_id/:mission_id/analysis"
         render={props => (React.createElement(MissionAnalysis, { mission, project, ...props }))}
       />
