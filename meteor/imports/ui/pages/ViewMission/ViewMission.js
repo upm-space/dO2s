@@ -5,7 +5,7 @@ import { withTracker } from 'meteor/react-meteor-data';
 import { Meteor } from 'meteor/meteor';
 import { Bert } from 'meteor/themeteorchef:bert';
 import { LinkContainer } from 'react-router-bootstrap';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, Redirect } from 'react-router-dom';
 import Missions from '../../../api/Missions/Missions';
 import Projects from '../../../api/Projects/Projects';
 import NotFound from '../NotFound/NotFound';
@@ -45,6 +45,7 @@ const renderMission = (mission, match, history, project) => (mission && mission.
             </LinkContainer>
           </Nav>
         </div>
+        {' '}
         <div className="mission-buttons">
           <ButtonToolbar>
             <ButtonGroup bsSize="small">
@@ -64,8 +65,8 @@ const renderMission = (mission, match, history, project) => (mission && mission.
       <Route
         exact
         path="/projects/:project_id/:mission_id/"
-        render={props =>
-          (React.createElement(MissionPlan, { mission, project, ...props }))}
+        render={() => (
+          <Redirect to={`${match.url}/plan`} />)}
       />
       <Route
         exact
