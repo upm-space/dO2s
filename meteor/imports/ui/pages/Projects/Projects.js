@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { Table, Alert, Button, Label } from 'react-bootstrap';
+import { Table, Alert, Button } from 'react-bootstrap';
 import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Bert } from 'meteor/themeteorchef:bert';
@@ -220,17 +220,18 @@ class Projects extends Component {
           >{!this.state.hideCompleted ? 'Hide Completed Projects' : 'Show Completed Projects'} ({this.props.completeCount})
           </Button>
           <div className="pull-right">
-            <Label bsClass="btn btn-default">
-              <span className="fa fa-upload fa-lg" aria-hidden="true" /> Import Project
-              <input
+            <Button bsStyle="default">
+              <label htmlFor="project-import">
+                <span className="fa fa-upload fa-lg" aria-hidden="true" /> Import Project
+              </label>
+              <input // hidden
+                id="project-import"
                 className="btn btn-default"
                 type="file"
-                style={{ display: 'none !important' }}
-
-                // hidden
+                style={{ display: 'none' }}
                 onChange={event => this.handleImport(event.target.files[0])}
               />
-            </Label>
+            </Button>
             {' '}
             <Link className="btn btn-success" to={`${match.url}/new`}>Add Project</Link>
           </div>
