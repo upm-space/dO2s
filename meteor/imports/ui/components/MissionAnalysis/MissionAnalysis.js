@@ -1,147 +1,95 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Row, Col, Panel, ListGroup, ListGroupItem } from 'react-bootstrap';
+import { Button, Row, Col, Panel, ListGroup, ListGroupItem, Nav, NavItem } from 'react-bootstrap';
+import { Route, Switch, Redirect } from 'react-router-dom';
+import { LinkContainer } from 'react-router-bootstrap';
 
-import WebSocketTelemetry from '../../../modules/flight-telemetry';
-import FileTransferUi from '../FileTransfer/FileTransferUi';
+import NotFound from '../../pages/NotFound/NotFound';
+import MissionFileManagement from '../MissionFileManagement/MissionFileManagement';
 
 class MissionAnalysis extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      noData: true,
-      connStatus: false,
-      logList: [],
+      mypth: 0,
     };
-    this.renderLogList = this.renderLogList.bind(this);
-    this.requestLogList = this.requestLogList.bind(this);
-    this.requestLog = this.requestLog.bind(this);
   }
-
-  componentDidMount() {
-    const client = new WebSocketTelemetry();
-    this.client = client;
-
-    client.on('connStatus', (msg) => {
-      this.setState({ connStatus: msg.status });
-    });
-
-    client.on('itemLogList', (msg) => {
-      this.setState(prevState => ({
-        logList: [...prevState.logList, msg],
-      }));
-    });
-
-    client.on('logData', (msg) => {
-      const logId = msg.id;
-      const updatedLogArray = this.state.logList.slice();
-      const totalSize = updatedLogArray[logId - 1].MbSize;
-      const transferPercentage = (msg.ofset / totalSize).toFixed(2) * 100;
-      updatedLogArray[logId - 1].transferPercentage = transferPercentage;
-      this.setState({ logList: updatedLogArray });
-    });
-
-    client.on('logConverted', (msg) => {
-      console.log(msg);
-      const logId = msg.id;
-      const updatedLogArray = this.state.logList.slice();
-      updatedLogArray[logId - 1].ready = true;
-      updatedLogArray[logId - 1].loading = false;
-      updatedLogArray[logId - 1].transferPercentage = 100;
-      this.setState({ logList: updatedLogArray });
-    });
-
-
-    client.on('noData', (value) => {
-      this.setState({ noData: value });
-    });
-
-    client.on('webServiceClosed', (value) => {
-      this.setState({ connStatus: value, noData: true });
-    });
-  }
-
-  componentWillUnmount() {
-    this.client.closeWebService();
-  }
-
-  requestLogList() {
-    this.setState({ logList: [] });
-    this.client.requestLogList();
-  }
-
-  requestLog(logId) {
-    const updatedLogArray = this.state.logList.slice();
-    updatedLogArray[logId - 1].loading = true;
-    updatedLogArray[logId - 1].transferPercentage = 0;
-    this.setState({ logList: updatedLogArray });
-    this.client.requestLog(logId);
-  }
-
-  renderLogList(logList) {
-    return logList.map(logItem => (
-      <ListGroupItem key={logItem.id} onClick={() => this.requestLog(logItem.id)}>
-        {`Nº ${logItem.id} : ${logItem.MbSize} Mb`}
-        {logItem.loading ? <span className="pull-right"><span className="fa fa-spinner fa-spin fa-lg fa-fw text-primary" aria-hidden="true" />{logItem.transferPercentage}%</span> : ''}
-        {logItem.ready ? <span className="fa fa-check-square-o fa-lg pull-right text-success" aria-hidden="true" /> : ''}
-      </ListGroupItem>
-    ));
-  }
-
-
   render() {
-    const LogListTitle = (
-      <h3 onClick={this.requestLogList} style={{ cursor: 'pointer' }}>
-        {this.state.logList.length === 0 ? 'Request Log List' : 'Log List'}
-      </h3>
-    );
+    const {
+      mission, project, match,
+    } = this.props;
     return (
-      <div>
-        <h5>Request Log Files</h5>
+      <div className="PreFlightCheckList"><h1>PreFlightCheckList</h1>
         <Row>
-          <Col xs={12} sm={8} md={8} lg={8}>
-            <Button
-              bsStyle={this.state.connStatus ? 'primary' : 'default'}
-              block
-              onClick={() => this.client.connectToServer()}
-            >
-              {this.state.connStatus ? 'Connected' : 'No Conection'}
-            </Button>
+          <Col xs={12} sm={3} md={3} lg={3}>
+            <Nav bsStyle="pills" activeKey={1} stacked>
+              <LinkContainer to={`/projects/${match.params.project_id}/${match.params.mission_id}/analysis/file-manager`}>
+                <NavItem eventKey={1}>File Manager</NavItem>
+              </LinkContainer>
+              <LinkContainer to={`/projects/${match.params.project_id}/${match.params.mission_id}/analysis/photo-sync`}>
+                <NavItem eventKey={2}>Map Photo Sync</NavItem>
+              </LinkContainer>
+              <LinkContainer to={`/projects/${match.params.project_id}/${match.params.mission_id}/analysis/motion-video`}>
+                <NavItem eventKey={3}>Full Motion Video</NavItem>
+              </LinkContainer>
+              <LinkContainer to={`/projects/${match.params.project_id}/${match.params.mission_id}/analysis/graphs`}>
+                <NavItem eventKey={4}>Log Analysis</NavItem>
+              </LinkContainer>
+            </Nav>
           </Col>
-          <Col xs={12} sm={4} md={4} lg={4}>
-            <span className={this.state.noData ? 'text-warning' : 'text-info'} >
-              <span style={{ verticalAlign: 'middle' }} className="fa fa-circle fa-lg" aria-hidden="true" />
-              {'  '}
-              <span style={{ verticalAlign: 'middle' }}>{this.state.noData ? 'No Data' : 'Data ON'}</span>
-            </span>
+          <Col xs={12} sm={9} md={9} lg={9}>
+            <Switch>
+              <Route
+                exact
+                path="/projects/:project_id/:mission_id/analysis/"
+                render={() => (
+                  <Redirect to={`${match.url}/file-manager`} />)}
+              />
+              <Route
+                exact
+                path="/projects/:project_id/:mission_id/analysis/file-manager"
+                render={props => (
+                  <MissionFileManagement
+                    mission={mission}
+                    project={project}
+                    {...props}
+                  />)}
+              />
+              {/* <Route
+                exact
+                path="/projects/:project_id/:mission_id/analysis/"
+                render={props => (<PreFlightTOL
+                  mission={mission}
+                  project={project}
+                  getPath={this.changeSelected}
+                  {...props}
+                />)}
+              />
+              <Route
+                exact
+                path="/projects/:project_id/:mission_id/analysis/"
+                render={props =>
+                  (<PreFlightChecks
+                    mission={mission}
+                    project={project}
+                    getPath={this.changeSelected}
+                    {...props}
+                  />)}
+              /> */}
+              <Route component={NotFound} />
+            </Switch>
           </Col>
         </Row>
-        <br />
-        <Row>
-          <Col xs={12} sm={8} md={6} lg={4}>
-            <Panel
-              defaultExpanded
-              header={LogListTitle}
-              style={{ maxHeight: '25vh', overflow: 'auto' }}
-              bsStyle={this.state.logList.length === 0 ? 'primary' : 'default'}
-            >
-              <ListGroup fill>
-                {this.renderLogList(this.state.logList)}
-              </ListGroup>
-            </Panel>
-          </Col>
-        </Row>
-
-        {/* <FileTransferUi /> */}
       </div>
     );
   }
 }
 
-
 MissionAnalysis.propTypes = {
   mission: PropTypes.object.isRequired,
+  project: PropTypes.object.isRequired,
+  match: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired,
 };
-
 
 export default MissionAnalysis;
