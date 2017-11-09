@@ -11,14 +11,7 @@ class WayPointList extends Component {
   constructor(props) {
     super(props);
     this.changeWaypointType = this.changeWaypointType.bind(this);
-    this.changeWaypointAtlRelative = this.changeWaypointAtlRelative(this);
-    this.state = {
-      waypointList: this.props.waypointList,
-    };
-  }
-
-  componentWillReiceiveProps() {
-    this.setState({ waypointList: this.props.waypointList });
+    this.changeWaypointAtlRelative = this.changeWaypointAtlRelative.bind(this);
   }
 
   changeWaypointType(waypointList, waypointIndex, newWayPointType) {
@@ -53,7 +46,7 @@ class WayPointList extends Component {
             type="text"
             className="form-control"
             name="rpa"
-            defaultValue={waypoint.properties.type}
+            value={waypoint.properties.type}
             onChange={event =>
               (this.changeWaypointType(
                 waypointList,
@@ -88,15 +81,8 @@ class WayPointList extends Component {
       </tr>));
   }
 
-  renderWaypointListBody(waypointList) {
-    return (
-      <tbody>
-        {this.renderWaypointListItems(waypointList)}
-      </tbody>
-    );
-  }
-
   render() {
+    const waypointListTd = this.renderWaypointListItems(this.props.waypointList);
     return (
       <div className="WayPointList">
         {this.props.waypointList.features.length ?
@@ -114,7 +100,9 @@ class WayPointList extends Component {
                 <th>Ground Elevation</th>
               </tr>
             </thead>
-            {this.renderWaypointListBody(this.state.waypointList)}
+            <tbody>
+              {waypointListTd}
+            </tbody>
           </Table> : <Alert bsStyle="warning">No waypoints yet!</Alert>}
       </div>
     );
