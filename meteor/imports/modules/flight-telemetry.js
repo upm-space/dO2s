@@ -53,10 +53,8 @@ class WebSocketTelemetry extends EventEmiter {
     this.webService.send(JSON.stringify(message));
   }
 
-  requestLog(log) {
-    // const log = document.getElementById('logs').value;
-    const id = log.split(' ')[1];
-    const message = { type: 'requestLog', id };
+  requestLog(logId) {
+    const message = { type: 'requestLog', id: logId };
     this.webService.send(JSON.stringify(message));
   }
 
@@ -168,6 +166,7 @@ class WebSocketTelemetry extends EventEmiter {
     };
 
     this.webService.onclose = () => {
+      this.emit('webServiceClosed', false);
       console.log('webService Closed');
     };
 
@@ -204,24 +203,41 @@ class WebSocketTelemetry extends EventEmiter {
           case 'mavlink':
             this.manageMavlink(msg.data);
             break;
+          case 'message':
+            this.emit('logText', msg.msg);
+            break;
+          case 'itemLogList':
+          // Message Format for itemLogList
+          // msg = {
+          //   type: 'itemLogList',
+          //   id: logId,
+          //   numlogs: total number of logs,
+          //   MbSize: size in Mb of this log,
+          //   ofset: number of Mb downloaded,
+          // };
+            this.emit('itemLogList', msg);
+            break;
+          case 'logData':
+          // Message Format for logData
+          // msg = {
+          //   type: 'logData',
+          //   id: logId,
+          //   ofset: number of Mb downloaded,
+          // };
+            this.emit('logData', msg);
+            break;
+          case 'logConverted':
+          // Message Format for logConverted
+          // msg = {
+          //   type: 'logConverted',
+          //   id: logId,
+          // };
+            this.emit('logConverted', msg);
+            break;
           default:
             this.emit('noData', true);
             throw new TypeError('This message is not defined');
           }
-
-          // if (msg.type == 'message') {
-          //  document.getElementById('logtext').innerHTML = msg.msg;
-          // }
-          // if (msg.type == 'itemLogList') {
-          //   document.getElementById('logtext').innerHTML = `Recibidos: ${msg.id} de ${msg.numLogs}`;
-          //   const x = document.getElementById('logs');
-          //   const option = document.createElement('option');
-          //   option.text = `Nº ${msg.id} : ${msg.MbSize}Mb`;
-          //   x.add(option);
-          // }
-          // if (msg.type == 'logData') {
-          //   document.getElementById('logtext').innerHTML = `Cargados: ${msg.ofset} Mb del log Nº ${msg.id}`;
-          // }
         }
       } catch (error) {
         console.log(error);

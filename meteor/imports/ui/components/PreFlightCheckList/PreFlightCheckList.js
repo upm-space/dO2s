@@ -44,10 +44,11 @@ class PreFlightCheckList extends Component {
     },
     ];
     return (
-      <div className="PreFlightCheckList"><h1>PreFlightCheckList</h1>
+      <div className="PreFlightCheckList">
         <Row>
           <Col xs={12} sm={3} md={3} lg={3}>
             <div className="PreFlightStages">
+              <h4>Pre-Flight Check-List</h4>
               <SvgMilestones elements={itemsPreFlight} />
             </div>
           </Col>

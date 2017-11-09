@@ -88,6 +88,10 @@ class MissionFlight extends React.Component {
     client.on('noData', (value) => {
       this.setState({ noData: value });
     });
+
+    client.on('webServiceClosed', (value) => {
+      this.setState({ connStatus: value, noData: true });
+    });
   }
 
   componentWillUnmount() {
