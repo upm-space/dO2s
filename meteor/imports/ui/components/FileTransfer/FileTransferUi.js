@@ -13,7 +13,6 @@ class FileTransferUi extends Component {
     this.state = {
       localFiles: [],
       serverFiles: [],
-      // uploadedSoFar: '',
     };
     this.rootDirectory = 'C:/Oficina/Universidad/TFM/';
     this.selectedLocalFiles = new Set();
@@ -49,21 +48,6 @@ class FileTransferUi extends Component {
     parent.renderServerFiles(parent.selectedServerFiles);
   }
 
-  oldLoadLocalFiles(path, files, callback) {
-    Meteor.apply('saveLocalFiles', [path, files], {
-      wait: true,
-      onResultReceived: (error, result) => {
-        if (result) {
-          if (result.result === 'ok') {
-            callback(`file copied${result}`);
-          } else {
-            callback(`Ooops. Something strange has happened copying the file: ${result}`);
-          }
-        }
-      },
-    });
-  }
-
   uploadFiles() {
     const loopUpload = setInterval(() => {
       if (!this.fileUploading) {
@@ -82,12 +66,6 @@ class FileTransferUi extends Component {
     //     if (fileCounter === this.state.localFiles.length) { clearInterval(loopUpload); }
     //   }
     // }, 500);
-    // // this.state.localFiles.forEach((file) => { this.uploadLocalFile(file); });
-    // // // this.state.localFiles.forEach((file) => {
-    // // //   this.uploadLocalFile(file, (data) => {
-    // // //     console.log(data);
-    // // //   });
-    // // // });
   }
 
   uploadLocalFile(file) {
@@ -104,10 +82,10 @@ class FileTransferUi extends Component {
               this.selectedServerFiles.add(file);
               this.renderServerFiles(this.selectedServerFiles);
               this.fileUploading = false;
-              console.log(`file copied${result}`);
+              // console.log(`file copied${result}`);
               // callback(result);
             } else {
-              console.log(`Ooops. Something strange has happened copying the file: ${result}`);
+              // console.log(`Ooops. Something strange has happened copying the file: ${result}`);
               // callback(result);
             }
           }
@@ -119,7 +97,6 @@ class FileTransferUi extends Component {
 
   renderLocalFiles(files) {
     const fileList = [];
-    // for(let i = 0; i < files.length; i++){
     files.forEach((file) => {
       const fileObj = (
         <FtpClientItems
@@ -144,7 +121,6 @@ class FileTransferUi extends Component {
 
   renderServerFiles(files) {
     const fileList = [];
-    // for(let i = 0; i < files.length; i++){
     files.forEach((file) => {
       const fileObj = (
         <FtpClientItems
@@ -178,8 +154,8 @@ class FileTransferUi extends Component {
               </label>
             </Button>
             <Button bsStyle="primary" onClick={() => this.uploadFiles()}>
-              <label>
-                <span className="fa fa-upload" aria-hidden="true" /> Upload
+              <label htmlFor="uploadFile">
+                <span id="uploadFile" className="fa fa-upload" aria-hidden="true" /> Upload
               </label>
             </Button>
           </ButtonGroup>
@@ -195,7 +171,6 @@ class FileTransferUi extends Component {
 }
 
 FileTransferUi.propTypes = {
-  // serverPath: PropTypes.string.isRequired,
 };
 
 export default FileTransferUi;
