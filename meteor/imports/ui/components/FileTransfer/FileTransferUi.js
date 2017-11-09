@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { Meteor } from 'meteor/meteor';
 import { Button, ButtonGroup, Row, Col } from 'react-bootstrap';
-import FtpClientItems from './ftp-client-items';
+import FtpItems from '../FtpItems/FtpItems';
 
 import './FileTransferUi.scss';
 
@@ -23,6 +23,14 @@ class FileTransferUi extends Component {
     this.uploadFiles = this.uploadFiles.bind(this);
   }
   componentDidMount() {
+  }
+
+  onChangeCheck(parent, file) {
+    if (parent.selectedLocalFiles.has(file)) {
+      parent.selectedLocalFiles.delete(file);
+    } else {
+      parent.selectedLocalFiles.add(file);
+    }
   }
 
   selectFiles(evt) {
@@ -99,7 +107,7 @@ class FileTransferUi extends Component {
     const fileList = [];
     files.forEach((file) => {
       const fileObj = (
-        <FtpClientItems
+        <FtpItems
           objFile={file}
           key={file.name}
           onchangeCheck={this.onChangeCheck}
@@ -123,7 +131,7 @@ class FileTransferUi extends Component {
     const fileList = [];
     files.forEach((file) => {
       const fileObj = (
-        <FtpClientItems
+        <FtpItems
           objFile={file.props.objFile}
           key={file.props.objFile.name}
           onchangeCheck={this.onChangeCheck}
