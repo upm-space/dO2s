@@ -1,6 +1,7 @@
 // import React, { Component, PropTypes } from 'react';
 import React, { Component } from 'react';
 import { Meteor } from 'meteor/meteor';
+import { Button, ButtonGroup, Row, Col } from 'react-bootstrap';
 import FtpClientItems from './ftp-client-items';
 
 import './FileTransferUi.scss';
@@ -17,15 +18,19 @@ class FileTransferUi extends Component {
     this.rootDirectory = 'C:/Oficina/Universidad/TFM/';
     this.selectedLocalFiles = new Set();
     this.selectedServerFiles = new Set();
+    this.fileUploading = false;
+
+    this.selectFiles = this.selectFiles.bind(this);
+    this.uploadFiles = this.uploadFiles.bind(this);
   }
   componentDidMount() {
   }
 
-  selectFiles() {
+  selectFiles(evt) {
     this.selectedLocalFiles = new Set();
-    // const btnFiles = this.btnSelectedFiles;
-    for (let i = 0; i < this.btnSelectedFiles.files.length; i += 1) {
-      this.selectedLocalFiles.add(this.btnSelectedFiles.files[i]);
+    const selectedFiles = evt.target.files;
+    for (let i = 0; i < selectedFiles.length; i += 1) {
+      this.selectedLocalFiles.add(selectedFiles[i]);
     }
     this.renderLocalFiles(this.selectedLocalFiles);
   }
@@ -60,16 +65,35 @@ class FileTransferUi extends Component {
   }
 
   uploadFiles() {
-    this.state.localFiles.forEach((file) => {
-      this.uploadLocalFile(file, (data) => {
-        console.log(data);
-      });
-    });
+    const loopUpload = setInterval(() => {
+      if (!this.fileUploading) {
+        if (this.state.localFiles.length === 0) { clearInterval(loopUpload); } else {
+          this.fileUploading = true;
+          this.uploadLocalFile(this.state.localFiles[0]);
+        }
+      }
+    }, 500);
+    // let fileCounter = 0;
+    // const loopUpload = setInterval(() => {
+    //   if (!this.fileUploading) {
+    //     this.fileUploading = true;
+    //     this.uploadLocalFile(this.state.localFiles[fileCounter]);
+    //     fileCounter += 1;
+    //     if (fileCounter === this.state.localFiles.length) { clearInterval(loopUpload); }
+    //   }
+    // }, 500);
+    // // this.state.localFiles.forEach((file) => { this.uploadLocalFile(file); });
+    // // // this.state.localFiles.forEach((file) => {
+    // // //   this.uploadLocalFile(file, (data) => {
+    // // //     console.log(data);
+    // // //   });
+    // // // });
   }
 
-  uploadLocalFile(file, callback) {
+  uploadLocalFile(file) {
+  // uploadLocalFile(file, callback) {
     const reader = new FileReader();
-    reader.onload = (event) => {
+    reader.onload = () => {
       const buffer = new Uint8Array(reader.result); // convert to binary
       Meteor.apply('saveFile', [buffer, this.rootDirectory, file.props.objFile.name], {
         wait: true,
@@ -79,6 +103,7 @@ class FileTransferUi extends Component {
               this.removeLocalFile(this, file.props.objFile);
               this.selectedServerFiles.add(file);
               this.renderServerFiles(this.selectedServerFiles);
+              this.fileUploading = false;
               console.log(`file copied${result}`);
               // callback(result);
             } else {
@@ -89,7 +114,6 @@ class FileTransferUi extends Component {
         },
       });
     };
-
     reader.readAsArrayBuffer(file.props.objFile);
   }
 
@@ -142,27 +166,30 @@ class FileTransferUi extends Component {
 
   render() {
     return (
-      <div className="row">
-        <div className="col-md-5">
-          <h3 className="redColored big-glyph text-center">Client side</h3>
+      <Row>
+        <Col md={5}>
+          <h3>Client side</h3>
           <div className="ftpFileContainer" id="ftpClientSide">{this.state.localFiles}</div>
-          <div className="row btn-group centerBlock data-input">
-            <label className="btn btn-lg btn-danger centerBlock">
-              <i className="fa fa-folder-open" aria-hidden="true" /> Browse
-              <input ref={(c) => { this.btnSelectedFiles = c; }} id="uploadFile" className="file" type="file" multiple onChange={this.selectFiles.bind(this)} />
-            </label>
-            <label className="btn btn-lg btn-danger" onClick={() => { this.uploadFiles(); }}>
-              <i className="fa fa-upload" aria-hidden="true" /> Upload {() => { }}
-            </label>
-          </div>
-        </div>
-        <div className="col-md-2" />
-
-        <div className="col-md-5">
-          <h3 className="redColored big-glyph text-center">Server side</h3>
+          <ButtonGroup>
+            <Button bsStyle="primary">
+              <label htmlFor="browseFile">
+                <span className="fa fa-folder-open" aria-hidden="true" /> Browse
+                <input id="browseFile" type="file" style={{ display: 'none' }} multiple onChange={event => this.selectFiles(event)} />
+              </label>
+            </Button>
+            <Button bsStyle="primary" onClick={() => this.uploadFiles()}>
+              <label>
+                <span className="fa fa-upload" aria-hidden="true" /> Upload
+              </label>
+            </Button>
+          </ButtonGroup>
+        </Col>
+        <Col md={2} />
+        <Col md={5}>
+          <h3>Server side</h3>
           <div className="ftpFileContainer" id="ftpServerSide">{this.state.serverFiles}</div>
-        </div>
-      </div>
+        </Col>
+      </Row>
     );
   }
 }
