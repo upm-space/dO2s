@@ -173,35 +173,52 @@ class FileTransferUi extends Component {
   render() {
     return (
       <Row>
-        <Col md={1} />
-        <Col md={4}>
-          <h3 align="center">Client side</h3>
-          <div className="ftpFileContainer" id="ftpClientSide">{this.state.localFiles}</div>
-          <ButtonGroup>
-            <Button bsStyle="primary">
-              <label htmlFor="browseFile">
-                <span className="fa fa-folder-open" aria-hidden="true" /> Browse
-                <input id="browseFile" type="file" style={{ display: 'none' }} multiple onChange={event => this.selectFiles(event)} />
-              </label>
-            </Button>
-            <Button bsStyle="primary" onClick={() => this.uploadFiles()}>
-              <label htmlFor="uploadFile">
-                <span id="uploadFile" className="fa fa-upload" aria-hidden="true" /> Upload
-              </label>
-            </Button>
-          </ButtonGroup>
+        <Col md={6}>
+          <Col md={2} />
+          <Col md={9}>
+            <Row>
+              <h3 align="center">Client side</h3>
+            </Row>
+            <Row>
+              <div className="ftpFileContainer" id="ftpClientSide">{this.state.localFiles}</div>
+            </Row>
+            <Row>
+              <ButtonGroup>
+                <Button bsStyle="primary">
+                  <label htmlFor="browseFile">
+                    <span className="fa fa-folder-open" aria-hidden="true" /> Browse
+                    <input id="browseFile" type="file" style={{ display: 'none' }} multiple onChange={event => this.selectFiles(event)} />
+                  </label>
+                </Button>
+                <Button bsStyle="primary" onClick={() => this.uploadFiles()}>
+                  <label htmlFor="uploadFile">
+                    <span id="uploadFile" className="fa fa-upload" aria-hidden="true" /> Upload
+                  </label>
+                </Button>
+              </ButtonGroup>
+            </Row>
+          </Col>
+          <Col md={1} />
         </Col>
-        <Col md={2} />
-        <Col md={4}>
-          <h3 align="center">Server side</h3>
-          <div className="ftpFileContainer" id="ftpServerSide">{this.state.serverFiles}</div>
-          <Button bsStyle="primary" onClick={() => this.deleteFiles()}>
-            <label htmlFor="deleteFile">
-              <span id="deleteFile" className="fa fa-trash" aria-hidden="true" /> Delete
-            </label>
-          </Button>
+        <Col md={6}>
+          <Col md={1} />
+          <Col md={9}>
+            <Row>
+              <h3 align="center">Server side</h3>
+            </Row>
+            <Row>
+              <div className="ftpFileContainer" id="ftpServerSide">{this.state.serverFiles}</div>
+            </Row>
+            <Row>
+              <Button bsStyle="primary" onClick={() => this.deleteFiles()}>
+                <label htmlFor="deleteFile">
+                  <span id="deleteFile" className="fa fa-trash" aria-hidden="true" /> Delete
+                </label>
+              </Button>
+            </Row>
+          </Col>
+          <Col md={2} />
         </Col>
-        <Col md={1} />
       </Row>
     );
   }
