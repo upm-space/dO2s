@@ -1,17 +1,27 @@
 import { Meteor } from 'meteor/meteor';
-// import { check } from 'meteor/check';
+import { check } from 'meteor/check';
 import rateLimit from '../../../modules/rate-limit';
-import { saveFileFrombuffer } from '../../../modules/server/file-system';
+import { saveFileFrombuffer, deleteFile } from '../../../modules/server/file-system';
 
-const Future = Npm.require('fibers/future');
+const Future = require('fibers/future');
 
 Meteor.methods({
-  saveFile: (buffer, dir, fileName) => {
-    // check(buffer, String);
-    // check(dir, String);
-    // check(fileName, String);
+  'fileTransfer.saveFile': (buffer, dir, fileName) => {
+    check(buffer, Uint8Array);
+    check(dir, String);
+    check(fileName, String);
     const future = new Future();
     saveFileFrombuffer(buffer, dir, fileName, (objJson) => {
+      future.return(objJson);
+    });
+    return future.wait();
+  },
+
+  'fileTransfer.deleteFile': (dir, fileName) => {
+    check(dir, String);
+    check(fileName, String);
+    const future = new Future();
+    deleteFile(dir, fileName, (objJson) => {
       future.return(objJson);
     });
     return future.wait();
@@ -20,7 +30,8 @@ Meteor.methods({
 
 rateLimit({
   methods: [
-    'saveFile',
+    'fileTransfer.saveFile',
+    'fileTransfer.deleteFile',
   ],
   limit: 5,
   timeRange: 1000,

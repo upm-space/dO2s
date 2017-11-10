@@ -1,6 +1,7 @@
 // import React, { Component, PropTypes } from 'react';
 import React, { Component } from 'react';
 import { Meteor } from 'meteor/meteor';
+import { Bert } from 'meteor/themeteorchef:bert';
 import { Button, ButtonGroup, Row, Col } from 'react-bootstrap';
 import FtpItems from '../FtpItems/FtpItems';
 
@@ -14,10 +15,12 @@ class FileTransferUi extends Component {
       localFiles: [],
       serverFiles: [],
     };
+
     this.rootDirectory = 'C:/Oficina/Universidad/TFM/';
     this.selectedLocalFiles = new Set();
     this.selectedServerFiles = new Set();
     this.fileUploading = false;
+    this.fileBeingDeleted = false;
 
     this.selectFiles = this.selectFiles.bind(this);
     this.uploadFiles = this.uploadFiles.bind(this);
@@ -65,39 +68,57 @@ class FileTransferUi extends Component {
         }
       }
     }, 500);
-    // let fileCounter = 0;
-    // const loopUpload = setInterval(() => {
-    //   if (!this.fileUploading) {
-    //     this.fileUploading = true;
-    //     this.uploadLocalFile(this.state.localFiles[fileCounter]);
-    //     fileCounter += 1;
-    //     if (fileCounter === this.state.localFiles.length) { clearInterval(loopUpload); }
-    //   }
-    // }, 500);
+  }
+
+  deleteFiles() {
+    const loopDeleting = setInterval(() => {
+      if (!this.fileBeingDeleted) {
+        if (this.state.serverFiles.length === 0) { clearInterval(loopDeleting); } else {
+          this.fileBeingDeleted = true;
+          this.deleteFile(this.state.serverFiles[0]);
+        }
+      }
+    }, 500);
   }
 
   uploadLocalFile(file) {
-  // uploadLocalFile(file, callback) {
     const reader = new FileReader();
     reader.onload = () => {
       const buffer = new Uint8Array(reader.result); // convert to binary
-      Meteor.apply('saveFile', [buffer, this.rootDirectory, file.props.objFile.name], {
-        wait: true,
-        onResultReceived: (error, result) => {
-          if (result) {
-            if (result.result === 'ok') {
-              this.removeLocalFile(this, file.props.objFile);
-              this.selectedServerFiles.add(file);
-              this.renderServerFiles(this.selectedServerFiles);
-              this.fileUploading = false;
-              // console.log(`file copied${result}`);
-              // callback(result);
-            } else {
-              // console.log(`Ooops. Something strange has happened copying the file: ${result}`);
-              // callback(result);
-            }
+      Meteor.call('fileTransfer.saveFile', buffer, this.rootDirectory, file.props.objFile.name, (error, result) => {
+        if (result) {
+          if (result.result === 'ok') {
+            this.selectedServerFiles.add(file.props.objFile);
+            this.renderServerFiles(this.selectedServerFiles);
+            this.removeLocalFile(this, file.props.objFile);
+            this.fileUploading = false;
+            Bert.alert(`File ${file.props.objFile.name} copied`, 'success');
+          } else {
+            Bert.alert(error.reason, 'danger');
           }
-        },
+        } else {
+          Bert.alert(error.reason, 'danger');
+        }
+      });
+    };
+    reader.readAsArrayBuffer(file.props.objFile);
+  }
+
+  deleteFile(file) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      Meteor.call('fileTransfer.deleteFile', this.rootDirectory, file.props.objFile.name, (error, result) => {
+        if (result) {
+          if (result.result === 'ok') {
+            this.removeServerFile(this, file.props.objFile);
+            this.fileBeingDeleted = false;
+            Bert.alert(`File ${file.props.objFile.name} removed`, 'success');
+          } else {
+            Bert.alert(error.reason, 'danger');
+          }
+        } else {
+          Bert.alert(error.reason, 'danger');
+        }
       });
     };
     reader.readAsArrayBuffer(file.props.objFile);
@@ -132,12 +153,13 @@ class FileTransferUi extends Component {
     files.forEach((file) => {
       const fileObj = (
         <FtpItems
-          objFile={file.props.objFile}
-          key={file.props.objFile.name}
+          objFile={file}
+          key={file.name}
           onchangeCheck={this.onChangeCheck}
           onDelete={this.removeServerFile}
           parent={this}
           drawCheck={false}
+          drawUpload={false}
           drawTrash
         />);
       fileList.push(fileObj);
@@ -151,8 +173,9 @@ class FileTransferUi extends Component {
   render() {
     return (
       <Row>
-        <Col md={5}>
-          <h3>Client side</h3>
+        <Col md={1} />
+        <Col md={4}>
+          <h3 align="center">Client side</h3>
           <div className="ftpFileContainer" id="ftpClientSide">{this.state.localFiles}</div>
           <ButtonGroup>
             <Button bsStyle="primary">
@@ -169,10 +192,16 @@ class FileTransferUi extends Component {
           </ButtonGroup>
         </Col>
         <Col md={2} />
-        <Col md={5}>
-          <h3>Server side</h3>
+        <Col md={4}>
+          <h3 align="center">Server side</h3>
           <div className="ftpFileContainer" id="ftpServerSide">{this.state.serverFiles}</div>
+          <Button bsStyle="primary" onClick={() => this.deleteFiles()}>
+            <label htmlFor="deleteFile">
+              <span id="deleteFile" className="fa fa-trash" aria-hidden="true" /> Delete
+            </label>
+          </Button>
         </Col>
+        <Col md={1} />
       </Row>
     );
   }
