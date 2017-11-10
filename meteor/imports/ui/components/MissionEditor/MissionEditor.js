@@ -128,8 +128,9 @@ class MissionEditor extends Component {
                 className="form-control"
                 name="rpa"
                 ref={rpa => (this.rpa = rpa)}
-                defaultValue={mission && mission.rpa}
+                value={mission && mission.rpa}
               >
+                {console.log(mission && mission.rpa)}
                 {this.renderRPAsSelect(rpas)}
               </select>
               {!rpas.length ?
@@ -146,7 +147,7 @@ class MissionEditor extends Component {
                 className="form-control"
                 name="payload"
                 ref={payload => (this.payload = payload)}
-                defaultValue={mission && mission.payload}
+                value={mission && mission.payload}
               >
                 {this.renderPayloadsSelect(payloads)}
               </select>
@@ -164,7 +165,7 @@ class MissionEditor extends Component {
                 className="form-control"
                 name="missionType"
                 ref={missionType => (this.missionType = missionType)}
-                defaultValue={mission && mission.missionType}
+                value={mission && mission.missionType}
               >
                 <option value="Surface Area">Surface Area</option>
                 <option value="Linear Area">Linear Area</option>
