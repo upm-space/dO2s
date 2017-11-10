@@ -61,8 +61,8 @@ class WayPointList extends Component {
             <option key="5" value="5">Waypoint</option>
           </select>
         </td>
-        <td>{waypoint.geometry.coordinates[0]}</td>
-        <td>{waypoint.geometry.coordinates[1]}</td>
+        {/* <td>{waypoint.geometry.coordinates[0]}</td>
+        <td>{waypoint.geometry.coordinates[1]}</td> */}
         <td>{waypoint.properties.altAbsolute.toFixed(2)}</td>
         <td><input
           type="number"
@@ -93,8 +93,8 @@ class WayPointList extends Component {
             Waypoints ({this.props.waypointList.features.length})
                 </th>
                 <th>Type</th>
-                <th>Longitude</th>
-                <th>Latitude</th>
+                {/* <th>Longitude</th>
+                <th>Latitude</th> */}
                 <th>altAbsolute</th>
                 <th>ALT Relative to TOff</th>
                 <th>Ground Elevation</th>
