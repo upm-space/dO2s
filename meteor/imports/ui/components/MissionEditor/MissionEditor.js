@@ -18,6 +18,14 @@ class MissionEditor extends Component {
 
     this.renderRPAsSelect = this.renderRPAsSelect.bind(this);
     this.renderPayloadsSelect = this.renderPayloadsSelect.bind(this);
+    this.handleRPAChange = this.handleRPAChange.bind(this);
+    this.handlePayloadChange = this.handlePayloadChange.bind(this);
+    this.state = {
+      missionRPA: (this.props.mission && this.props.mission.rpa) ?
+        this.props.mission && this.props.mission.rpa : '',
+      missionPayload: (this.props.mission && this.props.mission.payload) ?
+        this.props.mission && this.props.mission.payload : '',
+    };
   }
   componentDidMount() {
     const component = this;
@@ -66,8 +74,8 @@ class MissionEditor extends Component {
       name: this.name.value.trim(),
       description: this.description.value.trim(),
       project: this.props.match.params.project_id,
-      rpa: this.rpa.value.trim(),
-      payload: this.payload.value.trim(),
+      rpa: this.state.missionRPA,
+      payload: this.state.missionPayload,
       missionType: this.missionType.value.trim(),
     };
 
@@ -82,6 +90,14 @@ class MissionEditor extends Component {
         history.push(`/projects/${this.props.match.params.project_id}/${missionId}`);
       }
     });
+  }
+
+  handleRPAChange(newPRA) {
+    this.setState({ missionRPA: newPRA });
+  }
+
+  handlePayloadChange(newPayload) {
+    this.setState({ missionPayload: newPayload });
   }
   renderRPAsSelect(rpas) {
     return rpas.map(({ _id, name, rpaType }) => (
@@ -128,9 +144,9 @@ class MissionEditor extends Component {
                 className="form-control"
                 name="rpa"
                 ref={rpa => (this.rpa = rpa)}
-                value={mission && mission.rpa}
+                value={this.state.missionRPA}
+                onChange={event => this.handleRPAChange(event.target.value)}
               >
-                {console.log(mission && mission.rpa)}
                 {this.renderRPAsSelect(rpas)}
               </select>
               {!rpas.length ?
@@ -147,7 +163,8 @@ class MissionEditor extends Component {
                 className="form-control"
                 name="payload"
                 ref={payload => (this.payload = payload)}
-                value={mission && mission.payload}
+                value={this.state.missionPayload}
+                onChange={event => this.handlePayloadChange(event.target.value)}
               >
                 {this.renderPayloadsSelect(payloads)}
               </select>
@@ -165,7 +182,7 @@ class MissionEditor extends Component {
                 className="form-control"
                 name="missionType"
                 ref={missionType => (this.missionType = missionType)}
-                value={mission && mission.missionType}
+                defaultValue={mission && mission.missionType}
               >
                 <option value="Surface Area">Surface Area</option>
                 <option value="Linear Area">Linear Area</option>
