@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Row, Col, Panel, ListGroup, ListGroupItem } from 'react-bootstrap';
+import FileTransferUi from '../FileTransferUi/FileTransferUi';
 
 import WebSocketTelemetry from '../../../modules/flight-telemetry';
 
@@ -130,8 +131,7 @@ class MissionFileManagement extends Component {
             </Panel>
           </Col>
         </Row>
-
-        {/* <FileTransferUi /> */}
+        <FileTransferUi missionId={this.props.mission._id} />
       </div>
     );
   }
