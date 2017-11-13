@@ -1,9 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Meteor } from 'meteor/meteor';
+import { withTracker } from 'meteor/react-meteor-data';
 import { Bert } from 'meteor/themeteorchef:bert';
+
 import { Button, Row, Col, FormGroup, ControlLabel, HelpBlock } from 'react-bootstrap';
 import PreFlightMap from '../PreFlightMap/PreFlightMap';
+
+import RPAs from '../../../api/RPAs/RPAs';
 import getElevation from '../../../modules/mission-planning/get-elevation';
 import validate from '../../../modules/validate';
 
@@ -29,24 +33,6 @@ class PreFlightTOL extends Component {
 
   componentDidMount() {
     this.props.getPath(this.props.match.path.split('/').pop());
-    const component = this;
-    validate(component.form, {
-      rules: {
-        segmentSize: {
-          required: true,
-          max: 500,
-        },
-      },
-      messages: {
-        overlap: {
-          required: 'The overlap for the pictures',
-        },
-        sidelap: {
-          required: 'The overlap for the pictures',
-        },
-      },
-      submitHandler() { component.handleSubmit(); },
-    });
   }
 
   setTakeOffPoint(takeOffPoint = 0) {
@@ -249,12 +235,23 @@ class PreFlightTOL extends Component {
     );
   }
 }
+
 PreFlightTOL.propTypes = {
+  loading: PropTypes.bool.isRequired,
   mission: PropTypes.object.isRequired,
   project: PropTypes.object.isRequired,
+  rpa: PropTypes.object,
+  getPath: PropTypes.func.isRequired,
   match: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
-  getPath: PropTypes.func.isRequired,
 };
 
-export default PreFlightTOL;
+export default withTracker(({ mission }) => {
+  const rpaId = mission.rpa;
+  const subscription = Meteor.subscribe('rpas.view', rpaId);
+
+  return {
+    loading: !subscription.ready(),
+    rpa: RPAs.findOne(rpaId),
+  };
+})(PreFlightTOL);
