@@ -214,6 +214,11 @@ const calculateLandingPath = (
     const nextLandingPathWP = currentLatLon.destinationPoint(currentBearing, segmentSize / 1000);
     currentHeight += heightPerSegment;
     currentBearing += isClockWise ? 90 : -90;
+    if (currentBearing > 360) {
+      currentBearing -= 360;
+    } else if (currentBearing < 0) {
+      currentBearing += 360;
+    }
     const nextWPFeature = {
       type: 'Feature',
       geometry: {
