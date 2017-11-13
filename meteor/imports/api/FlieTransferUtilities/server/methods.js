@@ -1,30 +1,41 @@
 import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
+import path from 'path';
 import rateLimit from '../../../modules/rate-limit';
 import { saveFileFrombuffer, deleteFile } from '../../../modules/server/file-system';
 
 const Future = require('fibers/future');
 
 Meteor.methods({
-  'fileTransfer.saveFile': (buffer, dir, fileName) => {
+  'fileTransfer.saveFile': (buffer, missionId, fileName) => {
     check(buffer, Uint8Array);
-    check(dir, String);
+    check(missionId, String);
     check(fileName, String);
-    const future = new Future();
-    saveFileFrombuffer(buffer, dir, fileName, (objJson) => {
-      future.return(objJson);
-    });
-    return future.wait();
+    try {
+      const missionDir = path.join(Meteor.settings.private.config.missionsPath, missionId);
+      console.log(missionDir);
+      const future = new Future();
+      saveFileFrombuffer(buffer, missionDir, fileName, (objJson) => {
+        future.return(objJson);
+      });
+      return future.wait();
+    } catch (exception) {
+      throw new Meteor.Error('500', exception);
+    }
   },
 
   'fileTransfer.deleteFile': (dir, fileName) => {
     check(dir, String);
     check(fileName, String);
-    const future = new Future();
-    deleteFile(dir, fileName, (objJson) => {
-      future.return(objJson);
-    });
-    return future.wait();
+    try {
+      const future = new Future();
+      deleteFile(dir, fileName, (objJson) => {
+        future.return(objJson);
+      });
+      return future.wait();
+    } catch (exception) {
+      throw new Meteor.Error('500', exception);
+    }
   },
 });
 
