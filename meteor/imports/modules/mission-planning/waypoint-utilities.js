@@ -210,7 +210,8 @@ const calculateLandingPath = (
         landingPathFeaturePoints[0].geometry.coordinates[0],
       );
     }
-    const nextLandingPathWP = currentLatLon.destinationPoint(currentBearing, segmentSize);
+
+    const nextLandingPathWP = currentLatLon.destinationPoint(currentBearing, segmentSize / 1000);
     currentHeight += heightPerSegment;
     currentBearing += isClockWise ? 90 : -90;
     const nextWPFeature = {
