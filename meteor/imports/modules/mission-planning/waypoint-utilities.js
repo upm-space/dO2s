@@ -227,8 +227,8 @@ const calculateLandingPath = (
       },
       properties: {
         type: 5,
-        altRelative: currentHeight,
-        altAbsolute: currentHeight,
+        altRelative: (currentHeight < flightHeight) ? currentHeight : flightHeight,
+        altAbsolute: (currentHeight < flightHeight) ? currentHeight : flightHeight,
         altGround: 0,
         isLandingPath: true,
       },
