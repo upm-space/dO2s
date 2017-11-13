@@ -9,7 +9,7 @@ import PreFlightMap from '../PreFlightMap/PreFlightMap';
 
 import RPAs from '../../../api/RPAs/RPAs';
 import getElevation from '../../../modules/mission-planning/get-elevation';
-import validate from '../../../modules/validate';
+import { addLandingPath, deleteLandingPath } from '../../../modules/mission-planning/waypoint-utilities';
 
 class PreFlightTOL extends Component {
   constructor(props) {
@@ -20,6 +20,7 @@ class PreFlightTOL extends Component {
     this.editWayPointList = this.editWayPointList.bind(this);
     this.calculateElevation = this.calculateElevation.bind(this);
     this.checkLimit = this.checkLimit.bind(this);
+    this.setLandingPath = this.setLandingPath.bind(this);
 
     this.state = {
       isClockWise: false,
@@ -63,29 +64,44 @@ class PreFlightTOL extends Component {
     }
   }
 
-  checkLimit(newSegmentSize) {
-    this.setState({ segmentSizeOverLimit: newSegmentSize > 500 });
+  setLandingPath() {
+    const doWaypointsExist = this.props.mission.flightPlan &&
+     this.props.mission.flightPlan.missionCalculation &&
+     this.props.mission.flightPlan.missionCalculation.waypointList;
+    const isHeightDefined = this.props.mission.flightPlan &&
+     this.props.mission.flightPlan.flightParameters &&
+     this.props.mission.flightPlan.flightParameters.height;
+    const landingSlope = this.props.rpa.flightParameters.optimalLandingSlope;
+    if (!doWaypointsExist) {
+      Bert.alert('You need to draw the mission', 'danger');
+      return;
+    } else if (!isHeightDefined) {
+      Bert.alert('You need to define the Flight Height', 'danger');
+      return;
+    } else if (!landingSlope && landingSlope === 0) {
+      Bert.alert('The landing sole is zero', 'warning');
+      return;
+    }
+    const newWaypointList = addLandingPath(
+      doWaypointsExist,
+      this.state.landingBearing,
+      this.segmentSize.value,
+      landingSlope,
+      isHeightDefined,
+      this.state.isClockWise,
+    );
+    this.editWayPointList(newWaypointList);
   }
 
-  changeDirection(newValue) {
-    this.setState({ isClockWise: newValue });
-  }
-
-  toggleButtonSwitch(thisButton = '') {
-    this.setState((prevState) => {
-      const myButtons = Object.keys(prevState.buttonStates);
-      const newButtonStates = prevState.buttonStates;
-      for (let i = 0; i < myButtons.length; i += 1) {
-        if (thisButton !== myButtons[i]) {
-          if (prevState.buttonStates[myButtons[i]]) {
-            newButtonStates[myButtons[i]] = false;
-          }
-        }
+  editWayPointList(newWayPointList = {}) {
+    Meteor.call('missions.editWayPointList', this.props.mission._id, newWayPointList, (error) => {
+      if (error) {
+        Bert.alert(error.reason, 'danger');
+      } else if (newWayPointList) {
+        Bert.alert('Mission Waypoints Updated', 'success');
+      } else {
+        Bert.alert('You should not get here ever', 'danger');
       }
-      if (thisButton) {
-        newButtonStates[thisButton] = !prevState.buttonStates[thisButton];
-      }
-      return { buttonStates: newButtonStates };
     });
   }
 
@@ -107,16 +123,30 @@ class PreFlightTOL extends Component {
     getElevation(this.props.mission._id, isHeightDefined, doWaypointsExist);
   }
 
-  editWayPointList(newWayPointList = {}) {
-    Meteor.call('missions.editWayPointList', this.props.mission._id, newWayPointList, (error) => {
-      if (error) {
-        Bert.alert(error.reason, 'danger');
-      } else if (newWayPointList) {
-        Bert.alert('Mission Waypoints Updated', 'success');
-      } else {
-        Bert.alert('You should not get here ever', 'danger');
+  toggleButtonSwitch(thisButton = '') {
+    this.setState((prevState) => {
+      const myButtons = Object.keys(prevState.buttonStates);
+      const newButtonStates = prevState.buttonStates;
+      for (let i = 0; i < myButtons.length; i += 1) {
+        if (thisButton !== myButtons[i]) {
+          if (prevState.buttonStates[myButtons[i]]) {
+            newButtonStates[myButtons[i]] = false;
+          }
+        }
       }
+      if (thisButton) {
+        newButtonStates[thisButton] = !prevState.buttonStates[thisButton];
+      }
+      return { buttonStates: newButtonStates };
     });
+  }
+
+  checkLimit(newSegmentSize) {
+    this.setState({ segmentSizeOverLimit: newSegmentSize > 500 });
+  }
+
+  changeDirection(newValue) {
+    this.setState({ isClockWise: newValue });
   }
 
   render() {
@@ -151,7 +181,7 @@ class PreFlightTOL extends Component {
                 </Button>
               </Col>
             </Row>
-            <br />
+            <hr />
             <Row>
               <Col xs={12} sm={12} md={12} lg={12}>
                 <FormGroup
@@ -195,10 +225,15 @@ class PreFlightTOL extends Component {
             <br />
             <Row>
               <Col xs={12} sm={12} md={12} lg={12}>
-                <Button block bsStyle="primary">Set Landing Path</Button>
+                <Button
+                  onClick={() => this.setLandingPath()}
+                  block
+                  bsStyle="primary"
+                >Set Landing Path
+                </Button>
               </Col>
             </Row>
-            <br />
+            <hr />
             <Row>
               <Col xs={12} sm={12} md={12} lg={12}>
                 <Button block bsStyle="info">Send Waypoints</Button>
