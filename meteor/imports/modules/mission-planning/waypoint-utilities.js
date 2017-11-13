@@ -223,7 +223,7 @@ const calculateLandingPath = (
       type: 'Feature',
       geometry: {
         type: 'Point',
-        coordinates: nextLandingPathWP.latLonToPositionArray,
+        coordinates: nextLandingPathWP.latLonToPositionArray(),
       },
       properties: {
         type: 5,
