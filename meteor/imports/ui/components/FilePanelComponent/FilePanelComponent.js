@@ -78,7 +78,7 @@ FilePanelComponent.defaultProps = {
   hideCompleted: false,
   checkItem: (() => console.log('i dont have a function to complete anything')),
   uploadItem: (() => console.log('I am here for your safety')),
-  uploadButton: false,
+  uploadButton: true,
   panelMaxHeight: '25vh',
   panelHeight: 'auto',
   loading: false,
