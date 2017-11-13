@@ -44,8 +44,7 @@ class Zoom extends Component {
       .call(axis)
       .selectAll('text')
       .style('text-anchor', 'start')
-      .attr('transform', 'rotate(-30) translate(-10, -5)')
-    ;
+      .attr('transform', 'rotate(-30) translate(-10, -5)');
   }
 
   zoom(startTime, endTime, chartWidth) {
@@ -55,36 +54,26 @@ class Zoom extends Component {
     chart = d3.select('#chartContainer').append('svg')
       .attr('class', 'ZoomChart')
       .attr('width', chartWidth)
-      .attr('height', '100%')
-    ;
-
+      .attr('height', '100%');
     chart.append('text')
       .attr('class', 'chart-label')
       .attr('x', width - 10)
       .attr('text-anchor', 'end')
       .attr('transform', 'translate(0, 55)')
-      .text('Video')
-    ;
-
+      .text('Video');
     chart.append('text')
       .attr('class', 'chart-label')
       .attr('x', width - 10)
       .attr('text-anchor', 'end')
       .attr('transform', 'translate(0, 75)')
-      .text('Log')
-    ;
-
+      .text('Log');
     x = d3.scaleLinear()
       .domain([startTime, endTime])
       .range([0, axisWidth])
-      .clamp(true)
-    ;
-
+      .clamp(true);
     axis = d3.axisTop(x)
       .ticks(10)
-      .tickFormat(d => usToHHMMSS(d))
-    ;
-
+      .tickFormat(d => usToHHMMSS(d));
     const drag = d3.drag()
       .on('start.interrupt', () => { chartAxis.interrupt(); })
       .on('start drag', () => {
@@ -95,73 +84,54 @@ class Zoom extends Component {
           handleRed.attr('x', x(x.invert(d3.event.x) + this.props.timeGap) - 1.5);
           this.props.changeLogTime(i + this.props.timeGap);
         }
-      })
-    ;
-
+      });
     chartAxis = chart.append('g')
       .attr('class', 'plot-container')
       .attr('width', x.range()[1])
       .attr('height', 85)
-      .attr('transform', `translate(${width}, 0)`)
-    ;
-
+      .attr('transform', `translate(${width}, 0)`);
     chartAxis.append('g')
       .attr('class', 'axis')
       .attr('transform', 'translate(0, 40)')
       .call(axis)
       .selectAll('text')
       .style('text-anchor', 'start')
-      .attr('transform', 'rotate(-30) translate(-10, -5)')
-    ;
-
+      .attr('transform', 'rotate(-30) translate(-10, -5)');
     chartAxis.append('line')
       .attr('class', 'line-separator')
       .attr('transform', 'translate(0, 60)')
       .attr('x1', x.range()[0])
-      .attr('x2', x.range()[1])
-    ;
-
+      .attr('x2', x.range()[1]);
     chartAxis.append('line')
       .attr('class', 'line-separator')
       .attr('transform', 'translate(0, 80)')
       .attr('x1', x.range()[0])
-      .attr('x2', x.range()[1])
-    ;
-
+      .attr('x2', x.range()[1]);
     handleRed = chartAxis.insert('rect')
       .attr('class', 'ZoomRedSelector')
       .attr('transform', 'translate(0, 40)')
       .attr('x', x(this.props.logTime) - 1.5)
       .attr('width', 3)
-      .attr('height', 40)
-    ;
-
+      .attr('height', 40);
     chartAxis.append('circle')
       .attr('class', 'circle-red')
       .attr('cx', x(this.props.logTime))
       .attr('cy', 30)
       .attr('r', 3)
-      .attr('transform', 'translate(0, 40)')
-    ;
-
+      .attr('transform', 'translate(0, 40)');
     handleGreen = chartAxis.insert('rect')
       .attr('class', 'ZoomGreenSelector')
       .attr('transform', 'translate(0, 40)')
       .attr('x', x(this.props.logTime) - 1.5)
       .attr('width', 3)
       .attr('height', 40)
-      .call(drag)
-    ;
-
+      .call(drag);
     chartAxis.append('circle')
       .attr('class', 'circle-green')
       .attr('cx', x(this.props.logTime))
       .attr('cy', 10)
       .attr('r', 3)
-      .attr('transform', 'translate(0, 40)')
-    ;
-
-
+      .attr('transform', 'translate(0, 40)');
     setInterval(() => {
       i += f * 1000 * this.props.speed;
       n += f * 1000 * this.props.speed;
