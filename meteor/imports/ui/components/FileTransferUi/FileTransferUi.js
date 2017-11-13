@@ -1,11 +1,12 @@
-// import React, { Component, PropTypes } from 'react';
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Meteor } from 'meteor/meteor';
 import { Bert } from 'meteor/themeteorchef:bert';
 import { Button, ButtonGroup, Row, Col } from 'react-bootstrap';
-import FtpItems from '../FtpItems/FtpItems';
+// import FtpItems from '../FtpItems/FtpItems';
+import FilePanelComponent from '../FilePanelComponent/FilePanelComponent';
 
-import './FileTransferUi.scss';
+// import './FileTransferUi.scss';
 
 class FileTransferUi extends Component {
   constructor(props) {
@@ -85,14 +86,14 @@ class FileTransferUi extends Component {
     const reader = new FileReader();
     reader.onload = () => {
       const buffer = new Uint8Array(reader.result); // convert to binary
-      Meteor.call('fileTransfer.saveFile', buffer, this.rootDirectory, file.props.objFile.name, (error, result) => {
+      Meteor.call('fileTransfer.saveFile', buffer, this.props.missionId, file.id, (error, result) => {
         if (result) {
           if (result.result === 'ok') {
-            this.selectedServerFiles.add(file.props.objFile);
+            this.selectedServerFiles.add(file.objFile);
             this.renderServerFiles(this.selectedServerFiles);
-            this.removeLocalFile(this, file.props.objFile);
+            this.removeLocalFile(this, file.objFile);
             this.fileUploading = false;
-            Bert.alert(`File ${file.props.objFile.name} copied`, 'success');
+            Bert.alert(`File ${file.name} copied`, 'success');
           } else {
             Bert.alert(error.reason, 'danger');
           }
@@ -101,18 +102,18 @@ class FileTransferUi extends Component {
         }
       });
     };
-    reader.readAsArrayBuffer(file.props.objFile);
+    reader.readAsArrayBuffer(file.objFile);
   }
 
   deleteFile(file) {
     const reader = new FileReader();
     reader.onload = () => {
-      Meteor.call('fileTransfer.deleteFile', this.rootDirectory, file.props.objFile.name, (error, result) => {
+      Meteor.call('fileTransfer.deleteFile', this.props.missionId, file.name, (error, result) => {
         if (result) {
           if (result.result === 'ok') {
-            this.removeServerFile(this, file.props.objFile);
+            this.removeServerFile(this, file.objFile);
             this.fileBeingDeleted = false;
-            Bert.alert(`File ${file.props.objFile.name} removed`, 'success');
+            Bert.alert(`File ${file.name} removed`, 'success');
           } else {
             Bert.alert(error.reason, 'danger');
           }
@@ -121,24 +122,24 @@ class FileTransferUi extends Component {
         }
       });
     };
-    reader.readAsArrayBuffer(file.props.objFile);
+    reader.readAsArrayBuffer(file.objFile);
   }
 
   renderLocalFiles(files) {
     const fileList = [];
     files.forEach((file) => {
-      const fileObj = (
-        <FtpItems
-          objFile={file}
-          key={file.name}
-          onchangeCheck={this.onChangeCheck}
-          onDelete={this.removeLocalFile}
-          onUpload={this.uploadLocalFile}
-          parent={this}
-          drawCheck={false}
-          drawTrash
-          drawUpload
-        />);
+      const fileObj = {
+        objFile: file,
+        id: file.name,
+        name: file.name,
+        // onchangeCheck: this.onChangeCheck,
+        // onDelete: this.removeLocalFile,
+        // onUpload: this.uploadLocalFile,
+        // parent: this,
+        // drawCheck: false,
+        // drawTrash: true,
+        // drawUpload: true,
+      };
 
       fileList.push(fileObj);
     });
@@ -151,17 +152,17 @@ class FileTransferUi extends Component {
   renderServerFiles(files) {
     const fileList = [];
     files.forEach((file) => {
-      const fileObj = (
-        <FtpItems
-          objFile={file}
-          key={file.name}
-          onchangeCheck={this.onChangeCheck}
-          onDelete={this.removeServerFile}
-          parent={this}
-          drawCheck={false}
-          drawUpload={false}
-          drawTrash
-        />);
+      const fileObj = {
+        objFile: file,
+        id: file.name,
+        name: file.name,
+        // onchangeCheck: this.onChangeCheck,
+        // onDelete: this.removeServerFile,
+        // parent: this,
+        // drawCheck: false,
+        // drawUpload: false,
+        // drawTrash
+      };
       fileList.push(fileObj);
     });
 
@@ -171,18 +172,32 @@ class FileTransferUi extends Component {
   }
 
   render() {
+    // const testItems = [
+    //   {
+    //     id: 'qwertyuiop',
+    //     name: 'item1',
+    //   },
+    //   {
+    //     id: 'asdfghjklñ',
+    //     name: 'item2',
+    //   },
+    // ];
+
     return (
       <Row>
-        <Col md={6}>
-          <Col md={2} />
-          <Col md={9}>
-            <Row>
-              <h3 align="center">Client side</h3>
-            </Row>
-            <Row>
-              <div className="ftpFileContainer" id="ftpClientSide">{this.state.localFiles}</div>
-            </Row>
-            <Row>
+        <Col xs={12} sm={6} md={6} lg={6}>
+          <Row>
+            <Col xs={12} sm={12} md={12} lg={12}>
+              <FilePanelComponent
+                panelStyle="primary"
+                title="Client side"
+                items={this.state.localFiles}
+                deleteItem={this.deleteFile}
+              />
+            </Col>
+          </Row>
+          <Row>
+            <Col xs={12} sm={12} md={12} lg={12}>
               <ButtonGroup>
                 <Button bsStyle="primary">
                   <label htmlFor="browseFile">
@@ -196,28 +211,32 @@ class FileTransferUi extends Component {
                   </label>
                 </Button>
               </ButtonGroup>
-            </Row>
-          </Col>
-          <Col md={1} />
+            </Col>
+          </Row>
+          <br />
         </Col>
-        <Col md={6}>
-          <Col md={1} />
-          <Col md={9}>
-            <Row>
-              <h3 align="center">Server side</h3>
-            </Row>
-            <Row>
-              <div className="ftpFileContainer" id="ftpServerSide">{this.state.serverFiles}</div>
-            </Row>
-            <Row>
+        <Col xs={12} sm={6} md={6} lg={6}>
+          <Row>
+            <Col xs={12} sm={12} md={12} lg={12}>
+              <FilePanelComponent
+                panelStyle="primary"
+                panelMaxHeight="30"
+                panelHeight="25"
+                title="Server side"
+                items={this.state.serverFiles}
+                deleteItem={this.deleteFile}
+                uploadButton
+                downloadButton
+              />
+            </Col>
+          </Row>
+          <Row>
+            <Col xs={12} sm={12} md={12} lg={12}>
               <Button bsStyle="primary" onClick={() => this.deleteFiles()}>
-                <label htmlFor="deleteFile">
-                  <span id="deleteFile" className="fa fa-trash" aria-hidden="true" /> Delete
-                </label>
+                <span id="deleteFile" className="fa fa-trash" aria-hidden="true" /> Delete
               </Button>
-            </Row>
-          </Col>
-          <Col md={2} />
+            </Col>
+          </Row>
         </Col>
       </Row>
     );
@@ -225,6 +244,7 @@ class FileTransferUi extends Component {
 }
 
 FileTransferUi.propTypes = {
+  missionId: PropTypes.string.isRequired,
 };
 
 export default FileTransferUi;
