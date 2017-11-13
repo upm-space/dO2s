@@ -1,9 +1,9 @@
 /* eslint-disable meteor/audit-argument-checks */
 import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
-import Missions from './Missions';
 import fs from 'fs';
 import path from 'path';
+import Missions from './Missions';
 import rateLimit from '../../modules/rate-limit';
 import { deleteFolderRecursiveSync } from '../../modules/server/file-system';
 
