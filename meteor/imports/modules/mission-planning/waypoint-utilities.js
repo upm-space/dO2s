@@ -117,6 +117,13 @@ export const arrayContainsCoords = (item, array) => {
   return result;
 };
 
+/**
+ * Removes the number waypoint/s starting at the specified index
+ * @param {Feature Collection} waypointList GeoJSON Feature Collection with the waypoints
+ * @param {Integer} waypointIndex the index of the waypoint to remove
+ * @param {Integer} numberOfWaypointsToDelete the number of waypoints to delete starting at index
+ * @returns {Feature Collection} a new GeoJSON Feature Collection with the waypoints removed
+ */
 export const editWayPointType = (waypointList, waypointIndex, newWayPointType) => {
   let newWaypointList = JSON.parse(JSON.stringify(waypointList));
   newWaypointList.features[waypointIndex].properties.type = newWayPointType;
@@ -124,6 +131,14 @@ export const editWayPointType = (waypointList, waypointIndex, newWayPointType) =
   return newWaypointList;
 };
 
+/**
+ * Inserts the waypoint/s starting at the specified index
+ * @param {Feature Collection} waypointList GeoJSON Feature Collection with the waypoints
+ * @param {Integer} insertIndex the index to inser the waypoint
+ * @param {Feature} newWaypoints the new feature waypoint to insert
+ * @param {Array} newWaypoints an array of features of waypoints to insert
+ * @returns {Feature Collection} a new GeoJSON Feature Collection with the waypoints inserted
+ */
 export const insertNewWaypointsAtIndex = (waypointList, insertIndex, newWaypoints) => {
   const newWaypointList = JSON.parse(JSON.stringify(waypointList));
   if (newWaypoints instanceof Array) {
@@ -134,19 +149,50 @@ export const insertNewWaypointsAtIndex = (waypointList, insertIndex, newWaypoint
   return newWaypointList;
 };
 
+/**
+ * Removes the number waypoint/s starting at the specified index
+ * @param {Feature Collection} waypointList GeoJSON Feature Collection with the waypoints
+ * @param {Integer} waypointIndex the index of the waypoint to remove
+ * @param {Integer} numberOfWaypointsToDelete the number of waypoints to delete starting at index
+ * @returns {Feature Collection} a new GeoJSON Feature Collection with the waypoints removed
+ */
 export const removeWaypoint = (waypointList, waypointIndex, numberOfWaypointsToDelete = 1) => {
   const newWaypointList = JSON.parse(JSON.stringify(waypointList));
   newWaypointList.features.splice(waypointIndex, numberOfWaypointsToDelete);
   return newWaypointList;
 };
 
+/**
+ * Changes the Feature of the waypoint moved in the list
+ * @param {Feature Collection} waypointList GeoJSON Feature Collection with the waypoints
+ * @param {Integer} waypointIndex the index of the waypoint moved
+ * @param {Feature} movedWaypoint The Feature with the moved waypoint
+ * @returns {Feature Collection} a new GeoJSON Feature Collection with the waypoints changed
+ */
 export const moveWaypoint = (waypointList, waypointIndex, movedWaypoint) => {
   const newWaypointList = JSON.parse(JSON.stringify(waypointList));
   newWaypointList.features.splice(waypointIndex, 1, movedWaypoint);
   return newWaypointList;
 };
 
-export const calculateLandingPath = (landingPointFeature, landingBearing, segmentSize, landingSlope, flightHeight, isClockWise = false) => {
+/**
+ * Creates the array of feature points for the landing path
+ * @param {Feature} landingPoint a GeoJSON Feature
+ * @param {Number} landingBearing the bearing in degrees measured from magnetic north
+ * @param {number} segmentSize the size of the segment for the landint path in metres
+ * @param {number} landingSlope the slope for the landing path in percentage
+ * @param {number} flightHeight the height specified for the flight
+ * @param {boolean} isClockWise flag to indicate the rotation of the path
+ * @returns {Array} An new array of Feture Points with the landing path
+ */
+const calculateLandingPath = (
+  landingPointFeature,
+  landingBearing,
+  segmentSize,
+  landingSlope,
+  flightHeight,
+  isClockWise = false,
+) => {
   const landingPathFeaturePoints = [];
   const heightPerSegment = (segmentSize * landingSlope) / 100;
   let currentHeight = 0;
@@ -154,9 +200,15 @@ export const calculateLandingPath = (landingPointFeature, landingBearing, segmen
   while (currentHeight < flightHeight) {
     let currentLatLon = '';
     if (currentHeight === 0) {
-      currentLatLon = new LatLon(landingPointFeature.geometry.coordinates[1], landingPointFeature.geometry.coordinates[0]);
+      currentLatLon = new LatLon(
+        landingPointFeature.geometry.coordinates[1],
+        landingPointFeature.geometry.coordinates[0],
+      );
     } else {
-      currentLatLon = new LatLon(landingPathFeaturePoints[0].geometry.coordinates[1], landingPathFeaturePoints[0].geometry.coordinates[0]);
+      currentLatLon = new LatLon(
+        landingPathFeaturePoints[0].geometry.coordinates[1],
+        landingPathFeaturePoints[0].geometry.coordinates[0],
+      );
     }
     const nextLandingPathWP = currentLatLon.destinationPoint(currentBearing, segmentSize);
     currentHeight += heightPerSegment;
@@ -180,9 +232,48 @@ export const calculateLandingPath = (landingPointFeature, landingBearing, segmen
   return landingPathFeaturePoints;
 };
 
+/**
+ * Takes in the waypoint list and return this waypoint list with the landing path added
+ * @param {Feature Collection} waypointList the waypoint List
+ * @param {Feature} landingPoint a GeoJSON Feature
+ * @param {Number} landingBearing the bearing in degrees measured from magnetic north
+ * @param {number} segmentSize the size of the segment for the landint path in metres
+ * @param {number} landingSlope the slope for the landing path in percentage
+ * @param {number} flightHeight the height specified for the flight
+ * @param {boolean} isClockWise flag to indicate the rotation of the path
+ * @returns {Feature Collection} The waypoint list with the landing path inserted
+ */
+export const addLandingPath = (
+  waypointList,
+  landingBearing,
+  segmentSize,
+  landingSlope,
+  flightHeight,
+  isClockWise = false,
+) => {
+  const landingPathArray = calculateLandingPath(
+    waypointList.features[waypointList.features.length - 1],
+    landingBearing,
+    segmentSize,
+    landingSlope,
+    flightHeight,
+    isClockWise,
+  );
+  let newWaypointList = insertNewWaypointsAtIndex(waypointList, -1, landingPathArray);
+  newWaypointList = setWaypointNumbers(newWaypointList);
+  return newWaypointList;
+};
 
-export const addLandingPath = (waypointList, landingBearing, segmentSize, landingSlope, flightHeight, isClockWise = false) => {
+
+/**
+ * Removes the landing path from the waypoint list
+ * @param {Feature Collection} waypointList the waypoint List
+ * @returns {Feature Collection} The waypoint list without the landing path
+ */
+export const deleteLandingPath = (waypointList) => {
   const newWaypointList = JSON.parse(JSON.stringify(waypointList));
-  const landingPathArray = calculateLandingPath(waypointList.features[waypointList.features.length - 1], landingBearing, segmentSize, landingSlope, flightHeight, isClockWise);
-  const newWaypointFeatures = insertNewWaypointsAtIndex(waypointList.feaures, -1, landingPathArray);
+  const featuresArray = newWaypointList.features;
+  const filteredWaypointArray = featuresArray.filter(feature => !feature.isLandingPath);
+  newWaypointList.features = filteredWaypointArray;
+  return newWaypointList;
 };
