@@ -4,8 +4,10 @@
   "scripts": {
     "db": "mongod --dbpath ~/myGitprojects/data/db",
     "start": "meteor --settings settings-development.json",
-    "demo": "env MONGO_URL=mongodb://localhost:27017/do2sdb meteor --settings settings-demo.json",
-    "debug": "env MONGO_URL=mongodb://localhost:27017/do2sdb meteor debug --settings settings-demo.json",
+    "demo": "meteor --settings settings-demo.json",
+    "debug": "meteor --settings settings-demo.json",
+    "demodb": "env MONGO_URL=mongodb://localhost:27017/do2sdb meteor --settings settings-demo.json",
+    "debugdb": "env MONGO_URL=mongodb://localhost:27017/do2sdb meteor debug --settings settings-demo.json",
     "test": "jest"
   },
   "dependencies": {
