@@ -21,6 +21,7 @@ class PreFlightTOL extends Component {
     this.calculateElevation = this.calculateElevation.bind(this);
     this.checkLimit = this.checkLimit.bind(this);
     this.setLandingPath = this.setLandingPath.bind(this);
+    this.removeLandingPath = this.removeLandingPath.bind(this);
 
     this.state = {
       isClockWise: false,
@@ -90,6 +91,36 @@ class PreFlightTOL extends Component {
       isHeightDefined,
       this.state.isClockWise,
     );
+    if (newWaypointList === 0) {
+      Bert.alert('Landing Path already defined', 'warning');
+      return;
+    }
+    this.editWayPointList(newWaypointList);
+  }
+
+  removeLandingPath() {
+    const doWaypointsExist = this.props.mission.flightPlan &&
+     this.props.mission.flightPlan.missionCalculation &&
+     this.props.mission.flightPlan.missionCalculation.waypointList;
+    const isHeightDefined = this.props.mission.flightPlan &&
+     this.props.mission.flightPlan.flightParameters &&
+     this.props.mission.flightPlan.flightParameters.height;
+    const landingSlope = this.props.rpa.flightParameters.optimalLandingSlope;
+    if (!doWaypointsExist) {
+      Bert.alert('You need to draw the mission', 'danger');
+      return;
+    } else if (!isHeightDefined) {
+      Bert.alert('You need to define the Flight Height', 'danger');
+      return;
+    } else if (!landingSlope && landingSlope === 0) {
+      Bert.alert('The landing sole is zero', 'warning');
+      return;
+    }
+    const newWaypointList = deleteLandingPath(doWaypointsExist);
+    if (newWaypointList === 0) {
+      Bert.alert('No landing path defined', 'warning');
+      return;
+    }
     this.editWayPointList(newWaypointList);
   }
 
@@ -159,7 +190,7 @@ class PreFlightTOL extends Component {
         <Row>
           <Col xs={12} sm={3} md={3} lg={3}>
             <Row>
-              <Col xs={12} sm={12} md={12} lg={12}>
+              <Col xs={12} sm={12} md={12} lg={12} style={{ padding: '0px 2px' }}>
                 <Button
                   onClick={() => this.setTakeOffPoint()}
                   block
@@ -171,7 +202,7 @@ class PreFlightTOL extends Component {
             </Row>
             <br />
             <Row>
-              <Col xs={12} sm={12} md={12} lg={12}>
+              <Col xs={12} sm={12} md={12} lg={12} style={{ padding: '0px 2px' }}>
                 <Button
                   onClick={() => this.setLandingPoint()}
                   block
@@ -183,7 +214,7 @@ class PreFlightTOL extends Component {
             </Row>
             <hr />
             <Row>
-              <Col xs={12} sm={12} md={12} lg={12}>
+              <Col xs={12} sm={12} md={12} lg={12} style={{ padding: '0px 2px' }}>
                 <FormGroup
                   validationState={this.state.segmentSizeOverLimit ? 'warning' : null}
                 >
@@ -202,7 +233,7 @@ class PreFlightTOL extends Component {
               </Col>
             </Row>
             <Row style={{ verticalAlign: 'middle' }}>
-              <Col xs={12} sm={12} md={12} lg={12}>
+              <Col xs={12} sm={12} md={12} lg={12} style={{ padding: '0px 2px' }}>
                 <FormGroup>
                   <input
                     type="checkbox"
@@ -218,36 +249,48 @@ class PreFlightTOL extends Component {
                     <HelpBlock>Legal limit is 500 m</HelpBlock> : ''}
                 </FormGroup>
               </Col>
-              <Col xs={12} sm={12} md={12} lg={12}>
+              <Col xs={12} sm={12} md={12} lg={12} style={{ padding: '0px 2px' }}>
                 <Button block bsStyle="default">Set Landing Bearing</Button>
               </Col>
             </Row>
             <br />
             <Row>
-              <Col xs={12} sm={12} md={12} lg={12}>
+              <Col xs={12} sm={6} md={6} lg={6} style={{ padding: '0px 2px' }}>
                 <Button
-                  onClick={() => this.setLandingPath()}
+                  onClick={this.setLandingPath}
                   block
                   bsStyle="primary"
-                >Set Landing Path
+                  style={{ whiteSpace: 'normal' }}
+                >
+                  Set Landing Path
+                </Button>
+              </Col>
+              <Col xs={12} sm={6} md={6} lg={6} style={{ padding: '0px 2px' }}>
+                <Button
+                  onClick={this.removeLandingPath}
+                  block
+                  bsStyle="danger"
+                  style={{ whiteSpace: 'normal' }}
+                >
+                  Remove Landing Path
                 </Button>
               </Col>
             </Row>
             <hr />
             <Row>
-              <Col xs={12} sm={12} md={12} lg={12}>
+              <Col xs={12} sm={12} md={12} lg={12} style={{ padding: '0px 2px' }}>
                 <Button block bsStyle="info">Send Waypoints</Button>
               </Col>
             </Row>
             <br />
             <Row>
-              <Col xs={12} sm={12} md={12} lg={12}>
+              <Col xs={12} sm={12} md={12} lg={12} style={{ padding: '0px 2px' }}>
                 <Button block bsStyle="info">Read Waypoints</Button>
               </Col>
             </Row>
             <br />
             <Row>
-              <Col xs={12} sm={12} md={12} lg={12}>
+              <Col xs={12} sm={12} md={12} lg={12} style={{ padding: '0px 2px' }}>
                 <Button
                   bsStyle="success"
                   onClick={() => history.push(`/projects/${match.params.project_id}/${match.params.mission_id}/preflight/checklist`)}
