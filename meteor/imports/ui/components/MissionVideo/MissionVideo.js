@@ -7,6 +7,7 @@ import L from 'leaflet';
 
 import './MissionVideo.scss';
 
+let loaded = false;
 let featureArray;
 let coordinates0;
 let Lng0;
@@ -55,38 +56,36 @@ class MissionVideo extends Component {
   }
 
   componentDidMount() {
-    this.myVideo.addEventListener('loadedmetadata', () => {
-    });
-    this.myTxtVideo.addEventListener('loadedmetadata', () => {
-    });
+    this.myVideo.addEventListener('loadedmetadata', () => { this.myTxtVideo.addEventListener('loadedmetadata', () => { loaded = true; }); });
     this.initiate(this);
   }
 
   componentDidUpdate() {
     n = this.props.logTime;
-    this.myVideo.currentTime = this.props.videoTime * 1e-6;
-    this.myTxtVideo.currentTime = this.props.videoTime * 1e-6;
-    this.myVideo.playbackRate = this.props.speed;
-    this.myTxtVideo.playbackRate = this.props.speed;
-    this.myVideo.play();
-    this.myTxtVideo.play();
+    if (loaded) {
+      this.myVideo.currentTime = this.props.videoTime * 1e-6;
+      this.myTxtVideo.currentTime = this.props.videoTime * 1e-6;
+      this.myVideo.playbackRate = this.props.speed;
+      this.myTxtVideo.playbackRate = this.props.speed;
+      this.myVideo.play();
+      this.myTxtVideo.play();
+    }
   }
 
   getCoords(e) {
     timeIndex += 1;
     timeVector.push(new Date().getTime());
-    // const videoCoords = [e.screenY - this.myVideo.offsetTop - 65, e.screenX - this.myVideo.offsetLeft - 15, 0];
     const videoCoords = [e.screenY, e.screenX, 0];
-    const newData1 = this.transformGeoJson(p1.x, p1.y, p2.x, p2.y, p0.x, p0.y, p3.x, p3.y, [0, 0, 0]);
-    const newData2 = this.transformGeoJson(p1.x, p1.y, p2.x, p2.y, p0.x, p0.y, p3.x, p3.y, [this.myVideo.videoHeight, 0, 0]);
-    const newData3 = this.transformGeoJson(p1.x, p1.y, p2.x, p2.y, p0.x, p0.y, p3.x, p3.y, [this.myVideo.videoHeight, this.myVideo.videoWidth, 0]);
-    const newData4 = this.transformGeoJson(p1.x, p1.y, p2.x, p2.y, p0.x, p0.y, p3.x, p3.y, [0, this.myVideo.videoWidth, 0]);
+    // const newData1 = this.transformGeoJson(p1.x, p1.y, p2.x, p2.y, p0.x, p0.y, p3.x, p3.y, [0, 0, 0]);
+    // const newData2 = this.transformGeoJson(p1.x, p1.y, p2.x, p2.y, p0.x, p0.y, p3.x, p3.y, [this.myVideo.videoHeight, 0, 0]);
+    // const newData3 = this.transformGeoJson(p1.x, p1.y, p2.x, p2.y, p0.x, p0.y, p3.x, p3.y, [this.myVideo.videoHeight, this.myVideo.videoWidth, 0]);
+    // const newData4 = this.transformGeoJson(p1.x, p1.y, p2.x, p2.y, p0.x, p0.y, p3.x, p3.y, [0, this.myVideo.videoWidth, 0]);
     const newData = this.transformGeoJson(p1.x, p1.y, p2.x, p2.y, p0.x, p0.y, p3.x, p3.y, videoCoords);
     const newDataTxt = mymap.containerPointToLatLng(new L.Point(newData[1] + p1.x, newData[0] + p1.y));
-    const newDataTxt1 = mymap.containerPointToLatLng(new L.Point(newData1[1] + p1.x, newData1[0] + p1.y));
-    const newDataTxt2 = mymap.containerPointToLatLng(new L.Point(newData2[1] + p1.x, newData2[0] + p1.y));
-    const newDataTxt3 = mymap.containerPointToLatLng(new L.Point(newData3[1] + p1.x, newData3[0] + p1.y));
-    const newDataTxt4 = mymap.containerPointToLatLng(new L.Point(newData4[1] + p1.x, newData4[0] + p1.y));
+    // const newDataTxt1 = mymap.containerPointToLatLng(new L.Point(newData1[1] + p1.x, newData1[0] + p1.y));
+    // const newDataTxt2 = mymap.containerPointToLatLng(new L.Point(newData2[1] + p1.x, newData2[0] + p1.y));
+    // const newDataTxt3 = mymap.containerPointToLatLng(new L.Point(newData3[1] + p1.x, newData3[0] + p1.y));
+    // const newDataTxt4 = mymap.containerPointToLatLng(new L.Point(newData4[1] + p1.x, newData4[0] + p1.y));
     if (linePointSelector === 1 && pointControl) {
       pointControl = false;
       dataSetPoint.features[0] = {
@@ -102,8 +101,8 @@ class MissionVideo extends Component {
       linePointSelector = 2;
     }
     if (linePointSelector === 0) {
-      // dataSetLineString.features[0].geometry.coordinates.push([newDataTxt.lng, newDataTxt.lat]);
-      dataSetLineString.features[0].geometry.coordinates.push([newDataTxt1.lng, newDataTxt1.lat], [newDataTxt2.lng, newDataTxt2.lat], [newDataTxt3.lng, newDataTxt3.lat], [newDataTxt4.lng, newDataTxt4.lat], [newDataTxt1.lng, newDataTxt1.lat]);
+      dataSetLineString.features[0].geometry.coordinates.push([newDataTxt.lng, newDataTxt.lat]);
+      // dataSetLineString.features[0].geometry.coordinates.push([newDataTxt1.lng, newDataTxt1.lat], [newDataTxt2.lng, newDataTxt2.lat], [newDataTxt3.lng, newDataTxt3.lat], [newDataTxt4.lng, newDataTxt4.lat], [newDataTxt1.lng, newDataTxt1.lat]);
     }
   }
 
@@ -323,7 +322,7 @@ class MissionVideo extends Component {
             ref={(c) => { this.myTxtVideo = c; }}
             autoPlay
             muted
-            src="http://stemkoski.github.io/Three.js/videos/sintel.ogv"
+            src="http://192.168.1.251:8080/logVideo480.mp4"
             type="video/mp4"
             style={{ opacity: 0.5 }}
           ><track kind="captions" />Video not found
@@ -334,7 +333,7 @@ class MissionVideo extends Component {
           ref={(c) => { this.myVideo = c; }}
           autoPlay
           muted
-          src="http://stemkoski.github.io/Three.js/videos/sintel.ogv"
+          src="http://192.168.1.251:8080/logVideo480.mp4"
           type="video/mp4"
           onClick={this.getCoords}
         ><track kind="captions" />Video not found
