@@ -70,6 +70,12 @@ class MissionEditor extends Component {
     const { history } = this.props;
     const existingMission = this.props.mission && this.props.mission._id;
     const methodToCall = existingMission ? 'missions.update' : 'missions.insert';
+    if (this.state.missionRPA === '') {
+      this.setState({ missionRPA: this.rpa.value.trim() });
+    }
+    if (this.state.missionPayload === '') {
+      this.setState({ missionPayload: this.payload.value.trim() });
+    }
     const mission = {
       name: this.name.value.trim(),
       description: this.description.value.trim(),
