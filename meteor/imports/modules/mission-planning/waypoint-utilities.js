@@ -239,6 +239,32 @@ const calculateLandingPath = (
 };
 
 /**
+ * Check if the landing path is defined
+ * @param {Feature Collection} waypointList the waypoint List
+ * @returns {boolean} True if landing path is defined, false otherwise
+ */
+const checkforLandingPath = (waypointList) => {
+  let numberOfWPLandingPath = 0;
+  const isLandingPath = waypointFeature => (
+    waypointFeature.properties.isLandingPath !== undefined &&
+    waypointFeature.properties.isLandingPath);
+  const filterByLandingPath = (waypointFeature) => {
+    if (!isLandingPath(waypointFeature)) {
+      return true;
+    }
+    numberOfWPLandingPath += 1;
+    return false;
+  };
+  const featuresArray = waypointList.features;
+  featuresArray.filter(filterByLandingPath);
+  if (numberOfWPLandingPath === 0) {
+    return false;
+  }
+  return true;
+};
+
+
+/**
  * Takes in the waypoint list and return this waypoint list with the landing path added
  * @param {Feature Collection} waypointList the waypoint List
  * @param {Feature} landingPoint a GeoJSON Feature
@@ -247,7 +273,8 @@ const calculateLandingPath = (
  * @param {number} landingSlope the slope for the landing path in percentage
  * @param {number} flightHeight the height specified for the flight
  * @param {boolean} isClockWise flag to indicate the rotation of the path
- * @returns {Feature Collection} The waypoint list with the landing path inserted
+ * @returns {Feature Collection} The waypoint list with the landing path inserted or 0 if the
+ * landing path already exists
  */
 export const addLandingPath = (
   waypointList,
@@ -257,6 +284,9 @@ export const addLandingPath = (
   flightHeight,
   isClockWise = false,
 ) => {
+  if (checkforLandingPath(waypointList)) {
+    return 0;
+  }
   const landingPathArray = calculateLandingPath(
     waypointList.features[waypointList.features.length - 1],
     landingBearing,
@@ -274,12 +304,17 @@ export const addLandingPath = (
 /**
  * Removes the landing path from the waypoint list
  * @param {Feature Collection} waypointList the waypoint List
- * @returns {Feature Collection} The waypoint list without the landing path
+ * @returns {Feature Collection} The waypoint list without the landing path or
+ the number 0 if there is no landing path
  */
 export const deleteLandingPath = (waypointList) => {
   const newWaypointList = JSON.parse(JSON.stringify(waypointList));
-  const featuresArray = newWaypointList.features;
-  const filteredWaypointArray = featuresArray.filter(feature => !feature.isLandingPath);
-  newWaypointList.features = filteredWaypointArray;
-  return newWaypointList;
+  if (checkforLandingPath(newWaypointList)) {
+    const featuresArray = newWaypointList.features;
+    const filteredWaypointArray =
+    featuresArray.filter((waypointFeature => !waypointFeature.properties.isLandingPath));
+    newWaypointList.features = filteredWaypointArray;
+    return newWaypointList;
+  }
+  return 0;
 };
