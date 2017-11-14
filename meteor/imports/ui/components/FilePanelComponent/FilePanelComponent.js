@@ -16,47 +16,48 @@ const renderListItems =
   //   name: a name to display for the item,
   //   checked: boolean, is the item checked?
   // }
-  (<ListGroupItem key={item.id} >
-    {`File ${item.id} : ${item.name}`}
-    <span className="pull-right">
-      {uploadButton ?
+  (
+    <ListGroupItem key={item.id} >
+      {`File: ${item.name}`}
+      <span className="pull-right">
+        {uploadButton ?
+          <Button
+            bsStyle="default"
+            onClick={() => uploadItem(item.id)}
+            bsSize="xsmall"
+          >
+            <span className="fa fa-upload" aria-hidden="true" />
+          </Button> : ''}
+        {' '}
+        {downloadButton ?
+          <Button
+            bsStyle="default"
+            onClick={() => downloadItem(item.id)}
+            bsSize="xsmall"
+          >
+            <span className="fa fa-download" aria-hidden="true" />
+          </Button> : ''}
+        {' '}
+        {checkColumn ?
+          <Button
+            bsStyle={item.checked ? 'success' : 'default'}
+            onClick={() => checkItem(item.id, item.checked)}
+            bsSize="xsmall"
+          >
+            {item.checked ?
+              <span className="fa fa-check-square-o" aria-hidden="true" /> :
+              <span className="fa fa-square-o" aria-hidden="true" />}
+          </Button>
+          : ''}
+        {' '}
         <Button
-          bsStyle="default"
-          onClick={() => uploadItem(item.id)}
+          bsStyle="danger"
+          onClick={() => deleteItem(item.id)}
           bsSize="xsmall"
-        >
-          <span className="fa fa-upload" aria-hidden="true" />
-        </Button> : ''}
-      {' '}
-      {downloadButton ?
-        <Button
-          bsStyle="default"
-          onClick={() => downloadItem(item.id)}
-          bsSize="xsmall"
-        >
-          <span className="fa fa-download" aria-hidden="true" />
-        </Button> : ''}
-      {' '}
-      {checkColumn ?
-        <Button
-          bsStyle={item.checked ? 'success' : 'default'}
-          onClick={() => checkItem(item.id, item.checked)}
-          bsSize="xsmall"
-        >
-          {item.checked ?
-            <span className="fa fa-check-square-o" aria-hidden="true" /> :
-            <span className="fa fa-square-o" aria-hidden="true" />}
+        ><span className="fa fa-times" aria-hidden="true" />
         </Button>
-        : ''}
-      {' '}
-      <Button
-        bsStyle="danger"
-        onClick={() => deleteItem(item.id)}
-        bsSize="xsmall"
-      ><span className="fa fa-times" aria-hidden="true" />
-      </Button>
-    </span>
-  </ListGroupItem>));
+      </span>
+    </ListGroupItem>));
 
 const renderListBody = props => (
   <ListGroup fill style={{ height: props.panelHeight, maxHeight: props.panelMaxHeight, overflow: 'auto' }}>
@@ -78,7 +79,7 @@ FilePanelComponent.defaultProps = {
   hideCompleted: false,
   checkItem: (() => console.log('i dont have a function to complete anything')),
   uploadItem: (() => console.log('I am here for your safety')),
-  uploadButton: true,
+  uploadButton: false,
   panelMaxHeight: '25vh',
   panelHeight: 'auto',
   loading: false,

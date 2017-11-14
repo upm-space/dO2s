@@ -1,8 +1,9 @@
+/* eslint-disable max-len, no-return-assign */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Meteor } from 'meteor/meteor';
 import { Bert } from 'meteor/themeteorchef:bert';
-import { Button, ButtonGroup, Row, Col } from 'react-bootstrap';
+import { Button, ButtonGroup, FormGroup, ControlLabel, Row, Col } from 'react-bootstrap';
 // import FtpItems from '../FtpItems/FtpItems';
 import FilePanelComponent from '../FilePanelComponent/FilePanelComponent';
 
@@ -18,13 +19,19 @@ class FileTransferUi extends Component {
     };
 
     this.rootDirectory = 'C:/Oficina/Universidad/TFM/';
+    this.localDirectory = '';
     this.selectedLocalFiles = new Set();
     this.selectedServerFiles = new Set();
     this.fileUploading = false;
     this.fileBeingDeleted = false;
 
     this.selectFiles = this.selectFiles.bind(this);
+    this.selectFolder = this.selectFolder.bind(this);
     this.uploadFiles = this.uploadFiles.bind(this);
+    this.deleteFiles = this.deleteFiles.bind(this);
+    this.deleteLocalFile = this.deleteLocalFile.bind(this);
+    this.uploadLocalFile = this.uploadLocalFile.bind(this);
+    this.deleteServerFile = this.deleteServerFile.bind(this);
   }
   componentDidMount() {
   }
@@ -46,18 +53,25 @@ class FileTransferUi extends Component {
     this.renderLocalFiles(this.selectedLocalFiles);
   }
 
-  removeLocalFile(parent, file) {
-    if (parent.selectedLocalFiles.has(file)) {
-      parent.selectedLocalFiles.delete(file);
-    }
-    parent.renderLocalFiles(parent.selectedLocalFiles);
+  selectFolder(evt) {
+    const selectedFiles = evt.target.files;
+    const relativePath = selectedFiles[0].webkitRelativePath;
+    const folder = relativePath.split('/');
+    return folder;
   }
 
-  removeServerFile(parent, file) {
-    if (parent.selectedServerFiles.has(file)) {
-      parent.selectedServerFiles.delete(file);
+  removeLocalFile(file) {
+    if (this.selectedLocalFiles.has(file)) {
+      this.selectedLocalFiles.delete(file);
     }
-    parent.renderServerFiles(parent.selectedServerFiles);
+    this.renderLocalFiles(this.selectedLocalFiles);
+  }
+
+  removeServerFile(file) {
+    if (this.selectedServerFiles.has(file)) {
+      this.selectedServerFiles.delete(file);
+    }
+    this.renderServerFiles(this.selectedServerFiles);
   }
 
   uploadFiles() {
@@ -65,7 +79,7 @@ class FileTransferUi extends Component {
       if (!this.fileUploading) {
         if (this.state.localFiles.length === 0) { clearInterval(loopUpload); } else {
           this.fileUploading = true;
-          this.uploadLocalFile(this.state.localFiles[0]);
+          this.uploadLocalFile(this.state.localFiles[0].id);
         }
       }
     }, 500);
@@ -76,22 +90,25 @@ class FileTransferUi extends Component {
       if (!this.fileBeingDeleted) {
         if (this.state.serverFiles.length === 0) { clearInterval(loopDeleting); } else {
           this.fileBeingDeleted = true;
-          this.deleteFile(this.state.serverFiles[0]);
+          this.deleteServerFile(this.state.serverFiles[0].id);
         }
       }
     }, 500);
   }
 
-  uploadLocalFile(file) {
+  isFile(element, fileId) { return element.id === fileId; }
+
+  uploadLocalFile(fileId) {
+    const file = this.state.localFiles.find(element => this.isFile(element, fileId));
     const reader = new FileReader();
     reader.onload = () => {
       const buffer = new Uint8Array(reader.result); // convert to binary
-      Meteor.call('fileTransfer.saveFile', buffer, this.props.missionId, file.id, (error, result) => {
+      Meteor.call('fileTransfer.saveFile', buffer, this.props.missionId, file.name, (error, result) => {
         if (result) {
           if (result.result === 'ok') {
             this.selectedServerFiles.add(file.objFile);
             this.renderServerFiles(this.selectedServerFiles);
-            this.removeLocalFile(this, file.objFile);
+            this.removeLocalFile(file.objFile);
             this.fileUploading = false;
             Bert.alert(`File ${file.name} copied`, 'success');
           } else {
@@ -105,13 +122,24 @@ class FileTransferUi extends Component {
     reader.readAsArrayBuffer(file.objFile);
   }
 
-  deleteFile(file) {
+  deleteLocalFile(fileId) {
+    const file = this.state.localFiles.find(element => this.isFile(element, fileId));
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.removeLocalFile(file.objFile);
+      Bert.alert(`File ${file.name} removed`, 'success');
+    };
+    reader.readAsArrayBuffer(file.objFile);
+  }
+
+  deleteServerFile(fileId) {
+    const file = this.state.serverFiles.find(element => this.isFile(element, fileId));
     const reader = new FileReader();
     reader.onload = () => {
       Meteor.call('fileTransfer.deleteFile', this.props.missionId, file.name, (error, result) => {
         if (result) {
           if (result.result === 'ok') {
-            this.removeServerFile(this, file.objFile);
+            this.removeServerFile(file.objFile);
             this.fileBeingDeleted = false;
             Bert.alert(`File ${file.name} removed`, 'success');
           } else {
@@ -132,13 +160,6 @@ class FileTransferUi extends Component {
         objFile: file,
         id: file.name,
         name: file.name,
-        // onchangeCheck: this.onChangeCheck,
-        // onDelete: this.removeLocalFile,
-        // onUpload: this.uploadLocalFile,
-        // parent: this,
-        // drawCheck: false,
-        // drawTrash: true,
-        // drawUpload: true,
       };
 
       fileList.push(fileObj);
@@ -156,12 +177,6 @@ class FileTransferUi extends Component {
         objFile: file,
         id: file.name,
         name: file.name,
-        // onchangeCheck: this.onChangeCheck,
-        // onDelete: this.removeServerFile,
-        // parent: this,
-        // drawCheck: false,
-        // drawUpload: false,
-        // drawTrash
       };
       fileList.push(fileObj);
     });
@@ -172,17 +187,6 @@ class FileTransferUi extends Component {
   }
 
   render() {
-    // const testItems = [
-    //   {
-    //     id: 'qwertyuiop',
-    //     name: 'item1',
-    //   },
-    //   {
-    //     id: 'asdfghjklñ',
-    //     name: 'item2',
-    //   },
-    // ];
-
     return (
       <Row>
         <Col xs={12} sm={6} md={6} lg={6}>
@@ -190,9 +194,13 @@ class FileTransferUi extends Component {
             <Col xs={12} sm={12} md={12} lg={12}>
               <FilePanelComponent
                 panelStyle="primary"
+                panelMaxHeight="30vh"
+                panelHeight="25vh"
                 title="Client side"
                 items={this.state.localFiles}
-                deleteItem={this.deleteFile}
+                deleteItem={this.deleteLocalFile}
+                uploadButton
+                uploadItem={this.uploadLocalFile}
               />
             </Col>
           </Row>
@@ -202,7 +210,13 @@ class FileTransferUi extends Component {
                 <Button bsStyle="primary">
                   <label htmlFor="browseFile">
                     <span className="fa fa-folder-open" aria-hidden="true" /> Browse
-                    <input id="browseFile" type="file" style={{ display: 'none' }} multiple onChange={event => this.selectFiles(event)} />
+                    <input
+                      id="browseFile"
+                      type="file"
+                      style={{ display: 'none' }}
+                      multiple
+                      onChange={event => this.selectFiles(event)}
+                    />
                   </label>
                 </Button>
                 <Button bsStyle="primary" onClick={() => this.uploadFiles()}>
@@ -214,19 +228,50 @@ class FileTransferUi extends Component {
             </Col>
           </Row>
           <br />
+          <Row>
+            <Col xs={12} sm={12} md={12} lg={12}>
+              <FormGroup>
+                <ControlLabel>Local Folder</ControlLabel>
+                <input
+                  type="text"
+                  directory="localFolder"
+                  defaultValue="Folder path"
+                  ref={localDirectory => (this.localDirectory = `${localDirectory}/`)}
+                  className="form-control"
+                />
+              </FormGroup>
+              {/* <Button bsStyle="primary">
+                <label htmlFor="browseFolder">
+                  <span className="fa fa-folder-open" aria-hidden="true" /> Browse Folder
+                  <input
+                    id="browseFolder"
+                    type="file"
+                    accept
+                    style={{ display: 'block' }}
+                    webkitdirectory
+                    mozdirectory
+                    msdirectory
+                    odirectory
+                    directory
+                    multiple
+                    onChange={event => this.selectFolder(event)}
+                  />
+                </label>
+              </Button> */}
+            </Col>
+          </Row>
+          <br />
         </Col>
         <Col xs={12} sm={6} md={6} lg={6}>
           <Row>
             <Col xs={12} sm={12} md={12} lg={12}>
               <FilePanelComponent
                 panelStyle="primary"
-                panelMaxHeight="30"
-                panelHeight="25"
+                panelMaxHeight="30vh"
+                panelHeight="25vh"
                 title="Server side"
                 items={this.state.serverFiles}
-                deleteItem={this.deleteFile}
-                uploadButton
-                downloadButton
+                deleteItem={this.deleteServerFile}
               />
             </Col>
           </Row>

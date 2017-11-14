@@ -12,8 +12,7 @@ Meteor.methods({
     check(missionId, String);
     check(fileName, String);
     try {
-      const missionDir = path.join(Meteor.settings.private.config.missionsPath, missionId);
-      console.log(missionDir);
+      const missionDir = path.join(Meteor.settings.private.config.missionsPath, `${missionId}/`);
       const future = new Future();
       saveFileFrombuffer(buffer, missionDir, fileName, (objJson) => {
         future.return(objJson);
@@ -24,12 +23,13 @@ Meteor.methods({
     }
   },
 
-  'fileTransfer.deleteFile': (dir, fileName) => {
-    check(dir, String);
+  'fileTransfer.deleteFile': (missionId, fileName) => {
+    check(missionId, String);
     check(fileName, String);
     try {
+      const missionDir = path.join(Meteor.settings.private.config.missionsPath, `${missionId}/`);
       const future = new Future();
-      deleteFile(dir, fileName, (objJson) => {
+      deleteFile(missionDir, fileName, (objJson) => {
         future.return(objJson);
       });
       return future.wait();
