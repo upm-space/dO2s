@@ -7,7 +7,8 @@ import L from 'leaflet';
 
 import './MissionVideo.scss';
 
-let loaded = false;
+let loadedVideo = false;
+let loadedTxtVideo = false;
 let featureArray;
 let coordinates0;
 let Lng0;
@@ -56,18 +57,21 @@ class MissionVideo extends Component {
   }
 
   componentDidMount() {
-    this.myVideo.addEventListener('loadedmetadata', () => { this.myTxtVideo.addEventListener('loadedmetadata', () => { loaded = true; }); });
+    this.myVideo.addEventListener('loadedmetadata', () => { loadedVideo = true; });
+    this.myTxtVideo.addEventListener('loadedmetadata', () => { loadedTxtVideo = true; });
     this.initiate(this);
   }
 
   componentDidUpdate() {
     n = this.props.logTime;
-    if (loaded) {
+    if (loadedVideo) {
       this.myVideo.currentTime = this.props.videoTime * 1e-6;
-      this.myTxtVideo.currentTime = this.props.videoTime * 1e-6;
       this.myVideo.playbackRate = this.props.speed;
-      this.myTxtVideo.playbackRate = this.props.speed;
       this.myVideo.play();
+    }
+    if (loadedTxtVideo) {
+      this.myTxtVideo.currentTime = this.props.videoTime * 1e-6;
+      this.myTxtVideo.playbackRate = this.props.speed;
       this.myTxtVideo.play();
     }
   }
@@ -76,16 +80,8 @@ class MissionVideo extends Component {
     timeIndex += 1;
     timeVector.push(new Date().getTime());
     const videoCoords = [e.screenY, e.screenX, 0];
-    // const newData1 = this.transformGeoJson(p1.x, p1.y, p2.x, p2.y, p0.x, p0.y, p3.x, p3.y, [0, 0, 0]);
-    // const newData2 = this.transformGeoJson(p1.x, p1.y, p2.x, p2.y, p0.x, p0.y, p3.x, p3.y, [this.myVideo.videoHeight, 0, 0]);
-    // const newData3 = this.transformGeoJson(p1.x, p1.y, p2.x, p2.y, p0.x, p0.y, p3.x, p3.y, [this.myVideo.videoHeight, this.myVideo.videoWidth, 0]);
-    // const newData4 = this.transformGeoJson(p1.x, p1.y, p2.x, p2.y, p0.x, p0.y, p3.x, p3.y, [0, this.myVideo.videoWidth, 0]);
     const newData = this.transformGeoJson(p1.x, p1.y, p2.x, p2.y, p0.x, p0.y, p3.x, p3.y, videoCoords);
     const newDataTxt = mymap.containerPointToLatLng(new L.Point(newData[1] + p1.x, newData[0] + p1.y));
-    // const newDataTxt1 = mymap.containerPointToLatLng(new L.Point(newData1[1] + p1.x, newData1[0] + p1.y));
-    // const newDataTxt2 = mymap.containerPointToLatLng(new L.Point(newData2[1] + p1.x, newData2[0] + p1.y));
-    // const newDataTxt3 = mymap.containerPointToLatLng(new L.Point(newData3[1] + p1.x, newData3[0] + p1.y));
-    // const newDataTxt4 = mymap.containerPointToLatLng(new L.Point(newData4[1] + p1.x, newData4[0] + p1.y));
     if (linePointSelector === 1 && pointControl) {
       pointControl = false;
       dataSetPoint.features[0] = {
