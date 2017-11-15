@@ -80,9 +80,9 @@ const CamerasVector = (userId) => {
       weight: faker.random.number({ min: 0, max: 100 }),
       payloadType: 'Camera',
       sensorParameters: {
-        focalLength: faker.random.number({ min: 0, max: 50 }),
-        sensorWidth: faker.random.number({ min: 0, max: 50 }),
-        sensorHeight: faker.random.number({ min: 0, max: 50 }),
+        focalLength: faker.random.number({ min: 1, max: 50 }),
+        sensorWidth: faker.random.number({ min: 1, max: 50 }),
+        sensorHeight: faker.random.number({ min: 1, max: 50 }),
         imageWidth: faker.random.number({ min: 400, max: 10000 }),
         imageHeight: faker.random.number({ min: 600, max: 10000 }),
       },
