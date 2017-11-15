@@ -58,7 +58,7 @@ class PreFlightCheckList extends Component {
                 exact
                 path="/projects/:project_id/:mission_id/preflight"
                 render={() => (
-                  <Redirect to={`${match.url}/connect`} />)}
+                  <Redirect to={`${match.url}${(match.url.charAt(match.url.length - 1)) === '/' ? '' : '/'}connect`} />)}
               />
               <Route
                 exact

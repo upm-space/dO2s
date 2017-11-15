@@ -66,7 +66,7 @@ const renderMission = (mission, match, history, project) => (mission && mission.
         exact
         path="/projects/:project_id/:mission_id/"
         render={() => (
-          <Redirect to={`${match.url}/plan`} />)}
+          <Redirect to={`${match.url}${(match.url.charAt(match.url.length - 1)) === '/' ? '' : '/'}plan`} />)}
       />
       <Route
         exact
