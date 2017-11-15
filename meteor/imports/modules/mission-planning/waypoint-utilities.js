@@ -219,11 +219,11 @@ const calculateLandingPath = (
 ) => {
   const landingPathFeaturePoints = [];
   const heightPerSegment = (segmentSize * landingSlope) / 100;
-  let currentHeight = 0;
+  let currentHeight = landingPointFeature.properties.altRelative;
   let currentBearing = landingBearing;
   while (currentHeight < flightHeight) {
     let currentLatLon = '';
-    if (currentHeight === 0) {
+    if (currentHeight === landingPointFeature.properties.altRelative) {
       currentLatLon = new LatLon(
         landingPointFeature.geometry.coordinates[1],
         landingPointFeature.geometry.coordinates[0],
@@ -237,7 +237,7 @@ const calculateLandingPath = (
 
     const nextLandingPathWP = currentLatLon.destinationPoint(currentBearing, segmentSize / 1000);
     currentHeight += heightPerSegment;
-    currentBearing += isClockWise ? 90 : -90;
+    currentBearing += isClockWise ? -90 : 90;
     if (currentBearing > 360) {
       currentBearing -= 360;
     } else if (currentBearing < 0) {
@@ -292,7 +292,7 @@ const checkforLandingPath = (waypointList) => {
  * Takes in the waypoint list and return this waypoint list with the landing path added
  * @param {Feature Collection} waypointList the waypoint List
  * @param {Feature} landingPoint a GeoJSON Feature
- * @param {Number} landingBearing the bearing in degrees measured from magnetic north
+ * @param {Feature} landingBearing a LineString representing the landing bearing
  * @param {number} segmentSize the size of the segment for the landint path in metres
  * @param {number} landingSlope the slope for the landing path in percentage
  * @param {number} flightHeight the height specified for the flight
@@ -311,12 +311,16 @@ export const addLandingPath = (
   if (checkforLandingPath(waypointList)) {
     return 0;
   }
+
+  const altRelOfLastWP =
+  waypointList.features[waypointList.features.length - 2].properties.altRelative;
+
   const landingPathArray = calculateLandingPath(
     waypointList.features[waypointList.features.length - 1],
-    landingBearing,
+    getLandingBearing(landingBearing),
     segmentSize,
     landingSlope,
-    flightHeight,
+    (altRelOfLastWP === flightHeight) ? flightHeight : altRelOfLastWP,
     isClockWise,
   );
   let newWaypointList = insertNewWaypointsAtIndex(waypointList, -1, landingPathArray);
