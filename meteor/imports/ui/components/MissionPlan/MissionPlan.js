@@ -175,6 +175,9 @@ class MissionPlan extends Component {
     } else if (this.props.mission.missionType === 'Linear Area' && !this.props.mission.flightPlan.missionAxis) {
       Bert.alert('You need to define the Mission Axis', 'danger');
       return;
+    } else if (this.props.mission.missionType === 'Linear Area' && !this.props.mission.flightPlan.flightParameters.axisBuffer) {
+      Bert.alert('You need to define the Axis Buffer in Flight Parameters', 'danger');
+      return;
     }
 
     this.toogleButtonSwtich();
