@@ -175,6 +175,30 @@ export const moveWaypoint = (waypointList, waypointIndex, movedWaypoint) => {
   return newWaypointList;
 };
 
+
+/**
+ * Return the bearing for landing in degrees
+ * @param {Feature} landingBearing a GeoJSON Feature representing the landing bearing
+ * @returns {Number} The landing bearing in degrees
+ */
+const getLandingBearing = (landingBearing) => {
+  if (!landingBearing) {
+    return 0;
+  }
+
+  const landingLatLon = new LatLon(
+    landingBearing.geometry.coordinates[0][1],
+    landingBearing.geometry.coordinates[0][0],
+  );
+
+  const toPointLatLon = new LatLon(
+    landingBearing.geometry.coordinates[1][1],
+    landingBearing.geometry.coordinates[1][0],
+  );
+
+  return landingLatLon.bearingTo(toPointLatLon);
+};
+
 /**
  * Creates the array of feature points for the landing path
  * @param {Feature} landingPoint a GeoJSON Feature

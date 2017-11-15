@@ -231,6 +231,22 @@ Meteor.methods({
       throw new Meteor.Error('500', exception);
     }
   },
+  'missions.setLandingBearing': function missionsSetLandingBearing(missionId, landingBearing) {
+    check(missionId, String);
+    try {
+      if (landingBearing) {
+        FeatureLineString.validate(landingBearing);
+        Missions.update(missionId, { $set: { 'flightPlan.landingBearing': landingBearing } });
+      } else if (!landingBearing) {
+        Missions.update(missionId, { $unset: { 'flightPlan.landingBearing': '' } });
+      }
+    } catch (exception) {
+      if (exception.error === 'validation-error') {
+        throw new Meteor.Error(500, exception.message);
+      }
+      throw new Meteor.Error('500', exception);
+    }
+  },
 });
 
 rateLimit({
@@ -251,6 +267,7 @@ rateLimit({
     'missions.editWayPointList',
     'missions.clearWayPoints',
     'missions.editWayPointAltRelative',
+    'missions.setLandingBearing',
   ],
   limit: 5,
   timeRange: 1000,

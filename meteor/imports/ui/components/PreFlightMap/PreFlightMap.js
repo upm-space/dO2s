@@ -6,7 +6,7 @@ import L from 'leaflet';
 import 'leaflet-draw';
 
 import { featurePoint2latlong, latlong2featurePoint, featurePointGetZoom } from '../../../modules/geojson-utilities';
-import { waypointListOptions, rpaPathStyle } from '../../../modules/mission-planning/waypoint-style-chooser.js';
+import { waypointListOptions, rpaPathStyle, bearingPathStyle } from '../../../modules/mission-planning/waypoint-style-chooser.js';
 import { pointsCollectionFeatureToLineString } from '../../../modules/mission-planning/waypoint-utilities.js';
 
 import './PreFlightMap.scss';
@@ -75,35 +75,26 @@ class PreFlightMap extends Component {
             geoJSONWaypointListLayer.addLayer(layer));
         }
       }
+
+      if (flightPlan.landingBearing) {
+        const myLandingPathBearingLayer = L.geoJSON(flightPlan.landingBearing, bearingPathStyle);
+        this.geoJSONAngleToPointLayer.addLayer(myLandingPathBearingLayer.getLayers()[0]);
+      }
     }
 
-    if (this.props.mission) {
-      let bearing;
-    }
-
-    // moving take off and landing on click
     missionmap.on('click', (e) => {
-      // TODO Add alert to redraw mission if these change
       if (this.props.getAngleActive) {
         const toPoint = latlong2featurePoint(e.latlng.wrap());
+        const newLandingBearing = this.drawLandingBearing(toPoint);
+        this.props.updateLandingBearing(newLandingBearing);
       }
     });
 
-    // passing the new mission area geometry to the database
-    missionmap.on(L.Draw.Event.CREATED, (event) => {
-
-    });
-
-    missionmap.on(L.Draw.Event.EDITED, (event) => {
-
-    });
-
-    missionmap.on(L.Draw.Event.EDITVERTEX, (event) => {
-
-    });
-
-    missionmap.on(L.Draw.Event.DELETED, () => {
-
+    missionmap.on('mousemove', (e) => {
+      if (this.props.getAngleActive) {
+        const toPoint = latlong2featurePoint(e.latlng.wrap());
+        this.drawLandingBearing(toPoint);
+      }
     });
   }
 
@@ -150,6 +141,12 @@ class PreFlightMap extends Component {
         }
       }
 
+      if (flightPlan.landingBearing) {
+        this.geoJSONAngleToPointLayer.clearLayers();
+        const myLandingPathBearingLayer = L.geoJSON(flightPlan.landingBearing, bearingPathStyle);
+        this.geoJSONAngleToPointLayer.addLayer(myLandingPathBearingLayer.getLayers()[0]);
+      }
+
       const myflightPlanKeys = Object.keys(flightPlan);
       const clearedKeys = ['takeOffPoint', 'landingPoint', 'missionArea', 'missionCalculation'];
       const myflightPlanKeysFiltered = myflightPlanKeys.filter(word => clearedKeys.includes(word));
@@ -169,6 +166,34 @@ class PreFlightMap extends Component {
     this.geoJSONRpaPathLayer.getLayers().length !== 0) {
       this.geoJSONRpaPathLayer.getLayers()[0].editing.disable();
     }
+  }
+
+  drawLandingBearing(toPoint) {
+    const { flightPlan } = this.props.mission;
+    if (flightPlan && flightPlan.missionCalculation && flightPlan.missionCalculation.waypointList) {
+      const waypointArraylength = flightPlan.missionCalculation.waypointList.features.length;
+      const waypointArray = flightPlan.missionCalculation.waypointList.features;
+      const landingPoint = JSON.parse(JSON.stringify(waypointArray[waypointArraylength - 1]));
+
+      const landingBearingFeatureColec = {
+        type: 'FeatureCollection',
+        features: [],
+        properties: { },
+      };
+
+      landingBearingFeatureColec.features.push(landingPoint);
+      landingBearingFeatureColec.features.push(toPoint);
+
+      const landingBearingLineString =
+       pointsCollectionFeatureToLineString(landingBearingFeatureColec);
+
+      this.geoJSONAngleToPointLayer.clearLayers();
+      const myLandingPathBearingLayer = L.geoJSON(landingBearingLineString, bearingPathStyle);
+      this.geoJSONAngleToPointLayer.addLayer(myLandingPathBearingLayer.getLayers()[0]);
+      return landingBearingLineString;
+    }
+    Bert.alert('There is no waypoint list', 'warning');
+    return {};
   }
 
   render() {
@@ -195,6 +220,7 @@ PreFlightMap.defaultProps = {
   setLandingPoint: () => {},
   editWayPointsActive: false,
   editWayPoints: () => {},
+  updateLandingBearing: () => {},
 };
 
 PreFlightMap.propTypes = {
@@ -205,6 +231,8 @@ PreFlightMap.propTypes = {
   setLandingPoint: PropTypes.func,
   editWayPointsActive: PropTypes.bool,
   editWayPoints: PropTypes.func,
+  getAngleActive: PropTypes.bool,
+  updateLandingBearing: PropTypes.func,
 };
 
 export default PreFlightMap;

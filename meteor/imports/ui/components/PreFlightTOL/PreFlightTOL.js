@@ -22,6 +22,7 @@ class PreFlightTOL extends Component {
     this.checkLimit = this.checkLimit.bind(this);
     this.setLandingPath = this.setLandingPath.bind(this);
     this.removeLandingPath = this.removeLandingPath.bind(this);
+    this.editLandingBearing = this.editLandingBearing.bind(this);
 
     this.state = {
       isClockWise: false,
@@ -73,6 +74,8 @@ class PreFlightTOL extends Component {
      this.props.mission.flightPlan.flightParameters &&
      this.props.mission.flightPlan.flightParameters.height;
     const landingSlope = this.props.rpa.flightParameters.optimalLandingSlope;
+    const landingBearing = this.props.mission.flightPlan &&
+     this.props.mission.flightPlan.landingBearing;
     if (!doWaypointsExist) {
       Bert.alert('You need to draw the mission', 'danger');
       return;
@@ -85,7 +88,7 @@ class PreFlightTOL extends Component {
     }
     const newWaypointList = addLandingPath(
       doWaypointsExist,
-      this.state.landingBearing,
+      landingBearing,
       this.segmentSize.value,
       landingSlope,
       isHeightDefined,
@@ -180,6 +183,19 @@ class PreFlightTOL extends Component {
     this.setState({ isClockWise: newValue });
   }
 
+  editLandingBearing(newLandingBearing = {}) {
+    this.toggleButtonSwitch();
+    Meteor.call('missions.setLandingBearing', this.props.mission._id, newLandingBearing, (error) => {
+      if (error) {
+        Bert.alert(error.reason, 'danger');
+      } else if (newLandingBearing !== {}) {
+        Bert.alert('Mission Landing Bearing Updated', 'success');
+      } else {
+        Bert.alert('You should not get here ever', 'danger');
+      }
+    });
+  }
+
   render() {
     const {
       mission, project, match, history,
@@ -250,7 +266,13 @@ class PreFlightTOL extends Component {
                 </FormGroup>
               </Col>
               <Col xs={12} sm={12} md={12} lg={12} style={{ padding: '0px 2px' }}>
-                <Button block bsStyle="default">Set Landing Bearing</Button>
+                <Button
+                  onClick={() => this.toggleButtonSwitch('getAngleActive')}
+                  block
+                  bsStyle="default"
+                >
+                    Set Landing Bearing
+                </Button>
               </Col>
             </Row>
             <br />
@@ -306,6 +328,8 @@ class PreFlightTOL extends Component {
               location={project && project.mapLocation}
               mission={mission}
               height="70vh"
+              getAngleActive={this.state.buttonStates.getAngleActive}
+              updateLandingBearing={this.editLandingBearing}
             />
           </Col>
         </Row>
