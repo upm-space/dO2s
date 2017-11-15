@@ -14,7 +14,9 @@ import './PreFlightMap.scss';
 class PreFlightMap extends Component {
   componentDidMount() {
     const currentLocation = this.props.location;
-    const missionmap = L.map('preflightmap').setView(featurePoint2latlong(currentLocation), featurePointGetZoom(currentLocation));
+    const waypointArray = this.props.mission.flightPlan.missionCalculation.waypointList.features;
+    const currentLanding = waypointArray[waypointArray.length - 1];
+    const missionmap = L.map('preflightmap').setView(featurePoint2latlong(currentLanding), featurePointGetZoom(currentLocation));
     this.missionmap = missionmap;
     L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services' +
 '/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
