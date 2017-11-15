@@ -259,7 +259,7 @@ class MissionPlan extends Component {
                   active={this.state.buttonStates.takeOffButtonActive}
                   block
                 >
-                  <div><i className="fa fa-arrow-circle-up fa-lg" aria-hidden="true" /></div>
+                  <div><span className="fa fa-arrow-circle-up fa-lg" aria-hidden="true" /></div>
                   <div>Set<br />Take Off</div>
                 </Button>
               </Col>
@@ -270,7 +270,7 @@ class MissionPlan extends Component {
                   active={this.state.buttonStates.landingButtonActive}
                   block
                 >
-                  <div><i className="fa fa-arrow-circle-down fa-lg" aria-hidden="true" /></div>
+                  <div><span className="fa fa-arrow-circle-down fa-lg" aria-hidden="true" /></div>
                   <div>Set<br />Landing</div>
                 </Button>
               </Col>
@@ -281,7 +281,7 @@ class MissionPlan extends Component {
                   active={this.state.buttonStates.defineAreaButtonActive}
                   block
                 >
-                  <div><i className="fa fa-paint-brush fa-lg" aria-hidden="true" /></div>
+                  <div><span className="fa fa-paint-brush fa-lg" aria-hidden="true" /></div>
                   <div>Define<br />{this.buttonGeometryName(mission)}</div>
                 </Button>
               </Col>
@@ -296,7 +296,7 @@ class MissionPlan extends Component {
                   active={this.state.buttonStates.flightParametersButtonActive}
                   block
                 >
-                  <div><i className="fa fa-paper-plane fa-lg" aria-hidden="true" /></div>
+                  <div><span className="fa fa-paper-plane fa-lg" aria-hidden="true" /></div>
                   <div>Flight<br />Params</div>
                 </Button>
               </Col>
@@ -307,7 +307,7 @@ class MissionPlan extends Component {
                   active={this.state.buttonStates.payloadParamsButtonActive}
                   block
                 >
-                  <div><i className="fa fa-camera fa-lg" aria-hidden="true" /></div>
+                  <div><span className="fa fa-camera fa-lg" aria-hidden="true" /></div>
                   <div>Payload<br />Params</div>
                 </Button>
               </Col>
@@ -318,7 +318,7 @@ class MissionPlan extends Component {
                   active={this.state.buttonStates.pictureGridButtonActive}
                   block
                 >
-                  <div><i className="fa fa-picture-o fa-lg" aria-hidden="true" /></div>
+                  <div><span className="fa fa-picture-o fa-lg" aria-hidden="true" /></div>
                   <div>Picture<br />Grid</div>
                 </Button>
               </Col>
@@ -331,7 +331,7 @@ class MissionPlan extends Component {
                   onClick={() => this.drawMission(false)}
                   block
                 >
-                  <div><i className="fa fa-superpowers fa-lg" aria-hidden="true" /></div>
+                  <div><span className="fa fa-superpowers fa-lg" aria-hidden="true" /></div>
                   <div>Draw<br />Mission</div>
                 </Button>
               </Col>
@@ -341,7 +341,7 @@ class MissionPlan extends Component {
                   onClick={this.calculateElevation}
                   block
                 >
-                  <div><i className="fa fa-long-arrow-up fa-lg" aria-hidden="true" /></div>
+                  <div><span className="fa fa-long-arrow-up fa-lg" aria-hidden="true" /></div>
                   <div>Get WPS<br />Altitude<br /></div>
                 </Button>
               </Col>
@@ -352,7 +352,7 @@ class MissionPlan extends Component {
                   disabled={mission.missionType !== 'Surface Area'}
                   block
                 >
-                  <div><i className="fa fa-rotate-right fa-lg" aria-hidden="true" /></div>
+                  <div><span className="fa fa-rotate-right fa-lg" aria-hidden="true" /></div>
                   <div>Change Mission Direction</div>
                 </Button>
               </Col>
@@ -366,7 +366,7 @@ class MissionPlan extends Component {
                   active={this.state.buttonStates.showWayPointsButtonActive}
                   block
                 >
-                  <div><i className="fa fa-map-marker fa-lg" aria-hidden="true" /></div>
+                  <div><span className="fa fa-map-marker fa-lg" aria-hidden="true" /></div>
                   <div>Show<br />WayPoints</div>
                 </Button>
               </Col>
@@ -377,7 +377,7 @@ class MissionPlan extends Component {
                   active={this.state.buttonStates.showMissionDataButtonActive}
                   block
                 >
-                  <div><i className="fa fa-bullseye fa-lg" aria-hidden="true" /></div>
+                  <div><span className="fa fa-bullseye fa-lg" aria-hidden="true" /></div>
                   <div>Show<br />Mission Data</div>
                 </Button>
               </Col>
@@ -390,7 +390,7 @@ class MissionPlan extends Component {
                   block
                   onClick={() => this.clearWayPoints()}
                 >
-                  <div><i className="fa fa-trash fa-lg" aria-hidden="true" /></div>
+                  <div><span className="fa fa-trash fa-lg" aria-hidden="true" /></div>
                   <div>Clear WayPoints</div>
                 </Button>
               </Col>
@@ -403,7 +403,7 @@ class MissionPlan extends Component {
                   onClick={() => this.toogleButtonSwtich()}
                   block
                 >
-                  <div><i className="fa fa-square-o fa-lg" aria-hidden="true" /></div>
+                  <div><span className="fa fa-square-o fa-lg" aria-hidden="true" /></div>
                   <div>Perimeter<br /> KML</div>
                 </Button>
               </Col>
@@ -413,7 +413,7 @@ class MissionPlan extends Component {
                   onClick={() => this.toogleButtonSwtich()}
                   block
                 >
-                  <div><i className="fa fa-map fa-lg" aria-hidden="true" /></div>
+                  <div><span className="fa fa-map fa-lg" aria-hidden="true" /></div>
                   <div>Mission<br /> KML</div>
                 </Button>
               </Col>

@@ -119,15 +119,15 @@ class Missions extends Component {
               onClick={() => this.toggleDone(_id, done)}
             >
               {done ?
-                <i className="fa fa-check-square-o" aria-hidden="true" /> :
-                <i className="fa fa-square-o" aria-hidden="true" />}
+                <span className="fa fa-check-square-o" aria-hidden="true" /> :
+                <span className="fa fa-square-o" aria-hidden="true" />}
             </Button>
           </td>
           <td className="button-column">
             <Button
               bsStyle="danger"
               onClick={() => this.handleSoftRemove(_id)}
-            ><i className="fa fa-times" aria-hidden="true" />
+            ><span className="fa fa-times" aria-hidden="true" />
             </Button>
           </td>
         </tr>);
