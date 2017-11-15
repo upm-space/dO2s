@@ -68,7 +68,6 @@ class WayPointList extends Component {
           type="number"
           className="form-control"
           name="altRelative"
-          min="0"
           defaultValue={waypoint.properties.altRelative.toFixed(2)}
           onChange={event =>
             this.changeWaypointAtlRelative(
