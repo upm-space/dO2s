@@ -188,25 +188,25 @@ seeder(Meteor.users, {
       return projectsSeed(userId, userItemIDS);
     },
   }],
-  // modelCount: 5,
-  // model(index, faker) {
-  //   const userCount = index + 1;
-  //   return {
-  //     email: `user+${userCount}@test.com`,
-  //     password: 'password',
-  //     profile: {
-  //       name: {
-  //         first: faker.name.firstName(),
-  //         last: faker.name.lastName(),
-  //       },
-  //     },
-  //     roles: ['free-user'],
-  //     data(userId) {
-  //       const userItemIDS = insertOtherData(userId);
-  //       return projectsSeed(userId, userItemIDS);
-  //     },
-  //   };
-  // },
+  modelCount: 5,
+  model(index, faker) {
+    const userCount = index + 1;
+    return {
+      email: `user+${userCount}@test.com`,
+      password: 'password',
+      profile: {
+        name: {
+          first: faker.name.firstName(),
+          last: faker.name.lastName(),
+        },
+      },
+      roles: ['free-user'],
+      data(userId) {
+        const userItemIDS = insertOtherData(userId);
+        return projectsSeed(userId, userItemIDS);
+      },
+    };
+  },
 });
 
 if (!Meteor.isProduction) {
