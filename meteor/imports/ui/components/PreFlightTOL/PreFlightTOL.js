@@ -202,8 +202,8 @@ class PreFlightTOL extends Component {
     } = this.props;
     return (
       <div className="TOL">
-        <h4>Fix Take Off and Landing Points. Set Landing path.</h4>
         <Row>
+          <h4>Fix Take Off and Landing Points</h4>
           <Col xs={12} sm={3} md={3} lg={3}>
             <Row>
               <Col xs={12} sm={12} md={12} lg={12} style={{ padding: '0px 2px' }}>
@@ -230,6 +230,7 @@ class PreFlightTOL extends Component {
             </Row>
             <hr />
             <Row>
+              <h4>Set Landing Path</h4>
               <Col xs={12} sm={12} md={12} lg={12} style={{ padding: '0px 2px' }}>
                 <FormGroup
                   validationState={this.state.segmentSizeOverLimit ? 'warning' : null}
@@ -282,9 +283,8 @@ class PreFlightTOL extends Component {
                   onClick={this.setLandingPath}
                   block
                   bsStyle="primary"
-                  style={{ whiteSpace: 'normal' }}
                 >
-                  Set Landing Path
+                  Set
                 </Button>
               </Col>
               <Col xs={12} sm={6} md={6} lg={6} style={{ padding: '0px 2px' }}>
@@ -292,9 +292,8 @@ class PreFlightTOL extends Component {
                   onClick={this.removeLandingPath}
                   block
                   bsStyle="danger"
-                  style={{ whiteSpace: 'normal' }}
                 >
-                  Remove Landing Path
+                  Remove
                 </Button>
               </Col>
             </Row>
