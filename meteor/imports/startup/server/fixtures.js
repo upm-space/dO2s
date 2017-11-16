@@ -80,9 +80,9 @@ const CamerasVector = (userId) => {
       weight: faker.random.number({ min: 0, max: 100 }),
       payloadType: 'Camera',
       sensorParameters: {
-        focalLength: faker.random.number({ min: 0, max: 50 }),
-        sensorWidth: faker.random.number({ min: 0, max: 50 }),
-        sensorHeight: faker.random.number({ min: 0, max: 50 }),
+        focalLength: faker.random.number({ min: 1, max: 50 }),
+        sensorWidth: faker.random.number({ min: 1, max: 50 }),
+        sensorHeight: faker.random.number({ min: 1, max: 50 }),
         imageWidth: faker.random.number({ min: 400, max: 10000 }),
         imageHeight: faker.random.number({ min: 600, max: 10000 }),
       },
@@ -188,25 +188,25 @@ seeder(Meteor.users, {
       return projectsSeed(userId, userItemIDS);
     },
   }],
-  // modelCount: 5,
-  // model(index, faker) {
-  //   const userCount = index + 1;
-  //   return {
-  //     email: `user+${userCount}@test.com`,
-  //     password: 'password',
-  //     profile: {
-  //       name: {
-  //         first: faker.name.firstName(),
-  //         last: faker.name.lastName(),
-  //       },
-  //     },
-  //     roles: ['free-user'],
-  //     data(userId) {
-  //       const userItemIDS = insertOtherData(userId);
-  //       return projectsSeed(userId, userItemIDS);
-  //     },
-  //   };
-  // },
+  modelCount: 5,
+  model(index, faker) {
+    const userCount = index + 1;
+    return {
+      email: `user+${userCount}@test.com`,
+      password: 'password',
+      profile: {
+        name: {
+          first: faker.name.firstName(),
+          last: faker.name.lastName(),
+        },
+      },
+      roles: ['free-user'],
+      data(userId) {
+        const userItemIDS = insertOtherData(userId);
+        return projectsSeed(userId, userItemIDS);
+      },
+    };
+  },
 });
 
 if (!Meteor.isProduction) {

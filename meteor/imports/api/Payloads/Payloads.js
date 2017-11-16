@@ -21,27 +21,27 @@ const cameraParametersSchema = new SimpleSchema({
   focalLength: {
     type: Number,
     label: 'The focal length of the camera in milimeters',
-    min: 0,
+    min: 1,
   },
   sensorWidth: {
     type: Number,
     label: 'The sensor width in milimeters',
-    min: 0,
+    min: 1,
   },
   sensorHeight: {
     type: Number,
     label: 'The sensor height in milimeters',
-    min: 0,
+    min: 1,
   },
   imageWidth: {
     type: Number,
     label: 'The image width in pixels',
-    min: 0,
+    min: 1,
   },
   imageHeight: {
     type: Number,
     label: 'The image height in pixels',
-    min: 0,
+    min: 1,
   },
 });
 

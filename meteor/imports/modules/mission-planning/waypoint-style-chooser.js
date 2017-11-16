@@ -60,3 +60,7 @@ export const waypointListOptions = {
 export const rpaPathStyle = {
   style: { color: '#d9534f' },
 };
+
+export const bearingPathStyle = {
+  sytle: { color: '#FFCF50' },
+};

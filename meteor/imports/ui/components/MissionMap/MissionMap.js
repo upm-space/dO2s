@@ -266,8 +266,14 @@ class MissionMap extends Component {
     let newWaypointList = {};
     const operationType = getOperationType(rpaOldPath, newRPAPathLatLngs);
     let wptype = 5;
+    let WPHeight = flightPlan.flightParameters.height;
     if (operationType.operation === 'move') {
       wptype = currentWaypointList.features[operationType.index].properties.type;
+      if (wptype === 1) {
+        WPHeight = 50;
+      } else if (wptype === 2) {
+        WPHeight = 0;
+      }
     }
     const nextWPFeature = {
       type: 'Feature',
@@ -277,8 +283,8 @@ class MissionMap extends Component {
       },
       properties: {
         type: wptype,
-        altRelative: flightPlan.flightParameters.height,
-        altAbsolute: flightPlan.flightParameters.height,
+        altRelative: WPHeight,
+        altAbsolute: WPHeight,
         altGround: 0,
       },
     };

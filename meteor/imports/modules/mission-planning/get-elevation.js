@@ -15,6 +15,10 @@ const calculateAltitudes = (waypointFeatureCollection) => {
     } else if (waypointProps.type === 2) {
       waypointProps.altGround = waypointElevation;
       waypointProps.altRelative = waypointElevation - takeoffElevation;
+    } else if (waypointProps.isLandingPath) {
+      waypointProps.altGround = waypointElevation;
+      waypointProps.altAbsolute =
+         waypointProps.altRelative - (waypointElevation - takeoffElevation);
     } else {
       waypointProps.altGround = waypointElevation;
       waypointProps.altRelative = waypointHeight + (waypointElevation - takeoffElevation);

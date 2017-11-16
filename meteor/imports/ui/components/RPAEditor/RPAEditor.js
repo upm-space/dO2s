@@ -192,7 +192,7 @@ class RPAEditor extends Component {
                 className="form-control"
                 name="rpaType"
                 ref={rpaType => (this.rpaType = rpaType)}
-                value={rpa && rpa.rpasType}
+                defaultValue={rpa && rpa.rpasType}
               >
                 <option value="Plane">Plane</option>
                 <option value="MultiCopter">MultiCopter</option>
