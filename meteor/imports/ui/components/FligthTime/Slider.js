@@ -24,7 +24,7 @@ const usToHHMMSS = (time) => {
   if (hours < 10) { hours = `0${hours}`; }
   if (minutes < 10) { minutes = `0${minutes}`; }
   if (seconds < 10) { seconds = `0${seconds}`; }
-  return `${hours}:${minutes}:${seconds}`;
+  return ` ${hours}:${minutes}:${seconds}`;
 };
 
 class Slider extends Component {
@@ -173,7 +173,7 @@ Slider.propTypes = {
   domain: PropTypes.number.isRequired,
   logTime: PropTypes.number.isRequired,
   speed: PropTypes.number.isRequired,
-  synchrony: PropTypes.number.isRequired,
+  synchrony: PropTypes.bool.isRequired,
   timeGap: PropTypes.number.isRequired,
   frequency: PropTypes.number.isRequired,
   // features: PropTypes.array.isRequired,

@@ -45,6 +45,8 @@ class Zoom extends Component {
       .selectAll('text')
       .style('text-anchor', 'start')
       .attr('transform', 'rotate(-30) translate(-10, -5)');
+    // chart.remove();
+    // this.zoom(this.props.start, this.props.end, this.chartContainer.offsetWidth);
   }
 
   zoom(startTime, endTime, chartWidth) {
@@ -115,20 +117,20 @@ class Zoom extends Component {
       .attr('height', 40);
     chartAxis.append('circle')
       .attr('class', 'circle-red')
-      .attr('cx', x(this.props.logTime))
+      .attr('cx', x(0))
       .attr('cy', 30)
       .attr('r', 3)
       .attr('transform', 'translate(0, 40)');
     handleGreen = chartAxis.insert('rect')
       .attr('class', 'ZoomGreenSelector')
       .attr('transform', 'translate(0, 40)')
-      .attr('x', x(this.props.logTime) - 1.5)
+      .attr('x', x(this.props.videoTime) - 1.5)
       .attr('width', 3)
       .attr('height', 40)
       .call(drag);
     chartAxis.append('circle')
       .attr('class', 'circle-green')
-      .attr('cx', x(this.props.logTime))
+      .attr('cx', x(0))
       .attr('cy', 10)
       .attr('r', 3)
       .attr('transform', 'translate(0, 40)');
@@ -158,7 +160,7 @@ Zoom.propTypes = {
   logTime: PropTypes.number.isRequired,
   videoTime: PropTypes.number.isRequired,
   speed: PropTypes.number.isRequired,
-  synchrony: PropTypes.number.isRequired,
+  synchrony: PropTypes.bool.isRequired,
   timeGap: PropTypes.number.isRequired,
   frequency: PropTypes.number.isRequired,
   // features: PropTypes.array.isRequired,

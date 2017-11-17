@@ -98,7 +98,6 @@ class MissionVideo extends Component {
     }
     if (linePointSelector === 0) {
       dataSetLineString.features[0].geometry.coordinates.push([newDataTxt.lng, newDataTxt.lat]);
-      // dataSetLineString.features[0].geometry.coordinates.push([newDataTxt1.lng, newDataTxt1.lat], [newDataTxt2.lng, newDataTxt2.lat], [newDataTxt3.lng, newDataTxt3.lat], [newDataTxt4.lng, newDataTxt4.lat], [newDataTxt1.lng, newDataTxt1.lat]);
     }
   }
 
@@ -246,65 +245,70 @@ class MissionVideo extends Component {
       <div className="MissionVideo" id="MissionVideo">
         <div className="ButtonDiv">
           <Row>
-            <Col xs={10} sm={10} md={10} lg={12}>
+            <Col xs={12} sm={12} md={12} lg={12}>
               <Row>
-                <Col xs={10} sm={10} md={6} lg={6} className="margin-bottom">
+                <Col xs={12} sm={12} md={12} lg={12}>
                   <Button
                     bsStyle="primary"
                     onClick={() => this.pointP()}
                     block
                   >
-                    {/* <div><i className="fa fa-arrow-circle-up fa-lg" aria-hidden="true" /></div> */}
+                    <div><span className="fa fa-map-marker fa-lg" aria-hidden="true" /></div>
                     <div>Add Point</div>
                   </Button>
                 </Col>
-                <Col xs={10} sm={10} md={6} lg={6} className="margin-bottom">
+                <Col xs={12} sm={12} md={12} lg={12}>
                   <Button
                     bsStyle="primary"
                     onClick={() => this.lineP()}
                     block
                   >
-                    {/* <div><i className="fa fa-arrow-circle-down fa-lg" aria-hidden="true" /></div> */}
+                    <div><span className="fa fa-line-chart fa-lg" aria-hidden="true" /></div>
                     <div>Add Line</div>
                   </Button>
                 </Col>
               </Row>
-              <br />
+              {/* <br />
               <Row>
-                <Col xs={10} sm={10} md={10} lg={12} className="padding2">
+                <Col xs={12} sm={12} md={12} lg={12}>
                   <Button
                     bsStyle="warning"
                     onClick={() => {}}
                     block
                   >
-                    {/* <div><i className="fa fa-paper-plane fa-lg" aria-hidden="true" /></div> */}
-                    <div>Show<br />Photocenters</div>
+                    <div><span className="fa fa-paper-plane fa-lg" aria-hidden="true" /></div>
+                    <div>Photocenter<br />Line</div>
                   </Button>
                 </Col>
-              </Row>
+              </Row> */}
               <br />
               <Row>
-                <Col xs={10} sm={10} md={10} lg={12} className="padding2">
+                <Col xs={12} sm={12} md={12} lg={12}>
                   <Button
                     bsStyle="success"
                     onClick={() => this.props.syncTrue()}
                     block
                   >
-                    {/* <div><i className="fa fa-superpowers fa-lg" aria-hidden="true" /></div> */}
-                    <div>Synchronize<br />Timeline</div>
+                    <div><span className="fa fa-link fa-lg" aria-hidden="true" /></div>
+                    <div>Link<br />Timelines</div>
                   </Button>
                 </Col>
               </Row>
               <br />
               <Row>
-                <Col xs={10} sm={10} md={10} lg={12} className="padding2">
+                <Col xs={12} sm={12} md={12} lg={12}>
                   <Button
                     bsStyle="danger"
                     onClick={() => this.props.syncFalse()}
                     block
                   >
-                    {/* <div><i className="fa fa-map-marker fa-lg" aria-hidden="true" /></div> */}
-                    <div>Unsynchronize<br />Timeline</div>
+                    <div>
+                      <span className="fa fa-stack fa-lg" aria-hidden="true">
+                        <i className="fa fa-link fa-stack-1x" aria-hidden="true" />
+                        <i className="fa fa-ban fa-stack-2x" aria-hidden="true" />
+                      </span>
+                    </div>
+                    <div>Unlink<br />Timelines</div>
                   </Button>
                 </Col>
               </Row>
