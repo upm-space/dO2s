@@ -1,8 +1,9 @@
 import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
 import path from 'path';
+import fs from 'fs';
 import rateLimit from '../../../modules/rate-limit';
-import { saveFileFrombuffer, deleteFile } from '../../../modules/server/file-system';
+import { saveFileFrombuffer, deleteFile, getFileList } from '../../../modules/server/file-system';
 
 const Future = require('fibers/future');
 
@@ -37,12 +38,36 @@ Meteor.methods({
       throw new Meteor.Error('500', exception);
     }
   },
+
+  'fileTransfer.saveFolder': (missionId, dirPath) => {
+    check(missionId, String);
+    check(dirPath, String);
+    try {
+      const future = new Future();
+      if (fs.existsSync(dirPath)) {
+        const missionDir = path.join(Meteor.settings.private.config.missionsPath, `${missionId}/`);
+        getFileList(dirPath, (array) => {
+          array.forEach((fileName) => {
+            const filePath = path.join(dirPath, fileName);
+            const newFilePath = path.join(missionDir, fileName);
+            fs.copyFileSync(filePath, newFilePath);
+          });
+        });
+      } else {
+        throw Error('Directory not found');
+      }
+      return future.wait();
+    } catch (exception) {
+      throw new Meteor.Error('500', exception);
+    }
+  },
 });
 
 rateLimit({
   methods: [
     'fileTransfer.saveFile',
     'fileTransfer.deleteFile',
+    'fileTransfer.saveFolder',
   ],
   limit: 5,
   timeRange: 1000,

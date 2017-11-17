@@ -19,14 +19,12 @@ class FileTransferUi extends Component {
     };
 
     this.rootDirectory = 'C:/Oficina/Universidad/TFM/';
-    this.localDirectory = '';
     this.selectedLocalFiles = new Set();
     this.selectedServerFiles = new Set();
     this.fileUploading = false;
     this.fileBeingDeleted = false;
 
     this.selectFiles = this.selectFiles.bind(this);
-    this.selectFolder = this.selectFolder.bind(this);
     this.uploadFiles = this.uploadFiles.bind(this);
     this.deleteFiles = this.deleteFiles.bind(this);
     this.deleteLocalFile = this.deleteLocalFile.bind(this);
@@ -53,13 +51,6 @@ class FileTransferUi extends Component {
     this.renderLocalFiles(this.selectedLocalFiles);
   }
 
-  selectFolder(evt) {
-    const selectedFiles = evt.target.files;
-    const relativePath = selectedFiles[0].webkitRelativePath;
-    const folder = relativePath.split('/');
-    return folder;
-  }
-
   removeLocalFile(file) {
     if (this.selectedLocalFiles.has(file)) {
       this.selectedLocalFiles.delete(file);
@@ -75,14 +66,30 @@ class FileTransferUi extends Component {
   }
 
   uploadFiles() {
-    const loopUpload = setInterval(() => {
-      if (!this.fileUploading) {
-        if (this.state.localFiles.length === 0) { clearInterval(loopUpload); } else {
-          this.fileUploading = true;
-          this.uploadLocalFile(this.state.localFiles[0].id);
+    if (this.localDirectory.value) {
+      console.log(this.localDirectory.value);
+      const reader = new FileReader();
+      Meteor.call('fileTransfer.saveFolder', this.props.missionId, this.localDirectory.value, reader, (error, result) => {
+        if (result) {
+          if (result.result === 'ok') {
+            Bert.alert(`Folder ${this.localDirectory} copied`, 'success');
+          } else {
+            Bert.alert(error.reason, 'danger');
+          }
+        } else {
+          Bert.alert(error.reason, 'danger');
         }
-      }
-    }, 500);
+      });
+    } else {
+      const loopUpload = setInterval(() => {
+        if (!this.fileUploading) {
+          if (this.state.localFiles.length === 0) { clearInterval(loopUpload); } else {
+            this.fileUploading = true;
+            this.uploadLocalFile(this.state.localFiles[0].id);
+          }
+        }
+      }, 500);
+    }
   }
 
   deleteFiles() {
@@ -234,30 +241,12 @@ class FileTransferUi extends Component {
                 <ControlLabel>Local Folder</ControlLabel>
                 <input
                   type="text"
-                  directory="localFolder"
-                  defaultValue="Folder path"
-                  ref={localDirectory => (this.localDirectory = `${localDirectory}/`)}
+                  name="localDirectory"
+                  defaultValue="C:\Oficina\Universidad\TFM\pruebas-servidor-do2s\testFiles"
+                  ref={localDirectory => (this.localDirectory = localDirectory)}
                   className="form-control"
                 />
               </FormGroup>
-              {/* <Button bsStyle="primary">
-                <label htmlFor="browseFolder">
-                  <span className="fa fa-folder-open" aria-hidden="true" /> Browse Folder
-                  <input
-                    id="browseFolder"
-                    type="file"
-                    accept
-                    style={{ display: 'block' }}
-                    webkitdirectory
-                    mozdirectory
-                    msdirectory
-                    odirectory
-                    directory
-                    multiple
-                    onChange={event => this.selectFolder(event)}
-                  />
-                </label>
-              </Button> */}
             </Col>
           </Row>
           <br />
