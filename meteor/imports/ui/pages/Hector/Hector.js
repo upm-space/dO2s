@@ -53,8 +53,7 @@ class Hector extends Component {
         });
         a.forceUpdate();
       })
-      .catch(error => Bert.alert(`Coordinates Request Error: ${error}`, 'warning'))
-    ;
+      .catch(error => Bert.alert(`Coordinates Request Error: ${error}`, 'warning'));
   }
 
   changeVideoTime(f) {

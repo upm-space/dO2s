@@ -2,7 +2,7 @@ div#Hector{
   margin: 15px;
   position: absolute;
   top: 50px;
-  bottom: 60px;
+  bottom: 0;
   left: 0;
   right: 0;
 
@@ -32,7 +32,7 @@ div#Hector{
 
   div#Dial{
     position: absolute;
-    bottom: 0;
+    bottom: -19px;
     left: 0;
   }
 }

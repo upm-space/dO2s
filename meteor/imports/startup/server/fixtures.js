@@ -109,7 +109,7 @@ const batteriesSeed = (userId) => {
 
 const missionsSeed = (userId, projectId, rpasPayloadsIDS) => ({
   collection: Missions,
-  environments: ['development', 'staging'],
+  environments: ['development', 'staging', 'production'],
   noLimit: true,
   modelCount: 5,
   model(dataIndex, faker) {
@@ -128,7 +128,7 @@ const missionsSeed = (userId, projectId, rpasPayloadsIDS) => ({
 
 const projectsSeed = (userId, rpasPayloadsIDS) => ({
   collection: Projects,
-  environments: ['development', 'staging'],
+  environments: ['development', 'staging', 'production'],
   noLimit: true,
   modelCount: 5,
   model(dataIndex, faker) {
@@ -171,7 +171,7 @@ const insertOtherData = (userId) => {
 };
 
 seeder(Meteor.users, {
-  environments: ['development', 'staging'],
+  environments: ['development', 'staging', 'production'],
   noLimit: true,
   data: [{
     email: 'admin@admin.com',
@@ -209,13 +209,13 @@ seeder(Meteor.users, {
   },
 });
 
-if (!Meteor.isProduction) {
-  const userExists = Meteor.users.findOne({ 'emails.0.address': 'admin@admin.com' });
+// if (!Meteor.isProduction) {
+const userExists = Meteor.users.findOne({ 'emails.0.address': 'admin@admin.com' });
 
-  if (!userExists.emails[0].verified) {
-    Meteor.users.update(
-      { _id: userExists._id },
-      { $set: { 'emails.0.verified': true } },
-    );
-  }
+if (!userExists.emails[0].verified) {
+  Meteor.users.update(
+    { _id: userExists._id },
+    { $set: { 'emails.0.verified': true } },
+  );
 }
+// }

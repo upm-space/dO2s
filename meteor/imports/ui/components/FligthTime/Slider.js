@@ -24,7 +24,7 @@ const usToHHMMSS = (time) => {
   if (hours < 10) { hours = `0${hours}`; }
   if (minutes < 10) { minutes = `0${minutes}`; }
   if (seconds < 10) { seconds = `0${seconds}`; }
-  return `${hours}:${minutes}:${seconds}`;
+  return ` ${hours}:${minutes}:${seconds}`;
 };
 
 class Slider extends Component {
@@ -41,8 +41,7 @@ class Slider extends Component {
     slider.append('g')
       .attr('class', 'axis')
       .call(axis)
-      .lower()
-    ;
+      .lower();
     slider.selectAll('text').style('text-anchor', 'end').attr('transform', 'rotate(-30) translate(10, 5)');
   }
 
@@ -54,21 +53,15 @@ class Slider extends Component {
     x = d3.scaleLinear()
       .domain([0, this.props.domain])
       .range([0, width])
-      .clamp(true)
-    ;
-
+      .clamp(true);
     axis = d3.axisBottom(x).ticks(10).tickFormat(d => usToHHMMSS(d));
 
     slider = svg.append('g')
       .attr('class', 'slider')
-      .attr('transform', `translate(${margin.left},${(height / 2) - 15})`)
-    ;
-
+      .attr('transform', `translate(${margin.left},${(height / 2) - 15})`);
     slider.append('g')
       .attr('class', 'axis')
-      .call(axis)
-    ;
-
+      .call(axis);
     function hue(h) {
       if (active === 1) {
         if (handle2.attr('x') < x(h)) {
@@ -103,9 +96,7 @@ class Slider extends Component {
         if (this.props.synchrony) {
           this.props.changeVideoTime(x.invert(selector.attr('x')) - this.props.timeGap);
         }
-      })
-    ;
-
+      });
     slider.append('line')
       .attr('class', 'track')
       .attr('x1', x.range()[0])
@@ -114,16 +105,12 @@ class Slider extends Component {
       .attr('class', 'track-inset')
       .select(function a() { return this.parentNode.appendChild(this.cloneNode(true)); })
       .attr('class', 'track-overlay')
-      .call(drag)
-    ;
-
+      .call(drag);
     range = slider.append('line')
       .attr('class', 'track-range')
       .attr('x1', x.range()[0])
       .attr('x2', x.range()[1])
-      .call(drag)
-    ;
-
+      .call(drag);
     handle1 = slider.insert('rect')
       .attr('class', 'SliderHandle')
       .attr('x', -5)
@@ -131,9 +118,7 @@ class Slider extends Component {
       .attr('width', 5)
       .attr('height', 20)
       .on('mouseover', () => { active = 1; })
-      .call(drag)
-    ;
-
+      .call(drag);
     handle2 = slider.insert('rect')
       .attr('class', 'SliderHandle')
       .attr('x', width)
@@ -141,9 +126,7 @@ class Slider extends Component {
       .attr('width', 5)
       .attr('height', 20)
       .on('mouseover', () => { active = 2; })
-      .call(drag)
-    ;
-
+      .call(drag);
     selector = slider.insert('rect')
       .attr('class', 'SliderSelector')
       .attr('x', -1.5)
@@ -151,9 +134,7 @@ class Slider extends Component {
       .attr('width', 3)
       .attr('height', 45)
       .on('mousedown', () => { active = 3; })
-      .call(drag)
-    ;
-
+      .call(drag);
     setInterval(() => {
       i += f * 1000 * this.props.speed;
       selector.attr('x', x(i) - 1.5);
@@ -174,7 +155,8 @@ class Slider extends Component {
             id="SliderTextMin"
           >
             {usToHHMMSS(0)}
-          </span> - <span
+          </span> -
+          <span
             id="SliderTextMax"
           >
             {usToHHMMSS(this.props.end)}
@@ -191,7 +173,7 @@ Slider.propTypes = {
   domain: PropTypes.number.isRequired,
   logTime: PropTypes.number.isRequired,
   speed: PropTypes.number.isRequired,
-  synchrony: PropTypes.number.isRequired,
+  synchrony: PropTypes.bool.isRequired,
   timeGap: PropTypes.number.isRequired,
   frequency: PropTypes.number.isRequired,
   // features: PropTypes.array.isRequired,
