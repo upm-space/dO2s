@@ -2,13 +2,13 @@ import moment from 'moment';
 import 'moment-timezone';
 
 export const monthDayYear = (timestamp, timezone) => (
-  !timezone ? moment(timestamp).format('MMMM Do, YYYY') :
-    moment(timestamp).tz(timezone).format('MMMM Do, YYYY')
+  !timezone ? moment(timestamp).format('Do MMMM YYYY') :
+    moment(timestamp).tz(timezone).format('Do MMMM YYYY')
 );
 
 export const monthDayYearAtTime = (timestamp, timezone) => (
-  !timezone ? moment(timestamp).format('MMMM Do, YYYY [at] hh:mm a') :
-    moment(timestamp).tz(timezone).format('MMMM Do, YYYY [at] hh:mm a')
+  !timezone ? moment(timestamp).format('Do MMMM YYYY [at] hh:mm a') :
+    moment(timestamp).tz(timezone).format('Do MMMM YYYY [at] hh:mm a')
 );
 
 export const timeago = (timestamp, timezone) => (
