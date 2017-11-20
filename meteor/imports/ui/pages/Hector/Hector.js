@@ -51,53 +51,46 @@ class Hector extends Component {
           timeRangeEnd: featureArray[last].TimeUS,
           domain: featureArray[last].TimeUS,
         });
-        a.forceUpdate();
       })
       .catch(error => Bert.alert(`Coordinates Request Error: ${error}`, 'warning'));
   }
 
   changeVideoTime(f) {
     this.setState({
-      videoTime: f,
+      videoTime: parseFloat(f),
     });
-    this.forceUpdate();
   }
 
   changeRange(a, b) {
     this.setState({
-      timeRangeStart: a,
-      timeRangeEnd: b,
+      timeRangeStart: parseFloat(a),
+      timeRangeEnd: parseFloat(b),
     });
-    this.forceUpdate();
   }
 
   changeLogTime(c) {
     this.setState({
-      logTime: c,
+      logTime: parseFloat(c),
     });
-    this.forceUpdate();
   }
 
   changeSpeed(e) {
     this.setState({
-      speed: e,
+      speed: parseFloat(e),
     });
-    this.forceUpdate();
   }
 
   syncTrue() {
     this.setState({
-      timeGap: this.state.logTime - this.state.videoTime,
+      timeGap: parseFloat(parseFloat(this.state.logTime) - parseFloat(this.state.videoTime)),
       synchrony: true,
     });
-    this.forceUpdate();
   }
 
   syncFalse() {
     this.setState({
       synchrony: false,
     });
-    this.forceUpdate();
   }
 
   renderMissionVideo(freq) {

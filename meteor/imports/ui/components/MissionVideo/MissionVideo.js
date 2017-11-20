@@ -7,8 +7,6 @@ import L from 'leaflet';
 
 import './MissionVideo.scss';
 
-let loadedVideo = false;
-let loadedTxtVideo = false;
 let featureArray;
 let coordinates0;
 let Lng0;
@@ -50,6 +48,7 @@ class MissionVideo extends Component {
   constructor(props) {
     super(props);
 
+    this.initiate = this.initiate.bind(this);
     this.transformVideo = this.transformVideo.bind(this);
     this.getCoords = this.getCoords.bind(this);
     this.pointP = this.pointP.bind(this);
@@ -57,21 +56,26 @@ class MissionVideo extends Component {
   }
 
   componentDidMount() {
-    this.myVideo.addEventListener('loadedmetadata', () => { loadedVideo = true; });
-    this.myTxtVideo.addEventListener('loadedmetadata', () => { loadedTxtVideo = true; });
-    this.initiate(this);
+    this.initiate();
+    this.myVideo.addEventListener('loadeddata', () => {
+      console.log(this.myVideo.readyState);
+    });
+    this.myTxtVideo.addEventListener('loadeddata', () => {
+      console.log(this.myTxtVideo.readyState);
+    });
   }
 
   componentDidUpdate() {
     n = this.props.logTime;
-    if (loadedVideo) {
+    console.log(this.myTxtVideo.readyState);
+    this.myVideo.playbackRate = this.props.speed;
+    if (this.myVideo.readyState > 2) {
       this.myVideo.currentTime = this.props.videoTime * 1e-6;
-      this.myVideo.playbackRate = this.props.speed;
       this.myVideo.play();
     }
-    if (loadedTxtVideo) {
+    this.myTxtVideo.playbackRate = this.props.speed;
+    if (this.myTxtVideo.readyState > 2) {
       this.myTxtVideo.currentTime = this.props.videoTime * 1e-6;
-      this.myTxtVideo.playbackRate = this.props.speed;
       this.myTxtVideo.play();
     }
   }
@@ -116,7 +120,7 @@ class MissionVideo extends Component {
     };
   }
 
-  initiate(a) {
+  initiate() {
     fetch('http://localhost:3000/images/logJson2.json')
       .then((response) => {
         const contentType = response.headers.get('content-type');
@@ -146,7 +150,7 @@ class MissionVideo extends Component {
           p1 = mymap.latLngToContainerPoint(new L.LatLng(coordinates[1][1], coordinates[1][0]));
           p2 = mymap.latLngToContainerPoint(new L.LatLng(coordinates[2][1], coordinates[2][0]));
           p3 = mymap.latLngToContainerPoint(new L.LatLng(coordinates[3][1], coordinates[3][0]));
-          a.transformVideo(p1.x, p1.y, p2.x, p2.y, p0.x, p0.y, p3.x, p3.y);
+          this.transformVideo(p1.x, p1.y, p2.x, p2.y, p0.x, p0.y, p3.x, p3.y);
           L.geoJSON(dataSetLineString, {
             style: myStyle,
           }).addTo(mymap);
@@ -159,12 +163,12 @@ class MissionVideo extends Component {
   }
 
   transformVideo(x1, y1, x2, y2, x3, y3, x4, y4) {
-    this.myTxtVideoDiv.style['-webkit-transform-origin'] = '0 0';
-    this.myTxtVideoDiv.style['-moz-transform-origin'] = '0 0';
-    this.myTxtVideoDiv.style['-o-transform-origin'] = '0 0';
-    this.myTxtVideoDiv.style.transformOrigin = '0 0';
-    const w = this.myTxtVideo.videoWidth;
-    const h = this.myTxtVideo.videoHeight;
+    this.myTxtVideo.style['-webkit-transform-origin'] = '0 0';
+    this.myTxtVideo.style['-moz-transform-origin'] = '0 0';
+    this.myTxtVideo.style['-o-transform-origin'] = '0 0';
+    this.myTxtVideo.style.transformOrigin = '0 0';
+    const w = this.myTxtVideo.offsetWidth;
+    const h = this.myTxtVideo.offsetHeight;
     let t = this.general2DProjection(0, 0, x1, y1, w, 0, x2, y2, 0, h, x3, y3, w, h, x4, y4);
     for (let i = 0; i < 9; i += 1) t[i] /= t[8];
     t = [t[0], t[3], 0, t[6],
@@ -172,15 +176,15 @@ class MissionVideo extends Component {
       0, 0, 1, 0,
       t[2], t[5], 0, t[8]];
     const tTransform = `matrix3d(${t.join(',')})`;
-    this.myTxtVideoDiv.style['-webkit-transform'] = tTransform;
-    this.myTxtVideoDiv.style['-moz-transform'] = tTransform;
-    this.myTxtVideoDiv.style['-o-transform'] = tTransform;
-    this.myTxtVideoDiv.style.transform = tTransform;
+    this.myTxtVideo.style['-webkit-transform'] = tTransform;
+    this.myTxtVideo.style['-moz-transform'] = tTransform;
+    this.myTxtVideo.style['-o-transform'] = tTransform;
+    this.myTxtVideo.style.transform = tTransform;
   }
 
   transformGeoJson(x1, y1, x2, y2, x3, y3, x4, y4, videoCoords) {
     const w = this.myVideo.offsetWidth;
-    const h = this.myVideo.videoHeight;
+    const h = this.myVideo.offsetHeight;
     const tV = this.general2DProjection(0, 0, x1, y1, w, 0, x2, y2, 0, h, x3, y3, w, h, x4, y4);
     for (let i = 0; i < 9; i += 1) tV[i] /= tV[8];
     const tMatrix = [tV[0], tV[3], tV[6],
@@ -316,24 +320,24 @@ class MissionVideo extends Component {
           </Row>
         </div>
         <div className="Map" id="Map" />
-        <div className="TxtVideoDiv" id="TxtVideoDiv" ref={(c) => { this.myTxtVideoDiv = c; }}>
-          <video
-            id="TxtVideo"
-            ref={(c) => { this.myTxtVideo = c; }}
-            autoPlay
-            muted
-            src="http://192.168.1.251:8080/logVideo480.mp4"
-            type="video/mp4"
-            style={{ opacity: 0.5 }}
-          ><track kind="captions" />Video not found
-          </video>
-        </div>
+        <video
+          id="TxtVideo"
+          ref={(c) => { this.myTxtVideo = c; }}
+          autoPlay
+          muted
+          preload
+          src="http://192.168.1.251:8080/logVideo.mp4"
+          type="video/mp4"
+          style={{ opacity: 0.5 }}
+        ><track kind="captions" />Video not found
+        </video>
         <video
           id="Video"
           ref={(c) => { this.myVideo = c; }}
           autoPlay
           muted
-          src="http://192.168.1.251:8080/logVideo480.mp4"
+          preload
+          src="http://192.168.1.251:8080/logVideo.mp4"
           type="video/mp4"
           onClick={this.getCoords}
         ><track kind="captions" />Video not found
