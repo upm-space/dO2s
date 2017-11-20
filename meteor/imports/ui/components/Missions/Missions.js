@@ -3,12 +3,12 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Table, Alert, Button } from 'react-bootstrap';
-import { timeago, monthDayYearAtTime } from '@cleverbeagle/dates';
 import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Bert } from 'meteor/themeteorchef:bert';
 import classnames from 'classnames';
 
+import { timeago, monthDayYearAtTime } from '../../../modules/dates';
 import MissionsCollection from '../../../api/Missions/Missions';
 import Loading from '../../components/Loading/Loading';
 import TrashModal from '../../components/TrashModal/TrashModal';

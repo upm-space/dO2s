@@ -3,12 +3,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { ButtonToolbar, ButtonGroup, Button, Row, Col, Form, FormControl, ControlLabel, FormGroup } from 'react-bootstrap';
 import { withTracker } from 'meteor/react-meteor-data';
-import { monthDayYear } from '@cleverbeagle/dates';
 import { Meteor } from 'meteor/meteor';
 import { Bert } from 'meteor/themeteorchef:bert';
 import RPAs from '../../../api/RPAs/RPAs';
 import NotFound from '../NotFound/NotFound';
 import Loading from '../../components/Loading/Loading';
+
+import { monthDayYear } from '../../../modules/dates';
 
 const handleRemove = (rpaId, history) => {
   Meteor.call('rpas.softDelete', rpaId, (error) => {
