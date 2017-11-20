@@ -17,7 +17,6 @@ import RecoverPassword from '../../pages/RecoverPassword/RecoverPassword';
 import ResetPassword from '../../pages/ResetPassword/ResetPassword';
 import Profile from '../../pages/Profile/Profile';
 import VerifyEmail from '../../pages/VerifyEmail/VerifyEmail';
-import Footer from '../../components/Footer/Footer';
 import Terms from '../../pages/Terms/Terms';
 import Privacy from '../../pages/Privacy/Privacy';
 import ExamplePage from '../../pages/ExamplePage/ExamplePage';
@@ -66,67 +65,67 @@ const App = props => (
             <AdminPage exact path="/users" component={UserManagement} {...props} />
             <AdminPage exact path="/users/new" component={NewUser} {...props} />
             <AdminPage exact path="/users/:user_id/edit" component={EditUser} {...props} />
-            <Authenticated exact path="/projects" component={Projects} {...props} />
-            <Authenticated exact path="/projects/new" component={NewProject} {...props} />
-            <Authenticated exact path="/projects/:project_id" component={ViewProject} {...props} />
-            <Authenticated
+            <EmailNotVerified exact path="/projects" component={Projects} {...props} />
+            <EmailNotVerified exact path="/projects/new" component={NewProject} {...props} />
+            <EmailNotVerified exact path="/projects/:project_id" component={ViewProject} {...props} />
+            <EmailNotVerified
               exact
               path="/projects/:project_id/edit"
               component={EditProject}
               {...props}
             />
-            <Authenticated
+            <EmailNotVerified
               exact
               path="/projects/:project_id/newMission"
               component={NewMission}
               {...props}
             />
-            <Authenticated
+            <EmailNotVerified
               exact
               path="/projects/:project_id/:mission_id/edit"
               component={EditMission}
               {...props}
             />
-            <Authenticated
+            <EmailNotVerified
               exact={false}
               path="/projects/:project_id/:mission_id"
               component={ViewMission}
               {...props}
             />
-            <Authenticated exact path="/hangar" component={RPAs} {...props} />
-            <Authenticated exact path="/hangar/rpas" component={RPAs} {...props} />
-            <Authenticated exact path="/hangar/rpas/new" component={NewRPA} {...props} />
-            <Authenticated exact path="/hangar/rpas/:rpa_id" component={ViewRPA} {...props} />
-            <Authenticated exact path="/hangar/rpas/:rpa_id/edit" component={EditRPA} {...props} />
-            <Authenticated exact path="/hangar/payloads" component={Payloads} {...props} />
-            <Authenticated exact path="/hangar/payloads/new" component={NewPayload} {...props} />
-            <Authenticated
+            <EmailNotVerified exact path="/hangar" component={RPAs} {...props} />
+            <EmailNotVerified exact path="/hangar/rpas" component={RPAs} {...props} />
+            <EmailNotVerified exact path="/hangar/rpas/new" component={NewRPA} {...props} />
+            <EmailNotVerified exact path="/hangar/rpas/:rpa_id" component={ViewRPA} {...props} />
+            <EmailNotVerified exact path="/hangar/rpas/:rpa_id/edit" component={EditRPA} {...props} />
+            <EmailNotVerified exact path="/hangar/payloads" component={Payloads} {...props} />
+            <EmailNotVerified exact path="/hangar/payloads/new" component={NewPayload} {...props} />
+            <EmailNotVerified
               exact
               path="/hangar/payloads/:payload_id"
               component={ViewPayload}
               {...props}
             />
-            <Authenticated
+            <EmailNotVerified
               exact
               path="/hangar/payloads/:payload_id/edit"
               component={EditPayload}
               {...props}
             />
-            <Authenticated exact path="/hangar/batteries" component={Batteries} {...props} />
-            <Authenticated exact path="/hangar/batteries/new" component={NewBattery} {...props} />
-            <Authenticated
+            <EmailNotVerified exact path="/hangar/batteries" component={Batteries} {...props} />
+            <EmailNotVerified exact path="/hangar/batteries/new" component={NewBattery} {...props} />
+            <EmailNotVerified
               exact
               path="/hangar/batteries/:battery_id"
               component={ViewBattery}
               {...props}
             />
-            <Authenticated
+            <EmailNotVerified
               exact
               path="/hangar/batteries/:battery_id/edit"
               component={EditBattery}
               {...props}
             />
-            <Authenticated
+            <EmailNotVerified
               exact
               path="/hector"
               component={Hector}
@@ -145,7 +144,6 @@ const App = props => (
             <Route component={NotFound} />
           </Switch>
         </Grid>
-        {/* <Footer /> */}
       </div> : ''}
   </Router>
 );

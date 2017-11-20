@@ -5,13 +5,13 @@ import getOAuthProfile from '../../../modules/get-oauth-profile';
 export default (options, user) => {
   const OAuthProfile = getOAuthProfile(options, user);
 
-  const applicationName = 'dO2s';
+  const applicationName = 'Ipsilum';
   const firstName = OAuthProfile ? OAuthProfile.name.first : options.profile.name.first;
   const emailAddress = OAuthProfile ? OAuthProfile.email : options.email;
 
   return sendEmail({
     to: emailAddress,
-    from: `${applicationName} <do2s.app@gmail.com>`,
+    from: `${applicationName} <info@srmconsulting.es>`,
     subject: `[${applicationName}] Welcome, ${firstName}!`,
     template: 'welcome',
     templateVars: {

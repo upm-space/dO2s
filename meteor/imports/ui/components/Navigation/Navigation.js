@@ -11,7 +11,7 @@ const Navigation = props => (
   <Navbar collapseOnSelect fluid>
     <Navbar.Header>
       <Navbar.Brand>
-        <Link to="/">dO2s</Link>
+        <Link to="/">Ipsilum</Link>
       </Navbar.Brand>
       <Navbar.Toggle />
     </Navbar.Header>
