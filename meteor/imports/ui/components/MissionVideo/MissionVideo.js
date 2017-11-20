@@ -6,10 +6,9 @@ import L from 'leaflet';
 
 import './MissionVideo.scss';
 
-let coordinates0;
-let Lng0;
-let Lat0;
 let mymap;
+let trajectory;
+let trajectoryOn = false;
 let n = 1;
 let l = 0;
 let coordinates;
@@ -35,6 +34,16 @@ const dataSetLineString = {
     },
   }],
 };
+const dataSetPhotocenters = {
+  type: 'FeatureCollection',
+  features: [{
+    type: 'Feature',
+    geometry: {
+      type: 'LineString',
+      coordinates: [],
+    },
+  }],
+};
 const myStyle = {
   color: '#ffbb00',
   weight: 4,
@@ -51,6 +60,7 @@ class MissionVideo extends Component {
     this.getCoords = this.getCoords.bind(this);
     this.pointP = this.pointP.bind(this);
     this.lineP = this.lineP.bind(this);
+    this.showTrajectory = this.showTrajectory.bind(this);
 
     this.state = {
       featureArray: [],
@@ -111,6 +121,7 @@ class MissionVideo extends Component {
     linePointSelector = 1;
     pointControl = true;
   }
+
   lineP() {
     linePointSelector = 0;
     dataSetLineString.features[0] = {
@@ -122,13 +133,34 @@ class MissionVideo extends Component {
     };
   }
 
+  showTrajectory() {
+    if (!trajectoryOn) {
+      trajectory = L.geoJSON(dataSetPhotocenters, {
+        style: {
+          color: '#ffbb00',
+          weight: 4,
+          opacity: 1,
+          fillOpacity: 0,
+        },
+      }).addTo(mymap);
+      trajectoryOn = true;
+    } else {
+      trajectory.clearLayers();
+      trajectoryOn = false;
+    }
+  }
+
   initiate() {
     this.setState({
       featureArray: this.props.features,
     });
-    [coordinates0] = this.state.featureArray[0].geometry.coordinates;
-    Lng0 = (coordinates0[0][0] + coordinates0[1][0] + coordinates0[2][0] + coordinates0[3][0]) / 4;
-    Lat0 = (coordinates0[0][1] + coordinates0[1][1] + coordinates0[2][1] + coordinates0[3][1]) / 4;
+    for (let i = 0; i < this.state.featureArray.length; i += 1) {
+      const [coords] = this.state.featureArray[i].geometry.coordinates;
+      const Lng = (coords[0][0] + coords[1][0] + coords[2][0] + coords[3][0]) / 4;
+      const Lat = (coords[0][1] + coords[1][1] + coords[2][1] + coords[3][1]) / 4;
+      dataSetPhotocenters.features[0].geometry.coordinates.push([Lng, Lat]);
+    }
+    const [[Lng0, Lat0]] = dataSetPhotocenters.features[0].geometry.coordinates;
 
     mymap = L.map('Map').setView([Lat0, Lng0], 15);
     // L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
@@ -169,11 +201,11 @@ class MissionVideo extends Component {
       t[1], t[4], 0, t[7],
       0, 0, 1, 0,
       t[2], t[5], 0, t[8]];
-    const tTransform = `matrix3d(${t.join(',')})`;
-    this.myTxtVideo.style['-webkit-transform'] = tTransform;
-    this.myTxtVideo.style['-moz-transform'] = tTransform;
-    this.myTxtVideo.style['-o-transform'] = tTransform;
-    this.myTxtVideo.style.transform = tTransform;
+    const tTxt = `matrix3d(${t.join(',')})`;
+    this.myTxtVideo.style['-webkit-transform'] = tTxt;
+    this.myTxtVideo.style['-moz-transform'] = tTxt;
+    this.myTxtVideo.style['-o-transform'] = tTxt;
+    this.myTxtVideo.style.transform = tTxt;
   }
 
   transformGeoJson(x1, y1, x2, y2, x3, y3, x4, y4, videoCoords) {
@@ -271,11 +303,11 @@ class MissionVideo extends Component {
                 <Col xs={12} sm={12} md={12} lg={12}>
                   <Button
                     bsStyle="warning"
-                    onClick={() => {}}
+                    onClick={() => this.showTrajectory()}
                     block
                   >
                     <div><span className="fa fa-paper-plane fa-lg" aria-hidden="true" /></div>
-                    <div>Photocenter<br />Line</div>
+                    <div>Trajectory</div>
                   </Button>
                 </Col>
               </Row>
