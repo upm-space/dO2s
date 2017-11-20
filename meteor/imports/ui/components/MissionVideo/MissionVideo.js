@@ -1,13 +1,11 @@
 /* eslint-disable max-len */
 import React, { Component } from 'react';
-import { Bert } from 'meteor/themeteorchef:bert';
 import PropTypes from 'prop-types';
 import { Button, Row, Col } from 'react-bootstrap';
 import L from 'leaflet';
 
 import './MissionVideo.scss';
 
-let featureArray;
 let coordinates0;
 let Lng0;
 let Lat0;
@@ -53,21 +51,25 @@ class MissionVideo extends Component {
     this.getCoords = this.getCoords.bind(this);
     this.pointP = this.pointP.bind(this);
     this.lineP = this.lineP.bind(this);
+
+    this.state = {
+      featureArray: [],
+    };
   }
 
   componentDidMount() {
-    this.initiate();
+    setTimeout(this.initiate, 500);
     this.myVideo.addEventListener('loadeddata', () => {
-      console.log(this.myVideo.readyState);
+      // console.log(this.myVideo.readyState);
     });
     this.myTxtVideo.addEventListener('loadeddata', () => {
-      console.log(this.myTxtVideo.readyState);
+      // console.log(this.myTxtVideo.readyState);
     });
   }
 
   componentDidUpdate() {
     n = this.props.logTime;
-    console.log(this.myTxtVideo.readyState);
+    // console.log(this.myTxtVideo.readyState);
     this.myVideo.playbackRate = this.props.speed;
     if (this.myVideo.readyState > 2) {
       this.myVideo.currentTime = this.props.videoTime * 1e-6;
@@ -83,7 +85,7 @@ class MissionVideo extends Component {
   getCoords(e) {
     timeIndex += 1;
     timeVector.push(new Date().getTime());
-    const videoCoords = [e.screenY, e.screenX, 0];
+    const videoCoords = [e.screenY - this.myVideo.offsetTop - 131, e.screenX - this.myVideo.offsetLeft - 15, 0];
     const newData = this.transformGeoJson(p1.x, p1.y, p2.x, p2.y, p0.x, p0.y, p3.x, p3.y, videoCoords);
     const newDataTxt = mymap.containerPointToLatLng(new L.Point(newData[1] + p1.x, newData[0] + p1.y));
     if (linePointSelector === 1 && pointControl) {
@@ -121,45 +123,37 @@ class MissionVideo extends Component {
   }
 
   initiate() {
-    fetch('http://localhost:3000/images/logJson2.json')
-      .then((response) => {
-        const contentType = response.headers.get('content-type');
-        if (contentType && contentType.includes('application/json')) {
-          return response.json();
-        }
-        throw new TypeError("Oops, we haven't got JSON!");
-      }).then((data) => {
-        featureArray = data.features;
-        [coordinates0] = featureArray[0].geometry.coordinates;
-        Lng0 = (coordinates0[0][0] + coordinates0[1][0] + coordinates0[2][0] + coordinates0[3][0]) / 4;
-        Lat0 = (coordinates0[0][1] + coordinates0[1][1] + coordinates0[2][1] + coordinates0[3][1]) / 4;
+    this.setState({
+      featureArray: this.props.features,
+    });
+    [coordinates0] = this.state.featureArray[0].geometry.coordinates;
+    Lng0 = (coordinates0[0][0] + coordinates0[1][0] + coordinates0[2][0] + coordinates0[3][0]) / 4;
+    Lat0 = (coordinates0[0][1] + coordinates0[1][1] + coordinates0[2][1] + coordinates0[3][1]) / 4;
 
-        mymap = L.map('Map').setView([Lat0, Lng0], 15);
-        // L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-        L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-          attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors', minZoom: 1, maxZoom: 27,
-        }).addTo(mymap);
+    mymap = L.map('Map').setView([Lat0, Lng0], 15);
+    // L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+    L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+      attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors', minZoom: 1, maxZoom: 27,
+    }).addTo(mymap);
 
-        setInterval(() => {
-          n += this.props.frequency * 1000 * this.props.speed;
-          function isBigger(element) { return element.TimeUS >= n; }
-          const elt = featureArray.find(isBigger);
-          l = featureArray.indexOf(elt);
-          [coordinates] = featureArray[l].geometry.coordinates;
-          p0 = mymap.latLngToContainerPoint(new L.LatLng(coordinates[0][1], coordinates[0][0]));
-          p1 = mymap.latLngToContainerPoint(new L.LatLng(coordinates[1][1], coordinates[1][0]));
-          p2 = mymap.latLngToContainerPoint(new L.LatLng(coordinates[2][1], coordinates[2][0]));
-          p3 = mymap.latLngToContainerPoint(new L.LatLng(coordinates[3][1], coordinates[3][0]));
-          this.transformVideo(p1.x, p1.y, p2.x, p2.y, p0.x, p0.y, p3.x, p3.y);
-          L.geoJSON(dataSetLineString, {
-            style: myStyle,
-          }).addTo(mymap);
-          L.geoJSON(dataSetPoint, {
-            style: myStyle,
-          }).addTo(mymap);
-        }, this.props.frequency);
-      })
-      .catch(error => Bert.alert(`Coordinates Request Error: ${error}`, 'warning'));
+    setInterval(() => {
+      n += this.props.frequency * 1000 * this.props.speed;
+      function isBigger(element) { return element.TimeUS >= n; }
+      const elt = this.state.featureArray.find(isBigger);
+      l = this.state.featureArray.indexOf(elt);
+      [coordinates] = this.state.featureArray[l].geometry.coordinates;
+      p0 = mymap.latLngToContainerPoint(new L.LatLng(coordinates[0][1], coordinates[0][0]));
+      p1 = mymap.latLngToContainerPoint(new L.LatLng(coordinates[1][1], coordinates[1][0]));
+      p2 = mymap.latLngToContainerPoint(new L.LatLng(coordinates[2][1], coordinates[2][0]));
+      p3 = mymap.latLngToContainerPoint(new L.LatLng(coordinates[3][1], coordinates[3][0]));
+      this.transformVideo(p1.x, p1.y, p2.x, p2.y, p0.x, p0.y, p3.x, p3.y);
+      L.geoJSON(dataSetLineString, {
+        style: myStyle,
+      }).addTo(mymap);
+      L.geoJSON(dataSetPoint, {
+        style: myStyle,
+      }).addTo(mymap);
+    }, this.props.frequency);
   }
 
   transformVideo(x1, y1, x2, y2, x3, y3, x4, y4) {
@@ -272,7 +266,7 @@ class MissionVideo extends Component {
                   </Button>
                 </Col>
               </Row>
-              {/* <br />
+              <br />
               <Row>
                 <Col xs={12} sm={12} md={12} lg={12}>
                   <Button
@@ -284,7 +278,7 @@ class MissionVideo extends Component {
                     <div>Photocenter<br />Line</div>
                   </Button>
                 </Col>
-              </Row> */}
+              </Row>
               <br />
               <Row>
                 <Col xs={12} sm={12} md={12} lg={12}>
@@ -326,7 +320,8 @@ class MissionVideo extends Component {
           autoPlay
           muted
           preload
-          src="http://192.168.1.251:8080/logVideo.mp4"
+          // src="http://192.168.1.251:8080/logVideo.mp4"
+          src="https://stemkoski.github.io/Three.js/videos/sintel.ogv"
           type="video/mp4"
           style={{ opacity: 0.5 }}
         ><track kind="captions" />Video not found
@@ -337,7 +332,8 @@ class MissionVideo extends Component {
           autoPlay
           muted
           preload
-          src="http://192.168.1.251:8080/logVideo.mp4"
+          src="https://stemkoski.github.io/Three.js/videos/sintel.ogv"
+          // src="http://192.168.1.251:8080/logVideo.mp4"
           type="video/mp4"
           onClick={this.getCoords}
         ><track kind="captions" />Video not found
@@ -352,6 +348,7 @@ MissionVideo.propTypes = {
   logTime: PropTypes.number.isRequired,
   speed: PropTypes.number.isRequired,
   frequency: PropTypes.number.isRequired,
+  features: PropTypes.array.isRequired,
   syncTrue: PropTypes.func.isRequired,
   syncFalse: PropTypes.func.isRequired,
 };

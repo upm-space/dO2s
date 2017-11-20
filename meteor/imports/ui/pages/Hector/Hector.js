@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
 import { Bert } from 'meteor/themeteorchef:bert';
 import MissionVideo from '../../components/MissionVideo/MissionVideo';
-import Slider from '../../components/FligthTime/Slider';
-import Zoom from '../../components/FligthTime/Zoom';
+import Slider from '../../components/Slider/Slider';
+import Zoom from '../../components/Zoom/Zoom';
 import TimeControlComponent from '../../components/TimelineWidget/TimeControlComponent';
 
 import './Hector.scss';
 
 const coordinateUrl = 'http://localhost:3000/images/logJson2.json';
-const frequency = 200;
 let featureArray;
 let last;
 
@@ -29,6 +28,7 @@ class Hector extends Component {
       logTime: 0,
       videoTime: 0,
       speed: 1,
+      frequency: 200,
       domain: 60000000,
       synchrony: false,
       timeGap: 0,
@@ -36,7 +36,6 @@ class Hector extends Component {
   }
 
   componentWillMount() {
-    const a = this;
     fetch(coordinateUrl)
       .then((response) => {
         const contentType = response.headers.get('content-type');
@@ -47,7 +46,7 @@ class Hector extends Component {
       }).then((data) => {
         featureArray = data.features;
         last = data.features.length - 1;
-        a.setState({
+        this.setState({
           timeRangeEnd: featureArray[last].TimeUS,
           domain: featureArray[last].TimeUS,
         });
@@ -55,34 +54,34 @@ class Hector extends Component {
       .catch(error => Bert.alert(`Coordinates Request Error: ${error}`, 'warning'));
   }
 
-  changeVideoTime(f) {
+  changeVideoTime(a) {
     this.setState({
-      videoTime: parseFloat(f),
+      videoTime: a,
     });
   }
 
   changeRange(a, b) {
     this.setState({
-      timeRangeStart: parseFloat(a),
-      timeRangeEnd: parseFloat(b),
+      timeRangeStart: a,
+      timeRangeEnd: b,
     });
   }
 
-  changeLogTime(c) {
+  changeLogTime(a) {
     this.setState({
-      logTime: parseFloat(c),
+      logTime: a,
     });
   }
 
-  changeSpeed(e) {
+  changeSpeed(a) {
     this.setState({
-      speed: parseFloat(e),
+      speed: a,
     });
   }
 
   syncTrue() {
     this.setState({
-      timeGap: parseFloat(parseFloat(this.state.logTime) - parseFloat(this.state.videoTime)),
+      timeGap: this.state.logTime - this.state.videoTime,
       synchrony: true,
     });
   }
@@ -93,20 +92,20 @@ class Hector extends Component {
     });
   }
 
-  renderMissionVideo(freq) {
+  renderMissionVideo() {
     return (
       <MissionVideo
         videoTime={this.state.videoTime}
         logTime={this.state.logTime}
         speed={this.state.speed}
-        frequency={freq}
+        frequency={this.state.frequency}
         features={featureArray}
         syncTrue={this.syncTrue}
         syncFalse={this.syncFalse}
       />);
   }
 
-  renderSlider(freq) {
+  renderSlider() {
     return (
       <Slider
         end={this.state.timeRangeEnd}
@@ -115,15 +114,14 @@ class Hector extends Component {
         speed={this.state.speed}
         synchrony={this.state.synchrony}
         timeGap={this.state.timeGap}
-        frequency={freq}
-        features={featureArray}
+        frequency={this.state.frequency}
         changeRange={this.changeRange}
         changeLogTime={this.changeLogTime}
         changeVideoTime={this.changeVideoTime}
       />);
   }
 
-  renderZoom(freq) {
+  renderZoom() {
     return (
       <Zoom
         start={this.state.timeRangeStart}
@@ -133,8 +131,7 @@ class Hector extends Component {
         speed={this.state.speed}
         synchrony={this.state.synchrony}
         timeGap={this.state.timeGap}
-        frequency={freq}
-        features={featureArray}
+        frequency={this.state.frequency}
         changeLogTime={this.changeLogTime}
         changeVideoTime={this.changeVideoTime}
       />);
@@ -144,7 +141,6 @@ class Hector extends Component {
     return (
       <div className="Dial" id="Dial">
         <TimeControlComponent
-          features={featureArray}
           changeSpeed={this.changeSpeed}
         />
       </div>
@@ -154,9 +150,9 @@ class Hector extends Component {
   render() {
     return (
       <div className="Hector" id="Hector">
-        {this.renderMissionVideo(frequency)}
-        {this.renderZoom(frequency)}
-        {this.renderSlider(frequency)}
+        {this.renderMissionVideo()}
+        {this.renderZoom()}
+        {this.renderSlider()}
         {this.renderTimeControl()}
       </div>
     );
