@@ -176,7 +176,6 @@ Slider.propTypes = {
   synchrony: PropTypes.bool.isRequired,
   timeGap: PropTypes.number.isRequired,
   frequency: PropTypes.number.isRequired,
-  // features: PropTypes.array.isRequired,
   changeLogTime: PropTypes.func.isRequired,
   changeVideoTime: PropTypes.func.isRequired,
   changeRange: PropTypes.func.isRequired,
