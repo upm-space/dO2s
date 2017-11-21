@@ -935,6 +935,27 @@ const telArrayforTesting = [
   },
 ];
 
+const telArrayforTestingWrongFormat = [
+  {
+    lat: 34, lng: 30, alt: 50, seq: 0, command: 1,
+  },
+  {
+    lat: 34, lng: 30, alt: 50, seq: 1, command: 5,
+  },
+  {
+    lat: 34, lng: 30, command: 3,
+  },
+  {
+    lat: 34, lng: 30, alt: 50, seq: 3, command: 4,
+  },
+  {
+    lat: 34, lng: 30, alt: 50, seq: 4, command: 5,
+  },
+  {
+    lat: 34, lng: 30, alt: 50, seq: 5, command: 2,
+  },
+];
+
 const resultGeoJSONforTesting = {
   type: 'FeatureCollection',
   features: [
@@ -980,6 +1001,97 @@ const resultGeoJSONforTesting = {
         altGround: 0,
         type: 3,
         totalNumber: 2,
+      },
+      geometry: {
+        type: 'Point',
+        coordinates: [
+          30,
+          34,
+        ],
+      },
+    },
+    {
+      type: 'Feature',
+      properties: {
+        altRelative: 50,
+        altAbsolute: 50,
+        altGround: 0,
+        type: 4,
+        totalNumber: 3,
+      },
+      geometry: {
+        type: 'Point',
+        coordinates: [
+          30,
+          34,
+        ],
+      },
+    },
+    {
+      type: 'Feature',
+      properties: {
+        altRelative: 50,
+        altAbsolute: 50,
+        altGround: 0,
+        type: 5,
+        totalNumber: 4,
+      },
+      geometry: {
+        type: 'Point',
+        coordinates: [
+          30,
+          34,
+        ],
+      },
+    },
+    {
+      type: 'Feature',
+      properties: {
+        altRelative: 50,
+        altAbsolute: 50,
+        altGround: 0,
+        type: 2,
+        totalNumber: 5,
+      },
+      geometry: {
+        type: 'Point',
+        coordinates: [
+          30,
+          34,
+        ],
+      },
+    },
+  ],
+};
+
+const resultGeoJSONforTestingWrongFormat = {
+  type: 'FeatureCollection',
+  features: [
+    {
+      type: 'Feature',
+      properties: {
+        altRelative: 50,
+        altAbsolute: 50,
+        altGround: 0,
+        type: 1,
+        totalNumber: 0,
+      },
+      geometry: {
+        type: 'Point',
+        coordinates: [
+          30,
+          34,
+        ],
+      },
+    },
+    {
+      type: 'Feature',
+      properties: {
+        altRelative: 50,
+        altAbsolute: 50,
+        altGround: 0,
+        type: 5,
+        totalNumber: 1,
       },
       geometry: {
         type: 'Point',
@@ -1208,5 +1320,8 @@ describe('test moveWaypoint', () => {
 describe('test waypoint array from telemetry conversion', () => {
   test('test correct conversion', () => {
     expect(convertWaypointArrayToGeoJSON(telArrayforTesting)).toEqual(resultGeoJSONforTesting);
+  });
+  test('test conversion throws error', () => {
+    expect(convertWaypointArrayToGeoJSON(telArrayforTestingWrongFormat)).toEqual(resultGeoJSONforTestingWrongFormat);
   });
 });
