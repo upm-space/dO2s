@@ -5,6 +5,10 @@ import { Meteor } from 'meteor/meteor';
 import { Bert } from 'meteor/themeteorchef:bert';
 import { Button, ButtonGroup, FormGroup, ControlLabel, Row, Col } from 'react-bootstrap';
 
+const logUrl = 'C:/Oficina/Universidad/TFM/pruebas-servidor-do2s/';
+const photoUrl = 'C:/Oficina/Universidad/TFM/pruebas-servidor-do2s/Imagenes/';
+let camArray = [];
+
 class PhotoManagement extends Component {
   constructor(props) {
     super(props);
@@ -13,6 +17,21 @@ class PhotoManagement extends Component {
     };
 
     this.selectFiles = this.selectFiles.bind(this);
+  }
+
+  componentWillMount() {
+    fetch(logUrl)
+      .then((response) => {
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          return response.json();
+        }
+        throw new TypeError("Oops, we haven't got JSON!");
+      }).then((data) => {
+        camArray = data.CAM;
+        console.log(camArray[0]);
+      })
+      .catch(error => Bert.alert(`CAM Request Error: ${error}`, 'warning'));
   }
 
   componentDidMount() {
@@ -43,7 +62,7 @@ class PhotoManagement extends Component {
           </Row>
           <Row>
             <Col xs={12} sm={12} md={12} lg={12}>
-              <ButtonGroup>
+              {/* <ButtonGroup>
                 <Button bsStyle="primary">
                   <label htmlFor="browseFile">
                     <span className="fa fa-folder-open" aria-hidden="true" /> Browse
@@ -61,22 +80,22 @@ class PhotoManagement extends Component {
                     <span id="uploadFile" className="fa fa-upload" aria-hidden="true" /> Upload
                   </label>
                 </Button>
-              </ButtonGroup>
+              </ButtonGroup> */}
             </Col>
           </Row>
           <br />
           <Row>
             <Col xs={12} sm={12} md={12} lg={12}>
-              <FormGroup>
+              {/* <FormGroup>
                 <ControlLabel>Local Folder</ControlLabel>
                 <input
                   type="text"
                   name="localDirectory"
-                  defaultValue="C:\Oficina\Universidad\TFM\pruebas-servidor-do2s\testFiles"
+                  defaultValue="C:/Oficina/Universidad/TFM/pruebas-servidor-do2s/testFiles"
                   ref={localDirectory => (this.localDirectory = localDirectory)}
                   className="form-control"
                 />
-              </FormGroup>
+              </FormGroup> */}
             </Col>
           </Row>
           <br />
@@ -108,7 +127,7 @@ class PhotoManagement extends Component {
 }
 
 PhotoManagement.propTypes = {
-  missionId: PropTypes.string.isRequired,
+  // missionId: PropTypes.string.isRequired,
 };
 
 export default PhotoManagement;
