@@ -46,6 +46,33 @@ const setWaypointNumbers = (waypointFeatureCollection) => {
 };
 
 /**
+ * Returns a Feature collection with the waypoints and the web numbers calculated
+ * @param {Feature Collection} waypointList GeoJSON Feature Collection with the waypoints
+ * @returns {Feature Collection} GeoJSON Feature Collection with the waypoints' web numbers
+ * calculated for the read waypoints, deduced from the number in the sequence.
+ * To display if a number is skipped. Every total number has to be defined.
+ */
+const setWaypointWebNumbers = (waypointFeatureCollection) => {
+  const waypointFeatureCollectionCopy =
+  JSON.parse(JSON.stringify(waypointFeatureCollection));
+  const waypointArray = waypointFeatureCollectionCopy.features;
+  let nonNumberWP = 0;
+  waypointArray.forEach((feature) => {
+    if (feature.properties.type !== 5) {
+      nonNumberWP += 1;
+    } else if (feature.properties.type === 5) {
+      if (!feature.properties.totalNumber) {
+        return;
+      }
+      feature.properties.webNumber = (feature.properties.totalNumber + 1) - nonNumberWP;
+    } else if (feature.properties.webNumber) {
+      delete feature.properties.webNumber;
+    }
+  });
+  return waypointFeatureCollectionCopy;
+};
+
+/**
  * Returns a Line string with the waypoints
  * @param {Feature LineString} currentRPALineString GeoJSON Feature LineSrting with the waypoints
  * @param {Leaftet LatLng Array} newRPALatLngs Leaflet LatLng Array with the edited waypoints
@@ -476,4 +503,5 @@ export {
   addLandingPath,
   deleteLandingPath,
   convertWaypointArrayToGeoJSON,
+  setWaypointWebNumbers,
 };
