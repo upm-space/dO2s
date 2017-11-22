@@ -68,10 +68,10 @@ class MissionVideo extends Component {
   }
 
   componentDidMount() {
-    this.myVideo.addEventListener('loadeddata', () => {
+    this.myVideo.addEventListener('loadedmetadata', () => {
       // console.log(this.myVideo.readyState);
     });
-    this.myTxtVideo.addEventListener('loadeddata', () => {
+    this.myTxtVideo.addEventListener('loadedmetadata', () => {
       // console.log(this.myTxtVideo.readyState);
     });
     setTimeout(this.initiate, 500);
