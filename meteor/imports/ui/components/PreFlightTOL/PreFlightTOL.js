@@ -9,7 +9,7 @@ import PreFlightMap from '../PreFlightMap/PreFlightMap';
 
 import RPAs from '../../../api/RPAs/RPAs';
 import getElevation from '../../../modules/mission-planning/get-elevation';
-import { addLandingPath, deleteLandingPath } from '../../../modules/mission-planning/waypoint-utilities';
+import { addLandingPath, deleteLandingPath, convertWaypointArrayToGeoJSON, setWaypointWebNumbers } from '../../../modules/mission-planning/waypoint-utilities';
 
 class PreFlightTOL extends Component {
   constructor(props) {
@@ -23,11 +23,12 @@ class PreFlightTOL extends Component {
     this.setLandingPath = this.setLandingPath.bind(this);
     this.removeLandingPath = this.removeLandingPath.bind(this);
     this.editLandingBearing = this.editLandingBearing.bind(this);
+    this.readWPfromRPA = this.readWPfromRPA.bind(this);
 
     this.state = {
       isClockWise: false,
       segmentSizeOverLimit: false,
-      landingBearing: 0,
+      readWPList: {},
       buttonStates: {
         getAngleActive: false,
       },
@@ -125,6 +126,34 @@ class PreFlightTOL extends Component {
       return;
     }
     this.editWayPointList(newWaypointList);
+  }
+
+  readWPfromRPA() {
+    // TODO send message to read WP list from RPA
+    const telArrayforTesting = [
+      {
+        lat: -20.1742351208975, lng: 57.6712475717068, alt: 50, seq: 0, command: 1,
+      },
+      {
+        lat: -20.1752926079632, lng: 57.6708221921405, alt: 50, seq: 1, command: 5,
+      },
+      {
+        lat: -20.1752874953265, lng: 57.6713012158871, alt: 50, seq: 2, command: 3,
+      },
+      {
+        lat: -20.1752572837194, lng: 57.6741336286068, alt: 50, seq: 3, command: 4,
+      },
+      {
+        lat: -20.1752521774522, lng: 57.6746126523219, alt: 50, seq: 4, command: 5,
+      },
+      {
+        lat: -20.1742703680029, lng: 57.6739029586315, alt: 50, seq: 5, command: 2,
+      },
+    ];
+
+    const featureCollectionfromArray = convertWaypointArrayToGeoJSON(telArrayforTesting);
+    const featureCollectionfromArrayNumbers = setWaypointWebNumbers(featureCollectionfromArray);
+    this.setState({ readWPList: featureCollectionfromArrayNumbers });
   }
 
   editWayPointList(newWayPointList = {}) {
@@ -300,13 +329,24 @@ class PreFlightTOL extends Component {
             <hr />
             <Row>
               <Col xs={12} sm={12} md={12} lg={12} style={{ padding: '0px 2px' }}>
-                <Button block bsStyle="info">Send Waypoints</Button>
+                <Button
+                  block
+                  bsStyle="info"
+                >
+                    Send Waypoints
+                </Button>
               </Col>
             </Row>
             <br />
             <Row>
               <Col xs={12} sm={12} md={12} lg={12} style={{ padding: '0px 2px' }}>
-                <Button block bsStyle="info">Read Waypoints</Button>
+                <Button
+                  block
+                  bsStyle="info"
+                  onClick={this.readWPfromRPA}
+                >
+                    Read Waypoints
+                </Button>
               </Col>
             </Row>
             <br />
@@ -329,6 +369,7 @@ class PreFlightTOL extends Component {
               height="70vh"
               getAngleActive={this.state.buttonStates.getAngleActive}
               updateLandingBearing={this.editLandingBearing}
+              readWPList={this.state.readWPList}
             />
           </Col>
         </Row>
