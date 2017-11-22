@@ -1,6 +1,12 @@
+import SimpleSchema from 'simpl-schema';
 import LatLon from './GeoHelper';
 
-export const pointsCollectionFeatureToLineString = (pointsCollectionFeature) => {
+/**
+ * Returns a Line string with the waypoints
+ * @param {Feature Collection} waypointList GeoJSON Feature Collection with the waypoints
+ * @returns {Feature LineString} a new GeoJSON Feature LineString with the waypoints
+ */
+const pointsCollectionFeatureToLineString = (pointsCollectionFeature) => {
   const lineStringFeature = {
     type: 'Feature',
     geometry: {
@@ -15,7 +21,12 @@ export const pointsCollectionFeatureToLineString = (pointsCollectionFeature) => 
   return lineStringFeature;
 };
 
-export const setWaypointNumbers = (waypointFeatureCollection) => {
+/**
+ * Returns a Feature collection with the waypoints and the numbers calculated
+ * @param {Feature Collection} waypointList GeoJSON Feature Collection with the waypoints
+ * @returns {Feature Collection} GeoJSON Feature Collection with the waypoints' numbers calculated
+ */
+const setWaypointNumbers = (waypointFeatureCollection) => {
   const waypointFeatureCollectionCopy =
   JSON.parse(JSON.stringify(waypointFeatureCollection));
   const waypointArray = waypointFeatureCollectionCopy.features;
@@ -34,7 +45,47 @@ export const setWaypointNumbers = (waypointFeatureCollection) => {
   return waypointFeatureCollectionCopy;
 };
 
-export const getOperationType = (currentRPALineString, newRPALatLngs) => {
+/**
+ * Returns a Feature collection with the waypoints and the web numbers calculated
+ * @param {Feature Collection} waypointList GeoJSON Feature Collection with the waypoints
+ * @returns {Feature Collection} GeoJSON Feature Collection with the waypoints' web numbers
+ * calculated for the read waypoints, deduced from the number in the sequence.
+ * To display if a number is skipped. Every total number has to be defined.
+ */
+const setWaypointWebNumbers = (waypointFeatureCollection) => {
+  const waypointFeatureCollectionCopy =
+  JSON.parse(JSON.stringify(waypointFeatureCollection));
+  const waypointArray = waypointFeatureCollectionCopy.features;
+  let nonNumberWP = 0;
+  waypointArray.forEach((feature) => {
+    if (feature.properties.type !== 5) {
+      nonNumberWP += 1;
+    } else if (feature.properties.type === 5) {
+      if (!feature.properties.totalNumber) {
+        return;
+      }
+      feature.properties.webNumber = (feature.properties.totalNumber + 1) - nonNumberWP;
+    } else if (feature.properties.webNumber) {
+      delete feature.properties.webNumber;
+    }
+  });
+  return waypointFeatureCollectionCopy;
+};
+
+/**
+ * Returns a Line string with the waypoints
+ * @param {Feature LineString} currentRPALineString GeoJSON Feature LineSrting with the waypoints
+ * @param {Leaftet LatLng Array} newRPALatLngs Leaflet LatLng Array with the edited waypoints
+ * @returns {Object} An object that represents the result of the operation. With the format
+ * { operation: 'none', index: -1, lat: -1, lon: -1 }
+ * The type of the operations are add, move, delete or none.
+ * If the operation is delete, the index of the deleted wp is added to index
+ * If the operation is a move or an add. The new lat and lon of the waypoints are added to the
+ * result plus the index of the waypoint to be moved or the index into which
+ * the new waypoint was added.
+ * Otherwise the { operation: 'none', index: -1, lat: -1, lon: -1 } object is returned
+ */
+const getOperationType = (currentRPALineString, newRPALatLngs) => {
   const oldWaypointArray = currentRPALineString.geometry.coordinates;
   const oldMinusNew = oldWaypointArray.length - newRPALatLngs.length;
   const result = {
@@ -79,7 +130,13 @@ export const getOperationType = (currentRPALineString, newRPALatLngs) => {
   return result;
 };
 
-export const arrayEqualsCoords = (array1, array2) => {
+/**
+ * Returns true if the first array has the same coordinates as the second array
+ * @param {Array} array1 An array representing a GeoJSON Position
+ * @param {Array} array2 An array representing a GeoJSON Position
+ * @returns {Boolean} True if the arrays represent the same coordinates
+ */
+const arrayEqualsCoords = (array1, array2) => {
   // if the other array is a falsy value, return
   if (!array1) { return false; }
   if (!array2) { return false; }
@@ -100,7 +157,13 @@ export const arrayEqualsCoords = (array1, array2) => {
   return true;
 };
 
-export const arrayContainsCoords = (item, array) => {
+/**
+ * Returns true if the first array has the same coordinates as the second array
+ * @param {Array} item An array representing a GeoJSON Position
+ * @param {Array} array An array representing a GeoJSON Coordinates Array with Positions
+ * @returns {Boolean} True if array containts the item
+ */
+const arrayContainsCoords = (item, array) => {
   // if the other array is a falsy value, return false
   if (!array) { return false; }
   if (!item) { return false; }
@@ -124,7 +187,7 @@ export const arrayContainsCoords = (item, array) => {
  * @param {Integer} numberOfWaypointsToDelete the number of waypoints to delete starting at index
  * @returns {Feature Collection} a new GeoJSON Feature Collection with the waypoints removed
  */
-export const editWayPointType = (waypointList, waypointIndex, newWayPointType) => {
+const editWayPointType = (waypointList, waypointIndex, newWayPointType) => {
   let newWaypointList = JSON.parse(JSON.stringify(waypointList));
   newWaypointList.features[waypointIndex].properties.type = newWayPointType;
   newWaypointList = setWaypointNumbers(newWaypointList);
@@ -139,7 +202,7 @@ export const editWayPointType = (waypointList, waypointIndex, newWayPointType) =
  * @param {Array} newWaypoints an array of features of waypoints to insert
  * @returns {Feature Collection} a new GeoJSON Feature Collection with the waypoints inserted
  */
-export const insertNewWaypointsAtIndex = (waypointList, insertIndex, newWaypoints) => {
+const insertNewWaypointsAtIndex = (waypointList, insertIndex, newWaypoints) => {
   const newWaypointList = JSON.parse(JSON.stringify(waypointList));
   if (newWaypoints instanceof Array) {
     newWaypointList.features.splice(insertIndex, 0, ...newWaypoints);
@@ -156,7 +219,7 @@ export const insertNewWaypointsAtIndex = (waypointList, insertIndex, newWaypoint
  * @param {Integer} numberOfWaypointsToDelete the number of waypoints to delete starting at index
  * @returns {Feature Collection} a new GeoJSON Feature Collection with the waypoints removed
  */
-export const removeWaypoint = (waypointList, waypointIndex, numberOfWaypointsToDelete = 1) => {
+const removeWaypoint = (waypointList, waypointIndex, numberOfWaypointsToDelete = 1) => {
   const newWaypointList = JSON.parse(JSON.stringify(waypointList));
   newWaypointList.features.splice(waypointIndex, numberOfWaypointsToDelete);
   return newWaypointList;
@@ -169,7 +232,7 @@ export const removeWaypoint = (waypointList, waypointIndex, numberOfWaypointsToD
  * @param {Feature} movedWaypoint The Feature with the moved waypoint
  * @returns {Feature Collection} a new GeoJSON Feature Collection with the waypoints changed
  */
-export const moveWaypoint = (waypointList, waypointIndex, movedWaypoint) => {
+const moveWaypoint = (waypointList, waypointIndex, movedWaypoint) => {
   const newWaypointList = JSON.parse(JSON.stringify(waypointList));
   newWaypointList.features.splice(waypointIndex, 1, movedWaypoint);
   return newWaypointList;
@@ -300,7 +363,7 @@ const checkforLandingPath = (waypointList) => {
  * @returns {Feature Collection} The waypoint list with the landing path inserted or 0 if the
  * landing path already exists
  */
-export const addLandingPath = (
+const addLandingPath = (
   waypointList,
   landingBearing,
   segmentSize,
@@ -335,7 +398,7 @@ export const addLandingPath = (
  * @returns {Feature Collection} The waypoint list without the landing path or
  the number 0 if there is no landing path
  */
-export const deleteLandingPath = (waypointList) => {
+const deleteLandingPath = (waypointList) => {
   const newWaypointList = JSON.parse(JSON.stringify(waypointList));
   if (checkforLandingPath(newWaypointList)) {
     const featuresArray = newWaypointList.features;
@@ -345,4 +408,100 @@ export const deleteLandingPath = (waypointList) => {
     return newWaypointList;
   }
   return 0;
+};
+
+
+/**
+ * Converts the waypoint array received from telemetry to GeoJSON
+ * @param {Array} waypointArray the waypoint list array from telemetry
+ * @returns {Feature Collection} The waypoint list from the telemetry converted to
+ * a GeoJSON object. Empty object if the array is empty. If any object in the array
+ * does not have the correct format it's skipped.
+ */
+const convertWaypointArrayToGeoJSON = (waypointArray) => {
+  if (!(waypointArray instanceof Array)) {
+    return {};
+  } else if (waypointArray.length < 1) {
+    return {};
+  }
+
+  const newWayPointList = {
+    type: 'FeatureCollection',
+    features: [],
+  };
+
+  const waypointTelObjectSchema = new SimpleSchema({
+    lat: {
+      type: Number,
+      label: 'The latitude of the waypoint',
+      min: -90,
+      max: 90,
+    },
+    lng: {
+      type: Number,
+      label: 'The longitude of the waypoint',
+      min: -180,
+      max: 180,
+    },
+    alt: {
+      type: Number,
+      label: 'The longitude of the waypoint',
+      min: -180,
+      max: 180,
+    },
+    seq: {
+      type: Number,
+      label: 'The number of the waypoint in the list',
+      min: 0,
+    },
+    command: {
+      type: Number,
+      label: 'The type of the waypoint',
+      allowedValues: [1, 2, 3, 4, 5],
+    },
+  });
+
+  waypointArray.forEach((waypoint) => {
+    try {
+      waypointTelObjectSchema.validate(waypoint);
+      const nextWPFeature = {
+        type: 'Feature',
+        geometry: {
+          type: 'Point',
+          coordinates: [waypoint.lng, waypoint.lat],
+        },
+        properties: {
+          type: waypoint.command,
+          altRelative: waypoint.alt,
+          altAbsolute: waypoint.alt,
+          altGround: 0,
+          totalNumber: waypoint.seq,
+          // isLandingPath: true, // y esto que
+        },
+      };
+      newWayPointList.features.push(nextWPFeature);
+    } catch (e) {
+      return e;
+    }
+  });
+  return newWayPointList;
+};
+
+export {
+  pointsCollectionFeatureToLineString,
+  setWaypointNumbers,
+  getOperationType,
+  arrayEqualsCoords,
+  arrayContainsCoords,
+  editWayPointType,
+  insertNewWaypointsAtIndex,
+  removeWaypoint,
+  moveWaypoint,
+  getLandingBearing,
+  checkforLandingPath,
+  calculateLandingPath,
+  addLandingPath,
+  deleteLandingPath,
+  convertWaypointArrayToGeoJSON,
+  setWaypointWebNumbers,
 };

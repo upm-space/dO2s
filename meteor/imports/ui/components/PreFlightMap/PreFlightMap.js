@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import _ from 'lodash';
 import { Meteor } from 'meteor/meteor';
 import { Bert } from 'meteor/themeteorchef:bert';
 import PropTypes from 'prop-types';
@@ -6,7 +7,7 @@ import L from 'leaflet';
 import 'leaflet-draw';
 
 import { featurePoint2latlong, latlong2featurePoint, featurePointGetZoom } from '../../../modules/geojson-utilities';
-import { waypointListOptions, rpaPathStyle, bearingPathStyle } from '../../../modules/mission-planning/waypoint-style-chooser.js';
+import { waypointListOptions, rpaPathStyle, bearingPathStyle, readWaypointListOptions } from '../../../modules/mission-planning/waypoint-style-chooser.js';
 import { pointsCollectionFeatureToLineString } from '../../../modules/mission-planning/waypoint-utilities.js';
 
 import './PreFlightMap.scss';
@@ -35,43 +36,27 @@ class PreFlightMap extends Component {
     const geoJSONTakeOffPointLayer = L.geoJSON().addTo(missionmap);
     const geoJSONLandingPointLayer = L.geoJSON().addTo(missionmap);
     const geoJSONRpaPathLayer = L.geoJSON().addTo(missionmap);
-    const geoJSONWaypointListLayer = L.geoJSON().addTo(missionmap);
+    const geoJSONSentWaypointListLayer = L.geoJSON().addTo(missionmap);
+    const geoJSONReadWaypointListLayer = L.geoJSON().addTo(missionmap);
     const geoJSONAngleToPointLayer = L.geoJSON().addTo(missionmap);
+
+    const overlayMaps = {
+      'Sent WPList': geoJSONSentWaypointListLayer,
+      'Read WPList': geoJSONReadWaypointListLayer,
+    };
+
+    L.control.layers(null, overlayMaps).addTo(missionmap);
 
     // we load these variables in the component to access them
     // in other functions.
-    this.drawnItems = drawnItems;
-    this.geoJSONTakeOffPointLayer = geoJSONTakeOffPointLayer;
-    this.geoJSONLandingPointLayer = geoJSONLandingPointLayer;
     this.geoJSONRpaPathLayer = geoJSONRpaPathLayer;
-    this.geoJSONWaypointListLayer = geoJSONWaypointListLayer;
+    this.geoJSONSentWaypointListLayer = geoJSONSentWaypointListLayer;
+    this.geoJSONReadWaypointListLayer = geoJSONReadWaypointListLayer;
     this.geoJSONAngleToPointLayer = geoJSONAngleToPointLayer;
 
     // Here we load the current mission data on the map if it exists
     const { flightPlan } = this.props.mission;
     if (flightPlan) {
-      if (flightPlan.takeOffPoint) {
-        const myTakeOffPoint = flightPlan.takeOffPoint;
-        const myTakeOffPointLayer = L.geoJSON(myTakeOffPoint, waypointListOptions);
-        geoJSONTakeOffPointLayer.addLayer(myTakeOffPointLayer.getLayers()[0]);
-      }
-      if (flightPlan.landingPoint) {
-        const myLandingPoint = flightPlan.landingPoint;
-        const myLandingPointLayer = L.geoJSON(myLandingPoint, waypointListOptions);
-        geoJSONLandingPointLayer.addLayer(myLandingPointLayer.getLayers()[0]);
-      }
-
-      let missionGeometry = '';
-
-      if (flightPlan.missionArea) {
-        missionGeometry = flightPlan.missionArea;
-      } else if (flightPlan.missionAxis) {
-        missionGeometry = flightPlan.missionAxis;
-      }
-      if (missionGeometry) {
-        const myMissionGeomtryLayer = L.geoJSON(missionGeometry);
-        drawnItems.addLayer(myMissionGeomtryLayer.getLayers()[0]);
-      }
       if (flightPlan.missionCalculation) {
         if (flightPlan.missionCalculation.waypointList) {
           const rpaPath =
@@ -81,13 +66,21 @@ class PreFlightMap extends Component {
           const myWaypointList = flightPlan.missionCalculation.waypointList;
           const myWaypointListLayer = L.geoJSON(myWaypointList, waypointListOptions);
           myWaypointListLayer.eachLayer(layer =>
-            geoJSONWaypointListLayer.addLayer(layer));
+            geoJSONSentWaypointListLayer.addLayer(layer));
         }
       }
 
       if (flightPlan.landingBearing) {
         const myLandingPathBearingLayer = L.geoJSON(flightPlan.landingBearing, bearingPathStyle);
         this.geoJSONAngleToPointLayer.addLayer(myLandingPathBearingLayer.getLayers()[0]);
+      }
+    }
+    if (this.props.readWPList) {
+      if (!_.isEmpty(this.props.readWPList)) {
+        const myReadWaypointList = this.props.readWPList;
+        const myReadWaypointListLayer = L.geoJSON(myReadWaypointList, readWaypointListOptions);
+        myReadWaypointListLayer.eachLayer(layer =>
+          geoJSONReadWaypointListLayer.addLayer(layer));
       }
     }
 
@@ -111,42 +104,18 @@ class PreFlightMap extends Component {
     // re lodaing the mission if anything changes
     const { flightPlan } = this.props.mission;
     if (flightPlan) {
-      if (flightPlan.takeOffPoint) {
-        this.geoJSONTakeOffPointLayer.clearLayers();
-        const myTakeOffPoint = flightPlan.takeOffPoint;
-        const myTakeOffPointLayer = L.geoJSON(myTakeOffPoint, waypointListOptions);
-        this.geoJSONTakeOffPointLayer.addLayer(myTakeOffPointLayer.getLayers()[0]);
-      }
-      if (flightPlan.landingPoint) {
-        this.geoJSONLandingPointLayer.clearLayers();
-        const myLandingPoint = flightPlan.landingPoint;
-        const myLandingPointLayer = L.geoJSON(myLandingPoint, waypointListOptions);
-        this.geoJSONLandingPointLayer.addLayer(myLandingPointLayer.getLayers()[0]);
-      }
-
-      let missionGeometry = '';
-      if (flightPlan.missionArea) {
-        missionGeometry = flightPlan.missionArea;
-      } else if (flightPlan.missionAxis) {
-        missionGeometry = flightPlan.missionAxis;
-      }
-      if (missionGeometry) {
-        this.drawnItems.clearLayers();
-        const myMissionGeomtryLayer = L.geoJSON(missionGeometry);
-        this.drawnItems.addLayer(myMissionGeomtryLayer.getLayers()[0]);
-      }
-
       if (flightPlan.missionCalculation) {
         if (flightPlan.missionCalculation.waypointList) {
           this.geoJSONRpaPathLayer.clearLayers();
-          this.geoJSONWaypointListLayer.clearLayers();
+          this.geoJSONSentWaypointListLayer.clearLayers();
           const rpaPath =
            pointsCollectionFeatureToLineString(flightPlan.missionCalculation.waypointList);
           const myRpaPathLayer = L.geoJSON(rpaPath, rpaPathStyle);
           this.geoJSONRpaPathLayer.addLayer(myRpaPathLayer.getLayers()[0]);
           const myWaypointList = flightPlan.missionCalculation.waypointList;
           const myWaypointListLayer = L.geoJSON(myWaypointList, waypointListOptions);
-          myWaypointListLayer.eachLayer(layer => (this.geoJSONWaypointListLayer.addLayer(layer)));
+          myWaypointListLayer.eachLayer(layer =>
+            (this.geoJSONSentWaypointListLayer.addLayer(layer)));
         }
       }
 
@@ -164,7 +133,20 @@ class PreFlightMap extends Component {
         this.geoJSONLandingPointLayer.clearLayers();
         this.drawnItems.clearLayers();
         this.geoJSONRpaPathLayer.clearLayers();
-        this.geoJSONWaypointListLayer.clearLayers();
+        this.geoJSONSentWaypointListLayer.clearLayers();
+        this.geoJSONReadWaypointListLayer.clearLayers();
+      }
+    }
+
+    if (this.props.readWPList) {
+      if (_.isEmpty(this.props.readWPList)) {
+        this.geoJSONReadWaypointListLayer.clearLayers();
+      } else {
+        this.geoJSONReadWaypointListLayer.clearLayers();
+        const myReadWaypointList = this.props.readWPList;
+        const myReadWaypointListLayer = L.geoJSON(myReadWaypointList, readWaypointListOptions);
+        myReadWaypointListLayer.eachLayer(layer =>
+          this.geoJSONReadWaypointListLayer.addLayer(layer));
       }
     }
 
@@ -230,6 +212,7 @@ PreFlightMap.defaultProps = {
   editWayPointsActive: false,
   editWayPoints: () => {},
   updateLandingBearing: () => {},
+  readWPList: {},
 };
 
 PreFlightMap.propTypes = {
@@ -242,6 +225,7 @@ PreFlightMap.propTypes = {
   editWayPoints: PropTypes.func,
   getAngleActive: PropTypes.bool,
   updateLandingBearing: PropTypes.func,
+  readWPList: PropTypes.object,
 };
 
 export default PreFlightMap;
