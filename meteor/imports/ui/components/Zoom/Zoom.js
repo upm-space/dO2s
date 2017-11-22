@@ -26,6 +26,12 @@ const usToHHMMSS = (time) => {
 };
 
 class Zoom extends Component {
+  constructor(props) {
+    super(props);
+
+    this.loopZoom = this.loopZoom.bind(this);
+  }
+
   componentDidMount() {
     this.zoom(this.props.start, this.props.end, this.chartContainer.offsetWidth);
   }
@@ -45,13 +51,10 @@ class Zoom extends Component {
       .selectAll('text')
       .style('text-anchor', 'start')
       .attr('transform', 'rotate(-30) translate(-10, -5)');
-    // chart.remove();
-    // this.zoom(this.props.start, this.props.end, this.chartContainer.offsetWidth);
   }
 
   zoom(startTime, endTime, chartWidth) {
     const axisWidth = chartWidth - 70;
-    const f = this.props.frequency;
 
     chart = d3.select('#chartContainer').append('svg')
       .attr('class', 'ZoomChart')
@@ -86,6 +89,11 @@ class Zoom extends Component {
           handleRed.attr('x', x(x.invert(d3.event.x) + this.props.timeGap) - 1.5);
           this.props.changeLogTime(i + this.props.timeGap);
         }
+      })
+      .on('end', () => {
+        // i = x.invert(handleGreen.attr('x'));
+        // this.props.changeVideoTime(i);
+        console.log('fin del drag');
       });
     chartAxis = chart.append('g')
       .attr('class', 'plot-container')
@@ -134,13 +142,18 @@ class Zoom extends Component {
       .attr('cy', 10)
       .attr('r', 3)
       .attr('transform', 'translate(0, 40)');
+
+    this.loopZoom();
+  }
+
+  loopZoom() {
     setInterval(() => {
-      i += f * 1000 * this.props.speed;
-      n += f * 1000 * this.props.speed;
+      i += this.props.frequency * 1000 * this.props.speed;
+      n += this.props.frequency * 1000 * this.props.speed;
       handleGreen.attr('x', x(i) - 1.5);
       handleRed.attr('x', x(n) - 1.5);
       this.props.changeVideoTime(i);
-    }, f);
+    }, this.props.frequency);
   }
 
   render() {
@@ -163,7 +176,6 @@ Zoom.propTypes = {
   synchrony: PropTypes.bool.isRequired,
   timeGap: PropTypes.number.isRequired,
   frequency: PropTypes.number.isRequired,
-  // features: PropTypes.array.isRequired,
   changeLogTime: PropTypes.func.isRequired,
   changeVideoTime: PropTypes.func.isRequired,
 };

@@ -1,19 +1,14 @@
 /* eslint-disable max-len */
 import React, { Component } from 'react';
-import { Bert } from 'meteor/themeteorchef:bert';
 import PropTypes from 'prop-types';
 import { Button, Row, Col } from 'react-bootstrap';
 import L from 'leaflet';
 
 import './MissionVideo.scss';
 
-let loadedVideo = false;
-let loadedTxtVideo = false;
-let featureArray;
-let coordinates0;
-let Lng0;
-let Lat0;
 let mymap;
+let trajectory;
+let trajectoryOn = false;
 let n = 1;
 let l = 0;
 let coordinates;
@@ -39,6 +34,16 @@ const dataSetLineString = {
     },
   }],
 };
+const dataSetPhotocenters = {
+  type: 'FeatureCollection',
+  features: [{
+    type: 'Feature',
+    geometry: {
+      type: 'LineString',
+      coordinates: [],
+    },
+  }],
+};
 const myStyle = {
   color: '#ffbb00',
   weight: 4,
@@ -50,36 +55,47 @@ class MissionVideo extends Component {
   constructor(props) {
     super(props);
 
+    this.initiate = this.initiate.bind(this);
     this.transformVideo = this.transformVideo.bind(this);
     this.getCoords = this.getCoords.bind(this);
     this.pointP = this.pointP.bind(this);
     this.lineP = this.lineP.bind(this);
+    this.showTrajectory = this.showTrajectory.bind(this);
+
+    this.state = {
+      featureArray: [],
+    };
   }
 
   componentDidMount() {
-    this.myVideo.addEventListener('loadedmetadata', () => { loadedVideo = true; });
-    this.myTxtVideo.addEventListener('loadedmetadata', () => { loadedTxtVideo = true; });
-    this.initiate(this);
+    this.myVideo.addEventListener('loadedmetadata', () => {
+      // console.log(this.myVideo.readyState);
+    });
+    this.myTxtVideo.addEventListener('loadedmetadata', () => {
+      // console.log(this.myTxtVideo.readyState);
+    });
+    setTimeout(this.initiate, 500);
   }
 
   componentDidUpdate() {
     n = this.props.logTime;
-    if (loadedVideo) {
+    // console.log(this.myTxtVideo.readyState);
+    this.myVideo.playbackRate = this.props.speed;
+    if (this.myVideo.readyState > 2) {
       this.myVideo.currentTime = this.props.videoTime * 1e-6;
-      this.myVideo.playbackRate = this.props.speed;
-      this.myVideo.play();
     }
-    if (loadedTxtVideo) {
+    this.myVideo.play();
+    this.myTxtVideo.playbackRate = this.props.speed;
+    if (this.myTxtVideo.readyState > 2) {
       this.myTxtVideo.currentTime = this.props.videoTime * 1e-6;
-      this.myTxtVideo.playbackRate = this.props.speed;
-      this.myTxtVideo.play();
     }
+    this.myTxtVideo.play();
   }
 
   getCoords(e) {
     timeIndex += 1;
     timeVector.push(new Date().getTime());
-    const videoCoords = [e.screenY, e.screenX, 0];
+    const videoCoords = [e.screenY - this.myVideo.offsetTop - 131, e.screenX - this.myVideo.offsetLeft - 15, 0];
     const newData = this.transformGeoJson(p1.x, p1.y, p2.x, p2.y, p0.x, p0.y, p3.x, p3.y, videoCoords);
     const newDataTxt = mymap.containerPointToLatLng(new L.Point(newData[1] + p1.x, newData[0] + p1.y));
     if (linePointSelector === 1 && pointControl) {
@@ -105,6 +121,7 @@ class MissionVideo extends Component {
     linePointSelector = 1;
     pointControl = true;
   }
+
   lineP() {
     linePointSelector = 0;
     dataSetLineString.features[0] = {
@@ -116,71 +133,84 @@ class MissionVideo extends Component {
     };
   }
 
-  initiate(a) {
-    fetch('http://localhost:3000/images/logJson2.json')
-      .then((response) => {
-        const contentType = response.headers.get('content-type');
-        if (contentType && contentType.includes('application/json')) {
-          return response.json();
-        }
-        throw new TypeError("Oops, we haven't got JSON!");
-      }).then((data) => {
-        featureArray = data.features;
-        [coordinates0] = featureArray[0].geometry.coordinates;
-        Lng0 = (coordinates0[0][0] + coordinates0[1][0] + coordinates0[2][0] + coordinates0[3][0]) / 4;
-        Lat0 = (coordinates0[0][1] + coordinates0[1][1] + coordinates0[2][1] + coordinates0[3][1]) / 4;
+  showTrajectory() {
+    if (!trajectoryOn) {
+      trajectory = L.geoJSON(dataSetPhotocenters, {
+        style: {
+          color: '#ffbb00',
+          weight: 4,
+          opacity: 1,
+          fillOpacity: 0,
+        },
+      }).addTo(mymap);
+      trajectoryOn = true;
+    } else {
+      trajectory.clearLayers();
+      trajectoryOn = false;
+    }
+  }
 
-        mymap = L.map('Map').setView([Lat0, Lng0], 15);
-        // L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-        L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-          attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors', minZoom: 1, maxZoom: 27,
-        }).addTo(mymap);
+  initiate() {
+    this.setState({
+      featureArray: this.props.features,
+    });
+    for (let i = 0; i < this.state.featureArray.length; i += 1) {
+      const [coords] = this.state.featureArray[i].geometry.coordinates;
+      const Lng = (coords[0][0] + coords[1][0] + coords[2][0] + coords[3][0]) / 4;
+      const Lat = (coords[0][1] + coords[1][1] + coords[2][1] + coords[3][1]) / 4;
+      dataSetPhotocenters.features[0].geometry.coordinates.push([Lng, Lat]);
+    }
+    const [[Lng0, Lat0]] = dataSetPhotocenters.features[0].geometry.coordinates;
 
-        setInterval(() => {
-          n += this.props.frequency * 1000 * this.props.speed;
-          function isBigger(element) { return element.TimeUS >= n; }
-          const elt = featureArray.find(isBigger);
-          l = featureArray.indexOf(elt);
-          [coordinates] = featureArray[l].geometry.coordinates;
-          p0 = mymap.latLngToContainerPoint(new L.LatLng(coordinates[0][1], coordinates[0][0]));
-          p1 = mymap.latLngToContainerPoint(new L.LatLng(coordinates[1][1], coordinates[1][0]));
-          p2 = mymap.latLngToContainerPoint(new L.LatLng(coordinates[2][1], coordinates[2][0]));
-          p3 = mymap.latLngToContainerPoint(new L.LatLng(coordinates[3][1], coordinates[3][0]));
-          a.transformVideo(p1.x, p1.y, p2.x, p2.y, p0.x, p0.y, p3.x, p3.y);
-          L.geoJSON(dataSetLineString, {
-            style: myStyle,
-          }).addTo(mymap);
-          L.geoJSON(dataSetPoint, {
-            style: myStyle,
-          }).addTo(mymap);
-        }, this.props.frequency);
-      })
-      .catch(error => Bert.alert(`Coordinates Request Error: ${error}`, 'warning'));
+    mymap = L.map('Map').setView([Lat0, Lng0], 15);
+    // L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+    L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+      attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors', minZoom: 1, maxZoom: 27,
+    }).addTo(mymap);
+
+    setInterval(() => {
+      n += this.props.frequency * 1000 * this.props.speed;
+      function isBigger(element) { return element.TimeUS >= n; }
+      const elt = this.state.featureArray.find(isBigger);
+      l = this.state.featureArray.indexOf(elt);
+      [coordinates] = this.state.featureArray[l].geometry.coordinates;
+      p0 = mymap.latLngToContainerPoint(new L.LatLng(coordinates[0][1], coordinates[0][0]));
+      p1 = mymap.latLngToContainerPoint(new L.LatLng(coordinates[1][1], coordinates[1][0]));
+      p2 = mymap.latLngToContainerPoint(new L.LatLng(coordinates[2][1], coordinates[2][0]));
+      p3 = mymap.latLngToContainerPoint(new L.LatLng(coordinates[3][1], coordinates[3][0]));
+      this.transformVideo(p1.x, p1.y, p2.x, p2.y, p0.x, p0.y, p3.x, p3.y);
+      L.geoJSON(dataSetLineString, {
+        style: myStyle,
+      }).addTo(mymap);
+      L.geoJSON(dataSetPoint, {
+        style: myStyle,
+      }).addTo(mymap);
+    }, this.props.frequency);
   }
 
   transformVideo(x1, y1, x2, y2, x3, y3, x4, y4) {
-    this.myTxtVideoDiv.style['-webkit-transform-origin'] = '0 0';
-    this.myTxtVideoDiv.style['-moz-transform-origin'] = '0 0';
-    this.myTxtVideoDiv.style['-o-transform-origin'] = '0 0';
-    this.myTxtVideoDiv.style.transformOrigin = '0 0';
-    const w = this.myTxtVideo.videoWidth;
-    const h = this.myTxtVideo.videoHeight;
+    this.myTxtVideo.style['-webkit-transform-origin'] = '0 0';
+    this.myTxtVideo.style['-moz-transform-origin'] = '0 0';
+    this.myTxtVideo.style['-o-transform-origin'] = '0 0';
+    this.myTxtVideo.style.transformOrigin = '0 0';
+    const w = this.myTxtVideo.offsetWidth;
+    const h = this.myTxtVideo.offsetHeight;
     let t = this.general2DProjection(0, 0, x1, y1, w, 0, x2, y2, 0, h, x3, y3, w, h, x4, y4);
     for (let i = 0; i < 9; i += 1) t[i] /= t[8];
     t = [t[0], t[3], 0, t[6],
       t[1], t[4], 0, t[7],
       0, 0, 1, 0,
       t[2], t[5], 0, t[8]];
-    const tTransform = `matrix3d(${t.join(',')})`;
-    this.myTxtVideoDiv.style['-webkit-transform'] = tTransform;
-    this.myTxtVideoDiv.style['-moz-transform'] = tTransform;
-    this.myTxtVideoDiv.style['-o-transform'] = tTransform;
-    this.myTxtVideoDiv.style.transform = tTransform;
+    const tTxt = `matrix3d(${t.join(',')})`;
+    this.myTxtVideo.style['-webkit-transform'] = tTxt;
+    this.myTxtVideo.style['-moz-transform'] = tTxt;
+    this.myTxtVideo.style['-o-transform'] = tTxt;
+    this.myTxtVideo.style.transform = tTxt;
   }
 
   transformGeoJson(x1, y1, x2, y2, x3, y3, x4, y4, videoCoords) {
     const w = this.myVideo.offsetWidth;
-    const h = this.myVideo.videoHeight;
+    const h = this.myVideo.offsetHeight;
     const tV = this.general2DProjection(0, 0, x1, y1, w, 0, x2, y2, 0, h, x3, y3, w, h, x4, y4);
     for (let i = 0; i < 9; i += 1) tV[i] /= tV[8];
     const tMatrix = [tV[0], tV[3], tV[6],
@@ -268,19 +298,19 @@ class MissionVideo extends Component {
                   </Button>
                 </Col>
               </Row>
-              {/* <br />
+              <br />
               <Row>
                 <Col xs={12} sm={12} md={12} lg={12}>
                   <Button
                     bsStyle="warning"
-                    onClick={() => {}}
+                    onClick={() => this.showTrajectory()}
                     block
                   >
                     <div><span className="fa fa-paper-plane fa-lg" aria-hidden="true" /></div>
-                    <div>Photocenter<br />Line</div>
+                    <div>Trajectory</div>
                   </Button>
                 </Col>
-              </Row> */}
+              </Row>
               <br />
               <Row>
                 <Col xs={12} sm={12} md={12} lg={12}>
@@ -316,24 +346,28 @@ class MissionVideo extends Component {
           </Row>
         </div>
         <div className="Map" id="Map" />
-        <div className="TxtVideoDiv" id="TxtVideoDiv" ref={(c) => { this.myTxtVideoDiv = c; }}>
-          <video
-            id="TxtVideo"
-            ref={(c) => { this.myTxtVideo = c; }}
-            autoPlay
-            muted
-            src="http://192.168.1.251:8080/logVideo480.mp4"
-            type="video/mp4"
-            style={{ opacity: 0.5 }}
-          ><track kind="captions" />Video not found
-          </video>
-        </div>
+        <video
+          id="TxtVideo"
+          ref={(c) => { this.myTxtVideo = c; }}
+          autoPlay
+          muted
+          loop
+          // preload
+          // src="http://192.168.1.251:8080/logVideo.mp4"
+          src="https://stemkoski.github.io/Three.js/videos/sintel.ogv"
+          type="video/mp4"
+          style={{ opacity: 0.5 }}
+        ><track kind="captions" />Video not found
+        </video>
         <video
           id="Video"
           ref={(c) => { this.myVideo = c; }}
           autoPlay
           muted
-          src="http://192.168.1.251:8080/logVideo480.mp4"
+          loop
+          // preload
+          src="https://stemkoski.github.io/Three.js/videos/sintel.ogv"
+          // src="http://192.168.1.251:8080/logVideo.mp4"
           type="video/mp4"
           onClick={this.getCoords}
         ><track kind="captions" />Video not found
@@ -348,6 +382,7 @@ MissionVideo.propTypes = {
   logTime: PropTypes.number.isRequired,
   speed: PropTypes.number.isRequired,
   frequency: PropTypes.number.isRequired,
+  features: PropTypes.array.isRequired,
   syncTrue: PropTypes.func.isRequired,
   syncFalse: PropTypes.func.isRequired,
 };

@@ -122,34 +122,34 @@ class TimeControlComponent extends Component {
     );
     return svgText;
   }
-  incrementCurrentSpeed(parent) {
+  incrementCurrentSpeed() {
     if (currentSpeed === 0) {
       i = 20;
       currentSpeed = speedArray[i];
     } else if (i < 40) {
       i = parseFloat(i) + 1;
       currentSpeed = speedArray[i];
-      rot = parent.state.rotation > 100 ? parent.state.rotation : parent.state.rotation + 5;
+      rot = this.state.rotation > 100 ? this.state.rotation : this.state.rotation + 5;
     }
-    parent.setState({ rotation: rot, textFirstLine: `${currentSpeed}x` });
+    this.setState({ rotation: rot, textFirstLine: `${currentSpeed}x` });
     this.props.changeSpeed(currentSpeed);
   }
-  reduceCurrentSpeed(parent) {
+  reduceCurrentSpeed() {
     if (currentSpeed === 0) {
       i = 20;
       currentSpeed = speedArray[i];
     } else if (i > 0) {
       i -= 1;
       currentSpeed = speedArray[i];
-      rot = parent.state.rotation < -100 ? parent.state.rotation : parent.state.rotation - 5;
+      rot = this.state.rotation < -100 ? this.state.rotation : this.state.rotation - 5;
     }
-    parent.setState({ rotation: rot, textFirstLine: `${currentSpeed}x` });
+    this.setState({ rotation: rot, textFirstLine: `${currentSpeed}x` });
     this.props.changeSpeed(currentSpeed);
   }
-  stop(parent) {
+  stop() {
     rot = 0;
     currentSpeed = 0;
-    parent.setState({ rotation: rot, textFirstLine: `${currentSpeed}x` });
+    this.setState({ rotation: rot, textFirstLine: `${currentSpeed}x` });
     this.props.changeSpeed(currentSpeed);
   }
   rotateIndicator(e) {
