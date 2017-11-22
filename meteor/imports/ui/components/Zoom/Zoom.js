@@ -29,7 +29,7 @@ class Zoom extends Component {
   constructor(props) {
     super(props);
 
-    this.looping = this.looping.bind(this);
+    this.loopZoom = this.loopZoom.bind(this);
   }
 
   componentDidMount() {
@@ -89,6 +89,11 @@ class Zoom extends Component {
           handleRed.attr('x', x(x.invert(d3.event.x) + this.props.timeGap) - 1.5);
           this.props.changeLogTime(i + this.props.timeGap);
         }
+      })
+      .on('end', () => {
+        // i = x.invert(handleGreen.attr('x'));
+        // this.props.changeVideoTime(i);
+        console.log('fin del drag');
       });
     chartAxis = chart.append('g')
       .attr('class', 'plot-container')
@@ -138,10 +143,10 @@ class Zoom extends Component {
       .attr('r', 3)
       .attr('transform', 'translate(0, 40)');
 
-    this.looping();
+    this.loopZoom();
   }
 
-  looping() {
+  loopZoom() {
     setInterval(() => {
       i += this.props.frequency * 1000 * this.props.speed;
       n += this.props.frequency * 1000 * this.props.speed;

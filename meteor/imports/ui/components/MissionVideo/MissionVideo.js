@@ -68,13 +68,13 @@ class MissionVideo extends Component {
   }
 
   componentDidMount() {
-    setTimeout(this.initiate, 500);
     this.myVideo.addEventListener('loadeddata', () => {
       // console.log(this.myVideo.readyState);
     });
     this.myTxtVideo.addEventListener('loadeddata', () => {
       // console.log(this.myTxtVideo.readyState);
     });
+    setTimeout(this.initiate, 500);
   }
 
   componentDidUpdate() {
@@ -83,13 +83,13 @@ class MissionVideo extends Component {
     this.myVideo.playbackRate = this.props.speed;
     if (this.myVideo.readyState > 2) {
       this.myVideo.currentTime = this.props.videoTime * 1e-6;
-      this.myVideo.play();
     }
+    this.myVideo.play();
     this.myTxtVideo.playbackRate = this.props.speed;
     if (this.myTxtVideo.readyState > 2) {
       this.myTxtVideo.currentTime = this.props.videoTime * 1e-6;
-      this.myTxtVideo.play();
     }
+    this.myTxtVideo.play();
   }
 
   getCoords(e) {
@@ -351,7 +351,8 @@ class MissionVideo extends Component {
           ref={(c) => { this.myTxtVideo = c; }}
           autoPlay
           muted
-          preload
+          loop
+          // preload
           // src="http://192.168.1.251:8080/logVideo.mp4"
           src="https://stemkoski.github.io/Three.js/videos/sintel.ogv"
           type="video/mp4"
@@ -363,7 +364,8 @@ class MissionVideo extends Component {
           ref={(c) => { this.myVideo = c; }}
           autoPlay
           muted
-          preload
+          loop
+          // preload
           src="https://stemkoski.github.io/Three.js/videos/sintel.ogv"
           // src="http://192.168.1.251:8080/logVideo.mp4"
           type="video/mp4"

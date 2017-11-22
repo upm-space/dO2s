@@ -9,7 +9,6 @@ const height = 50;
 let x;
 let axis;
 let slider;
-let active = 1;
 let i = 0;
 let range;
 let handle1;
@@ -48,7 +47,6 @@ class Slider extends Component {
   slider() {
     const svg = d3.select('#SliderSvg');
     const width = this.wrapper.offsetWidth - margin.left - margin.right;
-    const f = this.props.frequency;
 
     x = d3.scaleLinear()
       .domain([0, this.props.domain])
@@ -62,41 +60,44 @@ class Slider extends Component {
     slider.append('g')
       .attr('class', 'axis')
       .call(axis);
-    function hue(h) {
-      if (active === 1) {
-        if (handle2.attr('x') < x(h)) {
-          handle1.attr('x', parseFloat(handle2.attr('x')) - 5);
-        } else {
-          handle1.attr('x', x(h) - 5);
-        }
-        d3.select('#SliderTextMin').text(usToHHMMSS(x.invert(range.attr('x1'))));
-      }
-      if (active === 2) {
-        if (parseFloat(handle1.attr('x')) + 5 > x(h)) {
-          handle2.attr('x', parseFloat(handle1.attr('x')) + 5);
-        } else {
-          handle2.attr('x', x(h));
-        }
-        d3.select('#SliderTextMax').text(usToHHMMSS(x.invert(range.attr('x2'))));
-      }
-      range.attr('x1', parseFloat(handle1.attr('x')) + 5);
-      range.attr('x2', handle2.attr('x'));
-      if (active === 3) {
-        selector.attr('x', x(h) - 1.5);
-        i = x.invert(selector.attr('x'));
-      }
-    }
 
-    const drag = d3.drag()
+    const dragLeft = d3.drag()
       .on('start.interrupt', () => { slider.interrupt(); })
       .on('start drag', () => {
-        hue(x.invert(d3.event.x));
+        if (handle2.attr('x') < x(x.invert(d3.event.x))) {
+          handle1.attr('x', parseFloat(handle2.attr('x')) - 5);
+        } else {
+          handle1.attr('x', x(x.invert(d3.event.x)) - 5);
+        }
+        d3.select('#SliderTextMin').text(usToHHMMSS(x.invert(range.attr('x1'))));
+        range.attr('x1', parseFloat(handle1.attr('x')) + 5);
         this.props.changeRange(x.invert(range.attr('x1')), x.invert(range.attr('x2')));
+      });
+
+    const dragRight = d3.drag()
+      .on('start.interrupt', () => { slider.interrupt(); })
+      .on('start drag', () => {
+        if (parseFloat(handle1.attr('x')) + 5 > x(x.invert(d3.event.x))) {
+          handle2.attr('x', parseFloat(handle1.attr('x')) + 5);
+        } else {
+          handle2.attr('x', x(x.invert(d3.event.x)));
+        }
+        d3.select('#SliderTextMax').text(usToHHMMSS(x.invert(range.attr('x2'))));
+        range.attr('x2', handle2.attr('x'));
+        this.props.changeRange(x.invert(range.attr('x1')), x.invert(range.attr('x2')));
+      });
+
+    const dragRed = d3.drag()
+      .on('start.interrupt', () => { slider.interrupt(); })
+      .on('start drag', () => {
+        selector.attr('x', x(x.invert(d3.event.x)) - 1.5);
+        i = x.invert(selector.attr('x'));
         this.props.changeLogTime(x.invert(selector.attr('x')));
         if (this.props.synchrony) {
-          this.props.changeVideoTime(x.invert(selector.attr('x')) - this.props.timeGap);
+          this.props.changeVideoTime(i - this.props.timeGap);
         }
       });
+
     slider.append('line')
       .attr('class', 'track')
       .attr('x1', x.range()[0])
@@ -105,43 +106,45 @@ class Slider extends Component {
       .attr('class', 'track-inset')
       .select(function a() { return this.parentNode.appendChild(this.cloneNode(true)); })
       .attr('class', 'track-overlay')
-      .call(drag);
+      .call(dragRed);
     range = slider.append('line')
       .attr('class', 'track-range')
       .attr('x1', x.range()[0])
       .attr('x2', x.range()[1])
-      .call(drag);
+      .call(dragRed);
     handle1 = slider.insert('rect')
       .attr('class', 'SliderHandle')
       .attr('x', -5)
       .attr('y', -10)
       .attr('width', 5)
       .attr('height', 20)
-      .on('mouseover', () => { active = 1; })
-      .call(drag);
+      .call(dragLeft);
     handle2 = slider.insert('rect')
       .attr('class', 'SliderHandle')
       .attr('x', width)
       .attr('y', -10)
       .attr('width', 5)
       .attr('height', 20)
-      .on('mouseover', () => { active = 2; })
-      .call(drag);
+      .call(dragRight);
     selector = slider.insert('rect')
       .attr('class', 'SliderSelector')
       .attr('x', -1.5)
       .attr('y', -10)
       .attr('width', 3)
       .attr('height', 45)
-      .on('mousedown', () => { active = 3; })
-      .call(drag);
-    setInterval(() => {
-      i += f * 1000 * this.props.speed;
-      selector.attr('x', x(i) - 1.5);
-      this.props.changeLogTime(i);
-    }, f);
+      .call(dragRed);
+
+    this.loop();
 
     slider.selectAll('text').style('text-anchor', 'end').attr('transform', 'rotate(-30) translate(10, 5)');
+  }
+
+  loop() {
+    setInterval(() => {
+      i += this.props.frequency * 1000 * this.props.speed;
+      selector.attr('x', x(i) - 1.5);
+      this.props.changeLogTime(i);
+    }, this.props.frequency);
   }
 
   render() {

@@ -12,9 +12,14 @@ div#chartContainer{
       font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
   }
 
+  .plot-container{
+      cursor: crosshair;
+  }
+
   .line-separator{
       stroke: #000;
       stroke-width: 0.55px;
+      cursor: crosshair;
   }
 
   .ZoomGreenSelector {
