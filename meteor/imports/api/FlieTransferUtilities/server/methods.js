@@ -1,11 +1,11 @@
 import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
+import { Future } from 'fibers/future';
 import path from 'path';
 import fs from 'fs';
 import rateLimit from '../../../modules/rate-limit';
 import { saveFileFrombuffer, deleteFile, getFileList } from '../../../modules/server/file-system';
 
-const Future = require('fibers/future');
 
 Meteor.methods({
   'fileTransfer.saveFile': (buffer, missionId, fileName) => {

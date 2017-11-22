@@ -6,6 +6,8 @@ import { LinkContainer } from 'react-router-bootstrap';
 
 import NotFound from '../../pages/NotFound/NotFound';
 import MissionFileManagement from '../MissionFileManagement/MissionFileManagement';
+import PhotoManagement from '../PhotoManagement/PhotoManagement';
+import Hector from '../../pages/Hector/Hector';
 
 class MissionAnalysis extends Component {
   constructor(props) {
@@ -55,17 +57,27 @@ class MissionAnalysis extends Component {
                     {...props}
                   />)}
               />
-              {/* <Route
+              <Route
                 exact
-                path="/projects/:project_id/:mission_id/analysis/"
-                render={props => (<PreFlightTOL
-                  mission={mission}
-                  project={project}
-                  getPath={this.changeSelected}
-                  {...props}
-                />)}
+                path="/projects/:project_id/:mission_id/analysis/photo-sync"
+                render={props => (
+                  <PhotoManagement
+                    mission={mission}
+                    project={project}
+                    {...props}
+                  />)}
               />
               <Route
+                exact
+                path="/projects/:project_id/:mission_id/analysis/motion-video"
+                render={props => (
+                  <Hector
+                    mission={mission}
+                    project={project}
+                    {...props}
+                  />)}
+              />
+              {/* <Route
                 exact
                 path="/projects/:project_id/:mission_id/analysis/"
                 render={props =>

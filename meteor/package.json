@@ -29,6 +29,7 @@
     "meteor-node-stubs": "^0.3.2",
     "moment": "^2.19.2",
     "moment-timezone": "^0.5.14",
+    "piexifjs": "^1.0.3",
     "prop-types": "^15.5.10",
     "react": "^16.1.1",
     "react-bootstrap": "^0.31.5",
