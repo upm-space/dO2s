@@ -57,6 +57,19 @@ export const waypointListOptions = {
   },
 };
 
+export const readWaypointListOptions = {
+  pointToLayer(feature, latlng) {
+    return L.marker(latlng, {
+      icon: L.divIcon({
+        html: waypointHtml(feature.properties.type, feature.properties.webNumber),
+        iconSize: waypointSize(feature.properties.type),
+        iconAnchor: waypointAnchor(feature.properties.type),
+        className: `wayPointIcon ${getWaypointType(feature.properties.type)}-read`,
+      }),
+    });
+  },
+};
+
 export const rpaPathStyle = {
   style: { color: '#d9534f' },
 };
