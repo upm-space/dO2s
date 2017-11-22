@@ -67,7 +67,6 @@ class FileTransferUi extends Component {
 
   uploadFiles() {
     if (this.localDirectory.value) {
-      console.log(this.localDirectory.value);
       const reader = new FileReader();
       Meteor.call('fileTransfer.saveFolder', this.props.missionId, this.localDirectory.value, reader, (error, result) => {
         if (result) {
